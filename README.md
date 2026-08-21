@@ -62,13 +62,16 @@ installable and loadable from that published commit. Concretely:
 - The skills were copied local files, verified structurally and referentially against their
   `useOrbit` originals, then committed and pushed to `github.com/elieandraos/agentic-engineering`
   (`main`, commit `fe5bd297908b1245b5670341eb3ac0a5253b149a`).
-- Installation/loading was independently verified from a **fresh `git clone` of that GitHub commit**
-  into an isolated project directory outside both `useOrbit` and this checkout, with no pre-existing
-  copy of any of the three skills anywhere else on the machine. Claude Code discovered all three by
-  their external names, loaded each `SKILL.md`, and read specific, verbatim content out of their
-  `rules/`/`references/` files (including the renamed `my-architecture-laboratory` and the
-  `{{Project}}` footer fix), proving the files actually came from that clone rather than being
-  recalled from training data or a stale local copy.
+- Installation/loading was independently verified via a **fresh `git clone` of that GitHub commit**
+  into a scratch location, then copying each of the three top-level skill directories from that
+  clone into an isolated test project's `.claude/skills/<name>/`, outside both `useOrbit` and this
+  checkout. Neither that isolated project nor personal `~/.claude/skills/` — the two locations
+  Claude Code actually scans — held any pre-existing copy of the three skills beforehand; the
+  original `useOrbit/.claude/skills/` copies still existed on the machine, just outside both of
+  those discovery scopes. Claude Code discovered all three by their external names, loaded each
+  `SKILL.md`, and read specific, verbatim content out of their `rules/`/`references/` files
+  (including the renamed `my-architecture-laboratory` and the `{{Project}}` footer fix), proving the
+  files actually came from that clone rather than being recalled from training data or a stale copy.
 - There is **no built-in Claude Code command that installs a bare skill repository directly from
   GitHub** — no `marketplace.json`/`plugin.json` exists here, and none was added to force one. The
   verified, actually-supported mechanism is a plain `git clone` into a location Claude Code scans
