@@ -141,13 +141,13 @@ The first externalization pass should preserve behavior and structure unless a c
 
 ## Completion criteria
 
-- [ ] The three skills live in `agentic-engineering`.
-- [ ] Each skill has its own `SKILL.md`.
-- [ ] Internal rule files remain reachable from each skill.
-- [ ] The architecture skill is renamed to `my-architecture-laboratory`.
-- [ ] Repository README explains the purpose and current skill family.
-- [ ] Each skill can be installed/loaded from the GitHub repository.
-- [ ] No skill depends on files that only exist inside `useOrbit` unless that dependency is explicitly documented as project-specific.
+- [x] The three skills live in `agentic-engineering`. (2026-08-22, local copy — see "Current status" below)
+- [x] Each skill has its own `SKILL.md`.
+- [x] Internal rule files remain reachable from each skill.
+- [x] The architecture skill is renamed to `my-architecture-laboratory`.
+- [x] Repository README explains the purpose and current skill family.
+- [ ] Each skill can be installed/loaded from the GitHub repository. **Not yet attempted — local only.**
+- [x] No skill depends on files that only exist inside `useOrbit` unless that dependency is explicitly documented as project-specific. (Findings recorded in root `README.md`, "Current portability status".)
 
 ---
 
@@ -548,14 +548,15 @@ The public/reusable version should emerge from proven cross-project methodology 
 - [x] Architecture reconstruction completed for Organization Identity & Authentication.
 - [x] Parent/child architecture artifact pattern successfully demonstrated.
 - [x] `agentic-engineering` GitHub repository created.
+- [x] Local externalization pass (2026-08-22): all three skills copied into `agentic-engineering` from the untracked, local `useOrbit/.claude/skills/` originals; `architecture-laboratory` renamed to `my-architecture-laboratory` (name, invocation, and prose references only); one literal `useOrbit` reference in the architecture template's footer replaced with a `{{Project}}` placeholder; structural and referential fidelity verified against the `useOrbit` originals (diffed, cross-skill `rules/`/`references/` links resolved). Root `README.md` written. `useOrbit` originals left untouched as rollback source. GitHub installation/loading not attempted this pass.
 
 ## In progress / next
 
-- [ ] Externalize `my-feature-planning` into `agentic-engineering`.
-- [ ] Externalize `my-git-workflow` into `agentic-engineering`.
-- [ ] Rename and externalize `architecture-laboratory` as `my-architecture-laboratory`.
-- [ ] Normalize repository README and top-level structure.
-- [ ] Test installing/loading each skill from GitHub.
+- [x] Externalize `my-feature-planning` into `agentic-engineering`. (local copy, 2026-08-22)
+- [x] Externalize `my-git-workflow` into `agentic-engineering`. (local copy, 2026-08-22)
+- [x] Rename and externalize `architecture-laboratory` as `my-architecture-laboratory`. (local copy, 2026-08-22)
+- [x] Normalize repository README and top-level structure.
+- [ ] Test installing/loading each skill from GitHub. **Still pending — this is the remaining Phase A gate.**
 
 ## Future
 

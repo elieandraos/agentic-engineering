@@ -1,0 +1,439 @@
+<!--
+  Architecture handoff scaffold — reverse-engineered from the "Reusable Documents Architecture"
+  and "Centralized Tagging Architecture" artifacts. This is a starting point for Phase 3, not a
+  form to fill in blindly: delete sections/blocks that don't fit the capability, add none of the
+  CSS classes below that you don't end up using, and re-read references/doc-style.md before
+  deciding the section list. Once a draft exists, run references/review.md against it before
+  calling it done.
+
+  This file is written for the Artifact tool: no DOCTYPE/html/head/body wrapper (added at publish
+  time), no external requests, no CDN — everything is inline. Publish via the Artifact tool with
+  title="{Capability} Architecture", a one-sentence description, and a stable domain emoji as
+  favicon. Load the artifact-design skill before your first publish of a new guide.
+-->
+<title>{{Capability}} Architecture</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --surface-2: #ecedf2;
+    --ink: #1b2430;
+    --muted: #5b6472;
+    --border: #dadfe6;
+    --accent: #3457d5;
+    --accent-ink: #24398f;
+    --code-bg: #1b2430;
+    --code-ink: #e7e9ee;
+    --code-muted: #8891a3;
+
+    /* Optional: only needed if the capability has a state machine with terminal outcomes
+       (pending/completed/failed-style). Drop these three trios if it doesn't. */
+    --status-pending: #9a6b00;
+    --status-completed: #1f8a55;
+    --status-failed: #c23b3b;
+    --status-pending-bg: #f7ecd2;
+    --status-completed-bg: #dff2e7;
+    --status-failed-bg: #f8e2e1;
+
+    /* Optional: only needed if the guide uses .pill badges to distinguish recurring variants. */
+    --tag-current-bg: #ecedf2;
+    --tag-current-ink: #5b6472;
+    --tag-illustrative-bg: #e4ecff;
+    --tag-illustrative-ink: #24398f;
+
+    /* Code token colors are fixed, not theme-dependent — the code surface itself (--code-bg)
+       stays dark in both page themes. */
+    --tok-keyword: #7aa2f7;
+    --tok-string: #9ece6a;
+    --tok-type: #e0af68;
+    --tok-var: #f7768e;
+    --tok-num: #ff9e64;
+    --tok-tag: #7aa2f7;
+    --tok-attr: #7dcfff;
+    --lang-php: #a5b4fc;
+    --lang-ts: #7dd3fc;
+    --lang-vue: #6ee7b0;
+    --lang-json: #fbbf72;
+    --lang-http: #c7ccd6;
+
+    --font-display: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12161d; --surface: #1a2028; --surface-2: #212836; --ink: #e6e9ef;
+      --muted: #8b95a5; --border: #2b3240; --accent: #8aa2ff; --accent-ink: #b6c4ff;
+      --code-bg: #0c0f14; --code-ink: #dbdfe8; --code-muted: #6d7688;
+      --status-pending: #e0b23f; --status-completed: #4fd694; --status-failed: #f0736f;
+      --status-pending-bg: #332907; --status-completed-bg: #0f2c1f; --status-failed-bg: #341313;
+      --tag-current-bg: #212836; --tag-current-ink: #8b95a5;
+      --tag-illustrative-bg: #1c2740; --tag-illustrative-ink: #b6c4ff;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12161d; --surface: #1a2028; --surface-2: #212836; --ink: #e6e9ef;
+    --muted: #8b95a5; --border: #2b3240; --accent: #8aa2ff; --accent-ink: #b6c4ff;
+    --code-bg: #0c0f14; --code-ink: #dbdfe8; --code-muted: #6d7688;
+    --status-pending: #e0b23f; --status-completed: #4fd694; --status-failed: #f0736f;
+    --status-pending-bg: #332907; --status-completed-bg: #0f2c1f; --status-failed-bg: #341313;
+    --tag-current-bg: #212836; --tag-current-ink: #8b95a5;
+    --tag-illustrative-bg: #1c2740; --tag-illustrative-ink: #b6c4ff;
+  }
+  :root[data-theme="light"] {
+    --bg: #f5f6f8; --surface: #ffffff; --surface-2: #ecedf2; --ink: #1b2430;
+    --muted: #5b6472; --border: #dadfe6; --accent: #3457d5; --accent-ink: #24398f;
+    --code-bg: #1b2430; --code-ink: #e7e9ee; --code-muted: #8891a3;
+    --status-pending: #9a6b00; --status-completed: #1f8a55; --status-failed: #c23b3b;
+    --status-pending-bg: #f7ecd2; --status-completed-bg: #dff2e7; --status-failed-bg: #f8e2e1;
+    --tag-current-bg: #ecedf2; --tag-current-ink: #5b6472;
+    --tag-illustrative-bg: #e4ecff; --tag-illustrative-ink: #24398f;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.62; }
+  a { color: var(--accent-ink); }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .shell { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 0; max-width: 1180px; margin: 0 auto; }
+  @media (max-width: 880px) { .shell { grid-template-columns: 1fr; } .nav { position: static; border-right: none; border-bottom: 1px solid var(--border); } }
+
+  .nav { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 2.25rem 1.1rem 2rem; border-right: 1px solid var(--border); }
+  @media (max-width: 880px) { .nav { height: auto; } }
+  .nav-mark { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 1.5rem; }
+  .nav ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.1rem; }
+  .nav a { display: flex; gap: 0.55rem; align-items: baseline; text-decoration: none; color: var(--muted); padding: 0.32rem 0.5rem; border-radius: 5px; font-size: 0.83rem; }
+  .nav a:hover { background: var(--surface-2); color: var(--ink); }
+  .nav a .num { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-ink); flex-shrink: 0; }
+
+  main { padding: 3rem clamp(1.25rem, 4vw, 4rem) 6rem; min-width: 0; }
+
+  header.hero { margin-bottom: 3rem; }
+  .eyebrow { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-ink); margin: 0 0 0.9rem; }
+  h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(2rem, 4vw, 2.6rem); line-height: 1.15; margin: 0 0 0.85rem; text-wrap: balance; max-width: 22ch; }
+  .dek { font-size: 1.12rem; color: var(--muted); max-width: 62ch; margin: 0 0 1.75rem; }
+
+  .specsheet { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; font-family: var(--font-mono); }
+  .specsheet div { background: var(--surface); padding: 0.85rem 1rem; }
+  .specsheet .label { display: block; font-size: 0.63rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+  .specsheet .value { font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+
+  section { margin-bottom: 4rem; scroll-margin-top: 1.5rem; }
+  .section-head { display: flex; align-items: baseline; gap: 0.9rem; margin-bottom: 0.5rem; }
+  .section-head .stage-num { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-ink); border: 1px solid var(--border); border-radius: 999px; width: 1.85rem; height: 1.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  h2 { font-family: var(--font-display); font-weight: 500; font-size: 1.5rem; margin: 0; text-wrap: balance; }
+  .section-intro { color: var(--muted); max-width: 68ch; margin: 0.9rem 0 1.6rem; }
+  .section-prompt { font-family: var(--font-display); font-style: italic; font-weight: 500; color: var(--accent-ink); font-size: 1.05rem; max-width: 60ch; margin: 0.6rem 0 0; }
+  h3 { font-family: var(--font-body); font-weight: 650; font-size: 1rem; margin: 1.9rem 0 0.6rem; }
+  h3:first-child { margin-top: 0; }
+  h4 { font-family: var(--font-mono); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent-ink); margin: 1.4rem 0 0.6rem; }
+  p { max-width: 68ch; }
+  ul, ol.plain { max-width: 68ch; padding-left: 1.2rem; }
+  ul li, ol.plain li { margin-bottom: 0.42rem; }
+
+  pre { margin: 0.9rem 0 0; background: var(--code-bg); color: var(--code-ink); border-radius: 8px; padding: 1rem 1.1rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.55; }
+  code { font-family: var(--font-mono); }
+  p code, li code, td code, th code { background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; padding: 0.05rem 0.35rem; font-size: 0.87em; }
+
+  pre[data-lang] { position: relative; padding-top: 1.9rem; }
+  pre[data-lang]::before {
+    content: attr(data-lang); position: absolute; top: 0.6rem; right: 0.85rem;
+    font-family: var(--font-mono); font-size: 0.62rem; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 0.1rem 0.45rem; border-radius: 4px;
+    background: rgba(255, 255, 255, 0.07);
+  }
+  pre[data-lang="php"]::before { color: var(--lang-php); }
+  pre[data-lang="ts"]::before { color: var(--lang-ts); }
+  pre[data-lang="vue"]::before { color: var(--lang-vue); }
+  pre[data-lang="json"]::before { color: var(--lang-json); }
+  pre[data-lang="http"]::before { color: var(--lang-http); }
+  .tok-keyword { color: var(--tok-keyword); }
+  .tok-string { color: var(--tok-string); }
+  .tok-comment { color: var(--code-muted); font-style: italic; }
+  .tok-type { color: var(--tok-type); }
+  .tok-var { color: var(--tok-var); }
+  .tok-num { color: var(--tok-num); }
+  .tok-tag { color: var(--tok-tag); }
+  .tok-attr { color: var(--tok-attr); }
+
+  .src-ref { display: block; margin-top: 0.3rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
+
+  .diagram-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.4rem 1.5rem; overflow-x: auto; }
+  .diagram-caption { font-size: 0.84rem; color: var(--muted); margin: 0.6rem 0 0; }
+  .ascii { font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.65; white-space: pre; overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.4rem; color: var(--ink); }
+
+  .flow-steps { counter-reset: flow; list-style: none; margin: 1.6rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+  .flow-steps > li { counter-increment: flow; position: relative; padding: 0 0 1.1rem 2.6rem; border-left: 1px solid var(--border); margin-left: 0.9rem; max-width: 68ch; list-style: none; }
+  .flow-steps > li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .flow-steps > li::before { content: counter(flow); position: absolute; left: -0.9rem; top: -0.1rem; width: 1.75rem; height: 1.75rem; border-radius: 999px; background: var(--surface); border: 1px solid var(--accent); color: var(--accent-ink); font-family: var(--font-mono); font-size: 0.75rem; display: flex; align-items: center; justify-content: center; }
+  .flow-steps strong { display: block; margin-bottom: 0.45rem; font-family: var(--font-mono); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--accent-ink); }
+  .flow-steps > li ul { margin: 0; padding-left: 1.15rem; list-style: disc; }
+  .flow-steps > li ul li { border: none; padding: 0; margin: 0 0 0.3rem; color: var(--muted); font-size: 0.94rem; list-style: disc; }
+
+  .callouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .callout { background: var(--surface); padding: 1.3rem 1.4rem; }
+  .callout h3 { font-size: 0.95rem; margin: 0 0 0.55rem; }
+  .callout h3 code { font-size: 0.85em; }
+  .callout p { margin: 0 0 0.5rem; font-size: 0.91rem; color: var(--muted); max-width: none; }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; margin: 1rem 0; }
+  table.lc { width: 100%; border-collapse: collapse; font-size: 0.86rem; min-width: 540px; }
+  table.lc th, table.lc td { padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+  table.lc th { background: var(--surface-2); font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); white-space: nowrap; }
+  table.lc td { background: var(--surface); }
+  table.lc tr:last-child td { border-bottom: none; }
+
+  /* Optional: only needed for a document that shows a state machine as a vertical rung stack
+     instead of an .ascii diagram. */
+  .lifetime-stack { display: flex; flex-direction: column; gap: 0; max-width: 46ch; margin: 1.4rem 0; font-family: var(--font-mono); font-size: 0.86rem; }
+  .lifetime-stack .rung { border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 0.75rem 1rem; }
+  .lifetime-stack .arrow { text-align: center; color: var(--muted); font-size: 0.78rem; padding: 0.3rem 0; }
+
+  /* Optional: only needed if the guide uses .pill badges (see --tag-current-*/--tag-illustrative-*
+     above). Add one modifier class per variant the guide needs to distinguish; reuse the same two
+     color pairs rather than inventing new ones. */
+  .pill { display: inline-flex; align-items: center; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.72rem; padding: 0.15rem 0.55rem; border-radius: 999px; background: var(--tag-illustrative-bg); color: var(--tag-illustrative-ink); }
+
+  .formula { font-family: var(--font-mono); font-size: 0.88rem; background: var(--code-bg); color: var(--code-ink); border-radius: 8px; padding: 1.05rem 1.25rem; line-height: 1.85; overflow-x: auto; }
+  .formula .op { color: var(--code-muted); }
+
+  footer { margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; }
+
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+  html { scroll-behavior: smooth; }
+</style>
+
+<div class="shell">
+  <nav class="nav" aria-label="Sections">
+    <p class="nav-mark">{{Capability}} / Architecture</p>
+    <ol>
+      <!--
+        One <li> per section, in document order. Number and name these after you've decided the
+        actual section list in Phase 3 — do not ship the two reference guides' section names.
+        Keep the five stable anchors (see references/doc-style.md#section-inventory-is-not-fixed):
+        Purpose first, Security, Decisions + principles, Improvements, Summary last.
+      -->
+      <li><a href="#purpose"><span class="num">01</span> Purpose &amp; scope</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <p class="eyebrow">Architecture handoff</p>
+      <h1>{{Capability}} Architecture</h1>
+      <p class="dek">
+        One sentence: what this capability is, and the one architectural idea that makes it reusable.
+      </p>
+      <!-- 3-6 concrete operational facts. Delete the whole block if the capability has none worth grounding the reader with. -->
+      <div class="specsheet">
+        <div><span class="label">{{Fact label}}</span><span class="value">{{value}}</span></div>
+      </div>
+    </header>
+
+    <!-- 01 — keep this section first in every guide -->
+    <section id="purpose">
+      <div class="section-head"><span class="stage-num">01</span><h2>Purpose &amp; scope</h2></div>
+      <p class="section-prompt">What problem does this capability solve, and what architecture solves it?</p>
+      <p>State the problem in terms of what would be duplicated without this capability.</p>
+
+      <p class="section-intro">
+        State the solution: the one shared model/contract/pipeline, and the rule for what stays
+        shared vs. what stays at the integration boundary.
+      </p>
+
+      <div class="callouts" style="margin-top:1.75rem;">
+        <div class="callout">
+          <h3>Current reference implementation</h3>
+          <h4>Backend</h4>
+          <p>✓ {{concrete implementer}}</p>
+          <h4>Frontend</h4>
+          <p>✓ {{concrete page/component}}</p>
+          <h4>Architecture</h4>
+          <p>✓ {{what it's designed to extend to next}}</p>
+        </div>
+      </div>
+    </section>
+
+    <!--
+      Sections 02 through N-3: build these from the content-block vocabulary in
+      references/doc-style.md. Typical anchors seen in both reference guides, reshape freely:
+        - the core contract/model section (interface code block + "why this shape" list)
+        - shared backend & frontend building blocks (table.lc per layer; split into multiple
+          tables if the capability is genuinely more than one sub-capability)
+        - integrating a new adopter (narrative walkthrough, or a numbered ol.plain checklist if
+          integration really is an ordered list of discrete steps)
+        - lifecycle/operations (flow-steps for sequential pipelines; table.lc for independent
+          CRUD-shaped operations; both if the capability has one sequential case among otherwise
+          independent ones)
+        - runtime architecture (one .ascii flow per independent runtime path + a runtime
+          ownership table.lc: Concern | Runtime owner | Implementation)
+    -->
+
+    <!-- Keep near the end: Security -->
+    <section id="security">
+      <div class="section-head"><span class="stage-num">NN</span><h2>Security &amp; {{failure handling / data integrity — whichever fits}}</h2></div>
+      <p class="section-prompt">How does the architecture stay correct and secure as it's extended?</p>
+      <div class="table-wrap">
+        <table class="lc">
+          <thead><tr><th>Concern</th><th>How it is enforced</th></tr></thead>
+          <tbody>
+            <tr><td>{{concern}}</td><td>{{enforcement mechanism}}<span class="src-ref">{{Namespace\Class}}</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Keep near the end: Testing -->
+    <section id="testing">
+      <div class="section-head"><span class="stage-num">NN</span><h2>Testing strategy</h2></div>
+      <p class="section-prompt">How is the shared capability verified independently of each integration?</p>
+      <div class="callouts">
+        <div class="callout">
+          <p class="section-intro" style="margin:0 0 0.9rem;">The testing structure mirrors the architecture's boundaries.</p>
+          <ul>
+            <li>{{shared-capability tests}}</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Keep near the end: Decisions, immediately followed by the principles callout -->
+    <section id="decisions">
+      <div class="section-head"><span class="stage-num">NN</span><h2>Architecture decisions &amp; trade-offs</h2></div>
+      <p class="section-prompt">Why was the architecture designed this way, and what trade-offs were accepted?</p>
+      <div class="table-wrap">
+        <table class="lc">
+          <thead><tr><th>Decision</th><th>Why</th><th>Trade-off</th></tr></thead>
+          <tbody>
+            <tr><td>{{decision}}</td><td>{{reason}}</td><td>{{accepted cost}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="callouts" style="margin-bottom:4rem;">
+      <div class="callout">
+        <h3>Architectural principles</h3>
+        <ul>
+          <li>{{principle stated as a preference, e.g. "Reusable capability over page-specific implementations"}}</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Second-to-last: Focused improvements — genuine, justified deferrals, not a wishlist -->
+    <section id="improvements">
+      <div class="section-head"><span class="stage-num">NN</span><h2>Focused improvements</h2></div>
+      <p class="section-prompt">What intentional limitations remain, and where could the architecture evolve?</p>
+      <ol class="plain">
+        <li><strong>{{limitation}}</strong> {{why it's an accepted, deliberate deferral rather than an oversight}}</li>
+      </ol>
+    </section>
+
+    <!-- Last: Summary, closing with a bolded one-line capstone and a .formula recap -->
+    <section id="summary">
+      <div class="section-head"><span class="stage-num">NN</span><h2>Summary</h2></div>
+      <p class="section-prompt">The complete {{capability}} capability at a glance.</p>
+      <p class="section-intro">
+        Restate the architecture end to end in one paragraph: the shared foundation, how an
+        integration adopts it, and what stays constant regardless of the integration.
+      </p>
+
+      <p><strong>{{One-sentence capstone: what a new adopter gets by integrating vs. reimplementing.}}</strong></p>
+
+      <div class="formula">{{Foundation}}<br>
+<span class="op">+</span> {{shared piece}}<br>
+<span class="op">──────────────────────────────────</span><br>
+<span class="op">=</span> {{outcome without duplicating the capability}}</div>
+    </section>
+
+    <footer>
+      {{Capability}} Architecture — {{Project}}
+    </footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  var KEYWORDS = {
+    php: ['declare', 'strict_types', 'namespace', 'use', 'final', 'class', 'interface', 'trait',
+      'abstract', 'extends', 'implements', 'function', 'public', 'private', 'protected',
+      'readonly', 'static', 'const', 'return', 'new', 'void', 'self', 'array', 'int', 'string',
+      'bool', 'float', 'null', 'true', 'false'],
+    ts: ['const', 'let', 'var', 'function', 'return', 'import', 'from', 'export', 'async',
+      'await', 'new', 'typeof'],
+    json: ['true', 'false', 'null'],
+  };
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function highlight(pre) {
+    var lang = pre.getAttribute('data-lang');
+    var codeEl = pre.querySelector('code');
+    if (!codeEl) { return; }
+
+    var out = escapeHtml(codeEl.textContent);
+    var stash = [];
+    function keep(html) {
+      stash.push(html);
+      return '\u0000' + (stash.length - 1) + '\u0002';
+    }
+
+    if (lang === 'php') {
+      // One level of nested [...] handled explicitly (e.g. #[Authorize('x', [A::class, 'b'])]) —
+      // a plain [^\]]* would stop at the array's closing bracket instead of the attribute's.
+      out = out.replace(/#\[(?:[^\[\]]|\[[^\]]*\])*\]/g, function (m) { return keep('<span class="tok-comment">' + m + '</span>'); });
+    }
+    if (lang === 'php' || lang === 'ts') {
+      out = out.replace(/\/\/[^\n]*/g, function (m) { return keep('<span class="tok-comment">' + m + '</span>'); });
+    }
+    if (lang === 'json') {
+      out = out.replace(/"(?:\\.|[^"\\])*"(?=\s*:)/g, function (m) { return keep('<span class="tok-attr">' + m + '</span>'); });
+    }
+    out = out.replace(/'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`/g, function (m) { return keep('<span class="tok-string">' + m + '</span>'); });
+
+    if (lang === 'php') {
+      // Stashed like comments/strings above — otherwise the keyword pass below re-matches the
+      // word "class" inside this span's own class="tok-var" attribute and corrupts the markup.
+      out = out.replace(/\$[A-Za-z_][A-Za-z0-9_]*/g, function (m) { return keep('<span class="tok-var">' + m + '</span>'); });
+    }
+
+    var kws = KEYWORDS[lang];
+    if (kws && kws.length) {
+      out = out.replace(new RegExp('\\b(' + kws.join('|') + ')\\b', 'g'), '<span class="tok-keyword">$1</span>');
+    }
+
+    if (lang === 'php' || lang === 'ts') {
+      out = out.replace(/\b([A-Z][A-Za-z0-9_]*)\b/g, '<span class="tok-type">$1</span>');
+    }
+
+    if (lang === 'vue') {
+      // Attributes first — tag-name highlighting below inserts a class="tok-tag" attribute of
+      // its own, which this would otherwise re-match if run afterward.
+      out = out.replace(/([:@]?[a-zA-Z][a-zA-Z-]*)(=)/g, '<span class="tok-attr">$1</span>$2');
+      out = out.replace(/(&lt;\/?)([A-Za-z][\w-]*)/g, '$1<span class="tok-tag">$2</span>');
+    }
+
+    if (lang === 'http') {
+      out = out.replace(/^(GET|POST|PUT|PATCH|DELETE)\b/, '<span class="tok-keyword">$1</span>');
+      out = out.replace(/\{[^}]+\}/g, '<span class="tok-var">$&</span>');
+    }
+
+    // Guarded so it can't match the digits inside stash placeholders before they're restored below.
+    out = out.replace(/(?<!\u0000)\b(\d+(?:\.\d+)?)\b(?!\u0002)/g, '<span class="tok-num">$1</span>');
+
+    out = out.replace(/\u0000(\d+)\u0002/g, function (_, i) { return stash[Number(i)]; });
+
+    codeEl.innerHTML = out;
+  }
+
+  var blocks = document.querySelectorAll('pre[data-lang]');
+  for (var i = 0; i < blocks.length; i++) {
+    highlight(blocks[i]);
+  }
+})();
+</script>
