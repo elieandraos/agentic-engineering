@@ -55,12 +55,26 @@ portable only after repeated evidence from more than one project (`roadmap.md`, 
 
 ## Current portability status
 
-This is a **Phase A** repository: a local externalization of the three skills out of `useOrbit`'s
-working tree, done for fidelity, not redesigned. Concretely:
+**Phase A is complete.** The three skills were externalized out of `useOrbit`'s working tree for
+fidelity, not redesigned, published to this repository's GitHub `main`, and independently verified
+installable and loadable from that published commit. Concretely:
 
-- The skills are copied local files, verified structurally and referentially against their
-  `useOrbit` originals — they have **not** been installed or loaded from GitHub yet. Nothing here
-  claims that installation path has been verified.
+- The skills were copied local files, verified structurally and referentially against their
+  `useOrbit` originals, then committed and pushed to `github.com/elieandraos/agentic-engineering`
+  (`main`, commit `fe5bd297908b1245b5670341eb3ac0a5253b149a`).
+- Installation/loading was independently verified from a **fresh `git clone` of that GitHub commit**
+  into an isolated project directory outside both `useOrbit` and this checkout, with no pre-existing
+  copy of any of the three skills anywhere else on the machine. Claude Code discovered all three by
+  their external names, loaded each `SKILL.md`, and read specific, verbatim content out of their
+  `rules/`/`references/` files (including the renamed `my-architecture-laboratory` and the
+  `{{Project}}` footer fix), proving the files actually came from that clone rather than being
+  recalled from training data or a stale local copy.
+- There is **no built-in Claude Code command that installs a bare skill repository directly from
+  GitHub** — no `marketplace.json`/`plugin.json` exists here, and none was added to force one. The
+  verified, actually-supported mechanism is a plain `git clone` into a location Claude Code scans
+  (personal `~/.claude/skills/<name>/` or project `.claude/skills/<name>/`). This is a real
+  distribution gap, not a defect in this repository — Phase H is where a packaging answer (if any)
+  belongs, and none is claimed here.
 - `my-architecture-laboratory` (renamed from `architecture-laboratory`) had one literal
   `useOrbit` reference in its Artifact template's footer, replaced with a `{{Project}}` placeholder
   consistent with the template's existing convention — the only content fix made in this pass.
