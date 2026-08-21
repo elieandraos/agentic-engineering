@@ -74,8 +74,9 @@ installable and loadable from that published commit. Concretely:
   files actually came from that clone rather than being recalled from training data or a stale copy.
 - There is **no built-in Claude Code command that installs a bare skill repository directly from
   GitHub** — no `marketplace.json`/`plugin.json` exists here, and none was added to force one. The
-  verified, actually-supported mechanism is a plain `git clone` into a location Claude Code scans
-  (personal `~/.claude/skills/<name>/` or project `.claude/skills/<name>/`). This is a real
+  verified, actually-supported mechanism is to clone the repository, then copy each desired
+  top-level skill directory into a location Claude Code scans (personal `~/.claude/skills/<name>/`
+  or project `.claude/skills/<name>/`). This is a real
   distribution gap, not a defect in this repository — Phase H is where a packaging answer (if any)
   belongs, and none is claimed here.
 - `my-architecture-laboratory` (renamed from `architecture-laboratory`) had one literal
