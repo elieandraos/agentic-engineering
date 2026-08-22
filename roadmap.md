@@ -169,15 +169,16 @@ useOrbit/.claude/skills/
 
 ## Requirements
 
-- **Provenance is required; its format is not decided yet.** Every snapshot consumed into `useOrbit` must be traceable to the upstream `agentic-engineering` commit(s) it came from. Whether that's a manifest file, a comment header, a git submodule, or something else should be decided from what the real consume/refresh work actually needs — not designed speculatively here.
-- **Retire the old copies only after validation.** The independently-maintained `useOrbit` originals (kept as the Phase A rollback source) stay in place and usable until the canonical, upstream-derived copies have been exercised on real `useOrbit` work and shown to hold up. Only then are the old copies retired from active use.
-- **The consume/use/contribute/refresh lifecycle must come from genuine use, not be invented.** Phase B's second output is an operational lifecycle: how a skill gets consumed into `useOrbit`, how it gets used there, how a fix or improvement discovered during real `useOrbit` work flows back upstream, and how `useOrbit` pulls a refreshed copy. Document it as it is actually exercised during real feature work — do not manufacture a change to a skill merely to rehearse the lifecycle, and do not write the lifecycle down before it has actually happened once.
+- **Provenance is required; its exact format is not decided yet.** Every snapshot consumed into `useOrbit` must be traceable to the upstream `agentic-engineering` commit it came from. What form that record takes should be decided from what the real consume/refresh work actually needs, not designed speculatively here.
+- **Preserve the old copies as rollback material until validated, then retire them.** The independently-authored `useOrbit` originals remain preserved as rollback material until the canonical, upstream-derived snapshots have been validated on real `useOrbit` work. Only then are the old copies retired from active use — how they're preserved in the meantime is not specified here.
+- **A genuine refresh/update-and-verification cycle is required; contribution alone does not satisfy this phase.** Phase B's second output is an operational lifecycle: how a skill gets consumed into `useOrbit`, how it gets used there, and — critically — how `useOrbit` pulls an updated snapshot from upstream and verifies it still works as a consumer. If real `useOrbit` work surfaces a fix or improvement, contributing it back upstream happens when that real use warrants it, but a contribution on its own does not complete Phase B. Document the lifecycle as it is actually exercised during real feature work — do not manufacture a change to a skill merely to rehearse it, and do not write the lifecycle down before it has actually happened.
 
 ## Completion criteria
 
 - [ ] Canonical skill copies are consumed into `useOrbit/.claude/skills/` and used for real, in-progress `useOrbit` work (not a synthetic or throwaway test).
 - [ ] Upstream commit provenance is tracked for those copies, in whatever format the real work shows is adequate.
-- [ ] At least one genuine consume → use → (contribute-back and/or refresh) cycle has been observed and recorded from actual `useOrbit` work.
+- [ ] At least one genuine refresh/update-and-verification cycle has been observed and recorded from actual `useOrbit` work: an updated skill snapshot pulled from upstream and verified as a consumer.
+- [ ] Any real fix or improvement contributed back upstream during that work is recorded — contribution alone, without an observed refresh/verification cycle, does not satisfy this phase.
 - [ ] The old, independently-maintained `useOrbit` skill copies are retired from active use.
 
 ---
@@ -186,7 +187,7 @@ useOrbit/.claude/skills/
 
 ## Objective
 
-Once canonical consumption is underway, analyze the three proven skills — as they actually exist and are actually used, including inside `useOrbit` under Phase B — and classify their content into:
+Once Phase B's consumer relationship is established and its consume/use/refresh lifecycle has been observed — not merely once consumption is underway — analyze the three proven skills as they actually exist and are actually used, and classify their content into:
 
 1. **portable methodology** — survives independent of stack or project;
 2. **Laravel / Vue / Inertia stack knowledge** — technology-specific, but not `useOrbit`-specific;
@@ -503,11 +504,10 @@ agentic-engineering
 │   ├── my-architecture-laboratory
 │   └── my-git-workflow
 │
-├── Stack adapters
-│   ├── my-laravel-patterns
-│   ├── my-nuxt-patterns
-│   ├── my-supabase-patterns
-│   └── my-vercel-patterns
+├── Stack adapters (shape and names to emerge from evidence, not predefined)
+│   ├── framework/ORM implementation conventions (e.g. Laravel/Eloquent/Inertia)
+│   ├── frontend build/runtime conventions (e.g. Nuxt/Vite)
+│   └── platform/hosting conventions (e.g. Supabase/Vercel)
 │
 └── Examples / project integrations
     ├── useOrbit
@@ -593,7 +593,8 @@ Phase A is done — see "Completed" above. Phase B (establishing `useOrbit` as t
 
 - [ ] Consume the canonical skills into `useOrbit/.claude/skills/` for real work (Phase B).
 - [ ] Track upstream commit provenance for consumed copies, in a format decided from real need (Phase B).
-- [ ] Exercise and record a genuine consume/use/contribute/refresh cycle from actual `useOrbit` work (Phase B).
+- [ ] Observe and record a genuine refresh/update-and-verification cycle from actual `useOrbit` work (Phase B).
+- [ ] Record any real upstream contribution made along the way, understanding that contribution alone does not satisfy Phase B (Phase B).
 - [ ] Retire the old, independently-maintained `useOrbit` skill copies from active use (Phase B).
 - [ ] Classify the three skills' content into portable / Laravel-Inertia / `useOrbit`-specific (Phase C).
 - [ ] Extract a Laravel/Inertia adapter, only if the Phase C evidence justifies it (Phase D).
