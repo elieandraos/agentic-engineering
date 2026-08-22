@@ -100,4 +100,12 @@ installable and loadable from that published commit. Concretely:
   `Centralized Tagging Architecture`) are live `claude.ai` Artifact URLs tied to the user's account,
   not `useOrbit` repo files — they resolve from any project context, so no fix was needed there.
 
-The original skills remain untouched under `useOrbit/.claude/skills/` as the rollback source.
+**Phase B (`roadmap.md`) is now underway.** The three canonical skills have been consumed from this
+repository at commit `12d9c1df75dde5fb1d944b62b0679c1e211137a4` into gitignored
+`useOrbit/.claude/skills/` as the active local snapshots, with upstream commit provenance recorded
+locally alongside them. The pre-Phase-A originals are preserved as rollback material, moved outside
+`useOrbit`'s active skill-discovery path rather than deleted. The canonical `my-feature-planning`
+snapshot has already been used on genuine `useOrbit` work, producing
+[`useOrbit#299`](https://github.com/elieandraos/useOrbit/issues/299). A genuine refresh/update-and-
+verification cycle — pulling and verifying an updated upstream snapshot — has not yet occurred and
+remains open.
