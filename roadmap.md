@@ -6,7 +6,7 @@
 
 The goal is not to collect prompts for one repository or one framework. The goal is to build reusable engineering workflows that can operate across projects and technology stacks, while keeping stack-specific implementation knowledge and project-specific conventions out of the portable core.
 
-The system is being developed from real use rather than designed in a vacuum. `useOrbit` is the first proving ground. A second, materially different application stack will provide the next portability test.
+The system is being developed from real use rather than designed in a vacuum. `useOrbit` is the first proving ground, and is now becoming the system's first real consumer: the canonical skills need to be consumed and used for genuine `useOrbit` work before any further generalization. A second, materially different application stack will later provide a portability test, but only once that consumption relationship and the evidence it produces are in place.
 
 ---
 
@@ -153,11 +153,83 @@ The first externalization pass should preserve behavior and structure unless a c
 
 ---
 
-# 3. Phase B — Prove the skills outside their birthplace
+# 3. Phase B — Establish useOrbit as the first real consumer
 
-The second step is not to generalize everything immediately. It is to **test portability**.
+## Objective
 
-The first proving ground is:
+Phase A proved the installation mechanism: fresh-clone `agentic-engineering`, then copy the desired top-level skill directories into a consuming project's `.claude/skills/<name>/`. That mechanism is not being redesigned or re-tested here — Phase B is not another portability test of it. It puts the proven mechanism to work on the relationship that actually matters first:
+
+```text
+agentic-engineering/main
+        ↓
+useOrbit/.claude/skills/
+```
+
+`agentic-engineering` becomes the **sole canonical source of truth** for the three portable skills. `useOrbit` should hold upstream-derived, project-local *snapshots* of them — not an independently authored second source of truth. The pre-Phase-A copies that used to be edited directly inside `useOrbit/.claude/skills/` are what this phase retires from active use.
+
+## Requirements
+
+- **Provenance is required; its format is not decided yet.** Every snapshot consumed into `useOrbit` must be traceable to the upstream `agentic-engineering` commit(s) it came from. Whether that's a manifest file, a comment header, a git submodule, or something else should be decided from what the real consume/refresh work actually needs — not designed speculatively here.
+- **Retire the old copies only after validation.** The independently-maintained `useOrbit` originals (kept as the Phase A rollback source) stay in place and usable until the canonical, upstream-derived copies have been exercised on real `useOrbit` work and shown to hold up. Only then are the old copies retired from active use.
+- **The consume/use/contribute/refresh lifecycle must come from genuine use, not be invented.** Phase B's second output is an operational lifecycle: how a skill gets consumed into `useOrbit`, how it gets used there, how a fix or improvement discovered during real `useOrbit` work flows back upstream, and how `useOrbit` pulls a refreshed copy. Document it as it is actually exercised during real feature work — do not manufacture a change to a skill merely to rehearse the lifecycle, and do not write the lifecycle down before it has actually happened once.
+
+## Completion criteria
+
+- [ ] Canonical skill copies are consumed into `useOrbit/.claude/skills/` and used for real, in-progress `useOrbit` work (not a synthetic or throwaway test).
+- [ ] Upstream commit provenance is tracked for those copies, in whatever format the real work shows is adequate.
+- [ ] At least one genuine consume → use → (contribute-back and/or refresh) cycle has been observed and recorded from actual `useOrbit` work.
+- [ ] The old, independently-maintained `useOrbit` skill copies are retired from active use.
+
+---
+
+# 4. Phase C — Classify the proven skills' content
+
+## Objective
+
+Once canonical consumption is underway, analyze the three proven skills — as they actually exist and are actually used, including inside `useOrbit` under Phase B — and classify their content into:
+
+1. **portable methodology** — survives independent of stack or project;
+2. **Laravel / Vue / Inertia stack knowledge** — technology-specific, but not `useOrbit`-specific;
+3. **`useOrbit`-specific project knowledge** — belongs to this one product/repository.
+
+This is an evidence-gathering pass, not an architecture pass. Its output is a classification of what already exists, not a new package, folder, or adapter.
+
+## Important rule
+
+This analysis produces evidence. Evidence may or may not justify a Laravel/Inertia adapter — that decision belongs to Phase D, not this one. Do not pre-sort content into an adapter shape while doing this classification; classify first, decide what to build second.
+
+---
+
+# 5. Phase D — Extract a Laravel/Inertia adapter, if justified
+
+Only after Phase C's classification exists should we decide whether a Laravel/Inertia adapter is worth creating.
+
+A stack skill should be created when the Phase C evidence shows a set of conventions is:
+
+1. technology-specific;
+2. reusable across multiple features;
+3. useful to an agent during implementation;
+4. distinct from product/domain rules.
+
+**Do not create the adapter upfront as a dumping ground** for anything that isn't obviously portable. If Phase C's evidence doesn't clearly justify an adapter yet, leave the content where it is and wait for more evidence — including, potentially, evidence from Phase E (Project B).
+
+### Example boundary
+
+Core methodology:
+
+> Walk the resource lifecycle, resolve authorization, identify persistence changes, determine tests, then sequence backend and frontend work appropriately.
+
+Laravel adapter:
+
+> Use migrations, Eloquent models, policies, FormRequests, API Resources, Actions, routes, Pest, and the project's established Vue/Inertia patterns.
+
+The methodology should not need to know which one it is using.
+
+---
+
+# 6. Phase E — Project B: the cross-stack proving ground
+
+Project B remains the later proving ground for cross-stack portability — it is **not the immediate next step**. It comes after canonical consumption is established (Phase B) and after the `useOrbit` skills have been analyzed for portable vs. stack vs. project content (Phase C), because that analysis is expected to produce most of the near-term portability evidence more cheaply than a second full project would.
 
 ### Project A — useOrbit
 
@@ -171,8 +243,6 @@ Current stack:
 - Pest
 - GitHub
 - Claude Code
-
-The second proving ground is a materially different application currently entering development at the user's day job.
 
 ### Project B — new AI/training application
 
@@ -191,7 +261,7 @@ The exact architecture and conventions of Project B should be discovered, not as
 
 ## Goal of the comparison
 
-Run the same portable methodologies against both projects and observe where they diverge.
+Run the same portable methodologies against Project B and observe where they diverge from how they were actually used on `useOrbit` — including from any Laravel/Inertia adapter Phase D may have produced.
 
 Examples of questions to learn from:
 
@@ -204,55 +274,13 @@ Examples of questions to learn from:
 
 ## Important rule
 
-Do not generalize from one project when a second project can provide evidence.
-
-Project B is not just another application. It is the first deliberate portability test.
+Do not generalize from one project when a second project can provide evidence. But do not treat Project B as more urgent than the consumption and analysis work (Phases B and C) that comes first — that work is expected to sharpen what Project B should even be checked against.
 
 ---
 
-# 4. Phase C — Extract stack adapters
+# 7. Phase F — Establish the general adapter boundary
 
-Only after using the workflows on both projects should we decide what deserves to become a stack adapter.
-
-Potential future adapter family:
-
-```text
-my-laravel-patterns
-my-nuxt-patterns
-my-supabase-patterns
-my-vercel-patterns
-```
-
-These names are provisional. They should not be created merely because they sound useful.
-
-A stack skill should be created when repeated implementation evidence shows that a set of conventions is:
-
-1. technology-specific;
-2. reusable across multiple features;
-3. useful to an agent during implementation;
-4. distinct from product/domain rules.
-
-### Example boundary
-
-Core methodology:
-
-> Walk the resource lifecycle, resolve authorization, identify persistence changes, determine tests, then sequence backend and frontend work appropriately.
-
-Laravel adapter:
-
-> Use migrations, Eloquent models, policies, FormRequests, API Resources, Actions, routes, Pest, and the project's established Vue/Inertia patterns.
-
-Nuxt/Supabase adapter:
-
-> Use Supabase RLS, composables, server routes, Nuxt data-fetching patterns, Vercel environment conventions, and the project's chosen validation/testing stack.
-
-The methodology should not need to know which one it is using.
-
----
-
-# 5. Phase D — Establish the adapter boundary
-
-At this stage, compare the two projects and explicitly separate:
+At this stage, synthesize the `useOrbit` classification (Phase C) and the Project B comparison (Phase E) and explicitly separate:
 
 ```text
 portable methodology
@@ -281,7 +309,7 @@ Do not design a universal adapter schema until multiple projects have demonstrat
 
 ---
 
-# 6. Phase E — Harden Git / issue / release portability
+# 8. Phase G — Harden Git / issue / release portability
 
 `my-git-workflow` has already evolved beyond simple Git commands.
 
@@ -349,7 +377,7 @@ This is a workflow decision, not merely a historical repository convention.
 
 ---
 
-# 7. Phase F — Architecture artifact ecosystem
+# 9. Phase H — Architecture artifact ecosystem
 
 `my-architecture-laboratory` now supports more than a single monolithic architecture document in practice.
 
@@ -390,7 +418,7 @@ Do not modify the architecture skill solely because this pattern exists once. Lo
 
 ---
 
-# 8. Phase G — Use architecture as upstream input to planning
+# 10. Phase I — Use architecture as upstream input to planning
 
 The intended lifecycle is increasingly:
 
@@ -421,16 +449,14 @@ A stack adapter should not quietly turn an implementation convention into a prod
 
 ---
 
-# 9. Phase H — Validate installation and distribution
+# 11. Phase J — Validate installation and distribution
 
-Once the skills are stable in GitHub:
+Phase A's completion already covered the parts that would otherwise sit here: a fresh-clone install into a clean environment, verified discovery/loading, verified `rules/*.md` references, and confirmation that the skills don't depend on the original `useOrbit` filesystem layout. Do not redo that verification — see Phase A's completion criteria and the root `README.md`'s "Current portability status" for what was already established.
 
-1. install each skill from the repository in a clean environment;
-2. verify discovery and loading behavior;
-3. verify references to `rules/*.md` remain valid;
-4. verify the skills do not rely on the original `useOrbit` filesystem layout;
-5. validate that the repository structure is compatible with the current skills.sh ecosystem;
-6. only then prepare for public distribution.
+What remains open:
+
+1. validate that the repository structure is compatible with the current skills.sh ecosystem;
+2. only then prepare for public distribution.
 
 The repository should remain useful even before public publication.
 
@@ -444,7 +470,7 @@ not:
 
 ---
 
-# 10. Phase I — Prepare for reusable publication
+# 12. Phase K — Prepare for reusable publication
 
 Once cross-stack validation is credible, prepare the repository for wider reuse.
 
@@ -459,11 +485,13 @@ Potential work:
 - documentation of supported adapters;
 - changelog/release notes for major workflow changes.
 
+README documentation for **consuming, refreshing, and contributing** skills specifically is deferred until Phase B's operational lifecycle has actually been exercised on real `useOrbit` work — writing it earlier would mean documenting a lifecycle that hasn't been lived yet.
+
 Only at this stage should we decide how much of the project history and development story belongs in public documentation.
 
 ---
 
-# 11. Future ecosystem shape
+# 13. Future ecosystem shape
 
 The target is not simply a skills repository. It is a small ecosystem of interoperable engineering methods.
 
@@ -504,11 +532,15 @@ agentic engineering workflow
 
 ---
 
-# 12. Working principles for the roadmap
+# 14. Working principles for the roadmap
 
 ## Evidence before abstraction
 
 Do not generalize a rule merely because it sounds reusable. Prefer repeated evidence from real projects.
+
+## Consume for real before formalizing the lifecycle
+
+The consume/use/contribute/refresh relationship between `agentic-engineering` and its consumers should be documented from lifecycle events that actually happened, not designed in advance and then exercised to match the design.
 
 ## Core before adapter
 
@@ -536,7 +568,7 @@ The public/reusable version should emerge from proven cross-project methodology 
 
 ---
 
-# 13. Current status
+# 15. Current status
 
 ## Completed
 
@@ -555,33 +587,38 @@ The public/reusable version should emerge from proven cross-project methodology 
 
 ## In progress / next
 
-Phase A is done — see "Completed" above. Nothing currently in progress.
+Phase A is done — see "Completed" above. Phase B (establishing `useOrbit` as the first real consumer of the canonical skills) has not started yet.
 
 ## Future
 
-- [ ] Apply the same methodologies to the Nuxt/Vite/Supabase/Vercel project.
-- [ ] Compare the two projects and record real portability differences.
-- [ ] Extract stack adapters only where repeated evidence justifies them.
-- [ ] Define the eventual project/stack adapter boundary from that evidence.
-- [ ] Validate skills.sh compatibility and installation conventions.
-- [ ] Prepare public reusable releases.
-- [ ] Publish the stable skill family and appropriate adapters.
+- [ ] Consume the canonical skills into `useOrbit/.claude/skills/` for real work (Phase B).
+- [ ] Track upstream commit provenance for consumed copies, in a format decided from real need (Phase B).
+- [ ] Exercise and record a genuine consume/use/contribute/refresh cycle from actual `useOrbit` work (Phase B).
+- [ ] Retire the old, independently-maintained `useOrbit` skill copies from active use (Phase B).
+- [ ] Classify the three skills' content into portable / Laravel-Inertia / `useOrbit`-specific (Phase C).
+- [ ] Extract a Laravel/Inertia adapter, only if the Phase C evidence justifies it (Phase D).
+- [ ] Apply the same methodologies to the Nuxt/Vite/Supabase/Vercel project (Phase E, later).
+- [ ] Compare `useOrbit` and Project B and record real portability differences (Phase E, later).
+- [ ] Synthesize both into the general adapter boundary (Phase F).
+- [ ] Validate skills.sh compatibility (Phase J).
+- [ ] Prepare public reusable releases, including the deferred consume/refresh/contribute README docs (Phase K).
 
 ---
 
-# 14. Immediate next move
+# 16. Immediate next move
 
 Phase A is complete: the three skills are published on GitHub `main` and independently verified
 installable/loadable from that commit by their external names.
 
-The next task is the first Phase B evidence-gathering step:
+The next task is Phase B, not Project B:
 
-> **Apply `my-feature-planning`, `my-git-workflow`, and `my-architecture-laboratory` to Project B —
-> the Nuxt/Vite/Supabase/Vercel AI training application — and record where they diverge from how
-> they were actually used on `useOrbit`.**
+> **Start consuming the canonical `agentic-engineering` skills into `useOrbit/.claude/skills/` and
+> using them for real, in-progress `useOrbit` work.** Track which upstream commit each consumed copy
+> came from, in whatever form that turns out to need. Let the consume/use/contribute/refresh
+> lifecycle emerge from that real work rather than designing it in advance, and retire the old,
+> independently-maintained `useOrbit` copies only once the canonical ones have proven themselves on
+> real work.
 
-This is not a redesign pass. The goal is observation: run the same portable methodologies against a
-materially different stack and let repeated evidence, not assumption, decide what's actually
-portable versus Laravel/Vue-specific.
-
-The system should evolve by proving its portability one real project at a time.
+Applying the methodologies to the Nuxt/Vite/Supabase/Vercel project (Project B) and analyzing the
+proven skills for portable vs. Laravel/Inertia vs. `useOrbit`-specific content both come after this —
+not before it, and not concurrently with it.
