@@ -165,18 +165,18 @@ agentic-engineering/main
 useOrbit/.claude/skills/
 ```
 
-`agentic-engineering` becomes the **sole canonical source of truth** for the three portable skills. `useOrbit` should hold upstream-derived, project-local *snapshots* of them — not an independently authored second source of truth. The pre-Phase-A copies that used to be edited directly inside `useOrbit/.claude/skills/` are what this phase retires from active use.
+`agentic-engineering` becomes the **sole canonical source of truth** for the three portable skills and the sole durable, Git-tracked source of their content and upstream history. `useOrbit` holds upstream-derived, project-local runtime *snapshots* of them — not an independently authored source of truth or a second durable copy. `useOrbit/.claude` remains gitignored, and the consumed snapshots are not committed to the `useOrbit` repository. The pre-Phase-A copies that used to be edited directly inside `useOrbit/.claude/skills/` are what this phase retires from active use.
 
 ## Requirements
 
-- **Provenance is required; its exact format is not decided yet.** Every snapshot consumed into `useOrbit` must be traceable to the upstream `agentic-engineering` commit it came from. What form that record takes should be decided from what the real consume/refresh work actually needs, not designed speculatively here.
+- **Provenance is required; no general format is fixed yet.** Every active snapshot consumed into `useOrbit` must be operationally traceable to the exact upstream `agentic-engineering` commit it came from. During Phase B, that provenance record may remain local alongside the consumed snapshots; it does not need to be committed to the `useOrbit` repository. The snapshots themselves remain uncommitted because `useOrbit/.claude` stays gitignored. What form the provenance record takes should continue to follow what the real consume/refresh work demonstrates is adequate, rather than being designed speculatively. This establishes the ownership and persistence boundary only; it does not design a synchronization, bootstrap, installation, or packaging mechanism.
 - **Preserve the old copies as rollback material until validated, then retire them.** The independently-authored `useOrbit` originals remain preserved as rollback material until the canonical, upstream-derived snapshots have been validated on real `useOrbit` work. Only then are the old copies retired from active use — how they're preserved in the meantime is not specified here.
 - **A genuine refresh/update-and-verification cycle is required; contribution alone does not satisfy this phase.** Phase B's second output is an operational lifecycle: how a skill gets consumed into `useOrbit`, how it gets used there, and — critically — how `useOrbit` pulls an updated snapshot from upstream and verifies it still works as a consumer. If real `useOrbit` work surfaces a fix or improvement, contributing it back upstream happens when that real use warrants it, but a contribution on its own does not complete Phase B. Document the lifecycle as it is actually exercised during real feature work — do not manufacture a change to a skill merely to rehearse it, and do not write the lifecycle down before it has actually happened.
 
 ## Completion criteria
 
 - [ ] Canonical skill copies are consumed into `useOrbit/.claude/skills/` and used for real, in-progress `useOrbit` work (not a synthetic or throwaway test).
-- [ ] Upstream commit provenance is tracked for those copies, in whatever format the real work shows is adequate.
+- [ ] The active local snapshots are traceable to their exact upstream commit, in whatever provenance format the real work shows is adequate; the snapshots remain uncommitted, and the provenance record may remain local alongside them.
 - [ ] At least one genuine refresh/update-and-verification cycle has been observed and recorded from actual `useOrbit` work: an updated skill snapshot pulled from upstream and verified as a consumer.
 - [ ] Any real fix or improvement contributed back upstream during that work is recorded — contribution alone, without an observed refresh/verification cycle, does not satisfy this phase.
 - [ ] The old, independently-maintained `useOrbit` skill copies are retired from active use.
