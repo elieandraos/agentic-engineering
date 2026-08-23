@@ -113,7 +113,15 @@ installable and loadable from that published commit. Concretely:
     to patch now.
 - `my-architecture-laboratory`'s two style precedents (`Reusable Documents Architecture`,
   `Centralized Tagging Architecture`) are live `claude.ai` Artifact URLs tied to the user's account,
-  not `useOrbit` repo files — they resolve from any project context, so no fix was needed there.
+  not `useOrbit` repo files. This claim is now stale for the Tagging citation specifically:
+  `roadmap.md` Phase C (`phase-discovery.md`) directly re-verified the cited "Centralized Tagging
+  Architecture" URL and found it dead ("artifact not found"), independent of and prior to that phase's
+  own work. A live, differently-titled replacement artifact ("Tagging Architecture") exists and was
+  confirmed, on content, to document `useOrbit`'s current tagging architecture — but
+  `my-architecture-laboratory` still cites the dead URL, not the live one. This is a
+  documentation-currency gap in this Phase A finding, not a defect in Phase A's process at the time it
+  was written; repairing the skill's citation is Phase D's (or a maintenance pass's) to address. See
+  `phase-discovery.md` for the full evidence.
 
 **Phase B (`roadmap.md`) is now underway.** The three canonical skills have been consumed from this
 repository at commit `12d9c1df75dde5fb1d944b62b0679c1e211137a4` into gitignored

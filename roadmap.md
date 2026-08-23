@@ -83,7 +83,7 @@ Things that belong to one product or repository:
 - existing architecture decisions;
 - project-specific release or issue conventions.
 
-The exact stack-layer boundary is intentionally **not designed yet**. Phase C classifies the existing evidence; Phase D decides what — if anything — to extract, refine, or leave unchanged. Stacks beyond Laravel/Vue/Inertia are a possible future direction, not part of this near-term roadmap.
+The exact stack-layer boundary is intentionally **not designed yet**. Phase C has classified the existing evidence (see `phase-discovery.md`); Phase D now decides what — if anything — to extract, refine, or leave unchanged. Stacks beyond Laravel/Vue/Inertia are a possible future direction, not part of this near-term roadmap.
 
 ---
 
@@ -221,13 +221,32 @@ An evidence-backed classification report/inventory and boundary model covering:
 
 This analysis produces evidence, not restructuring. Rewritten skills, file movement, or a predefined adapter tree are **not** part of Phase C completion — that decision belongs to Phase D. Do not pre-sort content into an adapter shape while classifying; classify first, decide what to build second.
 
+## Completion criteria
+
+- [x] Inventory and classification performed below whole-skill level — rules, references, responsibilities, dependencies, and interactions, plus relevant `useOrbit` project memory, not just top-level skill descriptions. (`phase-discovery.md`, Iteration 1, §1–§9.)
+- [x] Both custom stack candidates (`my-laravel-patterns`, `my-phpstorm-conventions`) deep-dived for reusable-extraction readiness. (`phase-discovery.md`, Iteration 2, §10–§12.)
+- [x] All three canonical portable methodology skills (`my-architecture-laboratory`, `my-feature-planning`, `my-git-workflow`) deep-dived for readiness. (`phase-discovery.md`, Iteration 3, §14–§21.)
+- [x] A final synthesis consolidating Iterations 1–3 into an evidence-backed readiness disposition per skill, including independent re-verification of load-bearing claims against live sources rather than restatement of the iterations' own text. (`phase-discovery.md`, "Phase C Synthesis — Current Disposition.")
+- [x] Deliverable produced covering clear classifications, mixed rules needing separation, duplicated/misplaced knowledge, external dependencies, existing seams, candidate stack-layer capabilities, and unresolved cases/open questions. (`phase-discovery.md`, Synthesis §"Skill-by-skill synthesis," §"Mixed material synthesis," §"External capability boundary," §"Phase D entry conditions," §"Phase C conclusion.")
+- [x] No restructuring performed as part of this phase — classification and judgment only; no skill, `useOrbit` file, or this roadmap was modified to produce the discovery or synthesis. (Stated method, `phase-discovery.md` Synthesis preamble.)
+
+**Phase C is complete.** Full findings, scores, and supporting evidence live in `phase-discovery.md` — that document, not this roadmap, is the durable Phase C evidence artifact. Headline results, at roadmap altitude:
+
+- The mature custom skill ecosystem — the five `my-*` skills plus the independently-discovered `content-backlog` — is now inventoried and classified below whole-skill level.
+- The architecture → planning → Git/delivery three-skill lifecycle is confirmed a sound decomposition across three independent passes of increasing depth, with only one narrow, disclosure-shaped boundary gap found (`plan.md` section-pruning ownership).
+- Targeted refinement needs were found in all three portable methodology skills: `my-git-workflow` (7.3/10) and `my-architecture-laboratory` (6.8/10) sit closest to clean; `my-feature-planning` (6.3/10) is sound overall but carries one heavily mixed file plus a smaller `SKILL.md` leak.
+- Of the two custom stack candidates, `my-phpstorm-conventions` (8.2/10) is the strongest — zero product-domain leakage found across two full reads, only disclosure gaps remain. `my-laravel-patterns` (5.8/10) requires substantial refinement before reusable extraction: an undisclosed test-macro dependency, an active conflict with Laravel Boost's own guidance, a broken worked example, and a self-contradiction with a co-loaded sibling skill.
+- Mixed stack/project material requiring separation was identified across the ecosystem, most heavily in `my-feature-planning/rules/resource-feature-checklist.md`, the ecosystem's densest concentration of interleaved generic and `useOrbit`-specific content — evidence across all three iterations agrees this needs a rewrite, not a mechanical extraction.
+- Laravel Boost and other first-party capabilities remain confirmed external throughout — composed with, never absorbed, renamed, or duplicated.
+- `content-backlog` is genuinely owned and mature but does not confidently fit any of the three defined layers; it is deliberately left unresolved and outside the current Phase D stack scope, consistent with this roadmap's own prior framing (§9, "Future directions").
+
 ---
 
 # 5. Phase D — Extract or refine the custom Laravel/Vue/Inertia stack layer, if justified
 
 ## Objective
 
-Phase D acts on Phase C's evidence — it does not automatically produce a singular adapter skill. Only once Phase C's classification exists should we decide what, if anything, the evidence justifies.
+Phase D acts on Phase C's evidence — it does not automatically produce a singular adapter skill. Phase C's classification now exists in full (`phase-discovery.md`); Phase D decides what, if anything, that evidence justifies. No Phase D implementation decision has been made yet — this section still describes the space of legitimate outcomes, not a chosen one. `phase-discovery.md` is the evidence source Phase D should reason from; it is not reconstructed here.
 
 ## Evidence-supported outcomes
 
@@ -433,10 +452,13 @@ These are possibilities worth keeping in view — not phases, dependencies, comm
 - [x] Local externalization pass (2026-08-22): all three skills copied into `agentic-engineering` from the untracked, local `useOrbit/.claude/skills/` originals; `architecture-laboratory` renamed to `my-architecture-laboratory` (name, invocation, and prose references only); one literal `useOrbit` reference in the architecture template's footer replaced with a `{{Project}}` placeholder; structural and referential fidelity verified against the `useOrbit` originals (diffed, cross-skill `rules/`/`references/` links resolved). Root `README.md` written. `useOrbit` originals left untouched as rollback source.
 - [x] Publication + GitHub install/load verification pass (2026-08-22): the local externalization committed as one coherent commit and pushed to `main` (`fe5bd297908b1245b5670341eb3ac0a5253b149a`), independently confirmed via `git ls-remote` against the GitHub URL itself. All three skills then verified installable and loadable from that exact commit: a fresh `git clone` of the GitHub repo into a scratch location, then copying each of the three skill directories from that clone into an isolated project's `.claude/skills/<name>/` (outside both `useOrbit` and the working `agentic-engineering` checkout). Neither that isolated project nor personal `~/.claude/skills/` held any pre-existing copy of the three skills beforehand — the `useOrbit` originals still existed on the machine, just outside both of those discovery scopes. Claude Code discovered all three by external name, loaded each `SKILL.md`, and read verbatim, distinguishing content out of their `rules/`/`references/` files, including confirming the `my-architecture-laboratory` rename and the `{{Project}}` footer fix survived the round-trip. No packaging (`marketplace.json`/`plugin.json`) was added to force the test — none exists, and none is claimed to. **Phase A is now complete.**
 - [x] Phase B consumption + first real use (2026-08-23): all three canonical skills consumed from `agentic-engineering` @ `12d9c1df75dde5fb1d944b62b0679c1e211137a4` into gitignored `useOrbit/.claude/skills/`, with upstream commit provenance recorded locally alongside the snapshots. The pre-Phase-A, independently-maintained originals were moved to `.claude/_rollback/pre-phase-b-skills/`, outside active skill discovery, and preserved rather than deleted. The canonical `my-feature-planning` snapshot was then used on genuine, already-intended `useOrbit` work — a discovered-work investigation into 2FA login precedence, resolved as intended behavior, and a drafted-then-created issue for the remaining actionable finding — producing [useOrbit#299](https://github.com/elieandraos/useOrbit/issues/299), the first durable consumer artifact of this relationship. No upstream contribution was warranted from this pass; that outcome is recorded rather than left silent. **Phase B's refresh/update-and-verification requirement remains unmet — this is real use, not yet a completed lifecycle.**
+- [x] Phase C classification + synthesis (2026-08-23): the mature custom `my-*` skill ecosystem (`my-architecture-laboratory`, `my-feature-planning`, `my-git-workflow`, `my-laravel-patterns`, `my-phpstorm-conventions`) plus the independently-discovered `content-backlog` inventoried and classified below whole-skill level across three iterations of increasing depth, then consolidated into a synthesis with independently re-verified, evidence-backed readiness dispositions. The three-skill portable lifecycle is confirmed a sound decomposition; all three portable methodology skills need targeted refinement; `my-phpstorm-conventions` (8.2/10) is the strongest current custom stack candidate and `my-laravel-patterns` (5.8/10) needs substantial refinement before reusable extraction; `resource-feature-checklist.md` is the ecosystem's heaviest mixed stack/project content, requiring a rewrite to separate; Laravel Boost and other first-party capabilities remain confirmed external; `content-backlog` stays deliberately unresolved and outside the current Phase D stack scope. Full evidence: `phase-discovery.md`. **Phase C is now complete.**
 
 ## In progress / next
 
-Phase B's consumer relationship is established: consumption, local provenance, first genuine real use (`useOrbit#299`), and retirement of the old copies from active discovery are done — see "Completed" above. What remains open, as an observational criterion rather than a blocking dependency: a genuine refresh/update-and-verification cycle (pulling and verifying an updated upstream skill snapshot), which has not happened because no genuine upstream skill-content update exists yet to refresh from — one will not be manufactured to close this out artificially. It will be completed opportunistically whenever real `useOrbit` work genuinely warrants a canonical skill update. Normal `useOrbit` development continues independently in the meantime, and Phase C (classifying the mature custom skill ecosystem) is now the next active Agentic Engineering work — it does not wait on this observation.
+Phase B's consumer relationship is established: consumption, local provenance, first genuine real use (`useOrbit#299`), and retirement of the old copies from active discovery are done — see "Completed" above. What remains open, as an observational criterion rather than a blocking dependency: a genuine refresh/update-and-verification cycle (pulling and verifying an updated upstream skill snapshot), which has not happened because no genuine upstream skill-content update exists yet to refresh from — one will not be manufactured to close this out artificially. Phase C has now surfaced genuine evidence warranting possible canonical skill refinement across all three portable methodology skills (`phase-discovery.md`, "Phase D entry conditions"). If Phase D turns any of that evidence into a real canonical skill-content change, exercising that change through the consume → refresh → verify sequence is a natural opportunity to close this still-open Phase B observation out — but that change has not happened yet, and none is manufactured ahead of a genuine Phase D decision.
+
+Phase C (classifying the mature custom skill ecosystem) is complete — see "Completed" above and `phase-discovery.md` for the full evidence base. Phase D — deciding what, if anything, Phase C's evidence justifies extracting, refining, combining, splitting, or leaving unchanged in the custom stack layer — is now the next active Agentic Engineering phase. No Phase D implementation decision has been made yet.
 
 ## Future
 
@@ -444,8 +466,8 @@ Phase B's consumer relationship is established: consumption, local provenance, f
 - [x] Track upstream commit provenance for consumed copies, in a format decided from real need. (Phase B — completed 2026-08-23.)
 - [ ] Observe and record a genuine refresh/update-and-verification cycle from actual `useOrbit` work, completed opportunistically whenever genuine skill-content evolution occurs. (Phase B — open observational criterion, non-blocking.)
 - [x] Retire the old, independently-maintained `useOrbit` skill copies from active use. (Phase B — completed 2026-08-23.)
-- [ ] Classify the mature custom `my-*` skill ecosystem into portable methodology / custom stack knowledge / `useOrbit`-specific knowledge / external first-party capabilities. (Phase C — now the next active work.)
-- [ ] Act on Phase C's evidence — extract, refine, combine, split, or leave the custom stack layer unchanged, only if justified. (Phase D.)
+- [x] Classify the mature custom `my-*` skill ecosystem into portable methodology / custom stack knowledge / `useOrbit`-specific knowledge / external first-party capabilities. (Phase C — completed 2026-08-23; see `phase-discovery.md`.)
+- [ ] Act on Phase C's evidence — extract, refine, combine, split, or leave the custom stack layer unchanged, only if justified. (Phase D — now the next active work; no implementation decision made yet.)
 
 See "Future directions" above for later, non-committed possibilities (Project B, cross-stack comparison, publication, etc.) — these are not part of this phase sequence.
 
@@ -466,15 +488,24 @@ refresh/update-and-verification cycle, where real work warrants a canonical skil
 canonical source is updated, the consuming local copies are refreshed, the refresh is verified in
 `useOrbit`, and the evidence recorded. This has not happened yet because no genuine upstream
 skill-content update exists yet to refresh from — one will not be manufactured to close this out
-artificially. It will be completed opportunistically whenever real `useOrbit` work genuinely produces
-that lifecycle; when it does, the canonical-source → consumer-refresh → verification sequence should
-still be exercised and recorded in full.
+artificially. Phase C has now surfaced genuine evidence warranting possible canonical skill refinement
+across all three portable methodology skills (`phase-discovery.md`, "Phase D entry conditions"). If
+Phase D turns any of that evidence into a real canonical skill-content change, exercising that change
+through the canonical-source → consumer-refresh → verification sequence is a natural opportunity to
+close this Phase B observation out — but that change has not happened yet, and none is manufactured
+ahead of a genuine Phase D decision.
 
 `useOrbit#299` remains genuine `useOrbit` work, and its implementation (via `my-git-workflow`, once
 separately authorized) is not a prerequisite for anything below — it is normal `useOrbit` development,
 which continues independently of the roadmap's phase sequence.
 
-Phase C — classifying the mature custom `my-*` skill ecosystem — is now the next active Agentic
-Engineering work. It is no longer blocked by the Phase B refresh observation above; that observation
-remains open and will be recorded whenever it genuinely occurs, in parallel with Phase C. Phase D, and
-anything in "Future directions," come later still, after Phase C provides evidence.
+Phase C — classifying the mature custom `my-*` skill ecosystem — is now **complete**. The inventory,
+the deep-dives of both custom stack candidates (`my-laravel-patterns`, `my-phpstorm-conventions`) and
+all three canonical portable methodology skills (`my-architecture-laboratory`, `my-feature-planning`,
+`my-git-workflow`), and the final synthesis with evidence-backed readiness dispositions all live in
+`phase-discovery.md`, which this roadmap does not reconstruct or duplicate.
+
+Phase D — deciding what, if anything, Phase C's evidence justifies extracting, refining, combining,
+splitting, or leaving unchanged in the custom stack layer — is now the next active Agentic Engineering
+phase. No Phase D implementation decision has been made yet. `phase-discovery.md` is the evidence
+source Phase D should reason from. Anything in "Future directions" comes later still.
