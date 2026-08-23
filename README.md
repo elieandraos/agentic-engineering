@@ -4,8 +4,9 @@ A portable system of agentic software-engineering methodologies — how to plan 
 architecture, and move work through implementation, review, commits, and release. The goal is
 reusable engineering workflow, not a prompt collection for one repository or framework.
 
-The system is being developed from real use rather than designed in a vacuum. Its first proving
-ground is `useOrbit`, a Laravel/Vue/Inertia application. See `roadmap.md` for the full plan.
+The system is being developed from real use rather than designed in a vacuum. `useOrbit`, a
+Laravel/Vue/Inertia application, is both the origin of the three-skill family below and the system's
+first real consumer of it as an external, canonical source. See `roadmap.md` for the full plan.
 
 ## The three-skill family
 
@@ -31,31 +32,40 @@ each skill's own `README.md` for the full walkthrough and `SKILL.md` for the ope
              |               |               |
              +---------------+---------------+
                              |
-                       STACK ADAPTERS
+                     CUSTOM STACK LAYER
                              |
-              (not yet extracted — roadmap.md
+              (not yet extracted/refined — roadmap.md
                Phase C classifies existing seams;
-             Phase D may extract one if justified)
+             Phase D acts on that evidence if justified)
                              |
                     PROJECT-SPECIFIC INPUT
                  domain decisions / repo rules /
                  deployment conventions / product
 ```
 
-- **Portable methodology** — the engineering method itself: how to investigate, plan, implement,
-  review, commit, release. This is what lives in this repository.
-- **Stack adapters** — technology-specific implementation knowledge (Laravel/Eloquent/Inertia,
-  Nuxt/Supabase/Vercel, etc.). Not designed yet — `roadmap.md` Phase C classifies the existing
-  seams first, and Phase D may extract a Laravel/Inertia adapter only if that evidence justifies it.
-  No adapter names or packages exist here yet.
-- **Project-specific input** — one product's domain model, repo conventions, and deployment
+Four kinds of knowledge are in play, and this repository is careful to keep them distinct:
+
+- **Portable custom methodology** — the engineering method itself: how to investigate, plan,
+  implement, review, commit, release. This is what lives in this repository today
+  (`my-feature-planning`, `my-architecture-laboratory`, `my-git-workflow`).
+- **Custom stack/ecosystem knowledge** — genuinely owned, technology-specific implementation
+  knowledge for the Laravel/Vue/Inertia stack (e.g. `my-laravel-patterns`,
+  `my-phpstorm-conventions`). Not extracted or refined into this repository yet — `roadmap.md`
+  Phase C classifies the existing seams first, and Phase D decides what, if anything, the evidence
+  justifies: extracting one capability, refining an existing skill, combining/splitting skills, or
+  no change. No stack-layer names or packages exist here yet.
+- **Project-specific knowledge** — one product's domain model, repo conventions, and deployment
   choices. This is the intended boundary the skills should stay clear of; which existing content
-  actually falls on which side of it (portable / stack-specific / `useOrbit`-specific) is what
-  `roadmap.md` Phase C classifies, not something already fully sorted here.
+  actually falls on which side of it is what `roadmap.md` Phase C classifies, not something already
+  fully sorted here.
+- **External first-party capabilities** — upstream dependencies such as Laravel Boost's
+  `laravel-best-practices` and `pest-testing`. These are not owned by this repository and are not
+  extraction targets; they compose with custom skills but are never absorbed, renamed, duplicated,
+  or presented as Agentic Engineering-owned.
 
 Extract rules from evidence, not from imagination — a rule graduates from project-specific to
-portable only after repeated evidence, starting with the `useOrbit` classification pass and
-continuing through later cross-stack validation (`roadmap.md`, Phase C onward).
+portable only after repeated evidence, starting with the `useOrbit` classification pass
+(`roadmap.md`, Phase C).
 
 ## Current portability status
 
@@ -81,8 +91,8 @@ installable and loadable from that published commit. Concretely:
   verified, actually-supported mechanism is to clone the repository, then copy each desired
   top-level skill directory into a location Claude Code scans (personal `~/.claude/skills/<name>/`
   or project `.claude/skills/<name>/`). This is a real
-  distribution gap, not a defect in this repository — Phase J is where a packaging answer (if any)
-  belongs, and none is claimed here.
+  distribution gap, not a defect in this repository — a packaging answer (if any) belongs to a later,
+  non-committed possibility (see "Future directions" in `roadmap.md`), and none is claimed here.
 - `my-architecture-laboratory` (renamed from `architecture-laboratory`) had one literal
   `useOrbit` reference in its Artifact template's footer, replaced with a `{{Project}}` placeholder
   consistent with the template's existing convention — the only content fix made in this pass.
@@ -92,10 +102,15 @@ installable and loadable from that published commit. Concretely:
   classification is `roadmap.md` Phase C's job:
   - `my-feature-planning`'s design-reconciliation rule depends on `_design/*.jsx`, a
     `useOrbit`-local, gitignored convention (documented inline as project-specific already).
-  - All three skills name `useOrbit`-only implementation skills (`my-laravel-patterns`,
-    `laravel-best-practices`, `pest-testing`, etc.) as what to load once implementation starts —
-    exactly the kind of seam `roadmap.md` Phase C is meant to classify, and which Phase D may later
-    extract into an adapter, only if the evidence justifies it — not a defect to patch now.
+  - All three skills name `useOrbit`-only implementation skills as what to load once implementation
+    starts, but those named skills are not all the same kind of thing: `my-laravel-patterns` and
+    `my-phpstorm-conventions` are custom stack knowledge genuinely owned by this ecosystem, while
+    `laravel-best-practices` and `pest-testing` are upstream Laravel Boost dependencies — external,
+    first-party capabilities this repository does not own and will not absorb, rename, or duplicate.
+    Distinguishing which of a skill's implementation-time references are custom versus external is
+    exactly the kind of seam `roadmap.md` Phase C is meant to classify; what (if anything) Phase D
+    extracts or refines from the custom side only follows once that evidence exists — not a defect
+    to patch now.
 - `my-architecture-laboratory`'s two style precedents (`Reusable Documents Architecture`,
   `Centralized Tagging Architecture`) are live `claude.ai` Artifact URLs tied to the user's account,
   not `useOrbit` repo files — they resolve from any project context, so no fix was needed there.
@@ -106,6 +121,9 @@ repository at commit `12d9c1df75dde5fb1d944b62b0679c1e211137a4` into gitignored
 locally alongside them. The pre-Phase-A originals are preserved as rollback material, moved outside
 `useOrbit`'s active skill-discovery path rather than deleted. The canonical `my-feature-planning`
 snapshot has already been used on genuine `useOrbit` work, producing
-[`useOrbit#299`](https://github.com/elieandraos/useOrbit/issues/299). A genuine refresh/update-and-
-verification cycle — pulling and verifying an updated upstream snapshot — has not yet occurred and
-remains open.
+[`useOrbit#299`](https://github.com/elieandraos/useOrbit/issues/299) — the first durable consumer
+artifact of this relationship; that first pass warranted no upstream skill contribution. Phase B's
+remaining gate is a genuine refresh/update-and-verification cycle — real work warranting a canonical
+skill update, that update pulled into `useOrbit`, and the refreshed skill verified there — which has
+not yet occurred and remains open. `useOrbit#299` is not a mandatory step toward that gate; normal
+`useOrbit` development continues independently of it.
