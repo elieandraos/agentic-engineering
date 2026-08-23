@@ -930,3 +930,615 @@ contradiction resolved, before it is in the same state of readiness `my-phpstorm
 already in. `resource-feature-checklist.md` needs substantially more — a genuine content split
 rather than targeted fixes — and this pass's finding (§12) is that the *shape* of that split is now
 well-evidenced even though the split itself is out of scope for a discovery pass to perform.
+
+---
+---
+
+# Iteration 3 — Deep-Dive Portable Methodology Readiness
+
+**Status:** Phase C discovery pass, third iteration. Still discovery and classification only — no
+skill, memory file, or `useOrbit` file was modified to produce it. This iteration does not
+supersede §§1–13 above; it opens a scope neither prior iteration covered in depth — the three
+*canonical portable* skills (`my-architecture-laboratory`, `my-feature-planning`,
+`my-git-workflow`) themselves, rather than the two candidate stack skills iteration 2 deep-dived.
+Iteration 1 assessed these three via a full read plus a targeted grep; iteration 2 did not
+re-touch them at all. This pass reads every operative file in all three end to end, verifies
+concrete claims against `useOrbit`'s actual source, git history, and — new for this pass — the
+actual published Claude Artifacts the methodology cites, using the `Artifact` tool's `read` and
+`list` actions directly rather than trusting a citation's text.
+
+**Snapshot analyzed:**
+- `agentic-engineering` @ `0e7dcd515a996677680bb6f70435fbb115ec334c` (`main`, clean working tree —
+  iteration 2's own commit). **Fact, checked directly:** no file inside `my-architecture-laboratory/`,
+  `my-feature-planning/`, or `my-git-workflow/` has changed since the single commit that externalized
+  them (`fe5bd29`, 2026-08-22) — `git log --all` against every file in all three skills' `rules/`/
+  `references/` directories returns only that one commit. This pass and iterations 1–2 are reading
+  byte-identical content.
+- `useOrbit` @ `e95bf86ad101f56fb32ef8831da1d2af9b63ea67` (clean working tree — unchanged since
+  iterations 1–2).
+- `useOrbit` project memory directory, re-listed: 15 `feedback_*` files + `project_design_files.md` +
+  `MEMORY.md`, vs. iteration 1's count of "16 feedback + 1 project." **Open question, not pursued
+  further here** (out of this iteration's scope, which is the three portable skills, not the memory
+  ecosystem): whether one feedback memory was removed/merged since iteration 1, or iteration 1's count
+  included `MEMORY.md` itself. Noted for completeness, not investigated.
+- The user's published Claude Artifacts (`Artifact` tool, `action: "list"`, `scope: "mine"`) — 9
+  artifacts total, read directly where `my-architecture-laboratory` cites one.
+
+**Method.** Full-text read of all 23 operative files across the three skills (8 in
+`my-architecture-laboratory`, 9 in `my-feature-planning`, 9 in `my-git-workflow`, counting each
+`SKILL.md` and `README.md`). Every citation to an external artifact, a `useOrbit` GitHub issue, or a
+`useOrbit` memory file was checked against the actual source — not taken on the citing file's word.
+Concretely: both Claude Artifact URLs `my-architecture-laboratory/SKILL.md` names as its foundational
+worked examples were fetched directly; `useOrbit`'s git history was searched for the polymorphic
+`Taggable`/`TagAttachment` architecture doc-style.md's table describes; a `useOrbit` GitHub issue
+(`#296`) `discovered-work.md` cites was fetched via `gh issue view` and compared word-for-word against
+the rule file's description of it; `template.html`'s embedded syntax-highlighter script was read in
+full, not sampled.
+
+---
+
+## 14. `my-architecture-laboratory` — deep-dive
+
+### Evidence
+
+**Fact.** `SKILL.md` (lines 14–16) names two "existing guides this methodology was reverse-engineered
+from," both "published Claude Artifacts, not repo files": *Reusable Documents Architecture*
+(`claude.ai/code/artifact/7a9c2f1c-bbb5-4241-95b0-7502c4c2bc0b`) and *Centralized Tagging Architecture*
+(`claude.ai/code/artifact/ab74b104-8e43-4301-b46d-9963c2f35449`). The file instructs: *"If you haven't
+internalized why those two documents have different section names for what looks like 'the same'
+section, read `references/doc-style.md` before writing anything — that's the whole point of this
+methodology."* `references/doc-style.md` and `references/review.md` both restate that these two guides
+are the methodology's entire empirical basis (doc-style.md line 3: *"This file exists because the two
+source guides prove structure adapts to the capability"*; review.md line 3: *"the methodology
+developed while iterating on the Documents and Tags architecture guides"*).
+
+**Fact, directly verified via `Artifact` `action: "read"`.**
+- The Documents URL resolves: owned by the user, private, 67.2 KB, titled "Reusable Documents
+  Architecture" — live and consistent with the citation.
+- The Tagging URL does **not** resolve: `"artifact not found — it may have been deleted, or it has
+  not been shared with you."` This is the exact URL `SKILL.md` names as one of exactly two canonical
+  worked examples the entire Phase-3 writing methodology (`doc-style.md`) claims to be built from.
+
+**Fact, via `Artifact` `action: "list"`, `scope: "mine"`.** A *different* artifact titled "Tagging
+Architecture" (no "Centralized") exists at a different URL
+(`claude.ai/code/artifact/1dd446e6-fee1-4f54-9783-136dec7761f0`), last updated 2026-08-09 — live,
+owned by the user, private. Neither `SKILL.md` nor `doc-style.md` nor `review.md` names or links this
+URL anywhere. The same listing surfaces a ninth artifact, "CRUD Application Architecture"
+(`25f3c842-5343-4168-9cc7-c730c7a436cb`, updated 2026-08-09) — plausibly, but not confirmed by opening
+it, the unnamed "CRUD guide" `references/review.md` (line 151: *"exports were the case that surfaced
+this in the CRUD guide"*) refers to without ever naming or linking it anywhere in the skill.
+**Inference, not confirmed:** the CRUD-guide identification is a title match, not a read-and-compare
+verification the way the Documents/Tagging check was — flagged as inference, not fact.
+
+**Fact.** `doc-style.md`'s "Section inventory is not fixed" table (line 53) describes the Tagging
+guide's foundation as *"The Taggable contract — a two-method interface... (`ownerColumn(): ?string`)"*
+— i.e., a polymorphic tag-attachment architecture.
+
+**Fact, via direct grep of the entire `useOrbit` tracked source tree** (`.php`/`.vue`/`.ts`, excluding
+`vendor`/`node_modules`): zero occurrences of `Taggable` or `ownerColumn` anywhere in the current
+codebase.
+
+**Fact, via `git log --all`.** A polymorphic `Taggable`/`TagAttachment` architecture did exist:
+introduced by `9515a99` ("Add Tag model, polymorphic taggables pivot, and Document wiring (#162)",
+2026-07-28), generalized by `1fe9b61` ("Generalize tag filtering from documents to any Taggable
+model"), then **removed** by `482e2d8` ("Collapse polymorphic tag attachment into a concrete
+`document_tag` pivot (#191)", 2026-07-31) and `126fe31` ("Drop `taggable_type` from Manage Tags UI and
+its composables (#192)", same day). This is the identical `TagAttachment::forTaggableType()` removal
+iteration 2 §10 already found independently while checking `my-laravel-patterns/rules/
+query-conditionals.md` — the same real refactor surfaces a second time here, in a different skill,
+through a different citation.
+
+**Fact.** `my-architecture-laboratory/SKILL.md` was committed to `agentic-engineering` (`fe5bd29`) on
+2026-08-22 — three weeks after the 2026-07-31 collapse.
+
+**Inference.** The "Centralized Tagging Architecture" guide `SKILL.md` cites by name and URL as half
+of its foundational teaching precedent almost certainly documented the pre-collapse polymorphic
+`Taggable` architecture (the specific method signature `doc-style.md` quotes, `ownerColumn(): ?string`,
+does not exist anywhere in the current source and never will again absent a revert) — and, independent
+of that content question, the citation itself is now a dead link for the account that owns it. A
+same-titled-but-different guide describing (presumably, per its more recent 2026-08-09 update date)
+the current concrete-pivot architecture exists but is referenced from nowhere in the skill.
+
+**Judgment.** This single finding sits in three of this iteration's seven analysis categories at once:
+it is a **stale/broken worked example** (category 3 — the cited artifact is unreachable, and the
+content it's known to have taught no longer matches the source project); it is **hidden project
+coupling** (category 1 — the methodology's entire empirical basis for "how a document's structure
+should adapt to its capability" is two specific `useOrbit` capabilities, not synthesized or genericized
+examples, disclosed as real guides but not as `useOrbit`-specific in the way `my-feature-planning`'s
+rule files consistently self-label their illustrations); and it is a **portability gap** (category 7 —
+even a `useOrbit` engineer reading this skill today cannot open the citation to check the lesson
+firsthand, and a different project's consumer never could, private-artifact URLs being
+non-transferable by construction).
+
+**Fact, via full read of `references/template.html` (438 lines), including its embedded
+syntax-highlighter script (lines 356–420).** The `highlight()` function recognizes exactly five
+`data-lang` values with dedicated styling: `php`, `ts`, `json`, `vue`, `http`. Keyword highlighting
+(`KEYWORDS` map) exists only for `php`, `ts`, and `json`. PHP gets dedicated regex handling for `#[Attribute]`
+syntax and `$variable` sigils; Vue gets dedicated tag/attribute regex handling. There is no generic
+fallback keyword/type highlighter for any other language — a code block in Python, Go, Ruby, Java, C#,
+or Rust would render with string-literal highlighting only, no keyword or type coloring, and no
+`--lang-*` CSS variable for its language-badge color (only `--lang-php`, `--lang-ts`, `--lang-vue`,
+`--lang-json`, `--lang-http` are defined in the `:root` token, lines 53–57). **Judgment.** This is
+concrete, unambiguous stack/tooling coupling (category 2) baked directly into the one shared artifact
+scaffold every Phase 3/4 architecture guide is built from, for any capability in any stack — not an
+illustrative example that could be swapped, but an implementation gap in the rendering pipeline itself.
+`SKILL.md` step 3 instructs using this file "as the starting scaffold... keep the design system unless
+the capability genuinely needs a new block type" — nothing in that instruction, or anywhere else in the
+skill, flags that the highlighter's language support is PHP/Vue/TS-only.
+
+**Fact, by cross-reference.** `doc-style.md`'s "Content block vocabulary" table names seven CSS
+classes (`.specsheet`, `.ascii`, `.table-wrap`/`table.lc`, `.flow-steps`, `.callouts`/`.callout`,
+`.formula`, `.pill`); all seven exist in `template.html`, confirmed by direct grep. This is a positive
+coherence finding — the one documentation/implementation pairing in this skill that was checked and
+found to match exactly, unlike the doc-style.md/Tagging-artifact pairing above.
+
+**Fact.** `README.md`'s "Is this portable?" section (lines 182–195), which iteration 1 §8.6 flagged as
+a possibly-stale self-assessment based on a grep-only pass, states the skill *"assumes things specific
+to this project: this project's Laravel/Vue stack, its particular Artifact publishing workflow for
+architecture guides, the existence of `plan.md`, and a handoff to `my-feature-planning`."*
+
+**Judgment — resolves iteration 1 §8.6.** The literal claim ("assumes... this project's Laravel/Vue
+stack") still does not hold on inspection — no operative file in this skill contains Laravel/Vue
+keywords, confirmed independently by both iteration 1's grep and this iteration's full read. But this
+pass's findings show the self-assessment's *spirit* was right for reasons the text itself doesn't
+name: real coupling exists, just not as literal Laravel/Vue references — it's in the PHP/Vue/TS-only
+syntax highlighter (a stack-tooling fact, not a stack-vocabulary fact) and in the two-`useOrbit`-guide
+teaching precedent (a project-evidence fact, not a stack fact). The self-assessment's other three
+claims — the Artifact publishing workflow, `plan.md`'s existence, and the `my-feature-planning` handoff
+— are accurate and, per this pass's findings below, correctly classified as external-capability and
+internal-methodology dependencies respectively, not defects. **Conclusion: not stale — imprecise about
+*why* it's right, but not wrong that real, non-trivial coupling remains.**
+
+**Fact, full read of `references/maintenance.md`, `references/plan-synthesis.md`, and the
+Phase-1/2/4 prose in `SKILL.md`.** Zero coupling found — no `useOrbit` reference, no stack reference,
+no dead citation, in any of these. `plan-synthesis.md`'s locked/open decision rule, canonical section
+list, and review checklist are fully generic and self-contained. This confirms and sharpens iteration
+1's "cleanest of the three" verdict for these specific files, while the findings above show the verdict
+does not extend to the whole skill uniformly.
+
+**Fact.** `references/review.md`'s checklist itself (the "Architectural center," "Reusable capability,"
+"Runtime," "Implementation," "Structure," "Decisions," "Overall" categories) is fully generic — every
+question is phrased as a property of "the guide," never of `useOrbit`. The only project-specific
+residue in this file is the unnamed "CRUD guide" citation noted above.
+
+### External dependency interaction
+
+**Fact.** Phase 3 (`SKILL.md` steps 2–4) requires the `artifact-design` skill and the `Artifact` tool
+by name — both genuinely external, Claude-Code-platform capabilities, not stack-specific. This
+dependency is disclosed structurally (named at the point of use) rather than as an upfront "requires"
+statement, but it is unambiguous and, on inspection, accurate: Phase 3, Phase 4, and Plan Synthesis's
+guide-publishing track cannot function without the `Artifact` tool. **Judgment.** This is a real
+environment dependency worth stating explicitly for portability purposes: Phase 1 (Explore) and Phase 2
+(Recap) work in any environment with file/code-reading tools; Plan Synthesis's `plan.md` output is a
+plain file with no `Artifact` dependency at all; but the architecture-guide half of this skill (Phase
+3/4) is unusable in a Claude Code environment without Artifact-publishing access, or in any other
+agentic coding tool. This is a reasonable, disclosed-by-use dependency, not a leak — but it is more
+consequential to portability than iteration 1 §5 (which covered `claude_design`'s role in
+`design-reconciliation.md`, a `my-feature-planning` file) credited to this skill specifically.
+
+### Readiness verdict: **Portable core with targeted refinement needed**
+
+The four-phase discipline, the locked/open Plan Synthesis rule, the maintenance methodology, and most
+of the review checklist are genuinely portable and, on a full re-read, hold up better than a
+grep-only pass could show. What keeps this skill short of "clean" is concentrated and fixable rather
+than structural: (1) the skill's single foundational teaching precedent cites a now-dead artifact URL
+whose documented content — per direct source and git-history verification — describes an architecture
+`useOrbit` itself no longer has; (2) the shared artifact template's syntax highlighter has PHP/Vue/TS/
+JSON-only support with no generic fallback or disclosure; (3) one review-checklist citation ("the CRUD
+guide") is never named or linked. None of these require redesigning the phase discipline itself — they
+are a broken citation to repair or replace, a template gap to either generalize or disclose, and a
+missing link to add.
+
+---
+
+## 15. `my-feature-planning` — deep-dive
+
+### Evidence
+
+**Fact.** `SKILL.md`'s own top-level Workflow section (not a `rules/` file) states at step 18: *"it
+names the pieces an issue needs (FormRequest, Action, Policy, API Resource, thin Controller,
+factory/seeder, tests)"* — Laravel-specific vocabulary embedded directly in the always-loaded
+activation surface, rather than confined to an illustrative `rules/` file the way every other project-
+or stack-flavored reference in this skill is. **Judgment.** This is a smaller, more surprising instance
+of category-1/2 coupling than anything iteration 1 found in this skill's `rules/` files, precisely
+*because* it sits in `SKILL.md` itself — the one file every invocation of this skill loads regardless
+of which downstream rule applies.
+
+**Fact, spot-verification via `gh issue view 296`.** `discovered-work.md`'s description of issue #296
+(the Inertia background-revisit response-mismatch finding, used as the "Deep" investigation-band
+example, lines 38–39 and throughout `issue-conventions.md`'s "Discovered-work issues" section) matches
+the live GitHub issue's Context section word-for-word in substance: the same confirmed/unconfirmed
+split (HTTP 200 vs. server exception; 2FA-incomplete accounts only; unaffected by #295's fix; the
+exact server-side reason left open), the same "Capture the automatic Inertia revisit's actual
+request..." task phrasing quoted directly in `issue-conventions.md:165`. All four tasks in the live
+issue are checked (`- [x]`), confirming the finding was resolved and the citation reflects a completed,
+accurate historical record rather than a stale or aspirational one. **This is a positive finding**:
+unlike `my-architecture-laboratory`'s Tagging citation, this skill's most load-bearing concrete
+citation is current and accurate on direct verification.
+
+**Fact, re-confirmed on full read.** Every `rules/` file in this skill (`feature-classification.md`,
+`capability-checklist.md`, `design-reconciliation.md`, `discovered-work.md`, `issue-conventions.md`,
+`plan-md-input.md`, `review.md`, `sequencing.md`) marks its `useOrbit`-derived illustrations with an
+explicit, consistent label — "An example from this project," "Examples from this project," "this
+project's..." — the same disciplined self-labeling iteration 1 §2/§6 documented. This pass's full read
+finds no exception to that discipline anywhere in these eight files; the labeling habit is genuinely
+uniform, not selectively applied.
+
+**Fact.** `design-reconciliation.md:11`'s direct, named dependency on the `project-design-files`
+memory (*"Per the `project-design-files` memory: design files from Claude Design live at `_design/`..."*)
+is present exactly as iteration 1 §6c described — unchanged, unresolved, confirmed on this pass's own
+read rather than inherited from iteration 1's citation.
+
+**Fact.** `rules/review.md` (the review/validation file) is, on full read, "generic by construction" in
+its own words, twice (lines 80, 126) — the rendered-manifest-integrity and issue-body-content-integrity
+checks explicitly state they re-derive their expected set from whatever the canonical definitions
+currently are, "for any feature and any issue count," and instruct never hard-coding a specific issue,
+title, or phrase into the check itself. This is the single most rigorously self-aware portability
+statement found anywhere in the three-skill ecosystem across all three iterations.
+
+**Fact, confirmed unchanged.** `resource-feature-checklist.md` was not re-analyzed line-by-line in this
+pass (`git log` confirms it is byte-identical to what iterations 1–2 examined, and iteration 2 §12
+already produced a full separability deep-dive on it). This iteration's contribution is corroborating,
+not new: the file remains the ecosystem's heaviest concentration of interleaved generic/`useOrbit`-
+specific content, and nothing in this pass's reading of the other seven `rules/` files or `SKILL.md`
+changes that assessment.
+
+### External dependency interaction
+
+**Fact.** `gh` (GitHub CLI) commands appear throughout `issue-conventions.md`, `review.md`, and
+implicitly in the workflow steps of `SKILL.md` — issues, milestones, and labels are GitHub-native
+concepts, not just a tool choice. **Judgment.** This is a genuine, undisclosed-but-reasonable platform
+dependency distinct from the Laravel/Vue stack-coupling findings: a team using GitLab Issues or Jira
+instead of GitHub would need to adapt every `gh`-shaped instruction in this skill, not merely swap a
+CLI binary name, because concepts like "milestone," "label," and the `#N` auto-linkification behavior
+`issue-conventions.md`'s reference-syntax rules are built around are GitHub-specific product behavior.
+Neither this skill nor iteration 1's external-dependency inventory (§5) names "GitHub, specifically" as
+a dependency distinct from "Laravel Boost" or "the `Artifact` tool" — worth naming explicitly here as
+its own category.
+
+**Fact, confirms iteration 1 §5.** `laravel-best-practices` and `my-laravel-patterns` are named as
+implementation-time loads in `SKILL.md`'s frontmatter description and step 18/105 — a correctly
+disclosed composition boundary, reconfirmed on full read.
+
+### Readiness verdict: **Portable core with targeted refinement needed**
+
+The classification taxonomy, the checklists' governing questions, the issue-format rules, and the
+three-tier review/validation model are genuinely portable, evidence-accurate on spot-check, and
+unusually disciplined about labeling illustrative content — this pass found no new instance of
+unlabeled project leakage outside what iterations 1–2 already identified. The refinement needed is
+concentrated in three places, one newly found here: `resource-feature-checklist.md`'s content split
+(iteration 2 §12, unchanged, the heaviest lift), the two named memory dependencies (`design-
+reconciliation.md`'s `project-design-files` citation, `issue-conventions.md`'s `feedback_github_issues`
+citation), and — new this pass — `SKILL.md` step 18's Laravel vocabulary leaking into the
+always-loaded activation file rather than staying confined to an illustrative rule file.
+
+---
+
+## 16. `my-git-workflow` — deep-dive
+
+### Evidence
+
+**Fact, full re-read of `rules/verification.md`, confirms iteration 1 §6a on direct inspection rather
+than citation.** The "Default loop" section states, unboxed, directly inside general methodology prose:
+*"verify it with the tests actually relevant to that commit's change (`php artisan test --compact
+<path>`) plus `vendor/bin/pint --dirty --format agent`"* (lines 18–20), and the isolation-verification
+recipe (lines 50–51) repeats `vendor/bin/pint --test --format agent` and `php artisan test --compact`
+the same way. **New in this pass:** the same file's "Ordering commits to keep intermediate states
+green" section names `skipUnlessFortifyHas()` (line 66) as the concrete mechanism behind its
+feature-flag-ordering principle — a second, previously uncited Laravel-Fortify-specific reference in
+the same file, also unboxed. Contrast `release.md`, read in full this pass and confirmed to still be
+the one file in the entire three-skill ecosystem that consistently separates portable methodology
+from project-evidence facts behind an explicit **"What this repository's evidence shows"** heading
+(twice — release policy discovery, and the publish-mechanism section) — `verification.md` has no
+equivalent heading anywhere, despite carrying comparably concrete repository-specific facts.
+
+**Fact, full read of `rules/commit-boundaries.md`, `rules/issue-closure.md`, `rules/review-gates.md`,
+`rules/sequencing.md`, `rules/milestone-completion.md`.** Zero stack or project coupling found in any
+of these five files beyond real-evidence citations that are already consistently and explicitly framed
+as "the evidence this skill was extracted from" (`#288`, `#287`, `#120`, `#289`, PR `#298`, `v0.17.0`)
+— never presented as the rule itself. `review-gates.md`'s one incidental Laravel-specific mention
+(`gatherMiddleware()`, line 61) is inside a real-evidence citation illustrating an investigation
+method, not a rule statement, and is comparably minor to the `#[Scope]`/`when()` mentions iteration 1
+already found acceptable elsewhere in this ecosystem.
+
+**Fact.** `SKILL.md`'s frontmatter explicitly and correctly names the stack-skill composition boundary:
+*"Always load ALONGSIDE this project's implementation skills (`my-laravel-patterns`,
+`laravel-best-practices`, `pest-testing`, `my-phpstorm-conventions`, `inertia-vue-development`,
+`fortify-development`, `wayfinder-development`, etc. as the code demands) — this skill owns the
+workflow machinery around commits, closure, release, and post-release milestone completion, not the
+code, tests, or framework conventions themselves."* This is the most extensive and explicit
+composition-boundary statement found in any of the three skills' frontmatter — a genuine strength,
+consistent with iteration 1 §5/§6f's "positive existing boundary" finding, reconfirmed at greater
+detail.
+
+**Fact.** `README.md`'s "Is this v0.1, and what's missing on purpose" section explicitly refuses to
+invent PR-creation, merge-strategy, deployment-trigger, or branch-naming conventions the repository's
+own evidence doesn't support — stated as a deliberate methodological stance ("the same method that
+built this skill... is how each of those should get added later... once there's a real... pattern to
+learn from"), not an oversight. **Judgment.** This restraint is itself a portable-methodology
+principle worth naming explicitly: the skill models "don't extrapolate a rule from one data point" on
+itself, in its own gaps, not only in the rules it does state.
+
+### External dependency interaction
+
+**Fact, confirms iteration 1 §5, no revision.** `gh` (issue/milestone/release operations) is used
+throughout exactly as in `my-feature-planning`, with the same GitHub-specific-concepts caveat noted in
+§15 above applying equally here (milestones, releases, and the `gh api .../milestones` PATCH mechanism
+`milestone-completion.md` uses are GitHub product concepts, not just CLI syntax).
+
+### Readiness verdict: **Portable core with targeted refinement needed**
+
+Of the three skills, this one required the smallest correction on a full fresh read: six of its seven
+rule files (`commit-boundaries.md`, `issue-closure.md`, `review-gates.md`, `sequencing.md`,
+`release.md`, `milestone-completion.md`) are fully portable, evidence-accurate, and — in `release.md`'s
+case — the model the rest of the ecosystem should be measured against. The gap is narrow and isolated:
+`verification.md`'s "Default loop" and commit-ordering sections carry two Laravel/Pest/Fortify-specific
+citations directly inside general methodology prose, unboxed, in the one file of the seven that never
+adopts the "what this repository's evidence shows" separation its sibling file uses successfully one
+file over. This keeps the skill out of "clean portable core" by a single file's single section, not by
+a pervasive or structural problem.
+
+---
+
+## 17. Cross-skill boundary findings
+
+**Fact, reconfirms iteration 1 §6h on a full fresh read of all three skills' README "owns / does not
+own" sections side by side.** The architecture → planning → git-workflow lifecycle boundary remains
+exceptionally clean: every "owns" list is matched by a corresponding "does NOT own" entry in the
+adjacent skill, every cross-reference is directional, and this pass found zero new instance of one
+skill silently performing another's job — no issue drafting inside `my-architecture-laboratory`, no
+architecture re-derivation inside `my-feature-planning`, no issue creation inside `my-git-workflow`.
+This is now confirmed by three independent passes at increasing depth (iteration 1's grep-plus-read,
+iteration 2's deep-dive of the adjacent stack skills, and this iteration's full read of all three
+portable skills together) — strong, repeated evidence the three-way decomposition itself is sound.
+
+**Fact — a new, genuine handoff-boundary gap.** `my-feature-planning` treats it as an established,
+load-bearing fact that `plan.md` sections get deleted once the corresponding work ships — stated
+explicitly in `SKILL.md:48` (*"in this project specifically, `plan.md` sections get deleted once the
+corresponding work ships (verifiable in its own commit history...)"*) and used to justify the entire
+"GitHub issues must stand alone" principle. **Verified true**, independent of the skill's own citation:
+`useOrbit`'s git history shows real pruning commits (`4698b7c` "Remove implemented Client Location
+Data section from plan.md", `7c1e69b` "Remove completed Clients Export section from plan.md," both
+July 2026, predating the skills' formal existence). But `my-architecture-laboratory` — the skill that
+now owns `plan.md`'s lifecycle end-to-end, including its Plan Synthesis track — never states this
+pruning as something it does. `plan-synthesis.md`'s "Where the plan lives" section (lines 134–140)
+only discusses *appending* a new section to an existing `plan.md`, explicitly modeled on how Phase 4
+preserves a guide's narrative; nothing anywhere in this skill discusses removing a completed section.
+**Judgment.** Neither skill claims ownership of the deletion action. `my-feature-planning` relies on a
+practice it doesn't perform and doesn't ask the other skill to perform, having observed it happen
+historically under pre-skill, ad hoc practice. This is a real, if narrow, "questionable handoff
+boundary" (the deliverable's own language) — not a contradiction, since nothing in either skill
+actively conflicts, but an assumption one skill depends on that the other skill never commits to
+sustaining now that both are formalized.
+
+**Fact.** Milestone-related rules cross-reference correctly and consistently between the two skills
+that touch them: `my-feature-planning/rules/issue-conventions.md`'s Backlog-vs.-delivery-milestone
+distinction and its optional-description-as-contract framing are read and respected without
+reinterpretation by `my-git-workflow/rules/milestone-completion.md` ("The milestone description, when
+present, is still the contract... This skill doesn't redraft, reinterpret, or second-guess that
+description — it applies it as written," lines 61–67). No contradiction found on full read of both
+files together.
+
+**Fact — a structural strength worth naming explicitly.** All three skills share a consistent,
+disciplined self-labeling convention for illustrative `useOrbit` content — "An example from this
+project" / "Examples from this project" / "this project's convention" / "the evidence this skill is
+built from" — applied uniformly across all 23 files read for this iteration, with the single narrow
+exception of `my-architecture-laboratory`'s two-guide teaching precedent (§14 above), which is
+disclosed as *real, published, external* material but not disclosed as `useOrbit`-*specific* the way
+every other illustrative citation across the ecosystem is. This is evidence the labeling discipline
+is a deliberate, cross-skill authored convention — making the one exception more notable, not less.
+
+**Judgment.** Nothing found in this pass argues for changing the three-skill decomposition itself.
+Every finding in §§14–16 is containable within its own skill's existing file boundaries (a citation to
+fix, a template to generalize, a section to box, a link to add) rather than requiring responsibility to
+move between skills — with the single exception of the `plan.md`-pruning gap above, which is a
+disclosure gap between two skills' documentation, not evidence either skill is doing the wrong job.
+
+---
+
+## 18. Project/stack leakage — strongest concrete examples, prioritized
+
+1. **`my-architecture-laboratory`'s dead/stale Tagging-guide citation** (§14) — the strongest finding
+   of this iteration. Not cosmetic: it is the literal, named empirical foundation of the skill's
+   Phase-3 writing methodology, verified unreachable via direct `Artifact` read, and — per independent
+   git-history verification — its documented content almost certainly describes an architecture
+   `useOrbit` no longer has.
+2. **`template.html`'s PHP/Vue/TS/JSON-only syntax highlighter** (§14) — genuine tooling coupling
+   baked into the one shared rendering pipeline every architecture guide from any capability, in any
+   stack, passes through.
+3. **`resource-feature-checklist.md`** (iterations 1–2, reconfirmed unchanged this pass) — remains the
+   single heaviest concentration of interleaved generic/`useOrbit`-specific content in the whole
+   ecosystem; no new evidence changes iteration 2 §12's "a rewrite, not an extraction" verdict.
+4. **`my-git-workflow/rules/verification.md`'s unboxed Laravel/Pest/Fortify commands** (§16) —
+   reconfirmed via full read, with one new citation (`skipUnlessFortifyHas()`) iteration 1 didn't
+   name; the contrast with `release.md`'s labeled-separation pattern, sitting one file over in the
+   same skill, remains the clearest evidence this is a fixable gap, not a structural one.
+5. **`my-feature-planning/SKILL.md` step 18's inline Laravel vocabulary** (§15) — smaller in scope
+   than the above but notable for *where* it sits: the always-loaded activation file, not an
+   illustrative `rules/` file, unlike every other project/stack reference in this skill.
+
+---
+
+## 19. Example/template audit
+
+**Preserve as-is** (portable, evidence-accurate on spot-check, no coupling found on full read):
+`my-architecture-laboratory/references/maintenance.md`, `plan-synthesis.md`; `my-feature-planning/
+rules/feature-classification.md`, `capability-checklist.md`, `discovered-work.md`, `plan-md-input.md`,
+`review.md`, `sequencing.md`; `my-git-workflow/rules/commit-boundaries.md`, `issue-closure.md`,
+`review-gates.md`, `sequencing.md`, `release.md`, `milestone-completion.md`. Fourteen of the
+twenty-three operative files read this pass fall cleanly into this bucket.
+
+**Needs targeted rewrite/refinement:**
+- `my-architecture-laboratory/references/doc-style.md` — the two-guide teaching precedent needs either
+  a working, current citation (repoint to the live "Tagging Architecture" artifact once its content is
+  confirmed to still teach the intended lesson) or should be generalized into a synthetic/abstract
+  description that no longer depends on a private, non-transferable URL at all.
+- `my-architecture-laboratory/references/template.html` — the syntax highlighter needs a generic
+  keyword/type fallback for unlisted languages, or an explicit note that its language support is
+  PHP/TS/Vue/JSON-specific.
+- `my-architecture-laboratory/references/review.md` — name and link "the CRUD guide" or remove the
+  reference.
+- `my-feature-planning/rules/resource-feature-checklist.md` — unchanged conclusion from iteration 2
+  §12: needs a genuine content split, not a targeted fix.
+- `my-feature-planning/SKILL.md` — step 18's Laravel vocabulary could be reworded to name "this
+  project's Actions-pattern layers" generically, or boxed as a labeled example the way every `rules/`
+  file in this skill already does.
+- `my-git-workflow/rules/verification.md` — needs the same "what this repository's evidence shows"
+  boxed treatment `release.md` already models, extended to cover both the Pest/Pint commands and the
+  `skipUnlessFortifyHas()` mechanism.
+
+**Stale, specifically (not merely coupled):** `my-architecture-laboratory/SKILL.md`'s
+"Centralized Tagging Architecture" citation — both its URL (dead) and, per independent verification,
+its known content (a polymorphic architecture the source project collapsed away three weeks before
+this skill file was written).
+
+**Verified accurate and current (a positive finding, not previously checked by either prior
+iteration):** `my-feature-planning/rules/discovered-work.md`'s `#296` citation, spot-checked directly
+against the live GitHub issue and found to match in substance and phrasing, with all tasks resolved.
+
+---
+
+## 20. External capability audit
+
+- **The `Artifact` tool + `artifact-design` skill** (`my-architecture-laboratory`, Phase 3/4 and Plan
+  Synthesis's guide track) — correctly used and named at the point of use; genuinely external to the
+  portable methodology; not disclosed as an upfront "requires" statement anywhere, but its necessity is
+  unambiguous from the phase instructions themselves. A consumer without Artifact-publishing access can
+  still use Phase 1/2 (investigation, recap) and Plan Synthesis's `plan.md` output, but not the
+  architecture-guide half of the skill.
+- **`gh` / GitHub itself** (`my-feature-planning`, `my-git-workflow`) — used extensively and correctly
+  as a tool choice, but the dependency runs deeper than tooling: milestones, labels, and issue
+  auto-linkification are GitHub product concepts the methodology's vocabulary is built around, not
+  swappable for another issue tracker without rewriting `issue-conventions.md`'s reference-syntax rules
+  and both skills' `gh`-shaped instructions. Neither skill nor iteration 1's §5 names this as its own
+  dependency category, distinct from Laravel Boost or the `Artifact` tool — worth naming explicitly now.
+- **Laravel Boost skills + the two custom stack skills** — correctly and explicitly declared as
+  "load alongside" dependencies in all three portable skills' frontmatter/`SKILL.md` prose; the
+  disclosure quality is highest in `my-git-workflow/SKILL.md`'s frontmatter, which names every specific
+  Boost skill it expects alongside it. No revision to iteration 1 §5's finding here — reconfirmed at
+  greater detail.
+- No new MCP-tool-level dependency was found inside these three skills (`getDiagnostics` belongs to
+  `my-phpstorm-conventions`, out of this iteration's scope, per iteration 2 §11).
+
+---
+
+## 21. Readiness conclusion per skill
+
+**`my-architecture-laboratory` — Portable core with targeted refinement needed.**
+The four-phase discipline, the maintenance methodology, the Plan Synthesis locked/open rule, and most
+of the review checklist are genuinely portable and hold up under a full fresh read better than iteration
+1's grep-only pass could show. The skill falls short of "clean" for reasons iteration 1 could not have
+found: a foundational teaching citation that is both unreachable and — per independent verification —
+describes an architecture the source project no longer has, and a shared artifact template with real,
+undisclosed stack-tooling coupling in its rendering pipeline. Both are fixable without touching the
+phase discipline itself, but both are more consequential than "cleanest of the three" suggested.
+
+**`my-feature-planning` — Portable core with targeted refinement needed.**
+The classification taxonomy, checklist governing questions, issue-format rules, and three-tier
+review/validation model are genuinely portable and unusually disciplined about labeling illustrative
+`useOrbit` content — confirmed via spot-verification against a live GitHub issue, not just inspection.
+The refinement needed is concentrated in `resource-feature-checklist.md` (a genuine rewrite, the
+heaviest lift of any single file across all three skills), two named memory dependencies, and — newly
+found this pass — `SKILL.md` step 18's Laravel vocabulary sitting in the always-loaded activation file
+rather than an illustrative rule file.
+
+**`my-git-workflow` — Portable core with targeted refinement needed.**
+The lightest lift of the three, but not zero: six of seven rule files are fully portable and
+evidence-accurate, and `release.md` remains the strongest methodology/adapter-fact separation anywhere
+in the ecosystem. The one gap — `verification.md`'s two unboxed Laravel/Pest/Fortify citations sitting
+in general methodology prose, one file away from a sibling file that solves the identical problem
+correctly — is narrow, isolated, and modelable on evidence that already exists inside this same skill.
+
+No skill in this iteration earned "Clean portable core" outright, and none fell to "Mixed; boundary
+separation needed" or "Not currently suitable" — every finding in §§14–16 is a targeted content or
+disclosure fix contained within existing file boundaries, not a sign the phase/workflow/checklist
+*structures* themselves are unsound or need re-drawing.
+
+---
+
+## 22. Phase D implications
+
+Offered as evidence-grounded possibilities, consistent with `roadmap.md`'s "evidence-supported
+outcomes" framing — none are recommendations, and Phase D remains free to reach different conclusions
+or take no action:
+
+- Evidence supports Phase D **repairing or replacing `my-architecture-laboratory`'s dead "Centralized
+  Tagging Architecture" citation** — either repointing to the live "Tagging Architecture" artifact
+  (after confirming its current content still teaches the intended structural lesson) or generalizing
+  `doc-style.md`'s teaching precedent so it no longer depends on a private, non-transferable URL.
+- Evidence supports Phase D **addressing `template.html`'s syntax-highlighter language coverage** —
+  either a generic fallback for unlisted languages or an explicit disclosure that its highlighting is
+  tuned for PHP/TS/Vue/JSON projects, before the shared artifact template is treated as stack-neutral.
+- Evidence supports Phase D **applying `release.md`'s "what this repository's evidence shows" pattern
+  to `verification.md`**, now with two citations to box rather than one (the Pest/Pint commands
+  iteration 1 found, plus this pass's `skipUnlessFortifyHas()` finding) — unchanged in kind from
+  iteration 1's open question §8.4, sharpened with additional evidence.
+- Evidence supports Phase D **naming/linking `review.md`'s unnamed "CRUD guide" citation**, or removing
+  it if it isn't meant to be a real dependency.
+- Evidence supports Phase D **clarifying `plan.md` section-pruning ownership** between
+  `my-architecture-laboratory` and `my-feature-planning` — a real, if narrow, disclosure gap between
+  two skills rather than a contradiction, newly surfaced by this iteration.
+- Evidence continues to support (unchanged from iteration 2 §13) **a genuine content split within
+  `resource-feature-checklist.md`** — this iteration's full read of the rest of the ecosystem found
+  nothing that reduces the scope of that already-identified lift.
+- Evidence does **not** support redesigning the three-skill decomposition — the architecture → planning
+  → git-workflow boundary held up under a third, deepest pass with zero new contradictions found, only
+  one narrow disclosure gap (plan.md pruning) that doesn't require moving responsibility between skills.
+- Evidence does **not** support treating any of the three skills as requiring a ground-up rewrite —
+  every finding in this iteration is a targeted, containable fix; none rises to "mixed" or
+  "not currently suitable."
+
+---
+
+## 23. What Iteration 3 confirmed, discovered, and leaves unresolved
+
+**Confirmed, with fuller or independently-sourced evidence:**
+- The three-skill lifecycle boundary (architecture → planning → git-workflow) remains exceptionally
+  clean under a third, full-text pass of all 23 files — no new contradiction found (§17).
+- `my-git-workflow/rules/verification.md`'s unboxed stack-command coupling, first found by iteration 1
+  via targeted grep, holds up under full read and gains one new supporting citation (§16).
+- `resource-feature-checklist.md`'s status as the ecosystem's heaviest-mixed file (iterations 1–2)
+  is unchanged and independently reconfirmed by this pass's reading of everything around it (§15, §18).
+- `my-feature-planning`'s illustrative-example self-labeling discipline, documented by iteration 1,
+  is confirmed uniform across all eight `rules/` files on full read, with one live citation
+  (`#296`) spot-verified word-for-word against GitHub (§15).
+
+**Discovered — new to iterations 1–2:**
+- `my-architecture-laboratory`'s foundational teaching citation is a dead link, and independently
+  verifiable evidence (grep + git history) shows its documented content described an architecture
+  `useOrbit` had already refactored away by the time the citation was written into `agentic-engineering`
+  — the single most consequential finding of this iteration, in a skill both prior iterations treated
+  as the cleanest of the three based on a grep-based pass that could not have found it (§14).
+- `template.html`'s syntax highlighter has hardcoded, undisclosed PHP/Vue/TS/JSON-only language support
+  baked into the one shared rendering pipeline every architecture guide passes through (§14).
+- `my-feature-planning/SKILL.md`'s own top-level Workflow section (not a `rules/` file) carries inline
+  Laravel vocabulary, a smaller but more structurally notable instance of coupling than anything found
+  in this skill's `rules/` files, because of where it sits (§15).
+- A real, if narrow, cross-skill disclosure gap around who is responsible for pruning completed
+  `plan.md` sections — relied upon by one skill, never claimed by the skill that owns the artifact (§17).
+- `review.md`'s unnamed "CRUD guide" citation, and the existence of a third, unreferenced architecture
+  artifact ("CRUD Application Architecture") plausibly matching it (§14).
+
+**Leaves unresolved:**
+- Whether "CRUD Application Architecture" is in fact the guide `review.md` calls "the CRUD guide" —
+  flagged as inference (title match only), not confirmed by opening the artifact (§14).
+- Whether the live "Tagging Architecture" artifact (distinct URL, more recent update date) documents
+  the current concrete `document_tag` pivot rather than the polymorphic architecture — not opened past
+  its header in this pass; the dead-link finding and the git-history mismatch stand independent of this
+  question either way (§14).
+- The memory-directory count discrepancy noted in this iteration's snapshot section — out of scope for
+  this pass, not investigated (front matter, above).
+- Everything iterations 1–2 left open in their own §8 that this iteration's narrower three-skill scope
+  did not touch (`content-backlog`'s category, the commit-message body-line soft conflict, `my-laravel-
+  patterns`/`my-phpstorm-conventions`'s one-skill-or-two question, etc.) remains exactly as open as
+  those iterations left it.
+
+**Net effect on Phase D readiness:** the three canonical portable skills are, on this deepest pass yet,
+in materially the same overall state as the two stack candidates iteration 2 examined — genuinely
+useful, evidence-grounded methodology with concentrated, fixable gaps rather than structural problems.
+No skill in this ecosystem, portable-core or stack-layer, has yet earned an unqualified "clean" verdict
+across three increasingly deep passes; each pass has instead found real, previously-invisible issues
+proportional to how hard it looked. That pattern is itself evidence worth carrying into Phase D: Phase
+A's completion established that the three skills are *consumable*, not that they are *finished*, and
+each iteration of this discovery phase has found something the previous one's method could not have
+surfaced.
