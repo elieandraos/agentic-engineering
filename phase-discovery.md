@@ -1542,3 +1542,750 @@ proportional to how hard it looked. That pattern is itself evidence worth carryi
 A's completion established that the three skills are *consumable*, not that they are *finished*, and
 each iteration of this discovery phase has found something the previous one's method could not have
 surfaced.
+
+---
+---
+
+# Phase C Synthesis — Current Disposition
+
+**Status:** Phase C synthesis pass. Consolidates Iterations 1–3 into a current best evidence-backed
+disposition of the mature custom skill ecosystem. Still classification and judgment only — no skill,
+`useOrbit` file, `roadmap.md`, or `README.md` was modified to produce this section, and Iterations 1–3
+above are preserved byte-for-byte. Per this pass's own instructions, this section does not begin Phase D
+and does not prescribe implementation structure beyond what the evidence makes unavoidable.
+
+**Method.** Before writing this section, a fresh reading pass independently re-inspected the underlying
+evidence rather than taking Iterations 1–3 on their word: `roadmap.md`'s Phase C/D sections and
+`README.md`'s "Current portability status" section were read directly; all five scored skills' directory
+structures were confirmed unchanged (`git log` shows `HEAD` is still iteration 3's own commit `fccc9f2`,
+identical to the tree iteration 3 analyzed); and a sample of the most load-bearing claims across all
+three iterations was independently re-verified against live sources rather than re-derived from the
+document text:
+
+- `TestingServiceProvider`'s five macros — confirmed to exist exactly as iteration 2 §10 describes.
+- `getDiagnostics` named in `my-phpstorm-conventions/SKILL.md` (lines 3, 30–31) — confirmed exactly as
+  iteration 2 §11 describes, including the retry-per-file caveat.
+- `verification.md`'s unboxed `php artisan test`/`vendor/bin/pint`/`skipUnlessFortifyHas()` citations —
+  confirmed at the exact lines iterations 1 and 3 cite.
+- Boost's `laravel-best-practices/rules/eloquent.md:33` and `rules/testing.md:7-13` — confirmed to state
+  `#[Scope]` and `assertModelExists()` exactly as iteration 2 §10 describes, and `my-laravel-patterns/
+  rules/testing-strategy.md:59,97` confirmed to use the `assertDatabaseCount`/`assertDatabaseHas` pattern
+  Boost's own file labels "Incorrect" — the conflict iteration 2 found is real and unchanged.
+- `query-conditionals.md`'s `forTaggableType` example — confirmed broken exactly as iteration 2
+  describes (`$ownerColumn`/`$modelClass` referenced but never defined or passed), and `git log --all --
+  '*TagAttachment*'` independently reproduces the same five-commit lifecycle (introduced `9515a99`,
+  generalized `1fe9b61`, collapsed away by `482e2d8`/`126fe31`) iteration 2 first found while checking a
+  different skill and iteration 3 found again independently while checking a third.
+- `content-backlog`'s skill directory (5 rule files) and `content-backlog.md` (1,432 lines, actively
+  tracked) — confirmed to exist as iteration 1 describes.
+- **New verification, not performed by any prior iteration:** both Artifact citations central to
+  iteration 3's §14 finding were re-fetched directly via the `Artifact` tool, one day after iteration 3's
+  own snapshot. The "Centralized Tagging Architecture" URL `my-architecture-laboratory/SKILL.md` cites by
+  name **still does not resolve** — "artifact not found." The live, differently-titled "Tagging
+  Architecture" artifact iteration 3 found but did not open past its header **was opened and grepped
+  directly**: it contains 13 occurrences of `document_tag` and zero of `Taggable`/`ownerColumn`/
+  `TagAttachment` — confirming, not merely inferring, that it documents `useOrbit`'s *current* concrete-
+  pivot architecture, not the dead polymorphic one the broken citation is known to have taught. This
+  resolves iteration 3 §23's second open question: yes, the live guide is current and usable — the
+  problem is entirely that `SKILL.md` points at the wrong (dead) URL, not that no good citation exists.
+  The "CRUD Application Architecture" artifact was also opened and grepped for `export`: it contains
+  extensive `ExportController`/`ExportClientToPdfAction`/`ExportTest` content, corroborating — on content,
+  not just title — iteration 3's inference that this is the unnamed "CRUD guide" `references/review.md:151`
+  cites. Both of iteration 3's two `content unresolved` open questions are now resolved in the direction
+  iteration 3's inference already pointed.
+- **New finding, not surfaced by any prior iteration:** `README.md`'s own "Current portability status"
+  section (lines 114–116) states, as a Phase A finding, that `my-architecture-laboratory`'s two style
+  precedents "resolve from any project context, so no fix was needed there." Direct re-verification shows
+  this is no longer true for the Tagging citation specifically — it is a dead link today, independent of
+  and prior to this pass's own action (this pass changed nothing). This is recorded here as a *currency*
+  gap in `README.md`'s Phase A claim, not a defect in Phase A's process at the time it was written, and
+  — per this pass's constraints — `README.md` itself is left unmodified; the gap is Phase D's (or a
+  maintenance pass's) to address.
+
+This spot-check covered the ecosystem's most consequential citations across all three iterations and
+found every one to hold up exactly as documented, with the two open questions above now resolved and one
+new documentation-currency gap surfaced. No claim in Iterations 1–3 was found to be inaccurate on
+independent re-inspection.
+
+---
+
+## Readiness rubric
+
+Two rubrics apply, per `roadmap.md` Phase C §"Method"'s own category split — one for the three canonical
+portable-methodology skills, one for the two custom stack skills. Both use the same 0–10 scale:
+
+- **8–10:** mature, with only targeted cleanup/refinement needed.
+- **6–7.9:** sound foundation, but meaningful refinement remains.
+- **4–5.9:** mixed or materially coupled, requiring substantial refinement.
+- **0–3.9:** not currently suitable for reusable extraction.
+
+Scores below are this pass's structured judgment applied consistently across both rubrics, not an
+objective measurement — a reasonable person could weight some dimensions differently, particularly for
+`my-laravel-patterns`, where the score sits closest to a rubric-band boundary (see its own section for
+the specific weighing).
+
+### Portable-methodology dimensions
+
+1. **Methodology purity** — does the rule state a principle or process independent of implementation, or
+   is the principle fused with concrete stack commands/facts that could be swapped out without losing the
+   lesson?
+2. **Project independence** — does the rule's *validity* depend only on illustration (a `useOrbit` name
+   used as a stand-in), or does it depend on a `useOrbit`-specific fact, macro, field, or live citation
+   that a different project would not have?
+3. **Stack/tooling independence** — does applying the rule require a specific language, framework,
+   editor, or platform to exist, and if so, is that requirement disclosed?
+4. **External dependency clarity** — are dependencies on tools/platforms outside the skill itself (the
+   `Artifact` tool, GitHub/`gh`, an MCP server) named explicitly, with behavior stated for a consumer
+   lacking them, rather than assumed silently?
+5. **Example/reference quality** — do the skill's citations and worked examples resolve, remain current
+   against the source project, and stay internally consistent?
+6. **Internal coherence** — do a skill's own files agree with each other, with no unnoticed
+   self-contradiction?
+7. **Cross-skill responsibility clarity** — does the skill state what it owns versus what an adjacent
+   skill owns, with no silent overlap and no unclaimed handoff?
+
+### Custom-stack dimensions
+
+Stack-specificity is not penalized here — it is the point of this layer. Instead:
+
+1. **Stack relevance and reuse potential** — would a different Laravel/Inertia (or PhpStorm-tooling)
+   project genuinely benefit from this rule as stated, beyond this one codebase?
+2. **Project independence** — does the rule's validity depend only on the stack, or does it silently
+   depend on `useOrbit`-specific code, config, or a live pointer into `useOrbit`'s own issue tracker?
+3. **Dependency clarity** — are functional dependencies (custom test macros, IDE-integration tools,
+   package versions) disclosed, with a stated fallback for a consumer that lacks them?
+4. **Overlap with first-party capabilities** — does the rule duplicate, silently conflict with, or
+   cleanly extend what Laravel Boost's own skills already document?
+5. **Example/reference quality** — are worked examples runnable, current, and free of citations to
+   removed code?
+6. **Internal coherence** — do this skill's own files agree with each other and with its always-co-loaded
+   sibling skill?
+7. **Maintainability** — is version- or time-sensitive knowledge (an IDE build, a framework version)
+   pinned or flagged for periodic re-verification, so a future maintainer knows when it might have gone
+   stale?
+
+---
+
+## Scoreboard
+
+| Skill | Classification | Readiness score | Category | One-line reason |
+|---|---|---|---|---|
+| `my-git-workflow` | Portable methodology | **7.3** | Sound foundation, meaningful refinement remains | Six of seven rule files are clean and evidence-accurate; the one gap (`verification.md`'s two unboxed stack citations) is narrow, isolated, and already modeled by a sibling file in the same skill. |
+| `my-architecture-laboratory` | Portable methodology | **6.8** | Sound foundation, meaningful refinement remains | The four-phase discipline and Plan Synthesis rule hold up under the deepest read of the three, but its one foundational teaching citation is a dead link whose known content no longer matches the source project, and its shared template has undisclosed PHP/Vue/TS-only tooling coupling. |
+| `my-phpstorm-conventions` | Custom stack/ecosystem knowledge | **8.2** | Mature, targeted cleanup only | Zero product-domain leakage found across two full-file reads; every gap is a disclosure gap (`getDiagnostics`' identity, no version baseline), not a content defect. |
+| `my-feature-planning` | Portable methodology, mixed at one file | **6.3** | Sound foundation, meaningful refinement remains | Eight of nine files are portable and unusually disciplined about self-labeling; `resource-feature-checklist.md` is the single heaviest concentration of interleaved generic/`useOrbit` content in the whole ecosystem, and `SKILL.md` itself (not just a rule file) carries inline Laravel vocabulary. |
+| `my-laravel-patterns` | Custom stack/ecosystem knowledge | **5.8** | Mixed, requires substantial refinement | Genuinely additive authoring philosophy over Boost in most files, but one file has an undisclosed functional dependency on project-local test macros, one actively conflicts with Boost's own guidance, one has a broken worked example, and the skill contradicts its own co-loaded sibling on a concrete convention. |
+| `content-backlog` | Category unresolved | — deferred — | Outside current Phase D stack scope | Genuinely owned and mature, but its subject matter (personal-brand/authorial content about the methodology-development process itself) does not confidently fit any of the three defined layers; see its own section below. |
+
+`my-laravel-patterns` sits closest to a band boundary (5.8, just under the 6.0 line into "sound
+foundation"). The weighing that keeps it in the lower band rather than the higher one: this pass counts
+the *combination* of an undisclosed functional dependency, an active (not merely overlapping) conflict
+with Boost's own first-party guidance, a broken example tied to a real deleted-code citation, and a
+within-skill self-contradiction as four independent, materially different failure modes concentrated in
+one skill — a denser cluster of distinct problem types than any other scored skill carries, even though
+most of the skill's individual files are strong.
+
+---
+
+## Skill-by-skill synthesis
+
+### `my-architecture-laboratory`
+
+#### Classification
+**Portable methodology.** Confirmed across all three iterations: no operative file contains Laravel/Vue/
+PHP-stack vocabulary, and the phase discipline, locked/open Plan Synthesis rule, maintenance methodology,
+and review checklist are all stated as properties of "the guide," never of `useOrbit` (Iteration 1 §2;
+Iteration 3 §14). The `README.md` self-assessment iteration 1 flagged as possibly stale (§8.6) is resolved
+by iteration 3 (§14) and reconfirmed by this pass: its literal claim ("assumes this project's Laravel/Vue
+stack") does not hold on inspection, but its *spirit* — real, non-trivial coupling exists — is correct for
+reasons the text itself never names (the template's language-specific highlighter, and the two-`useOrbit`
+-guide teaching precedent).
+
+#### Strengths
+The Explore → Recap → Guide → Maintain discipline, the "codebase tells us what exists, the human decides
+what it should become" principle, and the locked/current-state/derived/open-decision Plan Synthesis
+taxonomy are fully generic and self-contained (Iteration 1 §2; Iteration 3 §14). `references/maintenance.md`
+and `references/plan-synthesis.md` show zero coupling of any kind on full read — the strongest files in
+the skill. `references/review.md`'s checklist categories are phrased entirely as properties of "the
+guide." The `doc-style.md`/`template.html` content-block vocabulary (seven CSS classes) matches exactly
+between documentation and implementation — a positive coherence finding, not just an absence of problems.
+
+#### Problems
+One finding dominates: `SKILL.md`'s two named foundational teaching citations are its *entire* stated
+empirical basis for the Phase-3 writing methodology, and one of the two — the URL for "Centralized
+Tagging Architecture" — is confirmed dead (this pass's own re-fetch, one day after iteration 3's, still
+returns "artifact not found"), and its known content (a polymorphic `Taggable` contract with
+`ownerColumn()`) describes an architecture `useOrbit` collapsed away three weeks before this skill file
+was committed (Iteration 3 §14, independently reproduced by this pass via `git log`). A live,
+differently-titled replacement artifact exists and — per this pass's own direct read — documents the
+*current* architecture, but nothing in the skill names or links it. Separately, `template.html`'s syntax
+highlighter has hardcoded PHP/TS/Vue/JSON-only language support with no generic fallback and no
+disclosure (Iteration 3 §14) — real tooling coupling baked into the one rendering pipeline every guide,
+in any stack, passes through. A third, smaller gap: `references/review.md`'s "the CRUD guide" citation is
+never named or linked — this pass's own verification confirms a real, matching artifact exists
+("CRUD Application Architecture," content-matched on its exports discussion), so this is a missing link
+to add, not a fabricated reference.
+
+#### Dependencies and overlaps
+No `useOrbit` project-memory dependency was found in this skill (contrast `my-feature-planning`, below).
+Real external-capability dependency on the `Artifact` tool and the `artifact-design` skill for Phase 3/4
+and Plan Synthesis's guide-publishing track — disclosed by use, accurately, though not as an upfront
+"requires" statement (Iteration 3 §14). No cross-skill overlap found with `my-feature-planning` or
+`my-git-workflow` beyond the correctly-directional Plan Synthesis → issue-drafting handoff (Iteration 3
+§17). One genuine, narrow cross-skill disclosure gap: `my-feature-planning` treats `plan.md` section
+pruning as an established fact it relies on but does not perform, while `my-architecture-laboratory` —
+which now owns `plan.md`'s lifecycle — never states pruning as something it does (Iteration 3 §17).
+
+#### Example/reference quality
+Two of the skill's most load-bearing citations were independently re-verified by this pass rather than
+taken on the iterations' word: the dead Tagging URL is confirmed dead today, and the live "Tagging
+Architecture" and "CRUD Application Architecture" artifacts were opened and grepped directly, confirming
+they are current, on-topic, and (for the CRUD one) content-matched to the citation that names it. This
+elevates iteration 3's findings from "verified once" to "verified twice, on different days, by different
+means" for the artifact-liveness claims specifically.
+
+#### Required refinement
+Repoint or regenerate `doc-style.md`'s teaching precedent (repoint to the live "Tagging Architecture"
+artifact once its lesson is confirmed to still teach the intended structural point, or generalize the
+lesson so it no longer depends on a private, non-transferable URL at all); give `template.html`'s
+highlighter a generic fallback or an explicit disclosure of its PHP/TS/Vue/JSON-only scope; name and link
+"the CRUD guide." None of these require touching the phase discipline itself.
+
+#### What should remain unchanged
+The four-phase structure, the Plan Synthesis locked/open rule, `maintenance.md`, and the review
+checklist's generic framing — all confirmed clean under the deepest read applied to any skill in this
+ecosystem (Iteration 3's full-text pass plus this pass's independent artifact re-fetch).
+
+#### Current disposition
+**Portable core with targeted refinement needed.** The refinement is concentrated and containable — a
+citation to repair, a template to generalize or disclose, a link to add — not a sign the phase/workflow
+structure itself is unsound.
+
+---
+
+### `my-feature-planning`
+
+#### Classification
+**Portable methodology, with one heavily mixed file.** The Planned-vs-Discovered work-origin model, the
+investigation-depth/checkpoint framework, the four-shape feature-classification taxonomy, the issue-format
+rules, and the three-tier review/validation model are genuinely portable (Iteration 1 §2). One file,
+`resource-feature-checklist.md`, braids that portability with dense `useOrbit`-specific content (Iteration
+1 §6b; Iteration 2 §12) — see "Mixed material synthesis" below for its own detailed treatment.
+
+#### Strengths
+Every `rules/` file marks its `useOrbit`-derived illustrations with an explicit, consistent label ("An
+example from this project," etc.) — Iteration 3 §15 confirms this discipline holds with zero exception
+across all eight `rules/` files on a full read, not just a sample. `rules/review.md` states twice, in its
+own words, that its checks re-derive their expected set "for any feature and any issue count" and warns
+against hard-coding — the single most rigorous portability self-statement found anywhere in the ecosystem
+across all three iterations (Iteration 3 §15). `discovered-work.md`'s `#296` citation was spot-verified
+word-for-word against the live GitHub issue and found accurate, with all tasks resolved — a positive
+finding, not just an absence of a negative one (Iteration 3 §15).
+
+#### Problems
+`resource-feature-checklist.md` remains the ecosystem's heaviest concentration of interleaved generic and
+`useOrbit`-specific content, reconfirmed unchanged across all three iterations, with iteration 2 §12
+establishing that separating it is "a rewrite, not an extraction" — the braiding happens within
+individual sentences and clauses, not between them. Newly found in iteration 3 (§15): `SKILL.md`'s own
+top-level Workflow section — not a `rules/` file, the one file every invocation of this skill loads
+regardless of which downstream rule applies — states at step 18 that an issue names "FormRequest, Action,
+Policy, API Resource, thin Controller, factory/seeder, tests," Laravel-specific vocabulary sitting outside
+the self-labeling discipline the rest of the skill follows. `design-reconciliation.md:11` carries a named,
+direct content dependency on the `project-design-files` personal memory entry (Iteration 1 §6c; Iteration
+3 §15, unchanged).
+
+#### Dependencies and overlaps
+Two named personal-memory dependencies: `design-reconciliation.md` → `project-design-files`, and
+`issue-conventions.md` → `feedback_github_issues` (the latter self-acknowledged inline). `issue-
+conventions.md` also independently restates the live, evolving `feedback_github_label_colors` "next hue"
+state as a static snapshot — the memory is the actual source of truth here, and the skill's restatement
+can drift (Iteration 1 §6c/§6d). External dependency on `gh`/GitHub as a product, not just a CLI choice —
+milestones, labels, and `#N` auto-linkification are GitHub-specific concepts `issue-conventions.md`'s
+reference-syntax rules are built around (Iteration 3 §15, newly named as its own dependency category).
+Correctly disclosed composition boundary with `laravel-best-practices`/`my-laravel-patterns` as
+implementation-time loads (Iteration 1 §5, reconfirmed Iteration 3 §15).
+
+#### Example/reference quality
+Strong outside the one heavily mixed file: the `#296` citation is accurate and current (Iteration 3 §15,
+spot-verified). `resource-feature-checklist.md`'s own citations are a mix of genuinely generic pattern
+references (the Actions pattern, `wayfinder:generate --with-form`) and literal `useOrbit` file mirrors
+(`app/Models/Carrier.php`) fused into the same sentences (Iteration 2 §12).
+
+#### Required refinement
+A genuine content split of `resource-feature-checklist.md` (the heaviest lift of any single file across
+the whole ecosystem, per iteration 2 §12); rewording or boxing `SKILL.md` step 18's Laravel vocabulary
+consistent with the rest of the skill's labeling discipline; a decision on whether the two named memory
+dependencies become pointers, generalized patterns, or stay as-is with the dependency simply disclosed
+more prominently.
+
+#### What should remain unchanged
+The classification taxonomy, the checklist governing questions (outside Track F), the issue-format rules,
+the three-tier review model, and the self-labeling discipline itself — all reconfirmed clean under a full
+fresh read in iteration 3, with no new exception found.
+
+#### Current disposition
+**Mixed; boundary separation needed** for `resource-feature-checklist.md` specifically, sitting inside an
+otherwise **portable core with targeted refinement needed** for the skill as a whole. The skill-level
+score (6.3) reflects that the mixed file's severity is real but contained to one file plus one
+newly-found `SKILL.md` leak, not spread across the skill.
+
+---
+
+### `my-git-workflow`
+
+#### Classification
+**Portable methodology.** The lightest lift of the three canonical skills across every iteration that
+touched it (Iteration 3 §16, §21).
+
+#### Strengths
+"Issues describe outcomes, commits describe decisions"; the full commit-boundary reasoning in `commit-
+boundaries.md`; the two-gate model in `review-gates.md`; the ask-first recipe in `issue-closure.md`; the
+dependency-ready recalculation in `sequencing.md`; the three-condition closure gate in `milestone-
+completion.md` — all confirmed portable, evidence-accurate, and free of stack coupling on a full read
+(Iteration 1 §2; Iteration 3 §16, reconfirming with zero new exception across five of the skill's seven
+rule files). `release.md` is, across all three iterations, the single clearest methodology/adapter-fact
+separation in the entire ecosystem — it boxes concrete repository facts behind an explicit **"What this
+repository's evidence shows"** heading, twice, rather than weaving them into general prose (Iteration 1
+§2, §6a; Iteration 3 §16). `README.md`'s explicit refusal to invent PR/merge/deployment conventions the
+repository's own evidence doesn't yet support is itself a portable-methodology principle worth naming —
+the skill models "don't extrapolate from one data point" on itself (Iteration 3 §16).
+
+#### Problems
+`rules/verification.md` is the one file that does not follow `release.md`'s labeled-separation pattern —
+its "Default loop" and commit-ordering sections state Laravel/Pest/Fortify facts (`php artisan test
+--compact`, `vendor/bin/pint --dirty --format agent`, `skipUnlessFortifyHas()`) directly inside general
+methodology prose, unboxed (Iteration 1 §6a; Iteration 3 §16 adds the `skipUnlessFortifyHas()` citation
+iteration 1 didn't name). This pass's own re-grep confirms both citations sit exactly where documented,
+unchanged.
+
+#### Dependencies and overlaps
+`gh`/GitHub dependency shared with `my-feature-planning`, same caveat: milestones and releases are GitHub
+product concepts (Iteration 3 §16). Correctly and explicitly disclosed composition boundary — `SKILL.md`'s
+frontmatter names every specific Boost/custom implementation skill expected alongside it, the most
+extensive such statement in any of the three skills (Iteration 1 §5/§6f; Iteration 3 §16). No personal-
+memory dependency found, except the soft, unresolved tension between `feedback_commit_workflow.md`'s
+"single-sentence, no body" rule and `commit-boundaries.md`'s "concise title and, when useful, a short
+body" — independently derived from real commit history, not reconciled by either file (Iteration 1 §6g).
+
+#### Example/reference quality
+All real-evidence citations (`#288`, `#287`, `#120`, `#289`, PR `#298`, `v0.17.0`) are consistently framed
+as "the evidence this skill was extracted from," never presented as the rule itself (Iteration 3 §16) —
+the cleanest citation discipline of any skill in the ecosystem.
+
+#### Required refinement
+Apply `release.md`'s own "what this repository's evidence shows" pattern to `verification.md`, now
+covering both the Pest/Pint commands and the `skipUnlessFortifyHas()` mechanism.
+
+#### What should remain unchanged
+Everything except `verification.md`'s two unboxed sections — `commit-boundaries.md`, `issue-closure.md`,
+`review-gates.md`, `sequencing.md`, `release.md`, and `milestone-completion.md` are all confirmed clean
+across every pass that read them.
+
+#### Current disposition
+**Portable core with targeted refinement needed**, narrowly — this skill is one file's single section
+away from "clean portable core," the closest any skill in the ecosystem comes to that top disposition.
+
+---
+
+### `my-laravel-patterns`
+
+#### Classification
+**Custom stack/ecosystem knowledge**, genuinely additive over Boost's own `laravel-best-practices` in
+most of its ten rule files (Iteration 1 §3; Iteration 2 §10, verified directly against Boost's actual
+file contents, not inferred).
+
+#### Strengths
+`actions-pattern.md`, `filters-pattern.md`, `request-normalization.md`, `enum-options.md`, `factories-
+and-seeders.md` state real architectural decisions with no equivalent in Boost's own coverage — verified
+directly, not assumed (Iteration 2 §10). `enum-options.md:41` and `resources.md:75` are models of correct
+self-labeling, explicitly framing an arbitrary or conditional choice as exactly that. `SKILL.md:8`'s
+explicit precedence rule ("these take precedence... when there is a conflict") is a working composition
+model, present and correctly stated (Iteration 1 §3).
+
+#### Problems
+Four distinct, independently-verified problems, concentrated in different files: (1) `testing-strategy.md`'s
+worked examples are non-functional without `useOrbit`'s five custom Inertia/TestResponse test macros — a
+genuine functional dependency, not illustrative naming, undisclosed anywhere in the skill (Iteration 2
+§10, this pass's own re-check confirms the macros exist exactly as cited and the rule file names none of
+them as a prerequisite); (2) the same file's own examples use the exact assertion pattern
+(`assertDatabaseHas`) Boost's own `testing.md` labels "Incorrect," recommending `assertModelExists()`
+instead — an active conflict, not mere overlap, unresolved by any stated tie-break despite the skill's own
+precedence rule existing to resolve exactly this (Iteration 2 §10, this pass's own re-check confirms both
+sides of the conflict verbatim); (3) `query-conditionals.md`'s flagship example references `$ownerColumn`
+and `$modelClass`, neither defined nor passed, and cites `App\Models\TagAttachment::forTaggableType()`, a
+method this pass's own `git log` confirms was removed by `482e2d8` after the polymorphic tagging feature
+it belonged to was collapsed away (Iteration 2 §10, independently reproduced by this pass); (4)
+`resources.md`'s `Inertia::render()` examples contradict both `filters-pattern.md` elsewhere in the same
+skill and `my-phpstorm-conventions/rules/inertia.md`'s always-co-loaded central rule that `Inertia::render()`
+triggers a PhpStorm false positive and the project convention is the `inertia()` helper (Iteration 2 §10,
+§11). `eloquent-attributes.md`'s core claim (`#[Scope]` over `scopeXxx`) substantially overlaps Boost's own
+first-party `eloquent.md:33` recommendation — real but narrow additive value beyond Boost, not the clean
+non-overlap iteration 1 originally credited the skill with (Iteration 2 §10).
+
+#### Dependencies and overlaps
+`SKILL.md`'s "load alongside, never replace" boundary with `laravel-best-practices`/`pest-testing` is
+structurally clear, but — per problems (2) and (5) above — not actually conflict-free in content on
+closer inspection, which iteration 1's file-level read did not surface (Iteration 2 §10). `filters-
+pattern.md:5` embeds live, resolvable hyperlinks into `elieandraos/useOrbit`'s own issue tracker — a
+stronger identifying fingerprint than a model name (Iteration 2 §10). `authorization.md` and `factories-
+and-seeders.md` use `useOrbit`'s actual tenancy field names (`organization_id`, `current_organization_id`)
+as the substance of their demonstrations without the "this project's..." separation applied elsewhere in
+the same skill (Iteration 2 §10).
+
+#### Example/reference quality
+Mixed and the weakest of the two custom-stack skills: `query-conditionals.md`'s example doesn't compile
+as shown and cites now-nonexistent code; `filters-pattern.md`/`testing-strategy.md`'s examples read as
+lightly-cleaned verbatim snippets from real controllers (arbitrary literals like `paginate(7)`), carrying
+real-code idiosyncrasies a portable version would need to deliberately re-author (Iteration 2 §10). By
+contrast, `authorization.md`, `resources.md` (aside from its Inertia contradiction), `request-
+normalization.md`, and `factories-and-seeders.md` read as intentionally constructed teaching examples.
+
+#### Required refinement
+State `testing-strategy.md`'s macro dependency explicitly as a prerequisite, or separate the genuinely
+portable layer-ownership methodology from the macro-dependent worked examples; resolve or deliberately
+document the `assertDatabaseHas`/`assertModelExists` conflict with Boost; fix or replace `query-
+conditionals.md`'s broken example; reconcile the `Inertia::render()`/`inertia()` contradiction with
+`resources.md`'s own sibling file and with `my-phpstorm-conventions`; decide whether `eloquent-
+attributes.md` is trimmed to its narrow delta over Boost or kept as a convenience restatement.
+
+#### What should remain unchanged
+The Actions/FormRequest/Controller split, the `QueryFilter`/`Filterable` mechanism, `prepareForValidation()`
+-owns-normalization, and the four-layer test-ownership *model* (as distinct from its macro-dependent
+worked examples) — all independently verified as real, additive architectural decisions, not restated
+Boost content (Iteration 2 §10).
+
+#### Current disposition
+**Promising stack candidate, refinement required.** This is the one scored skill where the disposition
+sits closest to a genuine judgment call: the underlying authoring philosophy is sound and substantively
+richer than Boost's own coverage, but the density and variety of concrete, independently-confirmed defects
+in this pass (an undisclosed functional dependency, an active first-party conflict, a broken citation, and
+a self-contradiction with a co-loaded sibling, all distinct in kind) is real enough that this skill should
+not be read as "clean modulo cosmetics" the way `my-phpstorm-conventions` can be.
+
+---
+
+### `my-phpstorm-conventions`
+
+#### Classification
+**Custom stack/ecosystem knowledge** — genuinely IDE-and-framework knowledge, not project knowledge
+wearing project names (Iteration 1 §3; Iteration 2 §11, confirmed on a full re-read specifically checking
+for this).
+
+#### Strengths
+Every one of the six rule files documents a PhpStorm static-analysis false positive or an IDE-aware
+convention whose *findings* — as distinct from their illustrative call sites — depend on nothing about
+`useOrbit`'s product domain: `Eloquent::__callStatic` handling, union-typed facade method resolution, the
+Pest-plugin's chained-`->and()` inspection, PHP string-interpolation brace grammar (Iteration 2 §11).
+`phpdoc.md`'s IDE-helper-file technique explicitly generalizes itself in its own text ("this pattern works
+for any runtime-registered methods, not just macros") — one of the few places in the ecosystem where a
+file states its own generality rather than leaving it to inference. Example quality is uniformly high:
+every file follows a consistent ❌/✅ or Pattern/Warning/Verdict structure, states the exact IDE warning
+text, and explains the fix mechanically — no dead citation, no undefined-variable example, no
+internally-contradicted example found anywhere in the skill (Iteration 2 §11).
+
+#### Problems
+The skill's actual *trigger* mechanism, not its content, is the material finding: `SKILL.md:30` names an
+external tool call, `getDiagnostics`, as the enforcement step, and this pass's own re-check confirms the
+instruction is exactly as iteration 2 describes, including the "no-argument call returning 'File not
+found'" caveat. This tool is not among the MCP dependencies iteration 1's §5 enumerated, and its actual
+provenance (JetBrains/PhpStorm-specific, or something more general) is not established by inspecting the
+skill files (Iteration 2 §11). `feedback_phpstorm_skill_activation.md` (memory) independently documents
+three prior real occurrences of this activation step simply not firing — evidence the mechanism is
+fragile in practice, not just in theory. No file states a PhpStorm/plugin/Pest-plugin version baseline,
+unlike `my-laravel-patterns/eloquent-attributes.md`'s explicit Laravel version pin, despite at least one
+finding (`eloquent.md`'s `#[Scope]`-not-resolved section) describing current, not-yet-fixed IDE behavior
+that JetBrains could patch at any time. The one content-level defect, `inertia.md` vs. `my-laravel-
+patterns/resources.md`'s contradiction, belongs equally to both files (Iteration 2 §11).
+
+#### Dependencies and overlaps
+No overlap found with `laravel-best-practices` or `pest-testing` on a full-file read — the subject matter
+(IDE static-analysis behavior) sits entirely outside what either Boost skill documents (Iteration 2 §11).
+`getDiagnostics` is a real, previously-unnamed external dependency, distinct in kind from the documented
+MCP servers: it is the skill's entire activation mechanism, not a workflow it merely uses.
+
+#### Example/reference quality
+Uniformly high, confirmed on a full re-read specifically checking for exactly this — the strongest example
+quality of any skill in the ecosystem.
+
+#### Required refinement
+Name `getDiagnostics` as an explicit external/environment dependency with a stated fallback for a session
+without it (e.g., "read the rule files before finalizing PHP files manually"); either pin a PhpStorm/
+plugin-version baseline or explicitly note these findings should be periodically re-verified; fix the
+one-line `inertia.md`/`resources.md` contradiction shared with `my-laravel-patterns`.
+
+#### What should remain unchanged
+All six rule files' content — zero product-domain leakage found across two independent full reads is the
+strongest such finding for any skill in the ecosystem.
+
+#### Current disposition
+**Strong stack candidate, ready for Phase D consideration.** The content itself withstood a full re-read
+with zero new product-domain findings; what remains is disclosure work (naming a real tool dependency,
+considering a version baseline), not content repair.
+
+---
+
+## Mixed material synthesis
+
+### `my-feature-planning/rules/resource-feature-checklist.md`
+- **Portable:** the Track A–G skeleton itself (headings + governing questions — core infra, status
+  lifecycle, sub-resource, filters/sorting, export, frontend UX consistency, wiring gotchas), and the
+  framing sentence that the track *structure* is the generic rule (Iteration 1 §3; Iteration 2 §12). Every
+  track name and governing question generalizes to any resource-shaped feature in any CRUD-ish web
+  framework, not just Laravel/Vue (Iteration 2 §12).
+- **Stack-specific:** some instantiated content genuinely belongs to the Laravel/Inertia ecosystem layer
+  — "the Actions pattern," FormRequest normalization, the `wayfinder:generate --with-form` flag fact
+  (Iteration 1 §3).
+- **Project-specific:** the bulk of the file's actual prose — tenancy column names (`organization_id`),
+  audit column names (`created_by`/`updated_by`), literal file mirrors (`app/Models/Carrier.php`,
+  `BranchModal.vue`), and — most concentrated in Track F — the badge-tone palette, mobile/desktop header
+  breakpoint rules, breadcrumb rule, and drop-menu ordering (Iteration 1 §4, §6b, §6g).
+- **External:** none directly; the file's Laravel/Inertia terminology assumes Boost's own vocabulary is in
+  scope but does not restate Boost content.
+- **Is the separation currently clean?** No — this pass confirms iteration 2 §12's finding stands
+  unrevised: the braiding happens *within* individual sentences (a migration line names both "a tenancy
+  column" and its literal `useOrbit` name in the same clause), not between separable bullets. Track F has
+  no generic sentence to extract from at all — a generic version would need to be authored new, not lifted
+  by deletion.
+- **Refinement likely required:** a genuine rewrite into (at minimum) a generic Laravel/Inertia answer per
+  track plus a separate `useOrbit`-local reference for the mirrors/tones/breakpoints — the heaviest single-
+  file lift in the ecosystem, per three iterations' agreement.
+
+### `my-git-workflow/rules/verification.md`
+- **Portable:** the entire "targeted-then-full-suite" verification methodology and the isolation-technique
+  reasoning.
+- **Stack-specific:** `php artisan test --compact <path>`, `vendor/bin/pint --dirty --format agent`, and
+  `skipUnlessFortifyHas()` — Laravel/Pest/Fortify facts (Iteration 1 §6a; Iteration 3 §16).
+- **Project-specific:** none beyond the stack-specific commands themselves — no `useOrbit` product
+  reference found.
+- **External:** the commands assume Pest and Pint as installed tooling, disclosed only by use.
+- **Is the separation currently clean?** No — this is the one file in `my-git-workflow` that does not
+  follow the pattern its own sibling file (`release.md`) already models successfully, one file over in the
+  same skill.
+- **Refinement likely required:** box the stack-specific commands behind a labeled "what this repository's
+  evidence shows" subsection, exactly matching `release.md`'s existing, proven pattern — a template already
+  exists inside this same skill.
+
+### Project-memory overlaps inside nominally portable skills
+Two named, live dependencies from `my-feature-planning` onto `useOrbit`-local personal memory:
+`design-reconciliation.md:11` → `project-design-files` (no `useOrbit`-external fallback stated) and
+`issue-conventions.md` → `feedback_github_issues` (self-acknowledged inline) plus a static restatement of
+`feedback_github_label_colors`' live "next hue" state that can drift from the memory's actual current value
+(Iteration 1 §6c, §6d; Iteration 3 §15, unchanged). Separation is not clean in either case: a GitHub
+consumer of this skill without the corresponding memory entries would see the rule silently degrade rather
+than fail loudly.
+
+### Other materially mixed content found by the iterations
+- `my-architecture-laboratory/SKILL.md`'s two-guide teaching precedent (§14 above) — disclosed as real,
+  external, published material, but not disclosed as `useOrbit`-*specific* the way every other illustrative
+  citation in the ecosystem is (Iteration 3 §17) — an anomaly in an otherwise uniform cross-skill
+  self-labeling convention, not a second instance of the checklist's braiding pattern.
+- `my-laravel-patterns/rules/authorization.md` and `factories-and-seeders.md` (§ above) — the *mechanism*
+  taught is stack-generic, but `useOrbit`'s tenancy field names are used as the demonstration's substance
+  without the "this project's..." framing applied elsewhere in the same skill (Iteration 2 §10).
+
+---
+
+## External capability boundary
+
+Confirmed, unrevised across all three iterations and this pass's own spot-checks:
+
+- **Laravel Boost skills remain externally owned.** `boost.json`'s skill set (`infer-conventions`,
+  `fortify-development`, `laravel-best-practices`, `wayfinder-development`, `pest-testing`, `inertia-vue-
+  development`, `echo-vue-development`, `echo-development`, `tailwindcss-development`) is upstream-
+  maintained and mirrored identically in `.junie/skills/`, confirming it is IDE-agnostic, vendor-
+  distributed content, not `useOrbit`- or Claude-Code-authored (Iteration 1 §1.2, §5).
+- **Custom skills compose with Boost, correctly, in most places.** Both `my-laravel-patterns` and
+  `my-phpstorm-conventions` state "load alongside, never replace" explicitly, and this pass's own
+  re-checks confirm no wholesale restatement of Boost content in either skill (Iteration 1 §5; Iteration 2
+  §10/§11).
+- **Boost content is not extracted or duplicated at the skill-structure level**, but this pass's
+  independent re-verification confirms two real exceptions at the *rule* level, not the structural level:
+  `eloquent-attributes.md` substantially overlaps Boost's own `#[Scope]` guidance, and `testing-
+  strategy.md` actively contradicts Boost's own `assertModelExists()` recommendation (Iteration 2 §10,
+  both confirmed verbatim by this pass). Neither is duplication of Boost's *skill*, but both are
+  unreconciled disagreement or overlap at the *content* level within a skill that explicitly claims a
+  precedence rule for exactly this situation.
+- **Conflicts are not yet handled through the stated precedence rule** — `my-laravel-patterns/SKILL.md:8`'s
+  "these take precedence... when there is a conflict" rule is stated but was never applied to the
+  `assertDatabaseHas`/`assertModelExists` disagreement, because — per iteration 2's own framing — nobody
+  had identified the conflict existed to apply the rule to. This is the clearest evidence-backed instance
+  in the ecosystem of the "explicit precedence/composition rules rather than silent duplication" principle
+  existing on paper but not yet being exercised in practice.
+
+---
+
+## Cross-skill architecture
+
+The three-skill portable lifecycle (`my-architecture-laboratory` → `my-feature-planning` → `my-git-
+workflow`) remains, across three independent passes of increasing depth, the single most consistently
+reconfirmed finding in this entire discovery phase:
+
+- Iteration 1 (§6h): each skill's README "owns/does not own" sections are matched, cross-references are
+  directional, no overlap found on a full read.
+- Iteration 2: did not re-touch the boundary directly, but found nothing in its stack-skill deep-dive that
+  implicated the three-skill decomposition.
+- Iteration 3 (§17): a full fresh read of all three skills' README boundary statements side by side found
+  zero new instance of one skill silently performing another's job — no issue drafting inside
+  `my-architecture-laboratory`, no architecture re-derivation inside `my-feature-planning`, no issue
+  creation inside `my-git-workflow`.
+
+**This synthesis's own assessment: the decomposition remains coherent.** The only evidence-backed boundary
+issue found across all three iterations is narrow and disclosure-shaped, not structural: `my-feature-
+planning` relies on `plan.md` section pruning as an established practice it observed historically, while
+`my-architecture-laboratory` — which now owns `plan.md`'s lifecycle end-to-end — never states pruning as
+something it performs (Iteration 3 §17). Neither skill actively contradicts the other; this is an
+assumption one skill depends on that the other has not yet formally committed to sustaining. Per this
+pass's own constraint, this synthesis does not redesign the three-skill family or prescribe where pruning
+responsibility should land — it only records that the gap exists and is real.
+
+---
+
+## `content-backlog`
+
+**Current evidence.** A genuinely owned, mature skill (5 rule files: `formats.md`, `capture.md`,
+`backlog-file.md`, `suggestions.md`, `content-strategy.md`), backing a real, actively-used 1,432-line
+tracked file (`content-backlog.md`, confirmed by this pass's own `wc -l`, growing from the 96 KB/22-entry
+snapshot iteration 1 recorded — evidence of continued real use since Phase C began, not a stale artifact).
+It is not `my-`-prefixed, not present in `boost.json`, and `roadmap.md` itself names it as "a possible
+Agentic Engineering capability, potentially independent of stack work" (confirmed verbatim by this pass's
+own read of `roadmap.md` line 415) — a decision already deferred by the roadmap's own authors, not one
+this synthesis is introducing.
+
+**Why it does not yet fit the three-layer classification.** Its content is personal-brand/authorial
+material about the user's own public engineering-communication practice, not `useOrbit`'s application
+domain (ruling out "`useOrbit`-specific"), not a Laravel/Vue/Inertia/tooling convention (ruling out
+"custom stack knowledge"), and not a project-delivery methodology like architecture/planning/git-workflow
+(a looser fit for "portable methodology" than the other three skills, even though some individual rules —
+e.g. a capture-discipline pattern — might generalize). Several of its own tracked entries are explicitly
+*about* the `agentic-engineering` methodology-development process itself (Iteration 1 §1.4) — its
+filesystem location inside `useOrbit/.claude/skills/` is an accident of where the user's Claude Code
+session happens to run, not evidence the content belongs to `useOrbit` the product.
+
+**What this pass adds.** Nothing that resolves the category question — this pass's own file-existence and
+line-count check confirms the skill remains real, mature, and growing, which if anything strengthens the
+case that it deserves its own resolved category eventually, not that it fits an existing one now.
+
+**What evidence would be needed to resolve this later.** A close read of the five rule files themselves
+(not performed by any of Iterations 1–3, and not performed by this synthesis pass, since Phase C's
+existing evidence already establishes the category question as unresolved and this pass's job is to
+consolidate, not to open new file-level analysis); a decision on whether "personal-brand content
+methodology" is itself a fourth durable category `roadmap.md` should name, or whether specific rules
+within it turn out to be a genuinely portable capture/triage discipline separable from its authorial
+subject matter; and, if Phase D ever considers it, cross-project evidence this single-consumer discovery
+phase cannot supply (the same limitation Iteration 1 §8.8 already named for the stack skills).
+
+**Disposition:** deferred, category unresolved, outside current Phase D stack scope — exactly as
+`roadmap.md` itself already frames it. Not extracted, not scored, not assigned to portable core or stack
+layer merely to complete the taxonomy.
+
+---
+
+## Phase D entry conditions
+
+This section states conditions, not a plan. Per `roadmap.md` §5, Phase D may result in refinement without
+extraction, one reusable stack capability, several cooperating capabilities, combining or splitting
+skills, returning project-specific material to `useOrbit`, leaving skills unchanged, or a decision that
+extraction is not yet justified — none of these outcomes is assumed or ruled out here.
+
+**Refinements this evidence suggests addressing before or as part of any extraction:**
+- `my-architecture-laboratory`: repair or replace the dead Tagging-guide citation (a live, content-verified
+  replacement now exists, per this pass's own check); address `template.html`'s language-specific
+  highlighter; name the unlinked "CRUD guide" citation (also now content-verified by this pass).
+- `my-feature-planning`: the `resource-feature-checklist.md` content split (the heaviest lift identified by
+  any iteration); `SKILL.md` step 18's inline Laravel vocabulary; a decision on the two named memory
+  dependencies.
+- `my-git-workflow`: box `verification.md`'s two stack citations using `release.md`'s own already-proven
+  pattern.
+- `my-laravel-patterns`: disclose or resolve `testing-strategy.md`'s macro dependency; resolve the
+  `assertDatabaseHas`/`assertModelExists` conflict with Boost (a real, standing disagreement, not
+  cosmetic); fix `query-conditionals.md`'s broken example; reconcile the `Inertia::render()`/`inertia()`
+  contradiction with `my-phpstorm-conventions`.
+- `my-phpstorm-conventions`: name `getDiagnostics` as an explicit, environment-specific dependency with a
+  stated fallback; consider a version baseline.
+
+**Which skills are mature enough to consider first.** `my-phpstorm-conventions` (8.2) and `my-git-workflow`
+(7.3) carry the narrowest, most disclosure-shaped gaps of the five — their content itself is not in
+question, only what needs to be stated more explicitly. `my-architecture-laboratory` (6.8) is close behind
+but its refinement is more consequential (a foundational citation, not just a disclosure line).
+`my-feature-planning` (6.3) and `my-laravel-patterns` (5.8) need more substantial, evidence-dense work
+before either is in the same state of readiness — the checklist split and the macro/Boost-conflict
+disclosure respectively are not quick edits.
+
+**Mixed rules needing separation.** `resource-feature-checklist.md` above all — evidence-dense, agreed
+across three iterations to require a rewrite rather than a mechanical extraction. `verification.md` is a
+much smaller, already-modeled version of the same class of problem.
+
+**Dependencies needing disclosure or decoupling.** `testing-strategy.md`'s test macros; `getDiagnostics`'
+actual identity and fallback behavior; `gh`/GitHub as a first-class, named dependency distinct from Boost
+or the `Artifact` tool (Iteration 3 §15/§16/§20 names this gap but does not close it).
+
+**Evidence gaps that remain.** Whether `my-laravel-patterns` and `my-phpstorm-conventions` should become
+one skill or two (Iteration 1 §8.2) — this pass found no new evidence either way, and if anything iteration
+2's finding that their two most consequential problems sit on opposite sides of that seam is itself
+ambiguous evidence, arguable either way. Whether within-project repetition is sufficient grounds for calling
+something "reusable" absent cross-project evidence (Iteration 1 §8.8) — unresolved by a single-consumer
+discovery phase by construction. `content-backlog`'s category, as detailed above.
+
+**Where human architectural judgment is still required, not inferable from files alone.** Whether the
+`assertDatabaseHas`/`assertModelExists` conflict and the `Inertia::render()`/`inertia()` conflict are
+things the user wants reconciled now or only at extraction time (Iteration 2 §13); whether the
+`feedback_commit_workflow.md`/`commit-boundaries.md` commit-body-line tension is live or scoped away by
+`commit-boundaries.md`'s own pipeline (Iteration 1 §8.5); whether `my-laravel-patterns` +
+`my-phpstorm-conventions` combine; whether `content-backlog` ever gets a fourth category.
+
+**What Phase D is not compelled toward by this evidence.** Nothing here requires a `skills/portable-core/`,
+`skills/stack-adapters/`, or `skills/project-specific/` directory structure, a single unified adapter, or a
+ground-up rewrite of any skill. Every finding across all three iterations and this synthesis is contained
+within existing file boundaries — a citation, a template, a section, a link, a disclosure line — except
+`resource-feature-checklist.md`, which is the one place the evidence itself (not this pass's preference)
+points to something closer to a rewrite.
+
+---
+
+## Phase C conclusion
+
+**1. What did Phase C establish with high confidence?** The five named `my-*` skills plus the
+independently-discovered `content-backlog` are the complete set of genuinely owned, mature custom skills.
+The three-skill portable lifecycle decomposition is sound, reconfirmed across three passes of increasing
+depth with only one narrow, disclosure-shaped boundary gap (`plan.md` pruning ownership). No skill in the
+ecosystem has yet earned an unqualified "clean" verdict, and every skill's readiness gaps are, on the
+evidence gathered, targeted and containable rather than structural — with `resource-feature-checklist.md`
+as the one clear exception requiring a genuine rewrite rather than a targeted fix. This synthesis's own
+independent re-verification (the artifact re-fetches, the source-code and git-history spot-checks) found
+every load-bearing claim in Iterations 1–3 to hold up, and additionally resolved two of iteration 3's own
+open questions (the live Tagging artifact's current content; the CRUD guide's identity) in the direction
+those iterations already inferred.
+
+**2. Which skills are currently strongest?** `my-phpstorm-conventions` (8.2) — zero product-domain leakage
+across two full reads, only disclosure gaps remain. `my-git-workflow` (7.3) — the lightest lift, with
+`release.md` standing as the ecosystem's model file.
+
+**3. Which skills are not ready?** None scores below the "mixed, substantial refinement" band, but
+`my-laravel-patterns` (5.8) is the weakest of the five scored skills — not because its underlying
+philosophy is unsound, but because it carries the densest, most varied cluster of concrete, independently-
+confirmed defects (an undisclosed functional dependency, an active Boost conflict, a broken citation, and
+a self-contradiction with a sibling skill) of any skill examined.
+
+**4. What major boundary problems remain?** `resource-feature-checklist.md`'s generic/`useOrbit`-specific
+braiding, requiring a rewrite rather than an extraction. Two named personal-memory dependencies inside
+`my-feature-planning`. `my-architecture-laboratory`'s dead foundational citation, now resolved in
+disposition (a live replacement exists and was independently verified) but not yet repaired in the skill
+file itself. The unreconciled `assertDatabaseHas`/`assertModelExists` and `Inertia::render()`/`inertia()`
+conflicts between custom skills and Boost, and between two custom skills, respectively.
+
+**5. What should Phase D examine first?** Whichever refinement work the user chooses to prioritize is
+their call, not this pass's — but the evidence base is most mature (narrowest remaining unknowns) for
+`my-phpstorm-conventions` and `my-git-workflow`, and least mature (most work needed before the picture is
+settled) for `resource-feature-checklist.md`'s split and `my-laravel-patterns`' macro/Boost-conflict
+disclosure.
+
+**6. What remains genuinely unresolved?** `content-backlog`'s category. Whether `my-laravel-patterns` and
+`my-phpstorm-conventions` become one skill or two. Whether the two named content conflicts (Boost/testing,
+Inertia-call-style) are live problems the user wants fixed now or only at extraction time. Whether
+within-project repetition is sufficient evidence for "reusable" absent cross-project confirmation, for any
+of the stack-layer candidates. The `feedback_commit_workflow.md` soft conflict. Every one of these is a
+**fact-plus-judgment** pairing this synthesis deliberately leaves open rather than silently resolving: the
+facts are established (cited above, several independently re-verified by this pass); the judgment calls
+belong to the user or to Phase D, not to a synthesis pass.
+
+---
