@@ -161,7 +161,7 @@ useOrbit/.claude/skills/
 
 - **Provenance is required; no general format is fixed yet.** Every active snapshot consumed into `useOrbit` must be operationally traceable to the exact upstream `agentic-engineering` commit it came from. During Phase B, that provenance record may remain local alongside the consumed snapshots; it does not need to be committed to the `useOrbit` repository. The snapshots themselves remain uncommitted because `useOrbit/.claude` stays gitignored. What form the provenance record takes should continue to follow what the real consume/refresh work demonstrates is adequate, rather than being designed speculatively. This establishes the ownership and persistence boundary only; it does not design a synchronization, bootstrap, installation, or packaging mechanism.
 - **Preserve the old copies as rollback material until validated, then retire them.** The independently-authored `useOrbit` originals remain preserved as rollback material until the canonical, upstream-derived snapshots have been validated on real `useOrbit` work. Only then are the old copies retired from active use — how they're preserved in the meantime is not specified here.
-- **A genuine skill-content refresh/update-and-verification cycle is the remaining lifecycle gate; contribution is conditional, not a completion gate.** Phase B is not complete until real `useOrbit` work produces this full cycle:
+- **A genuine skill-content refresh/update-and-verification cycle remains an open observational criterion of this phase — not a blocking dependency for the rest of the roadmap.** Phase B's own completion still depends on real `useOrbit` work producing this full cycle:
 
   1. real work warrants a canonical skill improvement;
   2. the canonical source (`agentic-engineering`) is updated;
@@ -169,13 +169,13 @@ useOrbit/.claude/skills/
   4. the refreshed skill is verified in `useOrbit` as a consumer;
   5. the lifecycle evidence is recorded.
 
-  A documentation-only repository commit does not satisfy this gate. If real `useOrbit` work surfaces a fix or improvement worth contributing upstream, record it when it happens; if no such change is warranted, recording that outcome is itself sufficient — contribution is conditional on what real use actually produces, not a checklist item that has to fire. Document the lifecycle as it is actually exercised during real feature work — do not manufacture a change to a skill merely to rehearse it, and do not write the lifecycle down before it has actually happened.
+  A documentation-only repository commit does not satisfy this criterion. If real `useOrbit` work surfaces a fix or improvement worth contributing upstream, record it when it happens; if no such change is warranted, recording that outcome is itself sufficient — contribution is conditional on what real use actually produces, not a checklist item that has to fire. Document the lifecycle as it is actually exercised during real feature work — do not manufacture a change to a skill merely to rehearse it, and do not write the lifecycle down before it has actually happened. Normal `useOrbit` development and Phase C both proceed independently of this criterion; it is satisfied opportunistically whenever genuine skill-content evolution actually occurs, never manufactured to unlock other work.
 
 ## Completion criteria
 
 - [x] Canonical skill copies are consumed into `useOrbit/.claude/skills/` and used for real, in-progress `useOrbit` work (not a synthetic or throwaway test). (2026-08-23 — consumed from `agentic-engineering` @ `12d9c1df75dde5fb1d944b62b0679c1e211137a4`; the canonical `my-feature-planning` snapshot used on a genuine discovered-work investigation and planning pass, producing [useOrbit#299](https://github.com/elieandraos/useOrbit/issues/299) — the first durable consumer artifact of this relationship.)
 - [x] The active local snapshots are traceable to their exact upstream commit, in whatever provenance format the real work shows is adequate; the snapshots remain uncommitted, and the provenance record may remain local alongside them. (2026-08-23 — consumed at commit `12d9c1df75dde5fb1d944b62b0679c1e211137a4`, recorded locally in `useOrbit/.claude/skills/UPSTREAM_PROVENANCE.md`.)
-- [ ] At least one genuine refresh/update-and-verification cycle has been observed and recorded from actual `useOrbit` work: an updated skill snapshot pulled from upstream and verified as a consumer. (Not yet met — no newer upstream skill-content update or genuinely updated skill snapshot exists yet to refresh from. The subsequent commit `c09f15f9127317cc0faf79f03ff5072441c22d04` changed documentation only; it does not trigger or satisfy this criterion.)
+- [ ] At least one genuine refresh/update-and-verification cycle has been observed and recorded from actual `useOrbit` work: an updated skill snapshot pulled from upstream and verified as a consumer. (Not yet met — no newer upstream skill-content update or genuinely updated skill snapshot exists yet to refresh from. The subsequent commit `c09f15f9127317cc0faf79f03ff5072441c22d04` changed documentation only; it does not trigger or satisfy this criterion. This stays open and outstanding as a Phase B observational criterion; it does not block Phase C or normal `useOrbit` development.)
 - [x] The old, independently-maintained `useOrbit` skill copies are retired from active use. (2026-08-23 — moved to `.claude/_rollback/pre-phase-b-skills/`, outside `.claude/skills/` discovery scope; preserved as rollback material, not deleted.)
 - [x] The first consumer pass warranted no upstream skill contribution — recorded rather than left silent. (2026-08-23.)
 
@@ -436,15 +436,15 @@ These are possibilities worth keeping in view — not phases, dependencies, comm
 
 ## In progress / next
 
-Phase B is underway, not complete. Consumption, local provenance, first genuine real use (`useOrbit#299`), and retirement of the old copies from active discovery are done — see "Completed" above. What remains open: a genuine refresh/update-and-verification cycle (pulling and verifying an updated upstream skill snapshot), which has not happened because no genuine upstream skill-content update exists yet to refresh from — one will not be manufactured to close this out artificially. Real `useOrbit` development continues normally in the meantime; the lifecycle remains observational, not a gate that blocks other work. Phase C (classification) stays blocked until the refresh lifecycle has actually been observed, not merely until consumption and one round of use are done.
+Phase B's consumer relationship is established: consumption, local provenance, first genuine real use (`useOrbit#299`), and retirement of the old copies from active discovery are done — see "Completed" above. What remains open, as an observational criterion rather than a blocking dependency: a genuine refresh/update-and-verification cycle (pulling and verifying an updated upstream skill snapshot), which has not happened because no genuine upstream skill-content update exists yet to refresh from — one will not be manufactured to close this out artificially. It will be completed opportunistically whenever real `useOrbit` work genuinely warrants a canonical skill update. Normal `useOrbit` development continues independently in the meantime, and Phase C (classifying the mature custom skill ecosystem) is now the next active Agentic Engineering work — it does not wait on this observation.
 
 ## Future
 
 - [x] Consume the canonical skills into `useOrbit/.claude/skills/` for real work. (Phase B — completed 2026-08-23.)
 - [x] Track upstream commit provenance for consumed copies, in a format decided from real need. (Phase B — completed 2026-08-23.)
-- [ ] Observe and record a genuine refresh/update-and-verification cycle from actual `useOrbit` work. (Phase B.)
+- [ ] Observe and record a genuine refresh/update-and-verification cycle from actual `useOrbit` work, completed opportunistically whenever genuine skill-content evolution occurs. (Phase B — open observational criterion, non-blocking.)
 - [x] Retire the old, independently-maintained `useOrbit` skill copies from active use. (Phase B — completed 2026-08-23.)
-- [ ] Classify the mature custom `my-*` skill ecosystem into portable methodology / custom stack knowledge / `useOrbit`-specific knowledge / external first-party capabilities. (Phase C.)
+- [ ] Classify the mature custom `my-*` skill ecosystem into portable methodology / custom stack knowledge / `useOrbit`-specific knowledge / external first-party capabilities. (Phase C — now the next active work.)
 - [ ] Act on Phase C's evidence — extract, refine, combine, split, or leave the custom stack layer unchanged, only if justified. (Phase D.)
 
 See "Future directions" above for later, non-committed possibilities (Project B, cross-stack comparison, publication, etc.) — these are not part of this phase sequence.
@@ -453,24 +453,28 @@ See "Future directions" above for later, non-committed possibilities (Project B,
 
 # 11. Immediate next move
 
-Phase A is complete. Phase B is underway, not complete: the three canonical skills are consumed
-into `useOrbit/.claude/skills/` from `agentic-engineering` @ `12d9c1df75dde5fb1d944b62b0679c1e211137a4`,
-with provenance recorded locally, and the canonical `my-feature-planning` snapshot has already been
-used on genuine `useOrbit` work, producing `useOrbit#299` — the first durable consumer artifact of
-this relationship. No upstream skill contribution was warranted from that first pass.
+Phase A is complete. Phase B has established the real `useOrbit` consumer relationship: the three
+canonical skills are consumed into `useOrbit/.claude/skills/` from `agentic-engineering` @
+`12d9c1df75dde5fb1d944b62b0679c1e211137a4`, with provenance recorded locally, the old
+independently-maintained copies retired from active use, and the canonical `my-feature-planning`
+snapshot already used on genuine `useOrbit` work, producing `useOrbit#299` — the first durable
+consumer artifact of this relationship. No upstream skill contribution was warranted from that first
+pass.
 
-What remains open is Phase B's refresh/update-and-verification lifecycle gate: real work has to
-warrant a canonical skill improvement, the canonical source updated, the consuming local copies
-refreshed, the refresh verified in `useOrbit`, and the evidence recorded. This has not happened yet
-because no genuine upstream skill-content update exists yet to refresh from — one will not be
-manufactured to close this out artificially.
+One Phase B criterion remains open as an observational item, not a blocking dependency: a genuine
+refresh/update-and-verification cycle, where real work warrants a canonical skill improvement, the
+canonical source is updated, the consuming local copies are refreshed, the refresh is verified in
+`useOrbit`, and the evidence recorded. This has not happened yet because no genuine upstream
+skill-content update exists yet to refresh from — one will not be manufactured to close this out
+artificially. It will be completed opportunistically whenever real `useOrbit` work genuinely produces
+that lifecycle; when it does, the canonical-source → consumer-refresh → verification sequence should
+still be exercised and recorded in full.
 
-`useOrbit#299` is **not** a mandatory next task, and its implementation (via `my-git-workflow`, once
-separately authorized) does not itself satisfy this gate. Normal `useOrbit` development continues in
-the meantime; the lifecycle remains observational until real work actually produces a refresh to
-observe.
+`useOrbit#299` remains genuine `useOrbit` work, and its implementation (via `my-git-workflow`, once
+separately authorized) is not a prerequisite for anything below — it is normal `useOrbit` development,
+which continues independently of the roadmap's phase sequence.
 
-Phase C (classifying the mature custom `my-*` skill ecosystem) remains blocked until the
-refresh/update-and-verification lifecycle above has actually been observed — not merely once
-consumption and one round of real use are done. Phase D, and anything in "Future directions," come
-later still, after Phase C provides evidence.
+Phase C — classifying the mature custom `my-*` skill ecosystem — is now the next active Agentic
+Engineering work. It is no longer blocked by the Phase B refresh observation above; that observation
+remains open and will be recorded whenever it genuinely occurs, in parallel with Phase C. Phase D, and
+anything in "Future directions," come later still, after Phase C provides evidence.
