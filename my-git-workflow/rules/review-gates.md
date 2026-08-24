@@ -1,66 +1,107 @@
 # Review Gates
 
-Two human approvals gate the pre-merge side of this workflow, not one. Never collapse them, and
-never proceed past either one without an explicit yes. (The release phase that starts after a PR
-merges has its own analogous approval gate, over the proposed version/tag target/title/body —
-see `rules/release.md` step 4 — rather than being folded into Gate 1 or Gate 2 below.)
+## Principle
+
+> Two human approvals gate everything before a merge — not one — and a genuine unresolved decision
+> found along the way gets an explicit human stop, never a silent guess.
+
+```
+implement + verify → Gate 1: implementation review → derive commit plan → Gate 2: commit-plan review → build commits
+```
+
+Gate 1 and Gate 2 are never collapsed into a single approval, and approval at Gate 1 does not imply
+approval at Gate 2. No commit is created before Gate 2 is approved.
+
+The post-merge release workflow has its own separate approval boundary (`rules/release.md`), over
+the proposed version, tag target, title, and body. That boundary is not part of either gate below —
+a merged PR does not satisfy it.
 
 ## Gate 1 — implementation review
 
-After implementing an issue's scope and running the verification appropriate to it
-(`rules/verification.md`), stop. Report what changed and how it was verified — files touched, a
-short description of the approach, the test and formatting-check results (whatever those tools are
-for this project — see `rules/verification.md`) — and wait. Do not start thinking about commit
-structure yet; that's a separate step that only starts after this gate opens.
+Stop here once:
 
-If implementation surfaces a genuine unknown — not a style preference, an actual decision the human
-hasn't made — stop and ask before finishing the implementation, rather than guessing and presenting
-the guess at this gate. See "When to stop" below.
+- the approved issue scope has been implemented;
+- the verification appropriate to it has been run (`rules/verification.md`).
+
+Report concisely:
+
+- what changed;
+- the implementation approach;
+- files or surface area touched, where useful;
+- verification results.
+
+Then wait for explicit human approval. Approval at this gate authorizes moving on to commit
+planning — nothing more. Do not begin deriving commit structure before it.
+
+If implementation surfaces a genuine unresolved decision before reaching this point, stop and ask
+then, per "When to stop and ask" below, rather than silently choosing an answer and presenting the
+choice as part of this report.
 
 ## Gate 2 — commit-plan review
 
-Only after Gate 1 is approved: inspect the completed diff (`rules/commit-boundaries.md`), propose a
-semantic commit plan, and show it before writing a single commit. A commit plan is:
+Only after Gate 1 is approved:
 
-- The proposed grouping — which files, in which commit.
-- The order, and *why* that order (dependency order, or activation order — see
-  `rules/verification.md`'s ordering note).
-- Which tests travel with which commit, and which commits are intentionally test-free and why.
-- Draft commit messages, or at minimum the one-sentence "why" each commit represents — plus the
-  `Refs #N` trailer each of these issue-implementing commits carries (`rules/commit-boundaries.md`).
+1. Inspect the completed diff (`rules/commit-boundaries.md`).
+2. Derive the semantic commit plan.
+3. Present the plan before creating any commit.
 
-Get explicit approval of *this plan* before creating any commit. Approval of the implementation at
-Gate 1 is not approval of a commit structure — #289's actual sequence was implementation approved →
-two separate architectural questions raised and resolved → diff inspected → plan proposed → plan
-approved → commits built. Skipping straight from "the code looks good" to committing skips a real
-decision point: the same diff can be split several defensible ways, and the human should see the
-split before it becomes permanent history.
+The plan must communicate:
 
-If the human requests changes to the plan itself (different grouping, different order, merge two
-commits, split one further), revise the plan and show it again — don't start committing against a
-partially-approved plan.
+- the proposed grouping — which files, in which commit;
+- the commit order, and why (dependency order, or activation order — see `rules/verification.md`'s
+  ordering note);
+- which tests travel with which commit, and why any commit is intentionally test-free
+  (`rules/verification.md`);
+- draft commit messages, or at minimum the one-sentence implementation decision each commit
+  represents;
+- the `Refs #N` trailer for any commit implementing the tracked issue (`rules/commit-boundaries.md`).
 
-## When to stop and ask, at either gate
+Get explicit human approval of the complete plan before writing a single commit. Approval at this
+gate is what authorizes creating commits.
 
-Preserve an explicit human stop whenever:
+If the human requests a change — to grouping, ordering, splitting, merging, messages, or anything
+else in the plan — revise it and present the complete, resulting plan again before committing.
+Partial feedback on part of a plan is not approval of the rest of it.
 
-- **A product or architecture decision is missing.** Don't invent one and present it as a fact
-  during implementation review.
-- **Implementation reveals a contradiction with approved architecture.** #287's discovery that
-  `verified` middleware actually existed in 13 route groups across 8 files the original plan never
-  named — not the 3 it expected — was exactly this: the plan's own investigation was wrong about
-  the codebase's current state, discovered mid-implementation. It was surfaced and the human chose
-  the resolution (remove it everywhere) before implementation continued.
-- **Multiple valid sequencing choices exist**, whether that's implementation order or which
-  dependency-ready issue to pick up next (`rules/sequencing.md`). Don't silently pick one.
-- **The proposed commit decomposition is ambiguous** — more than one defensible way to draw the
-  boundaries, with no clearly-better answer. #289 is the evidence here in the other direction:
-  after the plan was proposed and approved, a later review pass asked two independent architecture
-  questions (was a bespoke policy-ability name actually consistent with the rest of the codebase;
-  was a defensive-looking middleware allowlist entry actually reachable) — both were investigated
-  with evidence (reading every existing policy; resolving real route middleware with
-  `gatherMiddleware()`) and reported as findings with a recommendation, *not* silently applied,
-  before the human said to apply them.
+## When to stop and ask
 
-A stop is a report plus a question, not a wall of options with no recommendation — investigate
-enough to have a position, state it, and let the human decide.
+An agent may investigate and recommend. It must never convert a genuine unresolved human decision
+into an implementation fact by silently choosing one. Stop, at either gate or during implementation,
+whenever:
+
+- a product or architecture decision is missing;
+- implementation evidence contradicts approved architecture or assumptions;
+- multiple valid sequencing choices exist and none is already authorized — whether that's
+  implementation order or which dependency-ready issue to pick up next (`rules/sequencing.md`);
+- the commit decomposition has multiple defensible boundaries with no clearly better answer.
+
+Ordinary engineering choices — ones the approved scope, repository conventions, applicable skills,
+and available evidence already support — are part of normal execution, not a reason to stop. Reserve
+a stop for a genuinely missing decision, a contradiction, or a choice the evidence can't narrow down;
+otherwise, keep executing.
+
+A stop is a report plus a question, not a context-free question or a wall of unexplored options:
+
+1. Investigate enough to understand the decision.
+2. Report the relevant evidence.
+3. State a recommendation, when the evidence supports one.
+4. Ask the human to decide.
+
+For example: implementation reveals that the approved plan assumed three affected surfaces, but the
+repository actually has many more — or two commit decompositions are both structurally coherent and
+neither is clearly better. Both call for a stop built the way above, not a silent pick.
+
+## Do / Don't
+
+**Do**
+- Stop at Gate 1 once implementation and verification are complete.
+- Derive the commit plan only after Gate 1 is approved.
+- Show the complete commit plan before creating any commit, and get explicit approval of it.
+- Investigate a genuine unknown and offer a recommendation before asking the human to decide.
+
+**Don't**
+- Collapse Gate 1 and Gate 2 into one approval.
+- Treat implementation approval as commit-plan approval.
+- Create a commit before Gate 2 is approved.
+- Silently resolve a missing product or architecture decision.
+- Ask the human to choose among unexplored options when evidence could narrow the decision first.
