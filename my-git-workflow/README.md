@@ -14,15 +14,6 @@ release policy, classifies the release, drafts outcome-level notes, stops for ap
 and validates the result. Separately again, once that release is validated, it checks whether the
 milestone the work belonged to is actually ready to close.
 
-> Issues describe outcomes. Commits describe coherent, verified implementation steps.
-
-Git and GitHub are intentional here, not incidental — issues, milestones, commits, and releases are
-the substrate this stage of the pipeline is written against, not a detail abstracted behind a
-generic platform adapter. What travels across projects is the *methodology* applied to that
-substrate: the same review gates, the same commit-boundary reasoning, the same verification
-discipline, the same release/milestone lifecycle — each discovering its own concrete policy at every
-point this skill says "the project's own."
-
 ## Pipeline role
 
 ```
@@ -46,9 +37,8 @@ already-approved item.
 - Recalculating and reporting the milestone's dependency-ready set.
 - After a PR merges: release-policy discovery, classification, outcome-level drafting, the release
   approval gate, publishing, and post-publication validation.
-- After release validation passes: the milestone-completion gate (delivery/phase only, release
-  published-and-validated, zero open issues, all freshly re-checked), the Backlog exemption, and the
-  closure mutation itself.
+- After release validation passes: the milestone-completion gate, the Backlog exemption, and the
+  closure mutation itself (see "Release and milestone-completion lifecycle" below for the gate).
 
 What it does *not* own is in "Composition and boundaries" below.
 
@@ -156,11 +146,16 @@ example of usage" below. Full detail: `rules/milestone-completion.md`.
 
 Those belong to `my-feature-planning`, the stack-specific implementation skills, or the human.
 
-**Composition:** this skill composes with whatever implementation, testing, and tooling skills match
-the consuming project's actual stack, loaded alongside it — it owns the workflow machinery, never the
-code, tests, or framework conventions.
+**Composes with:**
+- Git and GitHub as intentional core substrate for this methodology — not an abstraction to be
+  swapped out.
+- Whatever implementation, testing, and tooling skills match the consuming project's actual stack,
+  loaded alongside it.
+- The workflow machinery is what this skill owns — never the code, tests, or framework conventions.
 
-**Relationship to `my-feature-planning`:**
+**Relationship to `my-feature-planning`:** it defines, scopes, drafts, and creates approved work;
+`my-git-workflow` implements, reviews, commits, verifies, closes, releases, and completes the
+milestone.
 
 ```
 my-feature-planning   → classify / scope / reconcile / draft / review / create issues + milestone
@@ -170,11 +165,6 @@ my-git-workflow       → implement / review / commits / review / verify / close
 my-git-workflow       → release: discover policy / classify / draft / approve / publish / validate
 my-git-workflow       → milestone completion check / closure (delivery/phase only, never Backlog)
 ```
-
-`my-feature-planning` never decides commit structure, never touches git, and never closes a
-milestone — its responsibility ends at defining one and its issue set. This skill never decides what
-an issue should say or what belongs in a milestone; it moves already-approved work through
-implementation to closure, through a published release, and finally to the milestone's own closure.
 
 ## Real example of usage
 
