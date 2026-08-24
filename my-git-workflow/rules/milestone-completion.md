@@ -36,10 +36,14 @@ its own.
 
 ## What counts as a delivery/phase milestone
 
-A delivery/phase milestone represents a bounded body of work intended to ship as a release — this
-project's `Phase NN — {Feature Name}` convention (`my-feature-planning`'s
-`rules/issue-conventions.md`). The persistent Backlog milestone (or any similarly persistent
-catch-all) is not one — see "Backlog is exempt" below.
+A delivery/phase milestone represents a bounded body of work intended to ship as a release. That
+definition is about scope and intent, not about naming syntax — a milestone qualifies by what it
+bounds, not by what it's called. In the evidence this skill was built from, milestones with this
+shape happened to be named with a `Phase NN — {Feature Name}` convention (`my-feature-planning`'s
+`rules/issue-conventions.md`); a project that names its delivery milestones some other way still
+applies this rule the same way, once its own equivalent convention is identified. The persistent
+Backlog milestone (or any similarly persistent catch-all) is not one — see "Backlog is exempt"
+below.
 
 ## The milestone stays open through discovered work
 

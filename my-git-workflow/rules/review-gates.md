@@ -9,8 +9,9 @@ see `rules/release.md` step 4 — rather than being folded into Gate 1 or Gate 2
 
 After implementing an issue's scope and running the verification appropriate to it
 (`rules/verification.md`), stop. Report what changed and how it was verified — files touched, a
-short description of the approach, the test/Pint results — and wait. Do not start thinking about
-commit structure yet; that's a separate step that only starts after this gate opens.
+short description of the approach, the test and formatting-check results (whatever those tools are
+for this project — see `rules/verification.md`) — and wait. Do not start thinking about commit
+structure yet; that's a separate step that only starts after this gate opens.
 
 If implementation surfaces a genuine unknown — not a style preference, an actual decision the human
 hasn't made — stop and ask before finishing the implementation, rather than guessing and presenting

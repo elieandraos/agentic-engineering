@@ -8,9 +8,11 @@ report that, don't wait to be asked.
 
 1. List the open issues remaining in the milestone (`gh issue list --milestone "<name>" --state
    open`).
-2. For each, read its body for dependency mentions (this project writes them as plain prose —
-   "Depends on #120", "Depends on #290, #120" — not a structured field; read the issue body, don't
-   assume a schema).
+2. For each, read its body for dependency mentions — never assume a structured field; read whatever
+   format the issue body actually uses. In the evidence this skill was built from, dependencies were
+   written as plain prose ("Depends on #120", "Depends on #290, #120"), not a structured field; a
+   different project's issues may record dependencies differently, and this step follows suit rather
+   than assuming this particular format.
 3. An issue is dependency-ready when every issue it depends on is closed. An issue with no stated
    dependency is a root issue and is always ready.
 4. Everything else is blocked — note what it's blocked on, so the summary explains the graph, not
