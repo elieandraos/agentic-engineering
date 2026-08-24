@@ -1,20 +1,41 @@
 ---
 name: my-git-workflow
-description: "Personal workflow for moving an already-approved GitHub issue through implementation, human review, semantic git commits, verification, and issue closure, then recalculating the milestone's dependency-ready set afterward. Distinct from my-feature-planning, which decides what work should exist and owns issue drafting/creation/milestones — this skill starts only once an issue is already approved and ready to implement, and owns everything from there through the commit history and (optionally) closing the issue. Core principle: issues describe outcomes, commits describe coherent, verified implementation steps — never assume one issue equals one commit (see rules/commit-boundaries.md for the v0.1 evidence: #288 and #287 each landed as one coherent commit despite touching many files, while #120 and #289 each split into several dependency-ordered commits). Covers: implementing one dependency-ready issue's scope at a time, running verification proportional to what's being proven, a hard stop for human review of the implementation before any commit conversation starts, inspecting the finished diff only after that approval and proposing a semantic commit plan as its own separate review gate, building commits with targeted verification (reserving a full regression run for the completed-issue boundary, or for isolation-proving a non-trivial split), ordering commits so intermediate states stay green even when a feature-flag activation would retroactively un-skip pre-existing runtime-gated tests, asking (never assuming) whether to close the committed issue, the exact checked-tasks/closing-comment/close/post-mutation-validation closure recipe, and recalculating + reporting the milestone's dependency-ready set afterward without auto-starting the next issue. Also covers the Release phase that begins once a PR has been successfully merged: discovering the project's actual release/version policy from explicit config or, absent that, from established release history rather than assuming SemVer/GitHub Releases/a tag type without evidence; classifying the release's primary theme and outcomes (never by commit/file/line count); drafting release notes at release-level altitude grouped by meaningful area; a human approval gate on the proposed version, tag target, title, and body before anything is tagged or published; publishing through the project's own discovered mechanism; and post-publication validation that re-fetches the tag and release rather than trusting a publish command's exit code (see rules/release.md, built from PR #298 merging and shipping as v0.17.0 — Authentication & 2FA, plus this repository's prior 21 releases as evidence of the range of release shapes: feature, infrastructure, hardening/polish, upgrade, and multi-area). Also covers post-release milestone completion for a delivery/phase milestone — a forward-looking workflow decision, not an extraction of past repository practice (this project's full milestone history showed every milestone left open even when fully closed-out, which this rule deliberately does not preserve): the milestone stays open through implementation, review, manual testing, and any small follow-up issue discovered there and legitimately added to it, never inferring completion from open-issues-equals-zero alone; the closure gate requires all three at once, freshly checked — delivery/phase milestone (never the persistent Backlog, which this lifecycle never applies to), the shipping release published-and-validated, and zero open issues at that moment; and closing the milestone is itself a validated GitHub mutation — explicit human approval, then re-fetching the milestone afterward to confirm its state is actually closed, never trusting the closure command's exit code alone (see rules/milestone-completion.md). Trigger when the user asks to implement, build, or start work on a specific approved issue ('implement #290', 'let's build #121 next', 'start on the next dependency-ready issue'); asks to commit already-implemented work ('commit this', 'propose the commit plan', 'split this into commits', 'build and verify each commit in isolation'); asks to close an issue ('close #289 using the usual workflow'); asks what's next in a milestone ('what's the next dependency-ready issue', 'recalculate what's unblocked'); asks to release/publish merged work ('release Phase 22', 'let's publish v0.17.0', 'cut a release for this merge', 'what's our release policy'); or asks about a milestone's completion state ('is Phase 22 done', 'can we close this milestone', 'check if the milestone is ready to close', 'close out the milestone now that it's released'). Always load ALONGSIDE whatever implementation, testing, and tooling skills match the project's actual stack — in the evidence this skill was built from, that meant my-laravel-patterns, laravel-best-practices, pest-testing, my-phpstorm-conventions, inertia-vue-development, fortify-development, and wayfinder-development, but a project on a different stack composes this skill with its own equivalent implementation/testing/tooling skills instead, not with this Laravel-specific list — this skill owns the workflow machinery around commits, closure, release, and post-release milestone completion, not the code, tests, or framework conventions themselves. Does not decide what issues should exist, does not draft or create GitHub issues or milestones, and does not define a milestone's scope or description (that's my-feature-planning, which owns milestone definition but never closes one) — but does own the post-release milestone-completion check and the closure mutation itself, and — v0.1 — does not yet cover PR creation, merge strategy, or deployment automation; nor does it invent a branch-naming convention this repository hasn't already documented."
+description: "Delivery-stage skill in the Agentic Engineering pipeline (my-architecture-laboratory understands reality → my-feature-planning turns understanding into approved work → my-git-workflow turns approved work into verified delivery). Takes one already-approved work item — concretely, an approved GitHub issue that my-feature-planning has already drafted, reviewed, and created — and moves it through implementation, human review, semantic commit-plan proposal, verified commits, optional issue closure, and dependency-set recalculation, one item at a time. Once a PR carrying that work has merged, a separate release phase (discover the project's actual release policy rather than assuming one, classify the release's theme and outcomes never by size, draft outcome-level notes, get explicit human approval of version/tag/title/body, publish through the project's own discovered mechanism, then re-fetch and validate the result). Once that release is validated, a separate milestone-completion phase (a delivery/phase milestone stays open through manual testing and legitimate follow-up work — never inferred complete from zero open issues alone — and closes only once the shipping release is published-and-validated and the milestone has zero open issues right now; the persistent Backlog milestone is never subject to this). Core principle: issues describe outcomes, commits describe coherent, verified implementation steps — never assume one issue equals one commit; the actual diff decides the split, never issue size or file count (see rules/commit-boundaries.md). Two separate human approval gates on the pre-merge side (implementation, then the commit plan), a third on release content, and every GitHub mutation this skill performs (issue closure, release publish, milestone closure) is re-fetched and validated afterward rather than trusted on a command's exit code alone. Trigger when the user asks to implement, build, or start work on a specific approved issue ('implement #290', 'let's build #121 next', 'start on the next dependency-ready issue'); asks to commit already-implemented work ('commit this', 'propose the commit plan', 'split this into commits', 'build and verify each commit in isolation'); asks to close an issue ('close #289 using the usual workflow'); asks what's next in a milestone ('what's the next dependency-ready issue', 'recalculate what's unblocked'); asks to release or publish merged work ('cut a release for this merge', 'what's our release policy'); or asks about a milestone's completion state ('is this milestone done', 'can we close this milestone', 'check if the milestone is ready to close'). Composes with whatever implementation, testing, and tooling skills match the consuming project's actual stack, loaded alongside it — this skill owns the workflow machinery around commits, closure, release, and post-release milestone completion, never the code, tests, or framework conventions themselves. Does not decide what work should exist, does not draft or create issues or milestones, and does not define a milestone's scope or description (that's my-feature-planning, the planning stage this skill starts downstream of, and which never closes a milestone itself) — this skill starts only once a work item is already approved. v0.1: does not yet cover PR creation, merge strategy, deployment automation, or a branch-naming convention beyond what the consuming project already documents."
 ---
 
 # My Git Workflow
 
-Personal workflow for what happens *after* an issue is approved and *before* it's shipped:
-implement it, get it reviewed, turn the finished diff into a small number of coherent commits, get
-those reviewed too, verify at the right scope, optionally close the issue, and recalculate what's
-next. It also covers the Release phase that begins once a PR has merged — discover the project's
-real release policy, classify the release, draft outcome-level notes, get explicit approval, publish
-through the project's own mechanism, and validate the result. Built by extracting the actual pattern
-from implementing Phase 22 — Authentication & 2FA (#288, #287, #120, #289 through commits and
-closure; PR #298 merging and shipping as v0.17.0 for the release phase) — not designed up front.
-Where the evidence doesn't cover something (PR creation, merge strategy, branch naming, deployment),
-this skill says so explicitly rather than inventing it — see "Left for later versions" below.
+`my-git-workflow` is the **delivery stage** of the Agentic Engineering pipeline:
+
+```
+my-architecture-laboratory   → understand and reconstruct reality
+my-feature-planning          → turn that understanding into approved work
+my-git-workflow              → turn approved work into verified delivery      (this skill)
+```
+
+**Input.** One already-approved work item from the planning stage — concretely, in this skill's own
+implementation, an approved GitHub issue that `my-feature-planning` has already drafted, reviewed,
+and created. This is an intentional pipeline boundary, not incidental project coupling: this skill
+never decides what work should exist, and never starts earlier than an already-approved item.
+
+**Responsibilities.** For one approved item at a time: implementation → human review → semantic
+commit-plan proposal → verified commits → optional issue closure → dependency-set recalculation.
+Once a PR carrying that work has merged, a separate release phase (discover the project's actual
+release policy → classify → draft → approve → publish → validate). Once that release is validated, a
+separate milestone-completion phase.
+
+**Boundary.** This skill owns the engineering workflow around implementation and delivery. It does
+not decide what work should exist, define or scope milestones, write application code, or own
+framework/stack implementation conventions — and it does not yet decide PR creation or merge
+strategy, or invent deployment automation (see "Left for later versions" below).
+
+**Composition.** This skill composes with whatever implementation, testing, and tooling skills match
+the consuming project's actual stack, loaded alongside it. It owns the workflow machinery — commits,
+closure, release, milestone completion — never the code, tests, or framework conventions themselves.
+
+The methodology below was extracted from a real, completed pass through this workflow rather than
+designed up front. See `README.md`'s "Origin and observed evidence" for what that evidence was and
+which rules it grounds — the rules themselves don't require knowing it.
 
 > Issues describe outcomes. Commits describe coherent, verified implementation steps.
 
@@ -106,8 +127,8 @@ workflow would otherwise stop at.
 ## Release: after a PR merges
 
 This is a separate phase from the working loop above, not step 13 of it — it doesn't run per issue,
-it runs once a PR (which may bundle several issues' worth of committed work, the way PR #298 bundled
-four) has actually merged. Full detail in `rules/release.md`; the shape:
+it runs once a PR (which may bundle several issues' worth of committed work) has actually merged.
+Full detail in `rules/release.md`; the shape:
 
 1. **Discover the project's actual release policy.** Prefer an explicit policy/config if one
    exists; otherwise infer the convention from the repository's established release history. Do not
@@ -211,15 +232,14 @@ Not designed yet, because no real evidence exists to extract from:
 - **PR creation and description conventions.**
 - **Merge strategy** (merge commit vs. squash vs. rebase-and-merge).
 - **Deployment triggers.**
-- **A branch-naming convention.** The branch used throughout the commit/closure evidence was
-  `feature/organization-owner-provisioning` — a milestone-scoped branch that ended up carrying four
-  issues' worth of work, not a name chosen per-issue. That's one data point, not a pattern, and
-  this repository doesn't document a branching convention anywhere else. Do not generalize "one
-  branch per issue," "one branch per milestone," or any other scheme from it — ask, or take
-  whatever branch is already checked out, until there's real evidence of a repeated convention to
-  extract.
+- **A branch-naming convention.** A single milestone-scoped branch carried all the evidence this
+  loop was extracted from — one data point, not a pattern (see `README.md`'s "Origin and observed
+  evidence" for the specific branch). Do not generalize "one branch per issue," "one branch per
+  milestone," or any other scheme from it — ask, or take whatever branch is already checked out,
+  until there's real evidence of a repeated convention to extract.
 
 Release/changelog generation is no longer on this list — see "Release: after a PR merges" above and
-`rules/release.md`, extracted once PR #298 actually merged and shipped as `v0.17.0`. When real
-evidence for PR creation, merge strategy, or deployment shows up, extract those the same way: from
-what actually happened, not from what seemed reasonable in advance.
+`rules/release.md`, extracted once a real PR merge-and-release cycle actually happened (see
+`README.md`'s "Origin and observed evidence" for that run). When real evidence for PR creation,
+merge strategy, or deployment shows up, extract those the same way: from what actually happened, not
+from what seemed reasonable in advance.
