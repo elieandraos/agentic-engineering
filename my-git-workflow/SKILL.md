@@ -87,7 +87,8 @@ Trigger on requests shaped like:
 - `milestone-completion.md` — two milestone-level gates: PR readiness (all issues closed + confirmed
   manual testing + no follow-up found), consulted once `sequencing.md` reports an empty ready set;
   and the three-part closure gate plus the Backlog exemption and validated closure mutation,
-  consulted once the human gives the post-merge authorization — not gated on release publication
+  consulted once the human gives the post-merge authorization — that authorization is the approval
+  for closure, so no second approval is asked, and closure is not gated on release publication
   itself.
 
 > Detailed operational behavior lives in `rules/*.md`.

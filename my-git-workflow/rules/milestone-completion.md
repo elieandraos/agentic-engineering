@@ -4,10 +4,11 @@
 
 > A delivery/phase milestone passes through two distinct milestone-level gates, never automatically:
 > PR readiness, once every milestone issue is closed and final manual testing found nothing more —
-> and closure, only after the human's explicit post-merge authorization, the milestone has no open
-> issues right now, and the human explicitly approves closure. Closure does not wait on the release
-> that milestone represents to have shipped first — see "Milestone closure and release do not gate
-> each other" below.
+> and closure, gated on the human's post-merge authorization already covering it and the milestone
+> having no open issues right now, both verified fresh immediately before the mutation. That
+> authorization is the human approval for closure — this gate does not ask for it a second time.
+> Closure also does not wait on the release that milestone represents to have shipped first — see
+> "Milestone closure and release do not gate each other" below.
 
 Neither gate is an automatic consequence of issue closure, PR merge, or release publication — each of
 those proves something narrower, and none of them individually proves the milestone is ready for the
@@ -204,27 +205,29 @@ reinterpret, or second-guess it (see "Cross-rule dependencies" below).
 ## The closure gate
 
 This is the second, later milestone-level gate — distinct from PR readiness above, and starting once
-the human has given the explicit post-merge authorization (see "Where this phase starts"). Close the
-milestone only when all three conditions hold at once, checked fresh at the moment of the closure
-decision:
+the human has given the explicit post-merge authorization (see "Where this phase starts"). That
+authorization *is* the human approval for this mutation: this gate verifies eligibility against
+current fact, it does not request a second, separate approval to close. Close the milestone once all
+three conditions hold at once, checked fresh at the moment of the closure decision:
 
 1. **It's a delivery/phase milestone, not Backlog** (or an equivalent persistent catch-all).
-2. **The human has given explicit post-merge authorization** for this milestone's progression — the
-   same authorization `rules/release.md`'s step 0 asks for right after the human confirms the PR
-   merged. This is not a separate ask this rule owns, and it is not implied by the release itself
-   having been drafted, published, or validated — see "Milestone closure and release do not gate
-   each other."
+2. **The human's post-merge authorization actually covers closure.** This is the same authorization
+   `rules/release.md`'s step 0 asks for right after the human confirms the PR merged — confirmed here
+   as already given, not re-requested. It is not implied by the release itself having been drafted,
+   published, or validated — see "Milestone closure and release do not gate each other."
 3. **The milestone has no open issues right now** — re-query it fresh; don't reuse an earlier read
    from before authorization, since discovered work may have added an issue since.
 
-If any one of these doesn't hold, do not close the milestone:
+If any one of these doesn't hold, do not close the milestone — report what's missing and stop, the
+same discipline `rules/issue-closure.md` uses for a declined close: don't ask again unprompted, the
+human revisits it when ready.
 
 - **An issue remains open** → do not close, regardless of release state. This holds even if the
   open issue looks trivial — the gate is on issue state, not a judgment call about the issue's
   size.
-- **Authorization hasn't been given yet** → do not close. This gate is not a substitute for that
-  authorization having happened, and it does not wait on the release to have published first to
-  become eligible.
+- **Authorization hasn't been given, or didn't cover closure** → do not close. This gate cannot
+  substitute its own approval for that authorization, and it does not wait on the release to have
+  published first to become eligible.
 - **Manual testing (or anything else) added another issue to the milestone after authorization** →
   the milestone stays open until that issue is completed and the milestone is otherwise closeable
   again. Re-run the whole gate from scratch at that point rather than treating the new issue as the
@@ -236,7 +239,8 @@ If any one of these doesn't hold, do not close the milestone:
 Each condition is necessary on its own, but no single one is sufficient:
 
 > Zero open issues ≠ milestone complete. Post-merge authorization alone ≠ milestone complete either.
-> All three conditions, checked from current state, are what closure requires.
+> All three conditions, checked from current state, are what closure requires — and once they do,
+> closing proceeds without asking the human to approve the same closure twice.
 
 ## Backlog is exempt
 
@@ -251,29 +255,36 @@ treat a quiet stretch of zero open issues on it as anything worth acting on.
 Closing a milestone is a validated GitHub mutation, held to the same trust model as every other
 mutation this workflow performs: do not infer success from the closure command's exit code alone.
 
+Closure does not get its own, second human approval. The post-merge authorization already granted —
+"close the milestone and start the release?" or whatever form it actually took — is the approval for
+this mutation. This rule's job is to confirm that authorization is actually present and actually
+covers closure, confirm the milestone is actually eligible, and then act — not to ask the human to
+approve the same closure a second time.
+
 1. **Confirm the gate, explicitly, against freshly queried state** — not memory from earlier in the
    conversation. State which of the three conditions is being confirmed and how, e.g.:
-   - "Post-merge authorization for milestone `{title}` was given by the human on {reference}."
+   - "Post-merge authorization for milestone `{title}` was given by the human on {reference}, and
+     covered closure."
    - `gh issue list --milestone "{milestone title}" --state open` returns zero.
-2. **Ask for explicit human approval before closing.** This is a real, not-trivially-reversible
-   GitHub mutation. Passing the gate is not itself approval to close. If the human says no or not
-   yet, leave the milestone open and don't ask again unprompted — the gate gets re-checked fresh
-   whenever the human next revisits the question, not on a repeated prompt from this rule.
-3. **Run the closure**, using whatever mechanism the installed/project-supported GitHub tooling
+
+   If any condition doesn't hold — including authorization not actually having been given, or given
+   but not scoped to closure — stop here and report what's missing instead of closing. Don't ask
+   again unprompted; the human revisits it when ready.
+2. **Run the closure**, using whatever mechanism the installed/project-supported GitHub tooling
    actually offers — discover it rather than assuming a specific command exists. For example:
 
    ```
    gh api repos/{owner}/{repo}/milestones/{number} -X PATCH -f state=closed
    ```
 
-4. **Re-fetch the milestone afterward** and confirm its state is actually closed:
+3. **Re-fetch the milestone afterward** and confirm its state is actually closed:
 
    ```
    gh api repos/{owner}/{repo}/milestones/{number}
    ```
 
-   A successful exit code from step 3 is not proof; reading the result back is.
-5. **Report the result compactly** — see "Reporting" below.
+   A successful exit code from step 2 is not proof; reading the result back is.
+4. **Report the result compactly** — see "Reporting" below.
 
 ## Reporting
 
@@ -287,6 +298,8 @@ mutation this workflow performs: do not infer success from the closure command's
 - Milestone number/title.
 - The three closure-gate conditions and how each was confirmed.
 - The verified closed state.
+- If not eligible: which condition is missing — nothing further is asked until the human revisits
+  it.
 
 Do not re-print the milestone's issue list or the release notes — the reader can follow the links.
 
@@ -324,6 +337,9 @@ This rule sits downstream of several other contracts and does not redefine any o
   closing the milestone is not itself a precondition for release publication — the two proceed
   independently once the human gives post-merge authorization (see "Milestone closure and release do
   not gate each other").
+- It does not ask for a second, separate human approval before closing. The post-merge authorization
+  already covers it; this rule only re-verifies that authorization and eligibility are both actually
+  present before acting.
 
 ## Do / Don't
 
@@ -335,7 +351,8 @@ This rule sits downstream of several other contracts and does not redefine any o
 - Treat the same post-merge authorization that opens `rules/release.md`'s phase as this gate's own
   trigger too — not release validation.
 - Treat the milestone description as the scope contract when one exists.
-- Ask for explicit human approval before running the closure mutation.
+- Confirm post-merge authorization was already given and actually covers closure — don't ask for it
+  again — before running the closure mutation.
 - Verify the resulting state by re-fetching the milestone after closing it.
 
 **Don't**
@@ -347,5 +364,6 @@ This rule sits downstream of several other contracts and does not redefine any o
   milestone closure as something `rules/release.md` must wait for.
 - Propose or run either gate against Backlog.
 - Trust the closure command's exit code as proof of the resulting state.
-- Close a milestone automatically right after authorization, without re-checking issue state and
-  without human approval.
+- Close a milestone without re-checking issue state and authorization fresh, immediately before the
+  mutation.
+- Ask for a second, separate approval to close once post-merge authorization already covers it.

@@ -159,20 +159,26 @@ checked and validated through its own rule:
 ```
 PR merges → human confirms it merged (this confirmation is the integration gate — no independent
     re-verification of merge state)
-  → STOP — explicit human authorization to begin the post-merge progression
-      (one question can cover both branches below, e.g. "close the milestone and start the release?")
+  → STOP — one human acceptance, authorizing both branches below
+      (e.g. "close the milestone and start the release?" → accepted)
   ┌──────────────────────────────┴──────────────────────────────┐
   ▼                                                              ▼
 MILESTONE CLOSURE (rules/milestone-completion.md)       RELEASE (rules/release.md)
   → delivery/phase milestone, not Backlog                 → discover the project's actual release
   → zero open issues right now                                policy (explicit config, else history)
-  → STOP, human approves closing                           → determine theme/outcomes — never from
-  → close, re-fetch, confirm state is `closed`                 size
-                                                            → draft notes at release-level altitude
+  → close (authorization already given above —          → determine theme/outcomes — never from
+      no second approval asked), re-fetch, confirm            size
+      state is `closed`                                  → draft notes at release-level altitude
                                                             → STOP, human approves version/target/
                                                                 title/body
                                                             → publish, re-fetch, validate every field
 ```
+
+The single acceptance above answers "should we proceed at all" — it is not the same question as
+"is this exact release content correct." Milestone closure has no content to approve beyond the
+already-granted acceptance and its own eligibility facts, so it proceeds straight to the mutation;
+release still has a version/title/body that didn't exist yet at acceptance time, so it keeps its own
+separate content-approval stop before publishing.
 
 Neither branch is a precondition for the other: milestone closure does not wait for release
 publication to complete, and release publication does not wait for milestone closure. On the project
