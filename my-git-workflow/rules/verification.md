@@ -16,16 +16,25 @@ green.
 
 While building a single commit — whether it's the whole issue (#288, #287) or one step of a
 multi-commit issue (#120, #289) — verify it with the tests actually relevant to that commit's
-change (`php artisan test --compact <path>`) plus `vendor/bin/pint --dirty --format agent`. Do not
-reflexively run the full suite after every commit; that's slow and, for a step that's deliberately
-inert (see `rules/commit-boundaries.md`'s persistence-layer examples), it proves nothing the
-targeted run didn't already cover.
+change, plus the project's formatting/lint check. Do not reflexively run the full suite after every
+commit; that's slow and, for a step that's deliberately inert (see `rules/commit-boundaries.md`'s
+persistence-layer examples), it proves nothing the targeted run didn't already cover.
 
 Run the **full regression suite once**, at the completed-issue boundary — after the last commit for
 that issue, before reporting the issue done. This is the moment that actually matters: it's the
 proof that the whole issue, landed as however many commits it took, didn't regress anything else in
 the app. Every issue in the evidence (#288, #287, #120, #289) ended this way — one full-suite run,
 reported with its exact pass/skip/fail counts.
+
+### What this repository's evidence shows
+
+This repository's stack is Laravel + Pest + Pint. The targeted-verification command was
+`php artisan test --compact <path>` plus `vendor/bin/pint --dirty --format agent`; the full
+regression suite was the same `php artisan test --compact`, run with no path filter. These are this
+project's discovered test runner and formatter, not the methodology — a project on a different
+stack (a different language, test runner, or linter) runs the same targeted-then-full-suite loop
+through its own tools, discovered the same way `rules/release.md` discovers a release mechanism:
+from what the repository actually uses, not assumed in advance.
 
 ## Stronger technique: isolation verification, when a split needs real proof
 
@@ -47,13 +56,19 @@ The technique, exactly as used for both #120 and #289:
 2. `git stash push -u -m "<description>"` — hides every change not yet committed (staged,
    unstaged, and untracked), leaving the working tree at exactly the state of the commits made so
    far.
-3. Run `vendor/bin/pint --test --format agent` and the **full** `php artisan test --compact`
-   against that isolated state.
+3. Run the project's formatting/lint check and its **full** regression test suite against that
+   isolated state.
 4. `git stash pop` — restores the remaining work.
 5. Repeat for each subsequent commit: stage the next semantic group, commit, stash the rest,
    verify in isolation, pop.
 6. After the last commit, run one final full-suite pass with nothing stashed — the completed-issue
    boundary check from above.
+
+### What this repository's evidence shows
+
+For both #120 and #289, step 3 was `vendor/bin/pint --test --format agent` plus the full
+`php artisan test --compact` — this repository's discovered formatter and test runner (see "What
+this repository's evidence shows" above), not a fixed part of the technique itself.
 
 This is expensive (a full suite run per commit), which is exactly why it's a tool to reach for
 deliberately, not a default. #288 and #287 never needed it — each was one commit, verified once,
@@ -62,23 +77,29 @@ stand alone" was the property being asserted, not assumed.
 
 ## Ordering commits to keep intermediate states green
 
-Watch specifically for feature-flag activation retroactively changing what's under test.
-`skipUnlessFortifyHas()`-style runtime-gated tests (or any test conditioned on config/feature
-state) are silent until the moment the gating condition flips — and when it does, every test that
-was quietly skipped starts running immediately, against whatever code currently exists.
-
-This is exactly what happened while ordering #120's commits: enabling Fortify's 2FA feature flag
-would have un-skipped three pre-existing tests in `SecurityTest.php` — a file the issue never
-touched — whose assertions depended on `SecurityController` changes that were still a separate,
-not-yet-landed commit. Landing "enable the feature flag" before "wire the controller" would have
-made the flag-enabling commit red on its own, breaking the isolation guarantee.
-
-The fix was to reorder: land the controller wiring (inert while the flag is off — `Features::` 
-helpers all read `false`, so nothing observable changes) *before* the commit that flips the flag on.
-The flag-enabling commit then lands last, and activates everything at once — including retroactively
-proving the earlier, inert-looking commits correct.
+Watch specifically for feature-flag activation retroactively changing what's under test. Any test
+conditioned on config or feature state is silent until the moment the gating condition flips — and
+when it does, every test that was quietly skipped starts running immediately, against whatever code
+currently exists.
 
 Before committing a step that changes config/feature state, check whether any currently-skipped
 test in the repo (not just the ones this issue is adding) would start running as a result, and
 confirm its dependencies are already committed. If they aren't, reorder — don't land a commit that
 will read as green in isolation today but was only green because a gate hid the real assertions.
+
+### What this repository's evidence shows
+
+This is exactly what happened while ordering #120's commits. This repository's runtime-gated tests
+use Laravel Fortify's `skipUnlessFortifyHas()` helper, and enabling Fortify's 2FA feature flag would
+have un-skipped three pre-existing tests in `SecurityTest.php` — a file the issue never touched —
+whose assertions depended on `SecurityController` changes that were still a separate, not-yet-landed
+commit. Landing "enable the feature flag" before "wire the controller" would have made the
+flag-enabling commit red on its own, breaking the isolation guarantee.
+
+The fix was to reorder: land the controller wiring (inert while the flag is off — `Features::`
+helpers all read `false`, so nothing observable changes) *before* the commit that flips the flag on.
+The flag-enabling commit then lands last, and activates everything at once — including retroactively
+proving the earlier, inert-looking commits correct. `skipUnlessFortifyHas()` and Fortify's
+`Features::` facade are this project's mechanism for runtime-gated tests, not the methodology — a
+different stack's equivalent (a feature-flag SDK, an env-conditioned skip, a config-gated test) hits
+the same failure mode and gets fixed the same way: reorder so the gate-flipping commit lands last.
