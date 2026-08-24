@@ -2,168 +2,172 @@
 
 > Issues describe outcomes. Commits describe coherent, verified implementation steps.
 
-An issue and a commit answer different questions. An issue answers "what should exist when we're
-done, and why." A commit answers "what is the smallest coherent, independently-true step that got
-us there." Nothing forces those two counts to match, and in the evidence this skill is built from,
-they usually don't.
+An issue answers "what should exist when we're done, and why." A commit answers "what is the
+smallest coherent, independently-true step that got us there." Nothing forces those two counts to
+match.
 
-## Do not assume one issue equals one commit
+## Do not choose commit count in advance
 
-Four issues, four different shapes, decided by the actual diff each time — never by a rule of
-thumb applied in advance:
+Neither "one commit per issue" nor "many small commits" is the default. Commit count is not
+determined by issue size, file count, how many directories or file types are touched, or how a
+previous issue happened to split — it is discovered from the actual, finished, reviewed diff, every
+time (see "How to derive commit boundaries" below).
+
+A large diff can be one commit, if it's one decision applied consistently everywhere it reaches. A
+small diff can be several commits, if it actually contains several decisions. File count in
+particular is not commit count: splitting a single decision by directory or file type — routes in
+one commit, app code in another, tests in a third — produces commits that each leave the app in a
+half-migrated state. That's worse history, not better, even though it looks more organized.
+
+### What this repository's evidence shows
+
+Four issues, four different shapes, decided by the diff each time rather than a rule of thumb:
 
 | Issue | Shape | Commits |
 |---|---|---|
-| #288 — provision org + first Owner via Artisan command | One coherent new capability (Action + command + notification widen + tests) | **1** |
-| #287 — remove public registration | One coherent subtractive decision, applied everywhere it needed to apply | **1** |
-| #120 — 2FA backend (TDD) | One issue, three layered implementation steps (persistence → HTTP wiring → activation) | **3** |
-| #289 — org-level 2FA requirement + enforcement | One cross-cutting issue, four dependency-ordered steps (persistence → policy → settings page → enforcement) | **4** |
+| #288 — provision an org + its first Owner via a CLI command | One coherent new capability (action + command + a notification widened to match + tests) | **1** |
+| #287 — remove public registration | One coherent subtractive decision, applied everywhere it reached | **1** |
+| #120 — add 2FA to the backend (built TDD) | One issue, three layered implementation steps (persistence → HTTP wiring → activation) | **3** |
+| #289 — add an org-level 2FA requirement + enforcement | One cross-cutting issue, four dependency-ordered steps (persistence → policy → settings UI → enforcement) | **4** |
 
-Neither shape is the default. A single-file issue can be one commit; a five-file issue can be
-four. The diff decides — see "See the diff before deciding" below.
+The one-commit issues above were not small. #287 alone touched 21 files across app code, 11
+separate route files, a migration, and tests, and still landed as one commit — because it was one
+decision (public registration is gone, and its dead `verified` middleware goes with it), not because
+it was simple.
 
-## File count is not commit count
-
-#287 touched 21 files across app code, routes (11 separate route files), a migration, and tests —
-and landed as **one** commit, because it was one decision (public registration is gone, and its
-dead `verified` middleware goes with it) applied consistently everywhere that decision reached.
-Splitting it by directory or file type (routes in one commit, app code in another, tests in a
-third) would have produced three commits that each left the app in a half-migrated state — worse
-history, not better.
-
-Conversely, #120 landed as three commits touching as few as two files each. Small diffs don't
-default to one commit either, if the diff actually contains more than one implementation decision
-— see #120's shape below.
-
-## What makes a boundary "coherent"
+## What makes a semantic commit
 
 A semantic commit is one implementation decision you could summarize in a single sentence of *why*
 — not a bucket defined by folder, file type, or how the diff happened to be typed out over the
-course of the conversation. Ask, for each candidate grouping: if this commit existed alone on top
-of what came before it, does it represent one real, describable decision, and does the app still
-work?
+course of implementation. Ask, for each candidate grouping: if this commit existed alone on top of
+what came before it, does it represent one real, describable decision, and does the app still work?
 
-Concretely, from the evidence:
+"Still work" is narrower than "safe to deploy" or "user-visible":
 
-- **#120's three commits** were: "add the 2FA data layer" / "wire the Security settings page to
-  read it" / "turn the Fortify feature on and prove the whole pipeline end to end." Each is one
-  sentence. Each is a real decision.
-- **#289's four commits** were: "add the requirement column" / "add the Owner-only policy" / "add
-  the toggle page" / "enforce it via middleware." Same shape — one sentence, one decision, per
-  commit.
+> Every semantic commit leaves a coherent, structurally valid state that does not depend on a later
+> commit to become structurally valid.
 
-## Commit messages explain the decision, not the diff
+- A commit can be coherent and still be inert — dead code today, live tomorrow — as long as it's
+  structurally complete and correct on its own terms. A migration with no consumer yet is coherent
+  (it does nothing, and does it correctly). A change gated behind a feature flag that's still off is
+  coherent (it's dead code today, live once the flag flips).
+- A commit that depends on a class, route, or column that isn't defined until the *next* commit is
+  **not** coherent, no matter how small it is. That's the actual line — structural
+  self-sufficiency, not user-visible behavior.
 
-> Commit messages explain the decision, not the diff.
+### What this repository's evidence shows
 
-Prefer a concise title and, when useful, a short body describing the outcome and important
-guarantees or boundaries. Don't turn the commit message into a file-by-file implementation summary
-— the detailed implementation already lives in the diff and the issue; the message's job is to
-carry the "one sentence of *why*" from "What makes a boundary 'coherent'" above into the permanent
-record, not to re-narrate what changed.
+#289's four commits were each one sentence, one decision: "add the requirement column" / "add the
+Owner-only policy" / "add the toggle page" / "enforce it via middleware." #120 shows the inert case:
+its first two commits — the 2FA data layer, then wiring the Security settings page to read it —
+were each structurally complete but did nothing observable yet, since the feature flag gating them
+was still off. Its third commit turned the flag on, activating both — and retroactively proving the
+first two correct, once there was finally something to observe.
 
-## Reference the issue, never close it, from the commit message
+## How to derive commit boundaries
 
-> Every commit that implements a GitHub issue carries a `Refs #N` trailer — never `Closes`,
-> `Fixes`, or `Resolves`.
+Never decide commit boundaries before the implementation exists and has been reviewed. Planning
+boundaries speculatively while writing code — or copying how a previous, superficially similar issue
+happened to split — produces exactly the file-type/directory split this rule exists to avoid.
 
-Scope: this applies to commits produced by this skill's working loop for the dependency-ready,
-approved issue currently being implemented — not to every commit made while this skill happens to
-be in use. Not every commit in this workflow implements an issue: the Phase 22 history this skill
-was extracted from includes a content-backlog commit with no issue behind it at all, and it
-correctly carries no `Refs #N` — there's nothing to reference. When a commit isn't implementing a
-tracked issue, omit the trailer rather than inventing a reference. This rule is about this skill's
-own commits, not a general policy for every commit in the repository.
+The procedure:
 
-Add the reference as its own trailer/footer, after the body — not folded into the semantic title or
-body, which stay focused on the decision (see "Commit messages explain the decision, not the diff"
-above). The trailer ties that decision back to the issue that motivated it; it isn't part of the
-decision itself.
-
-Never use GitHub's auto-closing keywords. Issue closure in this workflow is an explicit,
-human-approved step that happens after commits exist and verification passes
-(`rules/issue-closure.md`) — a `Closes #N` trailer would let `git push` close the issue on its own,
-silently skipping that approval gate. `Refs #N` links the commit to the issue without closing
-anything.
-
-For a multi-commit issue, every commit carries the same `Refs #N` — the issue doesn't change
-mid-split, only the commit boundaries do.
-
-```
-Add operator-run 2FA reset for a locked-out sole Owner
-
-organizations:reset-owner-two-factor identifies the target by email,
-requires explicit confirmation, and reuses ResetTwoFactorAuthenticationAction
-directly — which now accepts a nullable actor for operator-triggered resets.
-
-Refs #291
-```
-
-## See the diff before deciding
-
-Never decide commit boundaries before the implementation exists and has been reviewed. Commit
-structure is discovered by inspecting the *actual* `git status` / `git diff --stat` / per-file
-diffs after the work is done and approved — not planned speculatively while writing code, and not
-copied from how a previous issue happened to split. Planning commit boundaries in advance and then
-forcing the code to fit them produces exactly the file-type/directory split this skill exists to
-avoid.
+1. Finish the implementation.
+2. Pass implementation review (Gate 1 — `rules/review-gates.md`).
+3. Inspect the actual diff (`git status`, `git diff --stat`, then per-file diffs).
+4. Identify the implementation decisions the diff actually contains.
+5. Group changes by decision, not by file location or type.
+6. Order the groups by dependency.
+7. Verify each intermediate state would be coherent, per "What makes a semantic commit" above.
+8. Propose the commit plan for human review (Gate 2 — `rules/review-gates.md`) before writing a
+   single commit.
 
 This is also why the commit plan is its own review gate, separate from implementation review — see
 `rules/review-gates.md`.
 
-## For TDD work, keep proving tests with their step
+## Commit messages and issue references
 
-When a commit introduces behavior that can be directly proven, its own tests travel with it in the
+> Commit messages explain the decision, not the diff.
+
+Prefer a concise title and, when useful, a short body describing the outcome and important
+guarantees or boundaries. Don't turn the message into a file-by-file implementation summary — the
+diff and the issue already carry that detail; the message's job is to carry the one-sentence "why"
+into the permanent record. History should read as a sequence of engineering decisions, not a
+transcript of the development conversation.
+
+Every commit that implements a tracked, approved issue carries a `Refs #N` trailer — never `Closes`,
+`Fixes`, or `Resolves`. Issue closure in this workflow is an explicit, human-approved step that
+happens after commits exist and verification passes (`rules/issue-closure.md`); an auto-closing
+keyword would let `git push` close the issue on its own, silently skipping that approval. `Refs #N`
+links the commit to the issue without closing anything.
+
+- The trailer is its own line, after the body — not folded into the title or body, which stay
+  focused on the decision.
+- For a multi-commit issue, every commit carries the same `Refs #N`. The issue doesn't change
+  mid-split; only the commit boundaries do.
+- Not every commit made while this skill is in use implements a tracked issue — a commit made for an
+  unrelated reason (a documentation fix, a backlog item) correctly carries no trailer. When a commit
+  isn't implementing a tracked issue, omit the reference rather than inventing one.
+- This is a rule about this skill's own commits for the dependency-ready, approved issue currently
+  being implemented, not a general policy for every commit in the repository.
+
+```
+Add rate limiting to the password-reset endpoint
+
+Limits reset requests to 5 per hour per account. Requests over the
+limit return 429 without revealing whether the account exists.
+
+Refs #{xxx}
+```
+
+## Tests travel with the decision
+
+When a commit introduces behavior that's independently observable, its proving tests land in the
 same commit — never split "the code" into one commit and "the tests that prove it" into another.
 
-Not every commit has tests of its own, and that's fine. #120's first two commits (persistence,
-then Security-page wiring) shipped with no new tests, because neither was independently observable
-yet — the persistence layer had no consumer, and the controller change read a feature flag that
-was still off. Their proof was negative: the full suite stayed exactly as green as it was before
-either commit landed (see `rules/verification.md`). The third commit, which turned the feature on,
-carried the tests that proved the whole activated pipeline — including retroactively proving the
-first two commits' work, once there was finally something to observe.
+Not every commit needs new tests. A commit that's intentionally inert (see "What makes a semantic
+commit" above) can legitimately ship with none, as long as its proof is negative: the full suite
+stays exactly as green as it was before the commit landed (`rules/verification.md`). Once a later
+commit activates the behavior, that commit's own tests retroactively prove the earlier, inert-looking
+commits correct too. Conversely, a change that's fully testable in isolation the moment it lands —
+a policy or validation rule with no HTTP layer needed, say — carries its test immediately, in the
+same commit.
 
-#289's policy commit is the cleaner case: `OrganizationPolicy` is fully testable in isolation via
-`$user->can('update', Organization::class)`, with no HTTP layer needed — so its test landed in the
-same commit as the policy, immediately.
+### What this repository's evidence shows
 
-## Review corrections fold into their semantic commit — no fixup commits
+#120's first two commits shipped with no new tests, for exactly the reason above — neither was
+independently observable until the third commit turned the feature on. #289's policy commit is the
+cleaner case: the policy was fully testable in isolation via `$user->can(...)`, with no HTTP layer
+needed, so its test landed in the same commit as the policy, immediately.
+
+## Review corrections fold into their semantic commit
 
 A correction discovered during review does not automatically become its own commit. Where it lands
-depends on whether anything has been committed yet:
+depends on whether anything has been committed yet.
 
-- **Nothing committed yet** — the correction is simply part of whichever semantic commit it
-  belongs to. #289's two review-driven refinements (renaming a bespoke policy ability to match the
-  codebase's `update` convention; trimming a middleware allowlist to the one route that's actually
-  reachable) landed straight inside the policy commit and the middleware commit respectively — no
-  separate "fix review comments" commit ever existed, because none of the work had been committed
-  when the corrections were made.
-- **Something already committed, correction needed before push** — don't bolt a fixup commit on
-  top. Rebuild history so the correction lands inside the commit it actually belongs to. #120 was
-  first implemented and committed as a single commit; when asked to split it into semantic steps
-  *after the fact*, the rewrite was done safely because nothing had been pushed yet:
-  `git reset --soft HEAD~1` (undoes the commit, keeps every change staged), then selective
-  `git add` + `git commit` per semantic group, verifying each one in isolation before moving to the
-  next (`rules/verification.md`). The result reads as if it had been built that way from the start
-  — there is no trace in the history of the fact that it was originally one commit.
+**Nothing committed yet.** The correction is simply part of whichever semantic commit it belongs to.
+No separate "fix review comments" commit exists, because none of the work had been committed when
+the correction was made.
 
-Never preserve every conversational step as its own commit "for the record." The history should
-read as a sequence of decisions, not a transcript.
+**Something already committed, correction needed before push.** Don't bolt a fixup commit on top.
+Rebuild history so the correction lands inside the commit it actually belongs to:
 
-## Each semantic commit leaves a coherent, non-broken state
+1. `git reset --soft HEAD~1` — undoes the commit, keeps every change staged.
+2. Selectively `git add` and `git commit` per semantic group.
+3. Verify each resulting commit in isolation before moving to the next (`rules/verification.md`).
 
-The standing rule underneath everything above:
+The result reads as if it had been built that way from the start — there's no trace in the history
+that it was originally committed differently.
 
-> Every semantic commit should leave a coherent, non-broken implementation state that does not
-> depend on a later commit to become structurally valid.
+Never preserve every conversational step as its own commit "for the record." The history should read
+as a sequence of decisions, not a transcript.
 
-That's a narrower bar than "safe to deploy from" — some coherent commits are intentionally inert
-until a later commit activates them, and that's fine. #120's first two commits (persistence, then
-Security-page wiring) are exactly that: each is structurally complete and correct on its own terms,
-but neither does anything observable until the third commit turns the feature flag on. A migration
-with no consumer is coherent (it does nothing yet, and does it correctly). A controller that reads
-a feature flag that's still off is coherent (it's dead code today, live code tomorrow). A commit
-that references a class, route, or column that doesn't exist until the *next* commit is not
-coherent, no matter how small it is — that's the actual line: structural self-sufficiency, not
-user-visible behavior.
+### What this repository's evidence shows
+
+#289's two review-driven refinements — renaming a bespoke policy ability to match the codebase's
+`update` convention, and trimming a middleware allowlist to the one route that's actually reachable
+— landed straight inside the policy commit and the middleware commit respectively; nothing had been
+committed yet when they were made. #120 is the rebuild case: it was first implemented and committed
+as a single commit, then split into its three semantic steps after the fact, safely, because nothing
+had been pushed yet — `git reset --soft HEAD~1`, then selective `git add` + `git commit` per group,
+verifying each in isolation before moving to the next.
