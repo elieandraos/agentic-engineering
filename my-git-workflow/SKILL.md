@@ -61,6 +61,24 @@ Trigger on requests shaped like:
 A short prompt like these invokes the full workflow, including its review gates — never a shortcut
 past them.
 
-### Detailed rules
+### Rules
 
-> Detailed workflow and decision rules live in `rules/*.md`.
+- `review-gates.md` — the two pre-merge human approval gates (implementation review, then
+  commit-plan review) and the conditions that always warrant a stop; consult once implementation is
+  ready to report, and again once a commit plan is ready to propose.
+- `commit-boundaries.md` — how to turn an approved diff into semantic commits: boundary reasoning,
+  message content, the `Refs #N` trailer, and safely folding in review corrections; consult while
+  inspecting the diff and building the commit plan, after Gate 1.
+- `verification.md` — verification scope: targeted tests per commit, the two distinct full-suite
+  moments, the stronger isolation technique for proving a split, and ordering commits around
+  feature-activation risk; consult while implementing and while building/ordering commits.
+- `issue-closure.md` — whether and how to close an issue: asking first, the closing recipe, and
+  post-mutation validation; consult after the completed-issue full-suite pass, once commits exist.
+- `sequencing.md` — recomputing the milestone's dependency-ready set and reporting/recommending the
+  next issue; consult immediately after a validated issue closure.
+- `release.md` — the release phase: discovering the project's real release policy, understanding the
+  release, drafting notes at release altitude, the approval gate, publishing, and post-publication
+  validation; consult once a PR carrying committed work has merged.
+- `milestone-completion.md` — whether a delivery/phase milestone is ready to close: the three-part
+  closure gate, the Backlog exemption, and the validated closure mutation; consult once release
+  validation has passed.
