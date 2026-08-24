@@ -51,7 +51,7 @@ The plan must communicate:
 - the commit order, and why (dependency order, or activation order — see `rules/verification.md`'s
   ordering note);
 - which tests travel with which commit, and why any commit is intentionally test-free
-  (`rules/verification.md`);
+  (`rules/commit-boundaries.md`);
 - draft commit messages, or at minimum the one-sentence implementation decision each commit
   represents;
 - the `Refs #N` trailer for any commit implementing the tracked issue (`rules/commit-boundaries.md`).

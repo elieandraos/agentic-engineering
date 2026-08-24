@@ -105,7 +105,9 @@ a link. Don't re-print the full issue body or the closing comment — the reader
   "Ask first" above — this rule only carries out and validates a closure once approved.
 - **It only operates on the single issue** associated with the work that was just committed and
   verified. It does not touch any other issue.
-- **It does not create or reopen issues.** That's `my-feature-planning`'s territory, not this rule's.
+- **It does not create issues.** That's `my-feature-planning`'s territory, not this rule's.
+- **It does not reopen issues.** This rule owns closing a committed, verified issue — not reopening
+  one; this rule takes no position on whose responsibility that is.
 
 ## Do / Don't
 
@@ -120,4 +122,5 @@ a link. Don't re-print the full issue body or the closing comment — the reader
 - Check off deferred or out-of-scope work to make the issue look complete.
 - Treat a successful CLI exit code as proof of the resulting state.
 - Re-print the entire issue body or comment in the final report.
-- Create or reopen issues from this rule — that belongs to `my-feature-planning`.
+- Create issues from this rule — that belongs to `my-feature-planning`.
+- Reopen issues from this rule — this rule does not own reopening.

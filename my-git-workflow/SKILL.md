@@ -64,9 +64,10 @@ Trigger on requests shaped like:
 - `commit-boundaries.md` — how to turn an approved diff into semantic commits: boundary reasoning,
   message content, the `Refs #N` trailer, and safely folding in review corrections; consult while
   inspecting the diff and building the commit plan, after Gate 1.
-- `verification.md` — verification scope: targeted tests per commit, the two distinct full-suite
-  moments, the stronger isolation technique for proving a split, and ordering commits around
-  feature-activation risk; consult while implementing and while building/ordering commits.
+- `verification.md` — verification scope: the narrowest reliable scope per commit across tests,
+  formatting, linting, and static analysis, the two distinct full-suite moments, the stronger
+  isolation technique for proving a split, and ordering commits around feature-activation risk;
+  consult while implementing and while building/ordering commits.
 - `issue-closure.md` — whether and how to close an issue: asking first, the closing recipe, and
   post-mutation validation; consult after the completed-issue full-suite pass, once commits exist.
 - `sequencing.md` — recomputing the milestone's dependency-ready set and reporting/recommending the

@@ -16,7 +16,7 @@ The lifecycle this rule verifies:
 
 ```
 implementation complete → full-suite verification → Gate 1
-Gate 1 approved → build semantic commits → targeted verification per commit
+Gate 1 approved → build semantic commits → narrowest-reliable verification per commit
   (when an intermediate committed state itself needs proof → isolation verification)
 all commits assembled → final full-suite verification at the completed-issue boundary
 ```

@@ -127,7 +127,9 @@ mutation this workflow performs: do not infer success from the closure command's
    - "Release `{version}` re-fetched and validated per `rules/release.md`."
    - `gh issue list --milestone "{milestone title}" --state open` returns zero.
 2. **Ask for explicit human approval before closing.** This is a real, not-trivially-reversible
-   GitHub mutation. Passing the gate is not itself approval to close.
+   GitHub mutation. Passing the gate is not itself approval to close. If the human says no or not
+   yet, leave the milestone open and don't ask again unprompted — the gate gets re-checked fresh
+   whenever the human next revisits the question, not on a repeated prompt from this rule.
 3. **Run the closure**, using whatever mechanism the installed/project-supported GitHub tooling
    actually offers — discover it rather than assuming a specific command exists. For example:
 

@@ -31,8 +31,8 @@ already-approved item.
 - Picking up one dependency-ready approved issue at a time.
 - The implementation review gate and the commit-plan review gate.
 - Proposing and building semantic commit boundaries from the actual diff.
-- Verification scope (targeted vs. full-suite vs. isolation-proving a split) and commit ordering
-  around feature-activation risk.
+- Verification scope (narrowest reliable scope per commit vs. full-suite vs. isolation-proving a
+  split) and commit ordering around feature-activation risk.
 - The issue-closure recipe and its post-mutation validation.
 - Recalculating and reporting the milestone's dependency-ready set.
 - After a PR merges: release-policy discovery, classification, outcome-level drafting, the release
@@ -46,11 +46,11 @@ What it does *not* own is in "Composition and boundaries" below.
 
 ```
 choose a dependency-ready, approved issue
-  → implement only its scope → verify (targeted + one full-suite pass)
+  → implement only its scope → verify (full-project scope)
   → STOP — human reviews the implementation
   → (approved) inspect the finished diff → propose a semantic commit plan
   → STOP — human reviews the commit plan
-  → (approved) build the commits, targeted verification per commit
+  → (approved) build the commits, narrowest-reliable verification per commit
   → full regression suite once, at the completed-issue boundary
   → ask: close the issue?
   → (if yes) check Tasks, closing comment, close, post-mutation validation
@@ -68,8 +68,9 @@ anything is committed land inside the commit they belong to, never a separate fi
 commit implementing a tracked item carries a `Refs #N` trailer — never `Closes`/`Fixes`, since
 closing stays a separate, human-approved step. Full detail: `rules/commit-boundaries.md`.
 
-**Verification** is targeted per commit plus one full regression run at the completed-issue
-boundary — not after every commit. When a split needs real proof, there's a stronger technique:
+**Verification** uses the narrowest reliable scope per commit — across tests, formatting, linting,
+and static analysis — plus one full regression run at the completed-issue boundary — not after every
+commit. When a split needs real proof, there's a stronger technique:
 commit, stash the rest, verify what's landed in isolation, pop, repeat. Watch for a feature-flag
 activation retroactively un-skipping tests whose supporting code hasn't landed yet — reorder before
 it lands red, not after. Full detail: `rules/verification.md`.
