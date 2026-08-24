@@ -1,49 +1,55 @@
 # Milestone Completion
 
-This phase starts after release publication has been validated — `rules/release.md`'s step 6 —
-never at issue closure and never at PR merge. It is a new, explicit workflow decision, not an
-extraction of past repository practice (see "Forward-looking only" below).
+## Principle
 
-> A delivery/phase milestone represents a bounded body of work intended to ship as a release.
-> Closing it belongs after that release has actually shipped and held up — not the moment the last
-> currently-known issue happens to close.
+> A delivery/phase milestone is closed only after the release it represents has actually shipped
+> and been validated, the milestone has no open issues right now, and the human explicitly approves
+> closure.
 
-## The lifecycle
+Milestone completion is a distinct workflow decision. It is never an automatic consequence of issue
+closure, PR merge, or release publication — each of those proves something narrower, and none of
+them individually proves the milestone is done. This rule owns the check and the closure mutation
+itself; it does not own deciding what belongs in the milestone.
+
+## Where this phase starts
+
+This phase begins only after release publication has been validated — `rules/release.md`'s
+post-publication validation step. It never starts at issue closure and never at PR merge.
 
 ```
-implementation → issue closure → PR → merge → release → release validation
-  → milestone completion check → milestone closure
+issue closure → PR merge → release → release validation → milestone completion check → closure
 ```
 
 Each arrow is a distinct event with its own evidence. None of the earlier ones implies the later
 ones:
 
 - **Issue closure** (`rules/issue-closure.md`) closes one issue once its committed work is
-  approved. It says nothing about whether the milestone that issue belongs to is done — other
-  issues in the same milestone may still be open, and more may still be discovered.
-- **PR merge** lands code. It doesn't mean a release was cut, or that manual testing of the merged
-  result has happened yet.
+  approved. It says nothing about the milestone that issue belongs to — other issues in the same
+  milestone may still be open, and more may still be discovered.
+- **PR merge** lands code. It doesn't mean a release was cut, or that the merged result has been
+  validated yet.
 - **Release + release validation** (`rules/release.md`) confirms a specific version actually
-  published correctly. It doesn't by itself confirm every issue the milestone was going to need is
-  closed — the release can validate cleanly while the milestone still has open work.
-- **Milestone completion check** is the first point where both of the above are confirmed together
-  — see "The closure gate" below.
-- **Milestone closure** is the mutation itself, gated and validated like every other GitHub mutation
-  this skill performs.
+  published correctly. It doesn't by itself confirm every issue the milestone needed is closed —
+  release validation can pass cleanly while the milestone still has open work.
+- **Milestone completion check** is the first point where release validation and issue state are
+  confirmed together — see "The closure gate" below.
+- **Milestone closure** is the mutation itself, gated and validated like every other GitHub
+  mutation this workflow performs.
 
 Do not let issue closure or PR merge auto-trigger milestone closure. Neither is evidence of it on
-its own.
+its own, and neither is this rule's trigger point.
 
 ## What counts as a delivery/phase milestone
 
-A delivery/phase milestone represents a bounded body of work intended to ship as a release. That
-definition is about scope and intent, not about naming syntax — a milestone qualifies by what it
-bounds, not by what it's called. In the evidence this skill was built from, milestones with this
-shape happened to be named with a `Phase NN — {Feature Name}` convention (`my-feature-planning`'s
-`rules/issue-conventions.md`); a project that names its delivery milestones some other way still
-applies this rule the same way, once its own equivalent convention is identified. The persistent
-Backlog milestone (or any similarly persistent catch-all) is not one — see "Backlog is exempt"
-below.
+A delivery/phase milestone is a bounded body of work intended to ship as a release. That
+definition is about scope and intent, not naming syntax — a milestone qualifies by what it bounds,
+not by what it's called. Whatever naming convention a given project actually uses for its delivery
+milestones, apply this rule the same way once that convention is identified — `my-feature-planning`'s
+`rules/issue-conventions.md` is where that convention gets defined (see "Cross-rule dependencies"
+below).
+
+A persistent Backlog or other catch-all milestone is not a delivery/phase milestone, regardless of
+what it's named — see "Backlog is exempt" below.
 
 ## The milestone stays open through discovered work
 
@@ -54,7 +60,7 @@ lifecycle, not a sign something's wrong.
 
 A small issue discovered during manual testing that genuinely belongs to this milestone's scope may
 legitimately be added to the still-open milestone. Attach it there and keep working the milestone —
-don't force it into a separate milestone, or into the Backlog, just to preserve a "zero open issues"
+don't force it into a separate milestone, or into Backlog, just to preserve a "zero open issues"
 appearance on this one.
 
 > Do not infer "milestone complete" from open issues = 0 alone. Zero open issues is necessary for
@@ -62,20 +68,21 @@ appearance on this one.
 > milestone can go from 0 open issues back to more than 0 the moment manual testing surfaces
 > something real, and that's a legitimate state, not a bug in the process.
 
-## The milestone description, when present, is still the contract
+## The milestone description, when present, is the scope contract
 
-`my-feature-planning`'s optional milestone-description rule doesn't change here. When a milestone
-carries a description defining its intent, boundaries, exclusions, or completion criteria, that
-description is what "does this belong to this milestone's scope" gets checked against when deciding
-whether a manual-testing finding belongs in this still-open milestone or somewhere else. This skill
-doesn't redraft, reinterpret, or second-guess that description — it applies it as written.
+`my-feature-planning`'s optional milestone-description convention doesn't change here. When a
+milestone carries a description defining its intent, boundaries, exclusions, or completion
+criteria, that description is what "does this belong to this milestone's scope" gets checked
+against when deciding whether a manual-testing finding belongs in this still-open milestone or
+somewhere else. This rule consumes that description as-is — it does not draft, redraft,
+reinterpret, or second-guess it (see "Cross-rule dependencies" below).
 
 ## The closure gate
 
-Close the milestone only when all three hold at once, checked at the moment of the closure
-decision:
+Close the milestone only when all three conditions hold at once, checked fresh at the moment of the
+closure decision:
 
-1. **It's a delivery/phase milestone, not the persistent Backlog** (or equivalent catch-all).
+1. **It's a delivery/phase milestone, not Backlog** (or an equivalent persistent catch-all).
 2. **The intended release has been successfully published and validated** —
    `rules/release.md`'s post-publication validation actually passed for the release this milestone
    was shipping.
@@ -97,52 +104,85 @@ If any one of these doesn't hold, do not close the milestone:
   it at all. Don't run it, don't propose closing it, and don't treat its issue count as evidence of
   anything — see "Backlog is exempt."
 
+Each condition is necessary on its own, but no single one is sufficient:
+
+> Zero open issues ≠ milestone complete. Release validated ≠ milestone complete. All three
+> conditions, checked from current state, are what closure requires.
+
 ## Backlog is exempt
 
-The persistent Backlog milestone (`my-feature-planning`'s `rules/issue-conventions.md`, "Backlog vs.
-delivery/phase milestones") is never subject to this lifecycle. It isn't a bounded body of work
-shipping as a release, so "did its release ship" and "does it have zero open issues right now" are
-both meaningless questions for it. Do not propose closing Backlog, do not run the closure gate
-against it, and do not treat a quiet stretch of zero open Backlog issues as anything worth acting
-on.
+A persistent Backlog (or equivalent catch-all) milestone is never subject to this lifecycle. It
+isn't a bounded body of work shipping as a release, so "did its release ship" and "does it have
+zero open issues right now" are both meaningless questions for it. Do not propose closing it, do
+not run the closure gate against it, and do not treat a quiet stretch of zero open issues on it as
+anything worth acting on.
 
-## Closing the milestone is a validated mutation
+## Closing the milestone
 
-Same trust model as every other GitHub mutation this skill performs
-(`rules/issue-closure.md`'s post-mutation validation, `rules/release.md`'s post-publication
-validation): do not infer success from the closure command's exit code alone.
+Closing a milestone is a validated GitHub mutation, held to the same trust model as every other
+mutation this workflow performs: do not infer success from the closure command's exit code alone.
 
-1. **Confirm the gate**, explicitly, against freshly queried state — not memory from earlier in the
-   conversation. State which of the three conditions is being confirmed and how (e.g. "release
-   `v0.18.0` re-fetched and validated per `rules/release.md`; `gh issue list --milestone "Phase 23"
-   --state open` returns zero").
+1. **Confirm the gate, explicitly, against freshly queried state** — not memory from earlier in the
+   conversation. State which of the three conditions is being confirmed and how, e.g.:
+   - "Release `{version}` re-fetched and validated per `rules/release.md`."
+   - `gh issue list --milestone "{milestone title}" --state open` returns zero.
 2. **Ask for explicit human approval before closing.** This is a real, not-trivially-reversible
-   GitHub mutation — the same posture as every other approval gate in this skill (Gate 1, Gate 2,
-   the release-content approval). Passing the gate is not itself approval to close.
-3. **Run the closure**, e.g. `gh api repos/{owner}/{repo}/milestones/{number} -X PATCH -f
-   state=closed` (or whatever mechanism the installed `gh` version actually offers — discover it
-   rather than assuming a specific command exists).
-4. **Re-fetch the milestone afterward** — `gh api repos/{owner}/{repo}/milestones/{number}` — and
-   confirm `state` is actually `closed`. A successful exit code from step 3 is not proof; reading
-   the result back is.
-5. **Report the result compactly**: milestone number/title, the three gate conditions and how each
-   was confirmed, and the verified closed state. Not a re-print of the milestone's issue list or
-   release notes.
+   GitHub mutation. Passing the gate is not itself approval to close.
+3. **Run the closure**, using whatever mechanism the installed/project-supported GitHub tooling
+   actually offers — discover it rather than assuming a specific command exists. For example:
 
-## Forward-looking only
+   ```
+   gh api repos/{owner}/{repo}/milestones/{number} -X PATCH -f state=closed
+   ```
 
-This is a new, explicit workflow decision — not an extraction of existing repository practice. This
-project's full milestone history (checked before this rule existed) showed every milestone ever
-created left open, including several where every issue inside was already closed. That was evidence
-about how things happened to be left under a different, unstated set of assumptions; it is not the
-rule this file follows, and no existing milestone gets retroactively closed because this lifecycle
-now exists. This rule governs delivery/phase milestones reaching this point in the workflow from now
-on.
+4. **Re-fetch the milestone afterward** and confirm its state is actually closed:
 
-## What this phase does not do
+   ```
+   gh api repos/{owner}/{repo}/milestones/{number}
+   ```
 
-It does not decide what belongs in the milestone or draft its issues — that's `my-feature-planning`
-(`rules/issue-conventions.md`'s "Milestone descriptions" and "Backlog vs. delivery/phase
-milestones"). It does not run at issue-closure time (`rules/issue-closure.md`) or at PR-merge time —
-see "The lifecycle" above; both of those are necessary precursors, neither is sufficient on its own.
-It does not touch Backlog or any other persistent catch-all milestone.
+   A successful exit code from step 3 is not proof; reading the result back is.
+5. **Report the result compactly** — see "Reporting" below.
+
+## Reporting
+
+Report the validated result compactly:
+
+- Milestone number/title.
+- The three gate conditions and how each was confirmed.
+- The verified closed state.
+
+Do not re-print the milestone's issue list or the release notes — the reader can follow the links.
+
+## Cross-rule dependencies
+
+This rule sits downstream of two other contracts and does not redefine either:
+
+- **`rules/release.md`** owns release drafting, publication, and post-publication validation.
+  Condition 2 of the closure gate consumes that validation; this rule does not re-validate a
+  release beyond confirming it passed.
+- **`my-feature-planning`'s `rules/issue-conventions.md`** owns milestone classification, naming,
+  descriptions, and issue drafting. This rule consumes that classification and description as
+  given; it does not decide what belongs in a milestone, name one, or draft its description.
+
+## What this rule does not do
+
+- It does not decide milestone scope or draft issues.
+- It does not run at issue closure or at PR merge.
+- It does not touch Backlog or any other persistent catch-all milestone.
+
+## Do / Don't
+
+**Do**
+- Re-check all three gate conditions, from fresh state, immediately before closure.
+- Treat the milestone description as the scope contract when one exists.
+- Ask for explicit human approval before running the closure mutation.
+- Verify the resulting state by re-fetching the milestone after closing it.
+
+**Don't**
+- Infer completion from zero open issues alone.
+- Infer completion from release publication alone.
+- Propose or run the closure gate against Backlog.
+- Trust the closure command's exit code as proof of the resulting state.
+- Close a milestone automatically right after release validation, without re-checking issue state
+  and without human approval.
