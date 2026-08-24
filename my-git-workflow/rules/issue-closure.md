@@ -10,6 +10,14 @@ Running `gh issue close` without confirming what actually landed treats the CLI'
 proof — it isn't. This rule governs both halves of that: when it's appropriate to ask about closing
 an issue at all, and how to carry out and validate the closure once the human says yes.
 
+**This closure intentionally happens before any PR carrying the issue's commits merges — or, for a
+milestone issue, even before that PR exists.** Closure marks that this issue's implementation and
+verification are done, not that its commits have reached the trunk branch. For a Backlog/hotfix issue
+worked directly on the trunk branch, that gap is usually momentary or nonexistent; for a milestone
+issue on a shared branch, several issues can close this way before the branch is ever proposed as a
+PR — `rules/milestone-completion.md`'s "Milestone PR readiness" gate is what checks the aggregate
+state of all that already-closed work before it moves toward a PR.
+
 ## Ask first
 
 Once a committed, approved issue has passed verification, ask the human whether they want to close
@@ -107,7 +115,10 @@ a link. Don't re-print the full issue body or the closing comment — the reader
   verified. It does not touch any other issue.
 - **It does not create issues.** That's `my-feature-planning`'s territory, not this rule's.
 - **It does not reopen issues.** This rule owns closing a committed, verified issue — not reopening
-  one; this rule takes no position on whose responsibility that is.
+  one. The observed default, when a later finding (e.g. milestone manual testing) concerns work this
+  rule already closed, is a *new* issue referencing the original — not reopening it — per
+  `rules/milestone-completion.md`'s "When manual testing finds something." That default doesn't make
+  reopening this rule's job; it just means reopening isn't the path a normal finding takes.
 
 ## Do / Don't
 

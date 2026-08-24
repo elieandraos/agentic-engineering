@@ -52,13 +52,36 @@ targeting each tool can reliably support is a property of the project's own tool
 this rule assumes in advance. Git and GitHub remain core substrate for this workflow; test, format,
 and static-analysis tooling is stack- and project-specific composition on top of it.
 
+## Regression baseline for lint/format/static checks
+
+> This rule does not require a project's full-project lint/format/static-analysis output to already
+> be at zero violations before this workflow can run. Pre-existing, unrelated violations are
+> tolerated debt, not a blocker — the standard is that this work introduces no new failures beyond
+> whatever baseline already existed, not that the whole project becomes clean because this issue
+> touched it.
+
+This applies specifically to lint/format/static-analysis, wherever this rule runs one of those checks
+at full-project scope (pre-Gate-1, and inside isolation verification). It does not change how the
+regression **test** suite is treated, at any boundary: a test either passes or fails regardless of
+the codebase's history, so the full-suite pass/fail signal stays exactly as strict as described
+elsewhere in this rule.
+
+How a project actually distinguishes "pre-existing" from "newly introduced" for its own lint/format/
+static tooling — comparing against a baseline snapshot, filtering to the files this issue touched, or
+whatever mechanism the project's tooling supports — is discovered the same way the tools themselves
+are (see "Discover the project's verification tools" above), never assumed in advance. When a
+full-project check comes back red, the first question is whether this issue's work caused it, not
+whether the project was already carrying that debt.
+
 ## Pre-Gate-1 verification
 
 Once the approved issue's implementation is complete, and before reporting at Gate 1
 (`rules/review-gates.md`):
 
 1. Run the project's complete formatting/lint/static checks, at the project's full-project scope
-   — not the narrower, per-change scoping used later while building commits.
+   — not the narrower, per-change scoping used later while building commits. Judge the result
+   against the regression-baseline model above: report new failures this work introduced, not every
+   pre-existing violation the project already carried.
 2. Run the full regression suite.
 3. Report the exact results at Gate 1.
 
@@ -124,7 +147,8 @@ The technique:
    untracked), leaving the working tree at exactly the state of the commits made so far.
 3. Run the project's full formatting/lint/static checks and its **full** regression suite against
    that isolated committed state — the same full scope as pre-Gate-1 and completed-issue
-   verification, not the narrower per-commit scoping used during construction.
+   verification, not the narrower per-commit scoping used during construction. Judge the lint/
+   format/static results against the regression-baseline model above, same as at pre-Gate-1.
 4. `git stash pop` — restores the remaining work.
 5. Repeat for each subsequent semantic commit: stage the next group, commit, stash the rest, verify
    in isolation, pop.
@@ -162,6 +186,15 @@ behavior to that support, still inactive; commit C flips the feature on. C must 
 enabling the feature activates tests and code paths that depend on both, and landing C first would
 make it green only because the gate was still hiding what it activates.
 
+### Relationship to dependency ordering
+
+`rules/commit-boundaries.md`'s derivation procedure already orders commits by structural dependency
+(its step 6); this section layers activation-safety ordering on top of that same sequence. No real
+work has yet produced a case where the two orderings actually disagree — this is recorded here as an
+observed non-conflict, not a claim that they can never conflict. No precedence rule is defined for
+if they do. Should that situation actually arise, it's a genuine unresolved decision for
+`rules/review-gates.md`'s "when to stop and ask" to surface, not a default to invent here in advance.
+
 ## Do / Don't
 
 **Do**
@@ -175,6 +208,8 @@ make it green only because the gate was still hiding what it activates.
 - Inspect activation/configuration changes for tests and dependencies they newly make active.
 - Discover the project's test, format, lint, and static-analysis tooling — and what each can and
   can't scope — from the repository itself.
+- Judge a full-project lint/format/static-analysis result against the regression-baseline model:
+  new failures block, pre-existing ones don't.
 
 **Don't**
 - Treat the pre-Gate-1 and completed-issue full-suite runs as duplicates of each other.
@@ -185,3 +220,6 @@ make it green only because the gate was still hiding what it activates.
 - Assume a project's test/format/lint/static-analysis commands, or their scoping ability, without
   discovering them from the repository.
 - Land an activation commit before the code and tests it activates can stand behind it.
+- Invent a precedence rule for dependency ordering vs. activation ordering — none has been needed yet.
+- Require a project's full historical lint/format/static-analysis output to be violation-free before
+  this workflow can run.

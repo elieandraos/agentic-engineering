@@ -1,14 +1,47 @@
-# Recalculating the Dependency-Ready Set
+# Sequencing
 
 ## Principle
 
-> After a validated issue closure, recompute the dependency-ready set in the current milestone
-> before deciding what work comes next. Closing one issue can unblock several others — surface that
-> proactively, rather than waiting to be asked.
+> This rule owns milestone-scoped progression at both ends of an issue's work: which branch that
+> work happens on before it starts, and what becomes ready to work on next after a closure. Closing
+> one issue can unblock several others — surface that proactively, rather than waiting to be asked.
 
-This phase starts only after a validated closure (`rules/issue-closure.md`) — never before.
+## Branch readiness before starting an issue
+
+Before implementing a dependency-ready, approved issue, determine which branch that work happens on.
+Which of the two paths applies is read from the issue's own milestone — Backlog/persistent-catch-all
+vs. a delivery/phase milestone, exactly as `my-feature-planning`'s `rules/issue-conventions.md`
+("Backlog vs. delivery/phase milestones") already classifies it. This rule consumes that
+classification; it does not redefine it.
+
+**Backlog or hotfix issue (no delivery/phase milestone).** There is no branch decision to make. Work
+proceeds on whatever branch is already checked out — normally the trunk/main branch. Don't create or
+propose a branch for this path, and don't ask about one. This path also does not end in a PR (see
+`rules/release.md`'s "Where this phase starts" for what that means for the release phase).
+
+**Delivery/phase milestone issue.** All issues in that milestone share one working branch —
+implementation does not get a fresh branch per issue.
+
+1. Inspect the currently checked-out branch.
+2. If it already is that milestone's working branch, proceed directly to implementation.
+3. If not, recommend a branch name derived from the milestone's actual nature and scope, and ask the
+   human before creating or switching to it. Do not silently create or check out a branch.
+4. Only once the correct branch is confirmed active does implementation begin — the rest of the
+   working lifecycle (`rules/review-gates.md` onward) is unchanged.
+
+Do not turn observed branch-name patterns into a rigid taxonomy. A name derived from what the
+milestone actually is — its area, or the kind of change it bundles — is the goal; illustrative shapes
+seen in practice include an area-scoped prefix for a cross-cutting rework (e.g. `core/...`) or a
+capability-scoped prefix for a new feature (e.g. `feat/...`). These are examples of the reasoning, not
+a fixed prefix list to match against. When the milestone's nature doesn't suggest an obvious name,
+ask rather than guess.
+
+Once every issue in the milestone is closed on this shared branch, the recompute below reports an
+empty ready set — see "When the ready set is empty" for what happens next.
 
 ## Recompute the dependency-ready set
+
+This phase starts only after a validated closure (`rules/issue-closure.md`) — never before.
 
 1. List the open issues remaining in the current milestone:
 
@@ -47,6 +80,18 @@ Recommendation is not authorization: investigate enough to recommend when possib
 convert a genuine sequencing judgment into an automatic choice. The human always makes the final
 sequencing decision.
 
+## When the ready set is empty
+
+For a Backlog/hotfix issue, an empty ready set means nothing beyond itself — there is no milestone
+graph to exhaust, and no further handoff.
+
+For a delivery/phase milestone, recomputing after a closure can find zero open issues remaining —
+nothing ready, nothing blocked. That is not this rule's job to act on further: report the empty set
+and hand off to `rules/milestone-completion.md`'s "Milestone PR readiness" gate rather than
+recommending a next issue that doesn't exist. This rule does not check that gate's conditions itself
+(final manual testing, whether it found anything) — it only recognizes the empty-set state and points
+to where that question actually gets answered.
+
 ## Do not chain into the next issue
 
 Recalculating and reporting the ready set ends this workflow pass. Do not start implementing the
@@ -57,13 +102,23 @@ authorization.
 ## Do / Don't
 
 **Do**
+- Determine Backlog/hotfix vs. delivery/phase milestone before deciding whether a branch decision
+  applies at all.
+- Inspect the current branch before starting milestone work, and ask before creating or switching to
+  a milestone branch.
 - Recompute readiness from current issue state after every validated closure.
 - Explain newly ready, already ready, and blocked work — not just a flat ready list.
 - Recommend when the evidence supports one, with a concise rationale.
 - Let the human make the sequencing decision.
+- Hand off to `rules/milestone-completion.md`'s PR-readiness gate when the ready set is empty, rather
+  than treating "no next issue" as nothing to report.
 
 **Don't**
+- Propose or create a branch for a Backlog/hotfix issue.
+- Generalize observed branch-name patterns into a rigid, enforced taxonomy.
 - Assume a dependency syntax the project doesn't actually use.
 - Silently pick between genuinely comparable ready issues.
 - Treat a recommendation, or an immediate human answer, as authorization to start implementing.
 - Chain straight into the next issue within the same pass.
+- Check milestone PR-readiness or closure conditions from this rule — that's
+  `rules/milestone-completion.md`'s job.

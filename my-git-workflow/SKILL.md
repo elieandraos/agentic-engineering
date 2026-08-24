@@ -1,6 +1,6 @@
 ---
 name: my-git-workflow
-description: "Delivery-stage skill in the Agentic Engineering pipeline, immediately after my-architecture-laboratory and my-feature-planning. Takes an approved GitHub issue and carries it through implementation review, semantic commits, verification, issue closure, release, and post-release milestone completion. Use when implementing, committing, verifying, closing, or releasing an approved issue, or checking whether a milestone is ready to close. Owns the Git/GitHub delivery workflow — not application code, framework conventions, or deciding what work should exist."
+description: "Delivery-stage skill in the Agentic Engineering pipeline, immediately after my-architecture-laboratory and my-feature-planning. Takes an approved GitHub issue and carries it through working-branch readiness, implementation review, semantic commits, verification, issue closure, milestone PR readiness, release, and post-release milestone completion. Use when implementing, committing, verifying, closing, or releasing an approved issue, or checking whether a milestone is ready for a PR or ready to close. Owns the Git/GitHub delivery workflow — not application code, framework conventions, or deciding what work should exist."
 ---
 
 # my-git-workflow
@@ -20,13 +20,15 @@ what work should exist, and never starts earlier than an already-approved issue.
 
 ## What it owns
 
+- Working-branch readiness: the Backlog/hotfix-vs-milestone-branch decision, before implementation
+  starts.
 - Implementation and commit-plan review gates.
 - Semantic commit planning and construction.
-- Verification.
-- Issue closure.
+- Verification, including the regression-baseline treatment of pre-existing lint/format/static debt.
+- Issue closure — intentionally before the milestone's PR merges.
 - Dependency-ready recalculation.
-- Release.
-- Post-release milestone completion.
+- Milestone PR readiness, once a milestone's issues are all closed.
+- The post-merge authorization gate, release, and post-release milestone completion.
 
 ## What it does not own
 
@@ -53,6 +55,7 @@ Trigger on requests shaped like:
 - `commit issue {xxx}`
 - `close issue {xxx}`
 - `what's next in milestone {name}`
+- `is milestone {name} ready for a PR`
 - `release {version}`
 - `is milestone {name} ready to close`
 
@@ -70,13 +73,19 @@ Trigger on requests shaped like:
   consult while implementing and while building/ordering commits.
 - `issue-closure.md` — whether and how to close an issue: asking first, the closing recipe, and
   post-mutation validation; consult after the completed-issue full-suite pass, once commits exist.
-- `sequencing.md` — recomputing the milestone's dependency-ready set and reporting/recommending the
-  next issue; consult immediately after a validated issue closure.
-- `release.md` — the release phase: discovering the project's real release policy, understanding the
-  release, drafting notes at release altitude, the approval gate, publishing, and post-publication
-  validation; consult once a PR carrying committed work has merged.
-- `milestone-completion.md` — whether a delivery/phase milestone is ready to close: the three-part
-  closure gate, the Backlog exemption, and the validated closure mutation; consult once release
-  validation has passed.
+  Closure is intentional before a milestone's PR merges.
+- `sequencing.md` — branch readiness before starting an issue (Backlog/hotfix on the trunk branch vs.
+  a shared milestone branch, inspected/recommended/created only with human approval), and, after a
+  validated closure, recomputing the milestone's dependency-ready set and reporting/recommending the
+  next issue — or handing off to `milestone-completion.md` when the set is empty.
+- `release.md` — the release phase: an authorization gate right after the human confirms a PR
+  merged, then discovering the project's real release policy, understanding the release, drafting
+  notes at release altitude, the content-approval gate, publishing, and post-publication validation;
+  consult once a PR carrying committed work has merged. Does not apply to Backlog/hotfix work, which
+  has no PR to merge.
+- `milestone-completion.md` — two milestone-level gates: PR readiness (all issues closed + confirmed
+  manual testing + no follow-up found), consulted once `sequencing.md` reports an empty ready set;
+  and the three-part closure gate plus the Backlog exemption and validated closure mutation,
+  consulted once release validation has passed.
 
 > Detailed operational behavior lives in `rules/*.md`.

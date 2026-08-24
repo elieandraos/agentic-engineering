@@ -20,14 +20,36 @@ perform.
 ## Where this phase starts
 
 ```
-PR merged → discover release policy → understand release → draft → human approval → publish → re-fetch and validate
+PR merged → human confirms it merged → STOP: authorization to begin the post-merge phase
+  → discover release policy → understand release → draft → human approval → publish
+  → re-fetch and validate
 ```
 
 - This phase starts only once a PR has been **successfully merged** — not when implementation
   finishes, and not when the last commit lands. A merged PR is the trigger; nothing earlier in the
-  lifecycle is.
+  lifecycle is. This describes the milestone-PR path specifically; a Backlog/hotfix issue worked
+  directly on the trunk branch (`rules/sequencing.md`'s "Branch readiness") has no PR to merge, and
+  what release cadence, if any, applies to that work is not designed by this rule — there's no
+  evidence yet to extract a rule from.
 - **PR creation and merge strategy are not owned by this rule.** However a PR came to be merged is
   out of scope here — this rule picks up from "a PR merged," full stop.
+- **The human's explicit confirmation that the PR merged is the integration gate.** Before that
+  confirmation, the human is expected to have already waited on CI/CD checks, confirmed there's no
+  merge conflict, reviewed the diff again, and merged. This rule does not independently re-fetch or
+  re-verify the merge state once the human says it happened — that would re-litigate a human gate
+  this rule doesn't own, not add a genuine check.
+
+## 0. Confirm authorization before beginning
+
+Merge confirmation is necessary to start this phase, but it is not by itself authorization to start
+it. Once the human confirms the PR merged, stop and ask for explicit authorization to proceed with
+the post-merge phase — drafting and eventually publishing a release, and, once that release
+validates, `rules/milestone-completion.md`'s closure gate — before beginning policy discovery below.
+
+This is a separate, earlier gate from step 4's approval of the exact release content, the same way
+Gate 1 and Gate 2 in `rules/review-gates.md` are separate: "may I start this phase at all" is not the
+same question as "is this exact version/title/body correct." Do not treat "the PR merged" as an
+implicit green light to start drafting.
 
 ## 1. Discover the release policy before proposing anything
 
@@ -127,9 +149,11 @@ Before any publication mutation, present all of the following together and stop:
 - the release title;
 - the complete release body.
 
-This mirrors the two pre-merge review gates (`rules/review-gates.md`): approval of the release
-*content* is not implicit in the merge having happened, and a **merged PR is not publication
-approval**. Approving one wording tweak is not the same as pre-approving everything else.
+This mirrors the two pre-merge review gates (`rules/review-gates.md`) and step 0 above: approval of
+the release *content* is not implicit in the merge having happened, and is not implicit in the step-0
+authorization to begin either — a **merged PR is not publication approval, and authorization to start
+drafting is not approval of what got drafted**. Approving one wording tweak is not the same as
+pre-approving everything else.
 
 If the human requests any change — to wording, version, tag target, or title — revise and confirm
 the *exact final content* before running any publish command. Do not tag or publish anything before
@@ -184,6 +208,9 @@ the whole release body.
   before the PR was even opened.
 - **It does not decide whether or how a PR gets created or merged.** This rule starts from "a PR
   merged," however that happened, and has no opinion on PR creation or merge strategy.
+- **It does not independently re-verify the merge state.** The human's confirmation that the PR
+  merged is the integration gate; whatever CI/conflict/diff checks the human performed before saying
+  so are theirs, not this rule's to redo.
 - **It does not invent deployment, rollback, prerelease-channel, or changelog-automation behavior**
   beyond what step 1 actually found evidence for.
 - **It does not decide milestone closure.** A validated release is an input to that decision, not the
@@ -193,6 +220,8 @@ the whole release body.
 ## Do / Don't
 
 **Do**
+- Ask for explicit authorization to begin the post-merge phase once the human confirms the PR
+  merged, before starting policy discovery.
 - Discover the release policy before proposing a version, title, or publication mechanism.
 - Let explicit repository policy override inferred history when they disagree.
 - Stop and ask when the evidence for release policy is ambiguous or conflicting.
@@ -204,6 +233,8 @@ the whole release body.
 - Report results compactly rather than re-printing the release body.
 
 **Don't**
+- Treat the human's merge confirmation as authorization to start drafting, or independently
+  re-verify the merge state.
 - Infer version importance from diff size, commit count, or file count.
 - Replay commit messages or issue titles as release notes.
 - Assume a specific tag/release command sequence without discovery evidence for this repository.

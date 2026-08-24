@@ -78,7 +78,9 @@ The procedure:
 3. Inspect the actual diff (`git status`, `git diff --stat`, then per-file diffs).
 4. Identify the implementation decisions the diff actually contains.
 5. Group changes by decision, not by file location or type.
-6. Order the groups by dependency.
+6. Order the groups by dependency. `rules/verification.md`'s activation-ordering rule can require
+   reordering on top of this — see that rule's "Relationship to dependency ordering" for how the two
+   interact.
 7. Verify each intermediate state would be coherent, per "What makes a commit coherent" above.
 8. Propose the commit plan for human review (Gate 2 — `rules/review-gates.md`) before writing a
    single commit.
