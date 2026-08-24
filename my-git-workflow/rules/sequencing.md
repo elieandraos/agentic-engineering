@@ -14,10 +14,19 @@ vs. a delivery/phase milestone, exactly as `my-feature-planning`'s `rules/issue-
 ("Backlog vs. delivery/phase milestones") already classifies it. This rule consumes that
 classification; it does not redefine it.
 
-**Backlog or hotfix issue (no delivery/phase milestone).** There is no branch decision to make. Work
-proceeds on whatever branch is already checked out — normally the trunk/main branch. Don't create or
-propose a branch for this path, and don't ask about one. This path also does not end in a PR (see
-`rules/release.md`'s "Where this phase starts" for what that means for the release phase).
+**Backlog or hotfix issue (no delivery/phase milestone).** This work happens directly on the
+repository's trunk branch — never a newly created feature branch, and never the milestone
+shared-branch flow below. There is no branch *decision* to make: don't create, propose, or ask about
+a branch for this path.
+
+Confirm the trunk branch is actually what's checked out before implementation starts. Which branch a
+given repository treats as trunk (commonly `main`, sometimes something else) is discovered from the
+repository, not assumed to be a fixed name. If the current checkout is something other than that
+branch, surface the mismatch to the human rather than proceeding — do not silently switch branches,
+and do not silently implement Backlog/hotfix work on whatever happens to be checked out.
+
+This path also does not end in a PR (see `rules/release.md`'s "Where this phase starts" for what that
+means for the release phase).
 
 **Delivery/phase milestone issue.** All issues in that milestone share one working branch —
 implementation does not get a fresh branch per issue.
@@ -104,6 +113,8 @@ authorization.
 **Do**
 - Determine Backlog/hotfix vs. delivery/phase milestone before deciding whether a branch decision
   applies at all.
+- Confirm the trunk branch is checked out before starting Backlog/hotfix work, and surface a mismatch
+  instead of proceeding on it.
 - Inspect the current branch before starting milestone work, and ask before creating or switching to
   a milestone branch.
 - Recompute readiness from current issue state after every validated closure.
@@ -115,6 +126,7 @@ authorization.
 
 **Don't**
 - Propose or create a branch for a Backlog/hotfix issue.
+- Silently proceed on a non-trunk branch for Backlog/hotfix work instead of surfacing the mismatch.
 - Generalize observed branch-name patterns into a rigid, enforced taxonomy.
 - Assume a dependency syntax the project doesn't actually use.
 - Silently pick between genuinely comparable ready issues.

@@ -78,14 +78,16 @@ Trigger on requests shaped like:
   a shared milestone branch, inspected/recommended/created only with human approval), and, after a
   validated closure, recomputing the milestone's dependency-ready set and reporting/recommending the
   next issue — or handing off to `milestone-completion.md` when the set is empty.
-- `release.md` — the release phase: an authorization gate right after the human confirms a PR
-  merged, then discovering the project's real release policy, understanding the release, drafting
-  notes at release altitude, the content-approval gate, publishing, and post-publication validation;
-  consult once a PR carrying committed work has merged. Does not apply to Backlog/hotfix work, which
-  has no PR to merge.
+- `release.md` — the release phase: a post-merge authorization gate right after the human confirms a
+  PR merged (the same gate that also opens `milestone-completion.md`'s closure gate — neither branch
+  waits on the other), then discovering the project's real release policy, understanding the release,
+  drafting notes at release altitude, the content-approval gate, publishing, and post-publication
+  validation; consult once a PR carrying committed work has merged. Does not apply to Backlog/hotfix
+  work, which has no PR to merge.
 - `milestone-completion.md` — two milestone-level gates: PR readiness (all issues closed + confirmed
   manual testing + no follow-up found), consulted once `sequencing.md` reports an empty ready set;
   and the three-part closure gate plus the Backlog exemption and validated closure mutation,
-  consulted once release validation has passed.
+  consulted once the human gives the post-merge authorization — not gated on release publication
+  itself.
 
 > Detailed operational behavior lives in `rules/*.md`.

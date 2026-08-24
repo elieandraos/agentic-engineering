@@ -25,6 +25,11 @@ PR merged → human confirms it merged → STOP: authorization to begin the post
   → re-fetch and validate
 ```
 
+The same authorization also opens `rules/milestone-completion.md`'s closure gate for a milestone
+issue. The two branches proceed independently from there — neither this rule's publication nor that
+rule's closure is a precondition for the other; see that rule's "Milestone closure and release do not
+gate each other."
+
 - This phase starts only once a PR has been **successfully merged** — not when implementation
   finishes, and not when the last commit lands. A merged PR is the trigger; nothing earlier in the
   lifecycle is. This describes the milestone-PR path specifically; a Backlog/hotfix issue worked
@@ -32,7 +37,10 @@ PR merged → human confirms it merged → STOP: authorization to begin the post
   what release cadence, if any, applies to that work is not designed by this rule — there's no
   evidence yet to extract a rule from.
 - **PR creation and merge strategy are not owned by this rule.** However a PR came to be merged is
-  out of scope here — this rule picks up from "a PR merged," full stop.
+  out of scope here — this rule picks up from "a PR merged," full stop. For a milestone issue, the
+  observed convention is that its PR references the milestone it integrates — see
+  `rules/milestone-completion.md`'s "The milestone-PR reference convention"; this rule has no PR-
+  content requirements of its own.
 - **The human's explicit confirmation that the PR merged is the integration gate.** Before that
   confirmation, the human is expected to have already waited on CI/CD checks, confirmed there's no
   merge conflict, reviewed the diff again, and merged. This rule does not independently re-fetch or
@@ -42,14 +50,19 @@ PR merged → human confirms it merged → STOP: authorization to begin the post
 ## 0. Confirm authorization before beginning
 
 Merge confirmation is necessary to start this phase, but it is not by itself authorization to start
-it. Once the human confirms the PR merged, stop and ask for explicit authorization to proceed with
-the post-merge phase — drafting and eventually publishing a release, and, once that release
-validates, `rules/milestone-completion.md`'s closure gate — before beginning policy discovery below.
+it. Once the human confirms the PR merged, stop and ask for explicit authorization to begin the
+post-merge progression — which may include drafting and publishing a release (this rule) and, for a
+milestone issue, closing the milestone (`rules/milestone-completion.md`'s closure gate). A single
+question can cover both, e.g. "close the milestone and start the release?" — but they are separate
+mutations, and completing one is never a precondition for starting the other (see
+`rules/milestone-completion.md`'s "Milestone closure and release do not gate each other"). Do not
+begin policy discovery below until this authorization is explicit.
 
 This is a separate, earlier gate from step 4's approval of the exact release content, the same way
 Gate 1 and Gate 2 in `rules/review-gates.md` are separate: "may I start this phase at all" is not the
 same question as "is this exact version/title/body correct." Do not treat "the PR merged" as an
-implicit green light to start drafting.
+implicit green light to start drafting, and do not treat authorization to start as approval of what
+gets published.
 
 ## 1. Discover the release policy before proposing anything
 
@@ -213,15 +226,18 @@ the whole release body.
   so are theirs, not this rule's to redo.
 - **It does not invent deployment, rollback, prerelease-channel, or changelog-automation behavior**
   beyond what step 1 actually found evidence for.
-- **It does not decide milestone closure.** A validated release is an input to that decision, not the
-  decision itself — see `rules/milestone-completion.md`, which starts only after this rule's
-  post-publication validation has passed.
+- **It does not decide milestone closure, and does not gate it.** `rules/milestone-completion.md`'s
+  closure gate starts from the same post-merge authorization this rule's step 0 asks for, not from
+  this rule's publication having completed — see that rule's "Milestone closure and release do not
+  gate each other." A milestone can close before, after, or without regard to the timing of this
+  rule's release.
 
 ## Do / Don't
 
 **Do**
-- Ask for explicit authorization to begin the post-merge phase once the human confirms the PR
-  merged, before starting policy discovery.
+- Ask for explicit authorization to begin the post-merge progression — covering both this rule's
+  release phase and, for milestone work, `rules/milestone-completion.md`'s closure gate — once the
+  human confirms the PR merged, before starting policy discovery.
 - Discover the release policy before proposing a version, title, or publication mechanism.
 - Let explicit repository policy override inferred history when they disagree.
 - Stop and ask when the evidence for release policy is ambiguous or conflicting.
@@ -235,6 +251,7 @@ the whole release body.
 **Don't**
 - Treat the human's merge confirmation as authorization to start drafting, or independently
   re-verify the merge state.
+- Treat this rule's publication as something milestone closure must wait for, or vice versa.
 - Infer version importance from diff size, commit count, or file count.
 - Replay commit messages or issue titles as release notes.
 - Assume a specific tag/release command sequence without discovery evidence for this repository.

@@ -4,8 +4,10 @@
 
 > A delivery/phase milestone passes through two distinct milestone-level gates, never automatically:
 > PR readiness, once every milestone issue is closed and final manual testing found nothing more —
-> and closure, only after the release that milestone represents has actually shipped and been
-> validated, the milestone has no open issues right now, and the human explicitly approves closure.
+> and closure, only after the human's explicit post-merge authorization, the milestone has no open
+> issues right now, and the human explicitly approves closure. Closure does not wait on the release
+> that milestone represents to have shipped first — see "Milestone closure and release do not gate
+> each other" below.
 
 Neither gate is an automatic consequence of issue closure, PR merge, or release publication — each of
 those proves something narrower, and none of them individually proves the milestone is ready for the
@@ -23,20 +25,26 @@ all milestone issues closed  →  MILESTONE PR READINESS  →  (human creates/re
                                                                     PR merged, human confirms it
                                                                           │
                                                                           ▼
-                                                        release.md: authorization → discover policy
-                                                        → draft → approve → publish → validate
-                                                                          │
-                                                                          ▼
-                                                              MILESTONE CLOSURE GATE  →  closure
+                                       STOP: explicit human authorization to begin the
+                                       post-merge progression (rules/release.md's step 0 —
+                                       one ask, both branches below)
+                                                    │                              │
+                                                    ▼                              ▼
+                                    MILESTONE CLOSURE GATE              release.md: discover policy
+                                    (this file, below)                   → draft → approve → publish
+                                                                                    → validate
 ```
 
 - **Milestone PR readiness** (below) starts once `rules/sequencing.md`'s dependency-ready
   recompute finds zero open issues left in the milestone. It never starts earlier — issues can close
   one at a time for a long time before this point, and that's expected, not a signal to check
   readiness early.
-- **The closure gate** (below) starts only after release publication has been validated —
-  `rules/release.md`'s post-publication validation step. It never starts at issue closure, at PR
-  merge, or at PR-readiness itself — passing PR readiness is not evidence the release has shipped.
+- **The closure gate** (below) starts once the human gives the explicit post-merge authorization —
+  the same authorization `rules/release.md`'s step 0 asks for, right after a confirmed PR merge. It
+  never starts at issue closure, at PR merge, or at PR-readiness itself — none of those is
+  authorization. It also does not wait for release publication to complete first: closure and release
+  both branch from the same authorization and proceed independently from there — see "Milestone
+  closure and release do not gate each other" below.
 
 Each arrow above is a distinct event with its own evidence. None of the earlier ones implies the
 later ones:
@@ -49,17 +57,37 @@ later ones:
   doesn't create the PR, and it doesn't mean a release was cut.
 - **PR merge** lands code. It doesn't mean a release was cut, or that the merged result has been
   validated yet.
+- **Post-merge authorization** is the human's explicit go-ahead, right after confirming the PR
+  merged, to begin the post-merge progression at all (`rules/release.md`'s step 0). It opens both the
+  closure gate below and `rules/release.md`'s drafting/publication — neither branch is implied to wait
+  for the other to finish.
 - **Release + release validation** (`rules/release.md`) confirms a specific version actually
   published correctly. It doesn't by itself confirm every issue the milestone needed is closed —
   release validation can pass cleanly while the milestone still has open work (a Backlog issue
-  discovered and filed elsewhere, for instance).
-- **Milestone completion check** is the first point where release validation and issue state are
-  confirmed together — see "The closure gate" below.
+  discovered and filed elsewhere, for instance) — and it is not a precondition this rule's closure
+  gate requires; see "Milestone closure and release do not gate each other" below.
+- **Milestone completion check** is the first point where post-merge authorization and current issue
+  state are confirmed together — see "The closure gate" below.
 - **Milestone closure** is the mutation itself, gated and validated like every other GitHub
   mutation this workflow performs.
 
 Do not let issue closure, PR-readiness, or PR merge auto-trigger milestone closure. None of them is
-evidence of it on its own, and none of them is the closure gate's trigger point.
+evidence of it on its own, and none of them is the closure gate's trigger point. Release publication
+does not auto-trigger milestone closure either, and milestone closure does not auto-trigger release
+publication — each proceeds through its own rule, both starting from the same authorization.
+
+## Milestone closure and release do not gate each other
+
+> Both branches below start from the same event — the human's explicit post-merge authorization —
+> and each proceeds entirely through its own rule from there. Neither is a precondition for the
+> other.
+
+This rule's closure gate does not wait for `rules/release.md`'s post-publication validation to have
+passed, and `rules/release.md` does not wait for this rule's closure to have happened. On the project
+this workflow was extracted from, the human has typically closed the milestone first and drafted the
+release after — but that is an observed sequencing habit on one project, not a rule either file
+enforces. A different project running the two in the opposite order, interleaved, or with real time
+between them, is equally valid under this methodology.
 
 ## What counts as a delivery/phase milestone
 
@@ -118,14 +146,28 @@ verification are done, not that its commits have reached the trunk branch yet. T
 gates in this file are what actually confirm the aggregate state of all that already-closed work
 before it moves toward a PR and, later, a release.
 
+### The milestone-PR reference convention
+
+> A PR carrying milestone work is expected to reference the milestone it integrates.
+
+This is a confirmed observed convention of this workflow, not archaeological context from a single
+past run: the human opens the milestone's PR against that milestone once the branch is PR-ready. It
+is stated here as a contract this rule is aware of, not as something it enforces — PR creation,
+description, and content stay entirely human-owned (see "What this gate does not do" below and
+`rules/release.md`'s "PR creation and merge strategy are not owned by this rule"). This rule does not
+check, require, or block on a PR actually carrying that reference.
+
+By contrast, a Backlog/hotfix issue worked directly on the trunk branch produces no PR at all
+(`rules/sequencing.md`'s "Branch readiness before starting an issue") — the reference convention
+applies only to a milestone's PR.
+
 ### What this gate does not do
 
 - It does not create the PR. PR creation, review, and merge stay human-owned, exactly as
   `rules/release.md` already states for the phase after this one — this rule only reports whether the
   branch looks ready.
-- It does not verify PR content. The observed convention is that the milestone PR references the
-  milestone once the human opens it — this rule records that as context, not as something it checks
-  or enforces.
+- It does not verify PR content. The milestone-PR reference convention above is stated as a contract
+  this rule is aware of, not something it checks or enforces.
 - It does not decide milestone closure. That's the separate, later gate below.
 
 Report the result compactly: which of the three conditions hold, and — if not all — what's missing
@@ -161,36 +203,40 @@ reinterpret, or second-guess it (see "Cross-rule dependencies" below).
 
 ## The closure gate
 
-This is the second, later milestone-level gate — distinct from PR readiness above, and starting only
-once release validation has actually passed (see "Where this phase starts"). Close the milestone
-only when all three conditions hold at once, checked fresh at the moment of the closure decision:
+This is the second, later milestone-level gate — distinct from PR readiness above, and starting once
+the human has given the explicit post-merge authorization (see "Where this phase starts"). Close the
+milestone only when all three conditions hold at once, checked fresh at the moment of the closure
+decision:
 
 1. **It's a delivery/phase milestone, not Backlog** (or an equivalent persistent catch-all).
-2. **The intended release has been successfully published and validated** —
-   `rules/release.md`'s post-publication validation actually passed for the release this milestone
-   was shipping.
+2. **The human has given explicit post-merge authorization** for this milestone's progression — the
+   same authorization `rules/release.md`'s step 0 asks for right after the human confirms the PR
+   merged. This is not a separate ask this rule owns, and it is not implied by the release itself
+   having been drafted, published, or validated — see "Milestone closure and release do not gate
+   each other."
 3. **The milestone has no open issues right now** — re-query it fresh; don't reuse an earlier read
-   from before release validation, since discovered work may have added an issue since.
+   from before authorization, since discovered work may have added an issue since.
 
 If any one of these doesn't hold, do not close the milestone:
 
 - **An issue remains open** → do not close, regardless of release state. This holds even if the
   open issue looks trivial — the gate is on issue state, not a judgment call about the issue's
   size.
-- **Release publication succeeded, but manual testing (or anything else) added another issue to the
-  milestone afterward** → the milestone stays open until that issue is completed and the milestone
-  is otherwise releasable again. Re-run the whole gate from scratch at that point rather than
-  treating the new issue as the only thing left to check — release validation itself doesn't need
-  redoing unless the new issue required its own release, but issue-openness and "is this really the
-  full set now" both do.
+- **Authorization hasn't been given yet** → do not close. This gate is not a substitute for that
+  authorization having happened, and it does not wait on the release to have published first to
+  become eligible.
+- **Manual testing (or anything else) added another issue to the milestone after authorization** →
+  the milestone stays open until that issue is completed and the milestone is otherwise closeable
+  again. Re-run the whole gate from scratch at that point rather than treating the new issue as the
+  only thing left to check.
 - **The milestone is Backlog or an equivalent persistent catch-all** → this gate does not apply to
   it at all. Don't run it, don't propose closing it, and don't treat its issue count as evidence of
   anything — see "Backlog is exempt."
 
 Each condition is necessary on its own, but no single one is sufficient:
 
-> Zero open issues ≠ milestone complete. Release validated ≠ milestone complete. All three
-> conditions, checked from current state, are what closure requires.
+> Zero open issues ≠ milestone complete. Post-merge authorization alone ≠ milestone complete either.
+> All three conditions, checked from current state, are what closure requires.
 
 ## Backlog is exempt
 
@@ -207,7 +253,7 @@ mutation this workflow performs: do not infer success from the closure command's
 
 1. **Confirm the gate, explicitly, against freshly queried state** — not memory from earlier in the
    conversation. State which of the three conditions is being confirmed and how, e.g.:
-   - "Release `{version}` re-fetched and validated per `rules/release.md`."
+   - "Post-merge authorization for milestone `{title}` was given by the human on {reference}."
    - `gh issue list --milestone "{milestone title}" --state open` returns zero.
 2. **Ask for explicit human approval before closing.** This is a real, not-trivially-reversible
    GitHub mutation. Passing the gate is not itself approval to close. If the human says no or not
@@ -256,9 +302,10 @@ This rule sits downstream of several other contracts and does not redefine any o
   issue should be closed.
 - **`my-feature-planning`'s `rules/discovered-work.md`** owns the intake for a manual-testing
   finding — this rule hands off to it rather than defining its own investigation process.
-- **`rules/release.md`** owns release drafting, publication, and post-publication validation.
-  Condition 2 of the closure gate consumes that validation; this rule does not re-validate a
-  release beyond confirming it passed.
+- **`rules/release.md`** owns release drafting, publication, and post-publication validation, and
+  its step 0 owns asking the post-merge authorization this rule's condition 2 also consumes. Neither
+  rule's completion is a precondition for the other's gate — see "Milestone closure and release do
+  not gate each other."
 - **`my-feature-planning`'s `rules/issue-conventions.md`** owns milestone classification, naming,
   descriptions, and issue drafting. This rule consumes that classification and description as
   given; it does not decide what belongs in a milestone, name one, or draft its description.
@@ -273,6 +320,10 @@ This rule sits downstream of several other contracts and does not redefine any o
 - It does not touch Backlog or any other persistent catch-all milestone.
 - It does not decide whether to reopen a closed issue — a manual-testing finding's default path is a
   new issue, not reopening (see "When manual testing finds something" above).
+- It does not require release publication to have completed before closing the milestone, and
+  closing the milestone is not itself a precondition for release publication — the two proceed
+  independently once the human gives post-merge authorization (see "Milestone closure and release do
+  not gate each other").
 
 ## Do / Don't
 
@@ -281,6 +332,8 @@ This rule sits downstream of several other contracts and does not redefine any o
 - Ask the human directly whether final manual testing has happened, rather than inferring it.
 - File a manual-testing finding as a new Discovered-work issue, referencing the original.
 - Re-check all three closure-gate conditions, from fresh state, immediately before closure.
+- Treat the same post-merge authorization that opens `rules/release.md`'s phase as this gate's own
+  trigger too — not release validation.
 - Treat the milestone description as the scope contract when one exists.
 - Ask for explicit human approval before running the closure mutation.
 - Verify the resulting state by re-fetching the milestone after closing it.
@@ -290,7 +343,9 @@ This rule sits downstream of several other contracts and does not redefine any o
 - Infer manual testing happened because issues are closed or time has passed.
 - Silently reopen a closed issue as the default response to a later finding.
 - Infer completion from release publication alone.
+- Require release publication to finish before checking or passing the closure gate, or treat
+  milestone closure as something `rules/release.md` must wait for.
 - Propose or run either gate against Backlog.
 - Trust the closure command's exit code as proof of the resulting state.
-- Close a milestone automatically right after release validation, without re-checking issue state
-  and without human approval.
+- Close a milestone automatically right after authorization, without re-checking issue state and
+  without human approval.

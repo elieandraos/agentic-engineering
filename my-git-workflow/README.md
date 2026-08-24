@@ -11,10 +11,11 @@ implements only its scope, stops for human review, turns the finished diff into 
 coherent commits (also reviewed before they're written), verifies at the right scope, optionally
 closes the item, and reports what's unblocked next. Separately, once every issue in a milestone is
 closed, it checks whether that milestone's shared branch is actually ready for a PR. Separately
-again, once a PR carrying that work has merged and the human authorizes proceeding, it discovers the
-project's real release policy, classifies the release, drafts outcome-level notes, stops for
-approval, publishes, and validates the result. Separately again, once that release is validated, it
-checks whether the milestone the work belonged to is actually ready to close.
+again, once a PR carrying that work has merged and the human authorizes proceeding, two independent
+branches open from that same authorization: it discovers the project's real release policy,
+classifies the release, drafts outcome-level notes, stops for approval, publishes, and validates the
+result — and, for a milestone issue, it checks whether the milestone the work belonged to is actually
+ready to close. Neither branch waits for the other to finish.
 
 ## Pipeline role
 
@@ -43,8 +44,9 @@ already-approved item.
 - Once that set is empty: the milestone's PR-readiness gate.
 - Once a PR merges and the human authorizes proceeding: release-policy discovery, classification,
   outcome-level drafting, the release approval gate, publishing, and post-publication validation.
-- After release validation passes: the milestone-completion gate, the Backlog exemption, and the
-  closure mutation itself (see "Release and milestone-completion lifecycle" below for the gate).
+- From that same authorization, independently: the milestone-completion gate, the Backlog exemption,
+  and the closure mutation itself — not gated on release publication having finished first (see
+  "Release and milestone-completion lifecycle" below).
 
 What it does *not* own is in "Composition and boundaries" below.
 
@@ -56,7 +58,8 @@ Backlog/catch-all vs. a delivery/phase milestone — `my-feature-planning`'s exi
 ```
 choose a dependency-ready, approved issue
   → BRANCH READINESS
-      Backlog/hotfix issue  → work on whatever's checked out, normally main; no branch decision
+      Backlog/hotfix issue  → work directly on the repository's trunk branch; no feature branch,
+                               no branch decision — surface a mismatch if trunk isn't checked out
       Milestone issue       → inspect current branch; if wrong, recommend a branch derived from the
                                milestone's nature and ask before creating/switching; every issue in
                                that milestone shares this one branch
@@ -78,10 +81,12 @@ branch until the milestone itself is PR-ready.
 
 **Branch readiness** is read from which kind of milestone the issue belongs to — a persistent
 Backlog/catch-all or a delivery/phase milestone, `my-feature-planning`'s existing distinction, not
-redefined here. Backlog/hotfix work makes no branch decision at all. Milestone work shares one branch
-across every issue in that milestone; if the wrong branch is checked out, recommend one derived from
-the milestone's actual nature (never a rigid prefix taxonomy) and ask before creating or switching to
-it. Full detail: `rules/sequencing.md`.
+redefined here. Backlog/hotfix work makes no branch decision at all — it runs directly on the
+repository's trunk branch, never a newly created feature branch; if the checkout isn't already trunk
+when that work begins, surface the mismatch rather than silently proceeding on it. Milestone work
+shares one branch across every issue in that milestone; if the wrong branch is checked out, recommend
+one derived from the milestone's actual nature (never a rigid prefix taxonomy) and ask before creating
+or switching to it. Full detail: `rules/sequencing.md`.
 
 Two review gates, not one — approving the implementation is not approving a commit structure; the
 same diff can be split several defensible ways, and the human sees the split before it becomes
@@ -143,49 +148,48 @@ milestone's ready set goes to zero
   → all three hold → report "PR-ready" (a report, not a mutation — PR creation stays human-owned)
 ```
 
-Full detail: `rules/milestone-completion.md`.
+Full detail: `rules/milestone-completion.md`. The PR that eventually carries this branch is expected
+to reference the milestone it integrates — a confirmed observed convention, not something this gate
+enforces (`rules/milestone-completion.md`'s "The milestone-PR reference convention").
 
-**Publishing a release** is a separate phase from both the working lifecycle above and PR readiness
-— it starts once a PR (which may bundle several issues) has actually merged, and runs once per
-release, not once per issue:
+**Once a PR merges**, one authorization gate opens two independent branches — publishing a release and
+closing the milestone that PR belonged to. Neither branch waits on the other to finish; each is
+checked and validated through its own rule:
 
 ```
 PR merges → human confirms it merged (this confirmation is the integration gate — no independent
     re-verification of merge state)
-  → STOP — authorization to begin the post-merge phase at all
-  → (authorized) discover the project's actual release policy (explicit config, else established
-      history)
-  → determine the release's primary theme and meaningful outcomes — never from size
-  → draft release notes at release-level altitude, grouped by area
-  → STOP — human approves the version, tag target, title, and body
-  → (approved) publish through the project's own discovered mechanism
-  → re-fetch the tag and release, validate every field against what was approved
+  → STOP — explicit human authorization to begin the post-merge progression
+      (one question can cover both branches below, e.g. "close the milestone and start the release?")
+  ┌──────────────────────────────┴──────────────────────────────┐
+  ▼                                                              ▼
+MILESTONE CLOSURE (rules/milestone-completion.md)       RELEASE (rules/release.md)
+  → delivery/phase milestone, not Backlog                 → discover the project's actual release
+  → zero open issues right now                                policy (explicit config, else history)
+  → STOP, human approves closing                           → determine theme/outcomes — never from
+  → close, re-fetch, confirm state is `closed`                 size
+                                                            → draft notes at release-level altitude
+                                                            → STOP, human approves version/target/
+                                                                title/body
+                                                            → publish, re-fetch, validate every field
 ```
 
-A Backlog/hotfix issue has no PR to merge, so this phase's trigger doesn't apply to it — what release
-cadence, if any, covers hotfix work directly on the trunk branch isn't designed here; there's no
-evidence yet to extract a rule from. Neither the version scheme nor the release mechanism is baked
-into this skill — both are read from each project's own evidence every time. Full detail:
-`rules/release.md`.
+Neither branch is a precondition for the other: milestone closure does not wait for release
+publication to complete, and release publication does not wait for milestone closure. On the project
+this workflow was extracted from, the human has typically closed the milestone first and drafted the
+release after — but that's an observed habit on one project, not a rule either file enforces; running
+the two in the opposite order, or interleaved, is equally valid.
 
-**Milestone completion** — the second, later milestone-level gate, distinct from PR readiness above —
-starts once release validation has actually passed:
-
-```
-release validation passes
-  → check the gate, freshly: delivery/phase milestone (never Backlog)
-      + shipping release published-and-validated + zero open issues right now
-  → any condition fails → stay open (an open issue blocks closure regardless of release state;
-      a newly-discovered follow-up issue re-opens the question even after a clean release)
-  → all three hold → STOP, human approves closing
-  → (approved) close, then re-fetch and confirm state is actually `closed`
-```
+A Backlog/hotfix issue has no PR to merge, so none of this phase applies to it — what release cadence,
+if any, covers hotfix work directly on the trunk branch isn't designed here; there's no evidence yet
+to extract a rule from. Neither the version scheme nor the release mechanism is baked into this
+skill — both are read from each project's own evidence every time.
 
 A delivery/phase milestone represents a bounded body of work intended to ship as a release — that's
 about scope and intent, not naming syntax. It stays open through manual testing and any small,
 legitimately-scoped follow-up issue discovered there; that's expected, not a process failure. This
 is a forward-looking workflow decision rather than an extraction of past practice — see "Real
-example of usage" below. Full detail: `rules/milestone-completion.md`.
+example of usage" below. Full detail: `rules/release.md` and `rules/milestone-completion.md`.
 
 ## Composition and boundaries
 
@@ -216,9 +220,10 @@ my-git-workflow       → branch readiness (trunk for Backlog/hotfix, shared bra
 my-git-workflow       → implement / review / commits / review / verify / close  (per issue)
   → milestone's ready set empty → PR readiness (all closed + manual testing confirmed clean)
   → PR opened, reviewed, merged        (not owned by this skill; Backlog/hotfix has no PR at all)
-my-git-workflow       → authorization to proceed, then release: discover policy / classify / draft
-  / approve / publish / validate
-my-git-workflow       → milestone completion check / closure (delivery/phase only, never Backlog)
+my-git-workflow       → authorization to proceed, then two independent branches (neither waits on
+                          the other to finish):
+                          - milestone completion check / closure (delivery/phase only, never Backlog)
+                          - release: discover policy / classify / draft / approve / publish / validate
 ```
 
 ## Real example of usage
@@ -248,9 +253,10 @@ prior knowledge of that project is needed.
 - **Milestone completion is a deliberate, forward-looking exception.** Every milestone in that
   project's history had actually been left open, including ones where every issue inside was already
   closed — evidence of past practice, not a convention worth preserving. The completion lifecycle
-  above (`rules/milestone-completion.md`) was added as an explicit forward-looking decision instead,
-  tied to release validation rather than issue count. No existing milestone was retroactively closed
-  because of it.
+  above (`rules/milestone-completion.md`) was added as an explicit forward-looking decision instead:
+  closure requires the human's explicit post-merge authorization and approval, not just zero open
+  issues, and it does not wait on the milestone's release to have published first. No existing
+  milestone was retroactively closed because of it.
 - **A shared milestone branch, confirmed across multiple milestones.** What started as a single data
   point — one branch carrying a whole milestone's work — recurred across enough real milestones
   (naming patterns like `core/multitenancy`, `feat/agents`, `feat/documents`) to confirm as the actual
