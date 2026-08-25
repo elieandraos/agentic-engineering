@@ -57,69 +57,137 @@ file that owns the gate built on top of the classification planning does define.
 
 ## 4. Current end-to-end lifecycle
 
-Two paths exist, chosen by which kind of milestone the approved issue belongs to.
-
-**Backlog / hotfix path:**
-
-```
-approved issue (Backlog/hotfix milestone)
-  → work directly on the repository's trunk branch (no feature branch; a checkout mismatch is
-      surfaced to the human, never silently worked around or switched)
-  → implement → Gate 1 (implementation review)
-  → derive commit plan → Gate 2 (commit-plan review)
-  → build semantic commits, narrowest-reliable verification per commit
-  → full regression suite at the completed-issue boundary
-  → ask: close the issue? → (yes) closing recipe + post-mutation validation
-```
-
-This path ends here. No PR, no milestone-level gate, no release trigger — none of the machinery
-below applies to it.
-
-**Milestone path:**
+Two paths exist, chosen by which kind of milestone the approved issue belongs to. Both share the
+same implement → verify → Gate 1 → commit plan → Gate 2 → build → verify spine; they diverge on what
+happens before it (branch readiness) and after it (what a validated closure triggers next).
 
 ```
-approved issue (delivery/phase milestone)
-  → branch readiness: inspect current branch; if it isn't this milestone's shared branch, recommend
-      one derived from the milestone's nature and ask before creating/switching
-  → implement → Gate 1 → derive commit plan → Gate 2
-  → build semantic commits, narrowest-reliable verification per commit
-  → full regression suite at the completed-issue boundary
-  → ask: close the issue? → (yes) closing recipe + post-mutation validation
-  → recompute the milestone's dependency-ready set, report, recommend — human picks next issue
-  → repeat for every issue in the milestone
-  → ready set goes to zero
-  → Milestone PR readiness: every issue closed + human confirms final manual testing done +
-      that testing found nothing further
-  → (all three hold) report PR-ready — a report, not a mutation
-  → human creates, reviews, and merges the milestone-linked PR (human-owned; not this skill's job)
-  → human confirms the merge
-  → STOP: one human acceptance — "close the milestone and start the release?" (or equivalent) —
-      authorizing both branches below
-  ┌───────────────────────────────┬────────────────────────────────┐
-  ▼                                                                  ▼
-MILESTONE CLOSURE                                              RELEASE
-  → eligibility: delivery/phase, zero open issues                → discover release policy
-  → close (no second approval — already authorized above)         → draft notes at release altitude
-  → re-fetch, confirm state is closed                              → STOP: approve exact version/
-                                                                       title/body
-                                                                    → publish, re-fetch, validate
+approved, dependency-ready issue  (handed off by my-feature-planning)
+│
+├── Backlog / hotfix
+│     → work on the repository trunk branch (a checkout mismatch is surfaced to the human,
+│        never silently worked around or switched — no feature branch, no branch decision)
+│     → implement
+│     → VERIFY — full-project suite, pre-Gate-1 (lint/format/static + full regression)
+│     → GATE 1 — implementation review
+│     → derive commit plan
+│     → GATE 2 — commit-plan review
+│     → build semantic commits  (VERIFY — narrowest reliable scope per commit)
+│     → VERIFY — full regression suite, completed-issue boundary
+│     → ask: close the issue?  →  closing recipe + post-mutation validation
+│     → recompute ready set within Backlog → next-work recommendation
+│     → done — no PR, no milestone-level gate, no release trigger
+│
+└── Milestone issue
+      → inspect current branch — not yet the milestone's shared branch?
+          → recommend a branch name derived from the milestone's nature, ask before
+             creating/switching
+      → implement issue
+      → VERIFY — full-project suite, pre-Gate-1 (lint/format/static + full regression)
+      → GATE 1 — implementation review
+      → derive commit plan
+      → GATE 2 — commit-plan review
+      → build semantic commits  (VERIFY — narrowest reliable scope per commit;
+          VERIFY — isolation, escalation only, when an intermediate committed state's
+          own correctness must itself be proven)
+      → VERIFY — full regression suite, completed-issue boundary
+      → ask: close the issue?  →  closing recipe + post-mutation validation
+      → recompute the milestone's dependency-ready set → recommend next issue
+      → repeat for every issue in the milestone
+      → ready set reaches zero
+      → Milestone PR readiness: every issue closed + human confirms final manual testing
+          done + that testing found nothing further
+      → follow-up work found during manual testing?
+           ├─ yes → discovered-work intake → new issue, attached to the still-open
+           │         milestone → continue milestone, re-run this gate once that issue closes
+           └─ no  → report: milestone PR-ready (a report, not a mutation)
+                    → human creates, reviews, and merges the milestone-linked PR
+                    → human confirms the merge
+                    → STOP — one bundled human authorization:
+                        "close the milestone and start the release?"
+                    → two independent branches, neither gates the other
+                         ├── MILESTONE CLOSURE
+                         │     → verify eligibility (delivery/phase, zero open issues,
+                         │        authorization actually covers closure — all checked fresh)
+                         │     → close (no second approval — already authorized above)
+                         │     → re-fetch, confirm state is closed
+                         └── RELEASE
+                               → discover release policy
+                               → understand the release, draft notes at release altitude
+                               → GATE — human approves exact version/tag target/title/body
+                               → publish
+                               → re-fetch, validate
 ```
 
-Two things about that fork matter and are easy to get wrong:
+**Backlog/hotfix ends at the closing recipe.** No PR, no milestone-level gate, no release trigger —
+none of the milestone branch's machinery applies to it.
 
-- **Milestone closure and release do not gate each other.** Both start from the same authorization
-  and proceed entirely through their own rule from there. Neither rule's completion is a
-  precondition for the other's gate. The workflow's home project has typically closed the milestone
-  first and drafted the release second — that's a recorded habit, not an enforced order, and a
-  project running the two in the opposite order, or interleaved, is equally valid under this
-  methodology.
-- **Release content still gets its own approval; milestone closure does not.** The single post-merge
-  acceptance answers "should we proceed with the milestone/release progression at all" — it cannot
-  also be approval of an exact version/title/body that doesn't exist yet at that moment. Release
-  drafts that content afterward and stops again for its own approval. Milestone closure has no
-  equivalent content to approve — its gate is entirely factual (is this a delivery/phase milestone,
-  is it actually eligible right now) — so once the bundled authorization is confirmed present, it
-  proceeds straight to the mutation without asking a second time.
+### What each checkpoint actually proves
+
+The diagram names six kinds of checkpoint — two review gates, three verification moments, and one
+authorization — that are easy to gloss as interchangeable "checks." They are not: each answers a
+different question, against different evidence, and licenses a different transition.
+
+**Gate 1 — implementation review.** *Event:* implementation is reported complete, and the
+pre-Gate-1 full-project verification has run — appropriate project-wide formatting/lint/static
+checks, and the full regression suite appropriate to the project. *Question it answers:* is the
+implementation itself ready to be turned into durable semantic history? *Evidence:* the
+verification results and any meaningful unknowns, visible to the human before they answer.
+*Transition:* approval authorizes moving on to commit-plan derivation — nothing more. Gate 1 does
+not approve commit structure; no commit boundary has even been proposed yet at this point.
+
+**Gate 2 — commit-plan review.** *Event:* a commit plan has been derived from the reviewed diff.
+*Question it answers:* is this the right engineering history for the implementation? *Evidence:*
+the proposed grouping and order, shown before anything is written — commit boundaries are
+engineering decisions in their own right; tests travel with the decision they verify when
+appropriate; ordering must keep every intermediate state coherent and must account for
+activation/configuration ordering hazards (`rules/verification.md`'s ordering note). *Transition:*
+approval authorizes writing the commits. Gate 2 does not re-approve the implementation — that
+question was already closed at Gate 1.
+
+**Per-commit verification.** While building the approved commit plan, verify each commit at the
+narrowest reliable scope that proves it — a principle that applies across every kind of check the
+project's tooling offers, not tests alone: targeted/relevant tests, formatting, linting, static
+analysis, and any other project-specific quality check, scoped down wherever the tooling can
+reliably do it. Where the tooling has no reliable way to scope a given check, that check falls back
+to its broader, project-wide mode for that commit — the target is the narrowest scope that's
+actually reliable, not the narrowest scope regardless of whether the tooling can back it.
+
+**Pre-Gate-1 verification vs. completed-issue verification.** These are the diagram's two
+full-project verification moments, and they can run the identical command without being duplicates
+of each other: pre-Gate-1 proves the complete implementation working tree is ready, before any
+commit history exists to review or split; the completed-issue pass proves the final assembled
+semantic history — however many commits it became, in whatever order — still reconstructs that same
+correct result once the commits actually exist. They are intentionally distinct proofs of two
+different objects, a working tree versus a commit history, and skipping either because the other
+already ran green loses a real check.
+
+**Isolation verification.** A deliberate escalation, not the default posture for every multi-commit
+issue — most issues verify each commit at its own narrowest reliable scope and never reach for this.
+It's used specifically when the correctness of an intermediate *committed* state itself needs to be
+proven — reconstructed-after-the-fact history, or commit order that's itself load-bearing for
+correctness — rather than assumed from how the working tree behaved during implementation. At a high
+level, it works by committing a semantic group, temporarily setting aside everything not yet
+committed, running the project's full verification against exactly that committed state, then
+restoring the rest and repeating for the next commit. The exact mechanics live in
+`rules/verification.md`; this dossier only needs the reader to know when and why the escalation
+exists, not how to execute it.
+
+**Post-merge authorization.** *Event:* the human confirms the milestone PR merged. *Question it
+answers:* should post-merge progression begin at all — for both the milestone-closure branch and
+the release branch. *Evidence:* the human's single explicit acceptance, typically phrased as one
+bundled question ("close the milestone and start the release?"). *Transition:* it opens two
+independent branches at once, neither gating the other — the workflow's home project has typically
+closed the milestone first and drafted the release second, but that's a recorded habit, not an
+enforced order, and running the two in the opposite order, or interleaved, is equally valid. The
+milestone-closure branch then verifies its own eligibility (delivery/phase, zero open issues,
+authorization actually covering closure, all checked fresh) and closes without asking a second
+time — the bundled authorization already is the approval for closure. The release branch separately
+requires its own later approval of the exact release content (version, tag target, title, body),
+because that content doesn't exist yet at the moment the bundled authorization is given — a merged
+PR, and the authorization itself, approve *proceeding*, not any particular version or wording. There
+is no second milestone-closure approval; there is a second, necessarily later, release-content
+approval.
 
 ## 5. Rule architecture
 
