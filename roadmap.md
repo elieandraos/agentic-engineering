@@ -322,45 +322,7 @@ These describe methodology and patterns already in use. They're recorded here as
 
 ## Git / issue / release / milestone methodology
 
-`my-git-workflow` has already evolved beyond simple Git commands. Its current conceptual lifecycle:
-
-```text
-implementation
-→ issue closure
-→ PR
-→ merge
-→ release
-→ release validation
-→ milestone completion check
-→ milestone closure
-```
-
-It treats these as distinct artifacts and lifecycle events:
-
-- Commit: technical change/history.
-- Issue: unit of planned/discovered work.
-- PR: integrated engineering change.
-- Release: shipped outcome.
-- Milestone: delivery intent and completion boundary.
-
-Release methodology discovers the project's actual release/version policy rather than assuming SemVer, GitHub Releases, lightweight tags, a specific tag target, or a specific changelog format:
-
-```text
-policy discovery
-→ release intent
-→ release notes
-→ approval
-→ publish
-→ post-publication validation
-```
-
-Milestone methodology treats "issues complete" as distinct from "milestone complete." A delivery milestone becomes eligible for closure only after:
-
-1. it is a delivery/phase milestone, not the persistent Backlog;
-2. its intended release has been published and validated;
-3. it has zero open issues at the time of the closure check.
-
-This is a workflow decision, not merely a historical repository convention.
+`my-git-workflow`'s Git/issue/release/milestone lifecycle has since been substantially refined beyond any summary of it recorded here — including a Backlog/hotfix path and a separate milestone delivery path, a two-gate review model, sequencing and verification scope, and a bundled post-merge authorization covering both milestone closure and release. The current methodology is owned by the skill's own files (`my-git-workflow/SKILL.md`, `my-git-workflow/rules/*.md`), with a full architecture-level deep-dive in `skill-audits/my-git-workflow.md`. This roadmap does not restate or duplicate it.
 
 ## Architecture artifact pattern
 
