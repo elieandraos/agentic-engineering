@@ -4,12 +4,13 @@
 
 ## Recognizing an approved section
 
-A `plan.md` section is in scope for this rule only when both hold:
+A `plan.md` section is in scope for this rule only when all three hold:
 
-- It matches the initiative being planned — a section for an unrelated or already-shipped milestone doesn't apply.
-- It carries an explicit statement, near the top of the section, that it is the source of truth for the subsequent feature-planning pass. Plan Synthesis's contract (`my-architecture-laboratory/references/plan-synthesis.md`) requires that statement, a completed review pass, and explicit user approval before the section is finalized — but it does not mandate one fixed sentence. Judge the statement's substance, not a literal phrase.
+- **Initiative match** — the section matches the initiative being planned; a section for an unrelated or already-shipped milestone doesn't apply.
+- **Source-of-truth statement** — it contains the semantic statement Plan Synthesis's contract (`my-architecture-laboratory/references/plan-synthesis.md`) requires near the top: that the section is the source of truth for the subsequent feature-planning pass. Judge the statement's substance, not a literal phrase. This statement identifies the section as an *intended* feature-planning handoff — it is **necessary but not sufficient** evidence of approval, because Plan Synthesis writes this statement into the plan before presenting it for approval, so a still-unapproved draft can already carry it.
+- **Known approval** — the user's explicit approval of that plan or section is established from reliable context (stated in this conversation, or clearly confirmed in prior context you can point to). File existence and polished wording do not prove approval; only the user does.
 
-If the section's approval state is genuinely unclear — no explicit source-of-truth statement, or ambiguity about whether it's approved versus still a draft — ask the user rather than guessing; don't treat an unapproved draft as canonical. If the user names an initiative and no matching approved section exists, fall back to the ordinary conversation-driven workflow.
+If explicit approval can't be established this way, ask the user rather than guessing or inferring it from the document's presentation — don't treat an unapproved (or ambiguously approved) draft as canonical. Don't invent a persistent approval marker or an exact required phrase to check for. Once explicit approval is established, trust the approved handoff as canonical; feature planning does not rerun Plan Synthesis's internal review pass. If the user names an initiative and no matching approved section exists, fall back to the ordinary conversation-driven workflow.
 
 ## Canonical source of truth
 
@@ -28,7 +29,7 @@ Once a matching approved section is confirmed:
 
 ## Handoff into feature planning
 
-This rule affects only how an approved plan's architecture, locked decisions, derived constraints, and open implementation details enter feature planning. Once consumed, continue at classification in `SKILL.md`'s pipeline — every later step (scope resolution, design reconciliation, issue drafting, sequencing, review, approval, GitHub creation, and post-mutation validation) still applies in full. An approved plan supplies input to that pipeline; it does not shortcut or replace any step of it.
+This rule affects only how an approved plan's architecture, locked decisions, derived constraints, and open implementation details enter feature planning. Once consumed, continue at classification in `SKILL.md`'s pipeline — every later step and gate `SKILL.md` defines remains mandatory. An approved plan supplies canonical input to that pipeline; it shortcuts nothing in it.
 
 ## Division of responsibility
 
