@@ -11,8 +11,8 @@ intake — origin never predetermines shape.
 
 **A. New resource / first-class domain entity** — a brand-new entity with its own persisted identity
 and a meaningful lifecycle, where operations center on that entity and authorization applies to it
-where relevant. → `rules/resource-feature-checklist.md`. It may later map to a migration/model/
-policy/controller or another stack's equivalents — that mapping is downstream, not the test.
+where relevant. → `rules/resource-feature-checklist.md`. The consuming stack determines the concrete
+storage, domain, authorization, and interface artifacts; those artifacts do not define the category.
 
 **B. Cross-cutting application capability** — behavior or infrastructure whose organizing
 responsibility spans multiple existing domains rather than one new entity's own lifecycle (a
