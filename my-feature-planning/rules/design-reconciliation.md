@@ -6,9 +6,10 @@ mid-implementation and never get folded back into the design source. This rule's
 
 ## When this pass runs
 
-Run this pass whenever an issue has any frontend/UI scope — any issue introducing or changing a
-user-facing surface, not only ones focused on wiring an existing design. Backend-only or
-infrastructure-only work with no user-facing surface skips this file entirely.
+Run this pass whenever the planned work has any frontend/UI scope — this runs during planning,
+before canonical issue definitions exist, so scope means the user-facing surface being planned, not
+only an issue already framed as UI wiring. Backend-only or infrastructure-only planned work with no
+user-facing surface skips this file entirely.
 
 Once frontend/UI is in scope, running the pass is not discretionary. But discovering that no
 relevant design artifact exists is a valid, ordinary outcome of running it — it does not by itself
@@ -28,8 +29,9 @@ don't invent a project convention for where one would live.
 
 ## Authority model
 
-Reconciliation compares sources; it doesn't decide who outranks whom on its own — that's fixed in
-advance:
+Reconciliation compares sources. Some authority is established in advance — most importantly an
+approved locked decision — while unclear chronology or authority between other sources must be
+surfaced, not assumed:
 
 - An approved `plan.md` locked decision (`rules/plan-md-input.md`) governs the intended target for
   anything it covers. A design artifact or the current implementation can't silently override it.
@@ -63,20 +65,34 @@ Before drafting canonical issue definitions whose scope depends on a UI choice:
 
 ## Outcomes
 
-- **No material disagreement.** Sources agree, or only one carries real information. Proceed.
-- **Superseded artifact.** The artifact is clearly superseded by a later confirmed product decision
-  (an approved plan, a decision the user has confirmed, or comparably solid evidence — not shipping
-  by itself). Use the newer decision. Note the drift only if it affects implementation
-  understanding.
-- **Genuine unresolved disagreement.** Sources express different product choices and neither
-  clearly supersedes the other. This is the only outcome that blocks drafting the affected issue(s)
-  — see "Presenting a blocking disagreement" below.
-- **Genuinely new UI.** A design artifact describes UI with no shipped equivalent. Follow the
-  design, subject to normal planning rules; there's nothing to reconcile.
-- **No relevant artifact.** Nothing usable was found or applies. Use approved decisions and
-  established product conventions when they give enough direction. Ask the user only when a
-  material product choice remains unresolved and the issue can't become developer-ready without it.
-  Never invent layout or interaction requirements to fill the gap.
+- **No material drift.** At least two relevant sources align, or their differences don't change
+  product behavior or issue scope. Proceed.
+- **Resolved drift.** Relevant sources materially differ, but an approved decision or established
+  chronology resolves the intended target — a stale artifact superseded by a later confirmed
+  decision, or shipped behavior that hasn't yet caught up with an approved future target. Record
+  the drift against the resolved target; shipping alone still doesn't establish authority.
+- **Genuine unresolved disagreement.** Relevant sources express different product choices, and no
+  approved authority or established chronology resolves which one governs.
+- **Genuinely new UI.** A relevant artifact describes a new surface with no shipped counterpart and
+  no conflicting approved decision. Follow the artifact, subject to normal planning rules.
+- **No relevant artifact.** No applicable artifact exists or can be accessed. Continue from approved
+  decisions and established product conventions when they give enough direction; never invent
+  layout or interaction requirements to fill the gap.
+
+## Drafting readiness
+
+Classifying the source relationship is separate from deciding whether drafting can proceed. After
+classifying, check whether a material product decision needed for developer-ready scope is still
+unresolved:
+
+- Genuine unresolved disagreement normally leaves such a decision open, and blocks only the
+  affected issue definitions.
+- No relevant artifact doesn't block by itself.
+- If a missing artifact leaves a necessary product decision unresolved, that unresolved decision —
+  not the missing artifact — blocks the affected drafting.
+- Issue definitions unaffected by the open decision may continue.
+- The user remains the authority either way — present a genuine disagreement as the decision-ready
+  list below, or ask directly when the gap came from insufficient source material.
 
 ## Presenting a blocking disagreement
 
@@ -89,7 +105,7 @@ drafting the affected issue(s):
 - An optional recommendation, with reasoning.
 
 Don't silently pick a side. Don't draft the affected canonical issue definitions until the user
-decides. Issues that don't depend on the open decision aren't blocked by it.
+decides.
 
 ## What this rule owns
 
