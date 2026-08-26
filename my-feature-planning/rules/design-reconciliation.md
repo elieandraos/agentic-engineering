@@ -1,41 +1,99 @@
 # Design Reconciliation
 
-Design mockups drift from what actually ships. This isn't a failure mode to prevent — it's normal, because real decisions get made mid-implementation that never get folded back into the design source. The job here is to **surface** drift, not silently resolve it in either direction.
+Design artifacts drift from what actually ships. That's normal — real product decisions get made
+mid-implementation and never get folded back into the design source. This rule's job is to
+**surface** that drift before it silently repeats, not to resolve it in either direction on its own.
 
-## This pass is conditional, not universal
+## When this pass runs
 
-Only run this when an issue has frontend/UI scope. Backend-only issues, and cross-cutting capabilities with no UI surface, skip this file entirely — don't go looking for a `_design/*.jsx` mockup that has no reason to exist. Don't assume `_design/` exists or is complete, either: it's gitignored and doesn't persist across machine restarts, and a mockup may predate the feature being planned (e.g. `_design/notifications.jsx` only covers the bell dropdown/index page shipped in an earlier phase — it has no mockup for a manual-Notify modal added later). Check for a matching file before assuming one is missing or present.
+Run this pass whenever an issue has any frontend/UI scope — any issue introducing or changing a
+user-facing surface, not only ones focused on wiring an existing design. Backend-only or
+infrastructure-only work with no user-facing surface skips this file entirely.
 
-## Where design lives
+Once frontend/UI is in scope, running the pass is not discretionary. But discovering that no
+relevant design artifact exists is a valid, ordinary outcome of running it — it does not by itself
+block planning. See "No relevant artifact" below.
 
-Per the `project-design-files` memory: design files from Claude Design live at `_design/` in the project root. Read from there directly — e.g. `_design/agents-screen.jsx`, `_design/carrier-detail.jsx`. If frontend/UI work genuinely needs a design reference and the matching file is missing (or only covers an earlier, unrelated version of the page), ask the user to re-share the Claude Design URL or confirm the intended UI rather than inventing layout.
+## Locating design artifacts
 
-## The reconciliation pass
+This rule does not assume a directory, filename, format, design provider or tool, tracked-vs-
+untracked status, or refresh mechanism, and it does not depend on any private memory entry.
+Discover the consuming project's actual design-artifact sources, and how to access them, from
+project-provided documentation, configuration, or reliable context already established in
+conversation.
 
-Before drafting **any** frontend/UI-wiring issue for a feature:
+If the location or access method is unclear, ask the user — but only when resolving it is
+materially necessary to produce a correct, developer-ready issue. Don't invent an artifact, and
+don't invent a project convention for where one would live.
 
-1. Read the matching `_design/*.jsx` mockup(s) for the page(s) this issue covers.
-2. Read the equivalent already-shipped page(s) elsewhere in the app (e.g. if planning an index page, read the existing index-page component for a sibling resource, not just the design).
-3. Classify what you find into one of four cases. Case is what determines the action — don't skip straight to an outcome without naming which case applies.
+## Authority model
 
-## The four cases
+Reconciliation compares sources; it doesn't decide who outranks whom on its own — that's fixed in
+advance:
 
-**A. Design is older than the shipped implementation, and the shipped implementation clearly represents the newer product decision.** Real decisions got made mid-implementation that never made it back into the design source — this is normal, not a failure to prevent. Use the shipped application as the implementation precedent. Mention the drift if it's useful context, but don't stop for a decision unless a genuine, still-unresolved product question remains underneath it.
+- An approved `plan.md` locked decision (`rules/plan-md-input.md`) governs the intended target for
+  anything it covers. A design artifact or the current implementation can't silently override it.
+- Current code is authoritative for current-state facts, and for discovering shipped product
+  conventions elsewhere in the app.
+- A design artifact is evidence of intended UI — not automatically the newest or winning source
+  just because it exists.
+- Shipping alone doesn't prove a deliberate, confirmed product decision. Something can ship without
+  anyone having decided it should stay that way.
+- When chronology or authority between two sources is genuinely unclear, and they express genuinely
+  different product choices, the user decides — don't guess which one is "more current."
+- A mismatch against an approved locked decision is recorded as drift against the approved target,
+  not treated as grounds to re-litigate the decision. Only the user can amend a locked decision, and
+  only explicitly.
 
-**B. Design and shipped implementation represent genuinely different product choices, and neither one clearly supersedes the other.** Stop and flag it (see "What 'flag it' means in practice" below) — do not pick a side silently. This is the only case that blocks drafting until the user weighs in.
+Whether a derived constraint from `plan.md` has gone stale against current code is
+`rules/plan-md-input.md`'s procedure, not this rule's — don't duplicate it here; apply this rule's
+outcomes to whatever that check leaves in place.
 
-**C. Design describes genuinely new UI with no shipped equivalent.** Follow the design, subject to the normal planning rules — there's nothing to reconcile because nothing shipped yet contradicts it.
+## The procedure
 
-**D. `plan.md` contains an explicitly locked design decision** (see `rules/plan-md-input.md`) covering what this pass would otherwise resolve — a UI shape, an interaction pattern. The plan decision remains authoritative; a stale design mockup never gets to silently override it, no matter which of A/B/C it would otherwise look like. Still run the reconciliation pass for context — `_design/` and the shipped app can both have moved since the plan was written — but its job here is to confirm nothing material has changed underneath the locked call, not to re-decide it. If a mockup actively disagrees with the locked decision, that's flagged exactly like case B, and the user confirms the locked decision stands (or explicitly amends it) rather than the mockup winning by default.
+Before drafting canonical issue definitions whose scope depends on a UI choice:
 
-## What "flag it" means in practice
+1. Identify any approved UI/product decisions that apply (from `plan.md` or otherwise established).
+2. Locate and inspect the relevant available design artifacts, if any exist.
+3. Inspect the affected shipped surface, and the closest established product precedent, where
+   either exists — neither is guaranteed to exist for genuinely new UI.
+4. Compare what the sources actually say.
+5. Classify the result using the outcomes below, and record the resulting scope, constraint, drift
+   note, or open product decision before drafting the affected issue(s).
 
-Compile the disagreements into a short list and hand it to the user before drafting the affected issues — one line each: what the design shows, what the shipped app (or the locked plan.md decision) actually does/has, and (if you have an opinion) which one you'd lean toward and why. Let the user decide; this is a product call, not an engineering one.
+## Outcomes
 
-## Examples from this project
+- **No material disagreement.** Sources agree, or only one carries real information. Proceed.
+- **Superseded artifact.** The artifact is clearly superseded by a later confirmed product decision
+  (an approved plan, a decision the user has confirmed, or comparably solid evidence — not shipping
+  by itself). Use the newer decision. Note the drift only if it affects implementation
+  understanding.
+- **Genuine unresolved disagreement.** Sources express different product choices and neither
+  clearly supersedes the other. This is the only outcome that blocks drafting the affected issue(s)
+  — see "Presenting a blocking disagreement" below.
+- **Genuinely new UI.** A design artifact describes UI with no shipped equivalent. Follow the
+  design, subject to normal planning rules; there's nothing to reconcile.
+- **No relevant artifact.** Nothing usable was found or applies. Use approved decisions and
+  established product conventions when they give enough direction. Ask the user only when a
+  material product choice remains unresolved and the issue can't become developer-ready without it.
+  Never invent layout or interaction requirements to fill the gap.
 
-**Case B (genuine disagreement, flagged):** `_design/new-carrier.jsx` and `_design/carrier-detail.jsx` still reference `onboarded_date` (a required date field), `is_hq` (a boolean flag marking one branch as headquarters), and `contact.department` — none of which exist anywhere in the shipped `Carrier`/`CarrierBranch` schema. The original GitHub issues (#198, #199, #208, #209) were written *from* the design and inherited the same fields, then the fields were quietly dropped during implementation without either the design or the issues being updated. Nobody made a documented decision to drop them — it just happened. That's exactly the kind of drift this pass exists to catch before it repeats on the next feature. (In hindsight this reads as case A — the shipped schema was the newer decision — but because no one had ever surfaced or confirmed that call, it had to be treated as an unresolved case B at the time it was caught.)
+## Presenting a blocking disagreement
 
-**Case C (genuinely new UI, design followed):** `_design/notifications.jsx` (Phase 21) only mocks the bell dropdown and notifications index page shipped in an earlier phase (document-upload notifications) and has no mockup at all for the manual-Notify modal/reason picker added in Phase 21. There's nothing to reconcile because the design is silent, not contradicting — the right move was to follow the shipped app's existing form pattern (`InviteMemberModal.vue`) instead.
+When the outcome is a genuine unresolved disagreement, compile a short, decision-ready list before
+drafting the affected issue(s):
 
-**Case D (locked plan.md decision holds against a stale mockup):** planning the Global Search capability (Phase 22), `plan.md` locked an inline-dropdown search UI in `AppTopNav.vue`, explicitly rejecting a command-palette/⌘K overlay. `_design/app-shell.jsx`'s `TopNav` mockup nonetheless showed a ⌘K-triggered search button — drawn before Agents/Carriers were in scope and never updated. Flagging it (rather than either silently following the stale mockup or silently ignoring it) let the user confirm the locked decision stood.
+- What each source indicates.
+- Why neither clearly supersedes the other.
+- The specific product decision required.
+- An optional recommendation, with reasoning.
+
+Don't silently pick a side. Don't draft the affected canonical issue definitions until the user
+decides. Issues that don't depend on the open decision aren't blocked by it.
+
+## What this rule owns
+
+Comparing sources, classifying drift, and surfacing unresolved product choices. It does not create
+or amend `plan.md`, update design artifacts, prescribe where a project stores design files, choose
+implementation/component details, implement the UI, or duplicate issue drafting or review mechanics
+owned elsewhere in this skill. Its output becomes input to canonical issue scope.
