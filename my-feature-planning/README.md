@@ -92,11 +92,11 @@ doesn't have — the issue then carries that unknown honestly rather than preten
 it's resolved.
 
 A validated discovered finding is also sequenced by its own scope, not forced into
-the backend-then-frontend batching this project uses for planned features — a
-frontend-only fix ships without waiting on a backend batch that doesn't exist for
-it, and vice versa. That batching convention only applies when the finding turns
-out to be genuinely entangled with a larger planned capability's own dependency
-graph.
+the backend-then-frontend batching that's the default for planned features (see
+"Sequencing" below) — a frontend-only fix ships without waiting on a backend batch
+that doesn't exist for it, and vice versa. That batching convention only applies
+when the finding turns out to be genuinely entangled with a larger planned
+capability's own dependency graph.
 
 This path only decides *whether there's a real, well-scoped issue* and writes it —
 it doesn't fix code, and once the issue is approved, the implementation skills take
@@ -176,6 +176,20 @@ against what the app actually ships.
 
 The detailed rules for running this check live in the rule files — this is just the shape of it.
 
+## Sequencing
+
+Once issues are drafted, they're batched: backend/TDD work lands before frontend/UI work, for both
+resource-shaped and cross-cutting features. This is the default shape, not a fixed issue count — the
+feature's actual dependency graph decides how many issues exist in each batch.
+
+In the project this skill was first built in, this held across two different feature shapes — a
+resource with its own CRUD spine, and a cross-cutting capability with none — even though the batch
+composition looked different each time. The full rule lives in `rules/sequencing.md`.
+
+A discovered-work finding (see "A third way to start" above) isn't automatically bound by this batch
+template — it sequences by its own scope, which may be backend-only, frontend-only, or genuinely
+entangled with a larger feature's dependency graph that's already being batched this way.
+
 ## Milestones and labels
 
 ```
@@ -227,7 +241,12 @@ Two main review checkpoints:
 2. **Final approval** — the user sees a compact manifest plus the milestone/label proposal.
 
 Nothing gets created on GitHub until the user has explicitly approved *both* the issue set and the
-proposed GitHub metadata. Dependency and structural checks run before that creation step, not after.
+proposed GitHub metadata. Before that approval, structural checks confirm the canonical issue set
+itself is sound, and a separate check confirms the compact manifest the user is approving actually
+matches it — a render is a generated artifact, not automatically trustworthy just because it came
+from the canonical definitions. After creation (and after any later edit to an already-created issue),
+the skill re-fetches what GitHub actually has and checks it against the canonical definition — a `gh`
+command succeeding is never treated as proof by itself.
 
 ## What the skill owns
 
@@ -282,17 +301,40 @@ my-architecture-laboratory → approved architecture / plan.md
 ## Is this portable?
 
 The planning method — classify, scope, reconcile, draft, review, sequence, create — isn't specific
-to this project and could apply to any codebase.
+to any one project's stack and could apply to any codebase.
 
-The skill as written today isn't fully generic yet. It carries this project's conventions baked in:
-Laravel/Vue patterns, milestone naming, label names and colors, this project's GitHub workflow.
-(The issue title convention itself — `<Area/Capability>: <action or outcome>` — is written to be
-portable rather than tied to this project's naming dialect; see `rules/issue-conventions.md`.)
+GitHub itself is a different kind of dependency from the rest, and it's worth naming separately from
+stack conventions: it's the methodology's actual planning substrate, not an abstraction layered on
+top of it. Milestones, labels, `#N` auto-linking, and the issue lifecycle this skill's issue and
+review rules are built around are GitHub product concepts, not just a CLI choice — a team using a
+different tracker would need to adapt those rules, not just point `gh` at a different host.
 
-> The planning method is reusable. The conventions around it belong to the project.
+`SKILL.md` and this file now describe the methodology, its safeguards, and its boundaries in
+project-agnostic terms; where an example is drawn from the project this skill was first built in,
+it's labeled as that (the issue title convention itself — `<Area/Capability>: <action or outcome>` —
+is written to be portable rather than tied to any one project's naming dialect; see
+`rules/issue-conventions.md`).
 
-If this skill is ever made public, those conventions should move into a project-specific adapter
-rather than staying baked into the core methodology.
+That doesn't make the whole skill generic yet. The rule files underneath still carry some of that
+project's conventions baked in more deeply than a labeled example:
+
+- `rules/resource-feature-checklist.md` interleaves the generic resource-planning track structure
+  (A–G) with that project's specific Laravel/Vue class names, file paths, and UI conventions closely
+  enough that separating the two is a rewrite, not an extraction — the heaviest remaining item.
+- `rules/design-reconciliation.md` and `rules/issue-conventions.md` each name a specific personal
+  memory (`project-design-files`; `feedback_github_issues` and `feedback_github_label_colors`) that
+  the rule depends on to know where design files live or how to format an issue — real dependencies
+  on that project's own memory store, not yet generalized or made optional.
+
+Refining those is a rule-file-level pass — each `rules/*.md` file receiving its own authoring pass —
+not something these two top-level files can resolve on their own.
+
+> The planning method is reusable. GitHub is a real dependency the method is built on. The specific
+> stack conventions and personal-memory dependencies inside some rule files still belong to the
+> project they were extracted from.
+
+If this skill is ever made public, those rule-file conventions should move into a project-specific
+adapter rather than staying baked into the core methodology.
 
 ## Relationship to my-architecture-laboratory
 
