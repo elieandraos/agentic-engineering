@@ -5,7 +5,10 @@ section, works out the scope and dependencies, drafts reviewed GitHub issues, an
 after approval. It plans the work — it does not implement it, that's a different skill's job, picked
 up after an issue is approved.
 
-## Two ways to start, plus a third
+## Three starting points, two work origins
+
+A feature conversation and an approved `plan.md` are the two starting points for Planned work; an
+unexpected finding is the starting point for Discovered work.
 
 **From a feature conversation.** Most features start here: "let's build X" → classify → work out
 scope → ask the important unanswered questions → draft issues.

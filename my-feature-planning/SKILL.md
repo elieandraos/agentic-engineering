@@ -12,8 +12,10 @@ inside that shape. See `README.md` for the plain-English walkthrough and reasoni
 
 ## Two work origins
 
-- **Planned work** — scope is already understood or approved: a feature ask in conversation, or an
-  approved `plan.md` section (`rules/plan-md-input.md`). Enters the pipeline below at classification.
+- **Planned work** — scope is already understood or approved. A feature ask in conversation enters
+  the pipeline below at classification (step 2); an approved `plan.md` section
+  (`rules/plan-md-input.md`) enters at step 1, consuming that input before classification. Both are
+  the same Planned-work origin.
 - **Discovered work** — starts from an unexpected finding (implementation, code review, manual
   testing, production/debugging, another workflow) with scope not yet known. Runs
   `rules/discovered-work.md`'s investigation first; only a validated finding enters the pipeline.
@@ -31,10 +33,12 @@ never gets a lighter-weight issue.
    (`rules/resource-feature-checklist.md` or `rules/capability-checklist.md`).
 4. When frontend/UI is in scope, reconcile the project's available design artifacts against the
    shipped application and any approved architecture decisions (`rules/design-reconciliation.md`).
-5. Draft canonical issue definitions (`rules/issue-conventions.md`).
-6. Sequence the work by its actual dependency graph and run the review pass
+5. Query existing GitHub milestones/labels and propose names/colors (`rules/issue-conventions.md`);
+   create nothing yet.
+6. Draft canonical issue definitions (`rules/issue-conventions.md`).
+7. Sequence the work by its actual dependency graph, run the review pass, and present the full draft
+   for content review; then obtain final approval of the compact manifest and the proposed metadata
    (`rules/sequencing.md`, `rules/review.md`).
-7. Propose milestone/labels and get explicit human approval before creating anything.
 8. Create GitHub issues in dependency-safe order and validate every mutation by reading state back.
 
 ## Non-negotiable contracts
