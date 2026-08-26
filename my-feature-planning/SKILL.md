@@ -1,105 +1,84 @@
 ---
 name: my-feature-planning
-description: "Personal workflow for planning a feature end-to-end before writing any code — a brand-new CRUD resource (e.g. Carriers, Agents), a cross-cutting application capability (e.g. Notifications), or a scoped extension/refactor that deserves its own milestone. When `my-architecture-laboratory` has already produced an approved, initiative-specific `plan.md` section (its Plan Synthesis track), this skill treats it as the canonical input for architecture and locked decisions instead of re-deriving them from conversation — see `rules/plan-md-input.md`. Covers feature-shape classification, a scope checklist tailored to that shape, a design-vs-shipped-app reconciliation pass against `_design/*.jsx` mockups when frontend is involved (including reconciling against a plan.md-locked design decision, and distinguishing stale design drift from a genuine unresolved product disagreement), an explicit propose-then-approve workflow for GitHub milestone/label metadata, canonical-issue-definition drafting (titles, labels, context-first issue bodies, task checklists, acceptance criteria/tests), an issue/dependency review pass with conditional extensibility-claim validation, structural-integrity validation, and TDD-first-then-UI sequencing. Trigger when the user asks to plan, scope, or scaffold a feature; says things like \"let's plan out X\", \"create issues for X\", \"scope this feature\", \"plan the approved X from plan.md\", \"turn this plan into a milestone/issues\" — whether X is a new CRUD resource, a cross-cutting capability, or an extension/refactor. Also trigger when an unexpected finding surfaces during implementation, code review, manual smoke testing, or production/debugging that needs triage into scoped work — \"smoke testing found a bug, figure out what's going on\", \"investigate this and open an issue if one's warranted\", \"turn this finding into an issue\" — see `rules/discovered-work.md` for the investigate-before-issue intake this skill runs for that path, distinct from already-scoped feature planning. This skill only plans, drafts, and reviews GitHub milestones/issues — it does not implement application code, and it does not produce or amend `plan.md` itself (that's `my-architecture-laboratory`'s job). See `README.md` for a plain-English walkthrough of the workflow and its boundaries before diving into the operational rules here and in `rules/`. Once implementation starts, load it alongside the consuming project's own stack-specific implementation skills instead of relying on this skill for code — in the originating project, that means `my-laravel-patterns` and `laravel-best-practices`."
+description: "Plans a feature end-to-end into GitHub milestone/label metadata and a reviewed, drafted set of issues — classify, scope, draft, review, and create only after approval. Trigger when asked to plan, scope, or scaffold a feature, or to turn an approved plan.md initiative into milestones/issues. When `my-architecture-laboratory` has already produced an approved, initiative-specific `plan.md` section, treat it as canonical input instead of re-deriving decisions from conversation — see `rules/plan-md-input.md`. Also trigger when an unexpected finding needs investigation before deciding whether it's issue-worthy — see `rules/discovered-work.md`. This skill only plans, drafts, and reviews GitHub milestones/issues; it does not implement code, and does not produce or amend `plan.md` itself (that's `my-architecture-laboratory`'s job). See `README.md` for a plain-English walkthrough."
 ---
 
 # My Feature Planning
 
-Personal workflow for turning "let's build a feature" into a milestone and a reviewed, drafted set of GitHub issues. The methodology — classify, scope, reconcile design, draft, review, sequence, create — is generic; a consuming project supplies its own stack conventions, milestone naming, and label palette inside that shape. The rule files illustrate the methodology with real examples from the project it was first extracted from — they illustrate the rules, they don't define them; see `README.md` for that history and a plain-English walkthrough of the workflow and its boundaries.
+Personal workflow for turning "let's build a feature" into a milestone and a reviewed, drafted set of
+GitHub issues. The methodology — classify, scope, reconcile design, draft, review, sequence, create —
+is portable across GitHub-based projects; each consuming project supplies its own stack conventions
+inside that shape. See `README.md` for the plain-English walkthrough and reasoning.
 
-## A minimal human prompt is enough
+## Two work origins
 
-This skill owns the workflow knowledge — detecting a `plan.md` input, recognizing a Discovered-work finding, classifying the feature, loading the right checklist, querying project metadata, drafting issue context/tasks/acceptance criteria, running review, and asking only genuinely unresolved questions. A prompt like "Plan this feature" or "Plan this initiative from the approved plan.md" is sufficient; the human doesn't need to restate the workflow, name which checklist applies, or specify the milestone/label mechanics themselves. Neither does a prompt that just reports a finding — "smoke testing found a bug, figure out what's going on and open an issue if one's warranted" is enough to trigger the Discovered-work intake below.
+- **Planned work** — scope is already understood or approved: a feature ask in conversation, or an
+  approved `plan.md` section (`rules/plan-md-input.md`). Enters the pipeline below at classification.
+- **Discovered work** — starts from an unexpected finding (implementation, code review, manual
+  testing, production/debugging, another workflow) with scope not yet known. Runs
+  `rules/discovered-work.md`'s investigation first; only a validated finding enters the pipeline.
 
-## Two work origins: Planned vs. Discovered
+Both origins converge on the same canonical-issue pipeline and the same review bar — Discovered work
+never gets a lighter-weight issue.
 
-Not everything this skill drafts starts from already-understood scope.
+## Pipeline
 
-- **Planned work** — starts from scope that's already understood or approved: a feature ask in conversation, or an approved `plan.md` section (`rules/plan-md-input.md`). Runs the workflow below unchanged, starting at classification.
-- **Discovered work** — starts from evidence of something unexpected found during implementation, code review, manual smoke testing, production/debugging, or another workflow. Scope — and sometimes the underlying cause — isn't known yet at the moment it's noticed. This needs an investigation/validation pass, `rules/discovered-work.md`, before there's anything to classify. That pass ends exactly where Planned work starts: a validated finding ready to go through classification, drafting, and review below.
+1. Consume an approved `plan.md` input when one exists (`rules/plan-md-input.md`); otherwise skip to
+   classification.
+2. Classify the feature — resource/CRUD, cross-cutting capability, extension, or refactor
+   (`rules/feature-classification.md`).
+3. Load the matching scope checklist and resolve every applicable question
+   (`rules/resource-feature-checklist.md` or `rules/capability-checklist.md`).
+4. When frontend/UI is in scope, reconcile the project's available design artifacts against the
+   shipped application and any approved architecture decisions (`rules/design-reconciliation.md`).
+5. Draft canonical issue definitions (`rules/issue-conventions.md`).
+6. Sequence the work by its actual dependency graph and run the review pass
+   (`rules/sequencing.md`, `rules/review.md`).
+7. Propose milestone/labels and get explicit human approval before creating anything.
+8. Create GitHub issues in dependency-safe order and validate every mutation by reading state back.
 
-Both origins converge on the same canonical-issue pipeline and the same review bar (`rules/review.md`) once there's a validated finding or an approved feature ask — Discovered work doesn't get a lighter-weight issue, and none of Planned work's rules change because this path exists.
+## Non-negotiable contracts
 
-## Quick Reference
+- An approved `plan.md`'s locked decisions are never re-litigated during planning.
+- Canonical issue definitions are the source of truth — every rendered draft, the compact manifest,
+  and every `gh issue create` call are generated fresh from them, never from a prior render.
+- A created GitHub issue must stand alone — understandable even if `plan.md`, the planning
+  conversation, and this skill's own prior output all disappeared.
+- Two review surfaces gate creation — a full content review, then a final compact-manifest/metadata
+  approval — and nothing (no milestone, label, or issue) is created until both are approved.
+- Every issue body is re-validated against its canonical definition immediately before it touches
+  GitHub, and every mutation is re-fetched from GitHub and validated again afterward, at creation and
+  on any later change — a `gh` command succeeding is never treated as proof by itself.
 
-0. Discovered-work intake → `rules/discovered-work.md` — when the starting point is an unexpected finding rather than already-approved scope: don't fix the code or file an issue from the first symptom, investigate proportionally, and validate the finding before it enters the pipeline below
-1. Plan.md input → `rules/plan-md-input.md` — when an approved, initiative-specific `plan.md` section exists (from `my-architecture-laboratory`'s Plan Synthesis), treat it as canonical for architecture and locked decisions; otherwise skip straight to classification
-2. Feature classification → `rules/feature-classification.md` — resource/CRUD, cross-cutting capability, extension, or refactor milestone
-3. Scope checklist → `rules/resource-feature-checklist.md` (shape A, or the CRUD slice of C) or `rules/capability-checklist.md` (shape B, loosely D)
-4. Design reconciliation → `rules/design-reconciliation.md` — only when frontend/UI is actually in scope; also governs how a plan.md-locked design decision interacts with a `_design/*.jsx` mockup
-5. Issue conventions → `rules/issue-conventions.md` — the portable `<Area/Capability>: <action or outcome>` title convention, context-first issue body, task checklists, acceptance criteria/tests, explicit milestone/label proposal-and-approval (including when an optional milestone description is warranted, and the persistent-backlog vs. delivery/phase distinction)
-6. Sequencing → `rules/sequencing.md` — for planned feature work: backend/TDD batch, then frontend batch, then the two-stage approval flow; for a standalone discovered-work issue, sequence by its own dependency graph instead of that batch template
-7. Review → `rules/review.md` — issue quality, dependency quality, extensibility-claim validation, canonical structural integrity (validates the issue definitions), rendered manifest integrity (validates the final manifest actually matches those definitions), issue-body content integrity (validates each rendered body is self-contained and developer-ready), post-mutation validation (validates every GitHub mutation, at creation time and on any later change, with a compact change summary)
+Full mechanics for all of the above: `rules/review.md`.
 
-## Canonical issue definitions are the source of truth
+## What it owns
 
-Maintain one canonical definition per proposed issue — sequence number, title, batch, labels, dependencies, task checklist, acceptance criteria/notes. Reason about and revise *these*, never a previously rendered preview. Every rendered output — the full content-review draft, the compact final manifest, and every `gh issue create` call — is generated fresh from the canonical definitions. Never reconstruct an issue body by copying from an earlier chat render. This is the rule that stops a preview from becoming an accidental second source of truth — duplicated headings, misplaced acceptance criteria, and similar drift are what happens when a render gets treated as a record instead of regenerated from the canonical definitions every time (see `README.md` for the real drafting pass this was extracted from). A preview is a one-way rendering of the canonical set, not a record to re-derive it from.
+Feature classification, scope discovery, discovered-work investigation/triage, design reconciliation,
+issue drafting, dependency-aware sequencing, review, milestone/label proposals, and GitHub issue
+creation after approval.
 
-Being generated from the canonical definitions doesn't make a render trustworthy by construction — rendering is still a generative step that can silently drop, duplicate, retitle, or reorder a row. The final compact manifest is therefore mechanically verified against the canonical definitions before it's ever shown — see "Rendered manifest integrity" in `rules/review.md`.
+## What it does not own
 
-## Acceptance criteria vs. task checklists
+Application implementation, framework-specific conventions, test implementation details, commit
+structure/messages, fixing a defect it discovers, and deciding when a milestone closes.
 
-A task checklist says **where to work** (which files/classes/tests). Acceptance criteria say **what must remain true when the issue is done** — the architectural or product guarantees planning actually surfaced (e.g. "tenant scope comes from `OrganizationContext`, never actor identity", "dispatch only after the mutation commits", "one event, two audiences, two classes"). Not every issue needs both in depth — a one-file frontend wiring issue can be tasks-only — but when planning surfaces a real invariant, it belongs in the issue as acceptance criteria, not buried in a vague "add tests" bullet.
+## Rule index
 
-## GitHub issues must stand alone
+- `rules/plan-md-input.md` — consuming an approved `plan.md` section as canonical input.
+- `rules/discovered-work.md` — investigating an unexpected finding before it's classified.
+- `rules/feature-classification.md` — which shape a feature is, and which checklist applies.
+- `rules/resource-feature-checklist.md` / `rules/capability-checklist.md` — shape-specific scope
+  questions.
+- `rules/design-reconciliation.md` — reconciling design artifacts against the shipped app when UI is
+  in scope.
+- `rules/issue-conventions.md` — issue format, and milestone/label proposal-and-approval.
+- `rules/sequencing.md` — batch order and dependency-driven sequencing.
+- `rules/review.md` — issue quality, structural/rendered/content integrity, and post-mutation
+  validation.
 
-> A created GitHub issue must remain understandable if `plan.md`, the architecture conversation, the planning transcript, and this skill's own output all disappeared tomorrow.
+## Handoff
 
-`plan.md` (when it exists — `rules/plan-md-input.md`) is the upstream architecture/planning artifact; a GitHub issue is the downstream execution artifact, and the two have different lifespans. In this project specifically, `plan.md` sections get deleted once the corresponding work ships (verifiable in its own commit history — completed initiatives are routinely trimmed out), so anything an issue body needs to be understood must live in the issue itself, not behind a citation into a file that may not say that anymore by the time someone reads the issue.
-
-The issue may briefly summarize a relevant architectural/product decision when doing so improves clarity — that's encouraged, not forbidden. What's forbidden is citing the decision instead of explaining it:
-
-- **GOOD:** "Public self-registration is being removed because accounts will enter the system only through controlled provisioning or invitation."
-- **BAD:** "Implements LOCKED decisions 1 and 5 from plan.md."
-
-The first is understandable on its own. The second requires the reader to go find external planning context that may no longer exist. See `rules/issue-conventions.md` for the full reference-syntax rules this implies, and `rules/review.md`'s "Issue-body content integrity" for how it's mechanically validated before anything touches GitHub.
-
-### A GitHub dependency is not an excuse to skip explaining what it provides
-
-`Depends on #N` is a real, legitimate reference — unlike a `plan.md` decision number, the target
-issue actually exists and isn't getting pruned. That legitimacy doesn't extend to the *behavior*
-behind it: a dependent issue must still briefly summarize, in its own words, whatever part of the
-dependency's behavior is necessary to understand the dependent issue's own scope and outcome.
-
-- The dependency link is where the full contract lives — don't re-derive or restate it.
-- The dependent issue owes the reader a concise reminder of what that dependency actually *does*
-  for this issue specifically — one or two sentences, not a re-explanation of the dependency's own
-  implementation.
-- Don't duplicate the dependency issue's Context, Tasks, or Acceptance Criteria.
-- Don't force this summary into every dependency — only when the relied-upon behavior is actually
-  necessary to understand *this* issue's own outcome and user/system behavior.
-
-The test: **could a developer understand this issue's own outcome and user/system behavior without
-opening the dependency?** If the honest answer is no, the issue is doing exactly what "BAD" above
-does — citing instead of explaining — just through a real `#N` instead of a fake one. See
-`rules/review.md`'s "Issue-body content integrity" for how this is checked alongside the rest of
-Context self-containedness.
-
-## Every GitHub mutation is validated and summarized
-
-Any time this skill actually touches GitHub — creating an issue, editing a body, changing a title/labels/milestone/assignee, creating a milestone or label — the mutation ends with a **compact change summary** and a **post-mutation validation pass** that re-fetches the result from GitHub and checks it, per `rules/review.md`'s "Post-mutation validation". This is not limited to the initial batch-creation moment at the end of a first planning pass: a later, narrower request against issues this skill already created (fix a body, retitle one issue, move something to a different milestone) gets exactly the same discipline — update the canonical definition, re-render, re-validate, mutate, then validate-and-summarize the result. Never report a GitHub change as done on the strength of the `gh` command succeeding alone; the proof is in reading the state back.
-
-## Workflow
-
-**Before step 1: is this Planned or Discovered work?** If the starting point is an unexpected finding rather than already-approved scope (implementation, code review, manual smoke testing, production/debugging, another workflow), run the Discovered-work intake (`rules/discovered-work.md`) first. Do not fix code or draft an issue from the first symptom. That intake ends with a validated finding — known/unknown boundary stated, reproduced where practical, blast radius understood, defect-vs-intended-behavior resolved, no open product/architecture question blocking scope — at which point the numbered workflow below proceeds exactly as it does for Planned work, starting at step 1. If the starting point is already-understood or approved scope, skip straight to step 1.
-
-1. **Check for an approved `plan.md` input.** If a matching initiative-specific section exists and carries Plan Synthesis's approval marker (`rules/plan-md-input.md`), treat its architecture, locked decisions, preserved behavior, and constraints as canonical — don't reconstruct or re-litigate them from conversation. If no matching approved section exists, skip straight to classification; the rest of the workflow is unchanged either way.
-2. **Classify the feature** per `rules/feature-classification.md`. This determines which checklist applies — don't apply resource assumptions (migrations, slugs, archive, exports) to a capability with no CRUD spine, and don't skip shared-infrastructure thinking on one that has none.
-3. **Load the matching checklist** and resolve every applicable question explicitly (ask the user for genuinely ambiguous ones). Don't silently assume a track or question doesn't apply. When plan.md already answers a question via a locked decision, use that answer directly instead of re-asking; only genuinely open, implementation-level items get resolved fresh here (`rules/plan-md-input.md`).
-4. **Reconcile `_design/`** per `rules/design-reconciliation.md` — only for issues with frontend/UI scope; backend-only or non-UI capability issues skip this entirely. If frontend design is needed but the matching file is missing or stale, ask the user rather than inventing layout. If plan.md already locked a design decision, this pass confirms nothing's moved since — it doesn't reopen the decision, and a disagreeing mockup never silently overrides it.
-5. **Verify/propose milestone + labels** — query existing milestones and labels first, check applicable project conventions, then explicitly propose names/colors and show what already exists vs. what's proposed. Propose a milestone description too, but only when the milestone's intent, boundaries, exclusions, governing principles, or completion criteria aren't already clear from the title and issue set alone (`rules/issue-conventions.md`) — most milestones don't need one. Create nothing until the user approves.
-6. **Build canonical issue definitions** — one per issue: `## Context` (why it exists, outcome, constraints, in/out of scope, dependencies) before `## Tasks` (where to work), with `## Acceptance Criteria` and `## Tests` added only where they earn their place — formatted per `rules/issue-conventions.md`.
-7. **Sequence the work per `rules/sequencing.md`.** Backend/TDD work lands before frontend/UI work as the default batch order for planned feature work — batch shape follows the feature's actual dependency graph, not a fixed issue count copied from a prior feature. A standalone Discovered-work issue is not forced into that batch template just because it surfaced during a feature's planning or implementation — `rules/sequencing.md`'s discovered-work carve-out applies instead unless the finding is genuinely entangled with that feature's own dependency graph.
-8. **Run the review pass** — `rules/review.md`'s issue-quality, dependency-quality, and extensibility-claim checks — against the canonical definitions.
-9. **Render the full draft** (title, labels, dependencies, context, tasks, acceptance criteria/tests per issue) from the canonical definitions. This is the first, substantive content-review surface — immediately run **issue-body content integrity validation** (`rules/review.md`) against every rendered body before presenting it. If any body fails, fix the *canonical definition* (never patch the rendered text) and re-render before showing the draft.
-10. **Apply any requested revisions directly to the canonical definitions**, never to the rendered text.
-11. **Re-run canonical structural-integrity validation** (`rules/review.md`) against the canonical definitions after every revision.
-12. **Render the compact manifest, then immediately run rendered-manifest integrity validation** (`rules/review.md`) against it — a mechanical diff of the rendered rows against the current canonical definitions (count, sequence numbers, titles, order, no additions/omissions/duplicates). This runs every time the manifest is shown, including re-shows after a revision. If it fails, do not show the manifest — report which row(s) diverged, regenerate the render from the canonical definitions, and re-validate before proceeding.
-13. **Show the validated compact manifest only** for the final approval pass (`# | title | labels | depends on` + a short validation summary confirming the canonical structural-integrity and rendered-manifest integrity checks passed). Don't re-render full issue bodies unless the user explicitly asks to inspect them again.
-14. **Immediately before creating or updating any GitHub issue**, render the final issue body straight from its canonical definition and run **issue-body content integrity validation** (`rules/review.md`) against it one more time — the last gate before anything touches GitHub, since a revision made after step 9's check could have reintroduced a problem. If it fails, do not create/update that issue — report the exact issue and field that failed, fix the canonical definition, re-render, and re-validate.
-15. **Only after the user has explicitly approved both the final compact manifest/issue set and the proposed GitHub metadata (milestone and labels), and every body has passed issue-body content integrity**, create issues via `gh issue create` in dependency-safe canonical order, generated straight from the canonical definitions.
-16. **Map canonical dependencies to real GitHub issue numbers** as each issue is created, substituting them into later issue bodies — no planning-only `#N` reference survives into a created issue.
-17. **Run post-mutation validation** (`rules/review.md`) — re-fetch every created/updated issue from GitHub and check it against the canonical definitions, then report a compact change summary (mutation type, per-issue one-liner, validation result). This is not a one-time step tied to initial creation: any later request that mutates an already-created milestone's issues (fixing a body, retitling, relabeling, remilestoning) ends the same way — canonical definition updated first, mutation applied, then this same validate-and-summarize pass, every time.
-18. Stop. Planning's responsibility ends at issue creation — application code, implementation conventions, and commit structure/messages belong to the consuming project's own implementation skills — load those when work on an approved issue actually begins.
-
-Never load this skill alone when writing code — once an issue is approved and implementation starts, switch to the project's own implementation skills instead. This skill stays self-contained for planning: it names the engineering pieces an issue needs (schema/data changes, authorization rules, input validation, the external interface, a thin entry point wiring it together, supporting fixtures, and tests) generically enough for any stack to map its own equivalents, without requiring implementation-convention skills to be loaded during planning.
+Planning's responsibility ends at issue creation. Once an issue is approved and implementation
+starts, switch to the consuming project's own implementation skills — never write code from this
+skill alone.
