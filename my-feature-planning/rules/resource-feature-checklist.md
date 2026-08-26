@@ -33,9 +33,8 @@ any particular stack? Always applies. Resolve every question below explicitly:
 - Where must the resource become discoverable or reachable (navigation, routing, listing)?
 - What behavior needs proof (tests or another form of verification)?
 
-These outcomes map onto migrations, models, policies, request/response contracts, controllers, routes,
-and pages in a typical web stack — but this checklist doesn't name those artifacts, because the mapping
-is the consuming stack's job, not this one's.
+The consuming stack determines the concrete artifacts that satisfy these outcomes; artifact mapping does
+not belong to this checklist.
 
 ## Track B — Lifecycle and state transitions
 
@@ -141,7 +140,10 @@ Resolve:
   it out until it's real.
 - Consistency with the consuming project's established design system and already-shipped patterns for
   comparable surfaces.
-- Whether `rules/design-reconciliation.md` needs to run for this issue.
+
+If frontend/UI surfaces are in scope, run `rules/design-reconciliation.md` — this is not discretionary
+once that condition is met. If the resource has no frontend/UI scope, this track may be explicitly
+marked not applicable.
 
 This checklist asks which of the consuming project's conventions apply to each surface; it does not
 carry those conventions itself — the concrete answers (breakpoints, component choices, status-tone
