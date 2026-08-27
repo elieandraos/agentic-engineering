@@ -120,8 +120,8 @@ the applicable owning decision gate; an open implementation detail may stay unre
 Classify the evidence, then assess drafting readiness separately.
 
 **A. Disposition**
-1. **Confirmed current defect** — violates an applicable expectation/guarantee; no unresolved
-   product/architecture decision blocks it (not 3, 4).
+1. **Confirmed current defect** — violates an already-applicable expectation, not an adjacent gap or
+   approved-target drift; no material decision remains unresolved.
 2. **Intended behavior, no actionable gap** — record it; no issue.
 3. **Intended behavior, adjacent gap** — scope the gap (communication, documentation, operations, UX),
    not a mislabeled defect.
@@ -131,10 +131,10 @@ Classify the evidence, then assess drafting readiness separately.
 6. **Not yet classifiable** — state what's missing, what would resolve it; don't assume defect from
    tone.
 
-**B. Readiness** — disposition alone doesn't authorize drafting: defect, gap, or drift proceeds once §6
-is met; an unresolved mechanism becomes a Task under §9 only. No gap needs no issue; unresolved decision
-blocks drafting regardless of evidence; not-yet-classifiable investigates or ends blocked, not automatic
-instrumentation.
+**B.** Disposition alone doesn't authorize drafting:
+- defect, adjacent gap, or drift proceeds under §6; unresolved mechanism becomes a Task under §9;
+- no actionable gap: no issue; unresolved material decision blocks drafting;
+- not-yet-classifiable investigates or stays blocked, never an instrumentation issue.
 
 ## 9. Stopping condition
 
