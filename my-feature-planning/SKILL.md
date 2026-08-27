@@ -12,10 +12,10 @@ inside that shape. See `README.md` for the plain-English walkthrough and reasoni
 
 ## Two work origins
 
-- **Planned work** — scope is already understood or approved. A feature ask in conversation enters
-  the pipeline below at classification (step 2); an approved `plan.md` section
-  (`rules/plan-md-input.md`) enters at step 1, consuming that input before classification. Both are
-  the same Planned-work origin.
+- **Planned work** — starts from an intentional proposed change, not an unexpected finding. A feature
+  ask in conversation enters the pipeline below at classification (step 2) and still requires scope
+  discovery; an approved `plan.md` section (`rules/plan-md-input.md`) enters at step 1 with its
+  architecture and decisions already canonical. Both are the same Planned-work origin.
 - **Discovered work** — starts from an unexpected finding (implementation, code review, manual
   testing, production/debugging, another workflow) with scope not yet known. Runs
   `rules/discovered-work.md`'s investigation first; only a validated finding enters the pipeline.

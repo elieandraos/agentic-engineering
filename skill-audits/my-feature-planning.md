@@ -19,7 +19,7 @@ invitation to revise the completed skill again.
 
 ## 2. What the skill is
 
-`my-feature-planning` converts an approved feature ask, an approved `plan.md` section, or a validated
+`my-feature-planning` converts a feature ask, an approved `plan.md` section, or a validated
 Discovered-work finding into reviewed, approved, developer-ready GitHub issues.
 
 GitHub is intentionally part of the methodology, not an abstraction layer standing in for some other
@@ -31,19 +31,22 @@ stated outright, not disguised as tracker neutrality.
 Three starting points feed two work origins into one shared pipeline:
 
 ```
-feature conversation ─┐
-approved plan.md ──────┼──► Planned work ──┐
-                        │                    ├──► classify → scope → [design reconcile]
-Discovered finding ────┘──► Discovered work ┘      → propose metadata → draft → sequence
-                            (validated first)       → review → approve → create → validate
+feature conversation ──┐
+                        ├──► Planned work ────┐
+approved plan.md ───────┘                     │
+                                               ├──► classify → scope → [design reconcile]
+Discovered finding ──► validate ──► Discovered work ──┘     → propose metadata → draft → sequence
+                                                              → review → approve → create → validate
 ```
 
-A feature conversation and an approved `plan.md` are both **Planned work** — scope is already
-understood or approved; they differ only in where they enter the pipeline (conversation enters at
-classification, an approved plan consumes `rules/plan-md-input.md` first). **Discovered work** starts
-from an unexpected finding with scope not yet known, and only a validated finding enters the pipeline.
-Both origins converge on the identical canonical-issue pipeline and the identical review bar —
-Discovered work never gets a lighter-weight issue.
+A feature conversation and an approved `plan.md` are both **Planned work** — both start from an
+intentional proposed change, not an unexpected finding, regardless of whether every scope detail is
+already resolved. A conversation-driven feature ask enters the pipeline at classification and still
+requires scope discovery; an approved plan enters by consuming `rules/plan-md-input.md` first, with
+its architecture and decisions already canonical. **Discovered work** starts from an unexpected
+finding with scope not yet known, and only a validated finding enters the pipeline. Both origins
+converge on the identical canonical-issue pipeline and the identical review bar — Discovered work
+never gets a lighter-weight issue.
 
 ## 3. Pipeline position and ownership
 
@@ -465,7 +468,7 @@ audits, and dossiers may use more natural explanatory prose. This observation do
 impose mechanical requirements — banning every contraction, forcing every paragraph onto one physical
 line, or forcing every file into the same structure — and it does not justify expanding or rewriting
 the current skill merely to satisfy itself. The formal standard, if ever referenced directly, is here:
-`https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf`.
+[ASD-STE100 Issue 9](https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf).
 
 ## 14. Boundaries and open questions
 
