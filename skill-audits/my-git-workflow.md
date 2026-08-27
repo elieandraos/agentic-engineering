@@ -446,35 +446,10 @@ immutable methodology law.
 
 ## 12. Authoring observations
 
-Lessons recorded from re-authoring this skill into its current, portable form — worth carrying into
-future skill-authoring work generally, not just this one:
-
-- **State the rule before the evidence.** A reader needs the reusable principle first; evidence that
-  justifies it belongs after, not interleaved in a way that makes the reader reconstruct the rule
-  from the example.
-- **A historical example should teach a rule, not become the rule.** An illustrative branch-name
-  prefix or a specific project's release format is useful exactly insofar as it shows the reasoning —
-  the moment a rule file reads like it *requires* that specific shape, the example has quietly become
-  the policy.
-- **Origin-project evidence is evidence, not a prerequisite.** A reader should be able to fully
-  understand and apply every rule in this skill without knowing anything about the project it was
-  extracted from. Where the origin project appears at all, it should read as "here's evidence this
-  rule holds," never as unexplained context a rule depends on.
-- **Rules must be self-sufficient for both human and LLM use.** A rule file that only makes sense
-  with outside context — a chat transcript, a memory the reader doesn't have — fails the actual use
-  case: an agent picking this skill up cold needs everything it requires inside the file itself.
-- **Use a placeholder when the specific identifier has no teaching value.** `{xxx}`, `{title}`,
-  `{version}` communicate "this is where a real value goes" without asking the reader to care about a
-  number or name that doesn't matter to the rule being taught.
-- **`SKILL.md` stays an activation/scope contract.** Its job is triggering on the right requests and
-  stating what the skill owns and doesn't — not re-explaining mechanics that live in `rules/*.md`.
-- **`README.md` orients; it doesn't duplicate.** It should give a reader the shape of the whole
-  lifecycle and the reasoning behind the big decisions, compactly, and point into the rules for
-  operational detail — not restate every rule's procedure in full.
-- **Rule files should optimize for conceptual cohesion, not mechanical uniformity.** Forcing every
-  rule file into an identical template — the same section order, the same heading names — regardless
-  of what that rule actually needs to say produces worse files than letting each rule's structure
-  follow what it's explaining.
+Reusable authoring observations extracted from this skill are consolidated in
+`skill-audits/skill-authoring-methodology.md`. This dossier retains only the skill-specific evidence,
+architecture, assessment, boundaries, and open questions; §11 above contains the empirical evidence
+relevant to this skill.
 
 ## 13. Known boundaries and open questions
 

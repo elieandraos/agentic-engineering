@@ -384,91 +384,10 @@ something surviving in a current rule — not a chronological record of what cha
 
 ## 13. Authoring observations
 
-Reusable lessons from this authoring pass, worth carrying into future skill-authoring work generally.
-
-### Evidence and portability
-
-- State the portable rule before its evidence — a reader needs the reusable principle first.
-- Historical evidence should teach a rule, not define it; the moment a rule file reads like it
-  *requires* a specific historical shape, the example has quietly become the policy.
-- Origin-project evidence cannot be required context — every rule must be understandable and
-  applicable without knowing anything about the project it was extracted from.
-- Runtime rules must be self-sufficient without private memory; an agent picking up a skill cold needs
-  everything the rule requires inside the file itself.
-- Use a placeholder (`{xxx}`, `{title}`) where a concrete identifier has no teaching value.
-- Repetition in project history is evidence, not automatic policy — record it as evidence that may
-  shape a proposal, never as a rule the methodology itself enforces.
-- Don't freeze live project state (a label palette, a milestone list) into static methodology — query
-  it fresh every time instead.
-
-### Conceptual modeling
-
-- Model authority separately from peer outcomes — an approved decision is an overlay applied around a
-  comparison, not one more candidate inside it.
-- Separate evidence classification from workflow readiness — classifying what the sources say is not
-  the same act as deciding whether the workflow can proceed.
-- Separate semantic disposition from scopeability — what a finding *is* and whether it's *ready to
-  draft* are different questions with different failure modes if conflated.
-- Separate canonical-scope membership from dependency-edge creation — belonging to an initiative never
-  implies a prerequisite relationship to everything else in it.
-- Separate planning waves from live implementation readiness — a dependency-safe presentation order is
-  not an authorization to implement.
-- Separate material product/architecture decisions from open implementation details, using a single
-  test: would flipping the choice change what the system guarantees?
-- Separate canonical structure, rendered artifacts, and live external state — each needs its own
-  validation standard; none substitutes for another.
-- Explicitly state where a special path (Discovered work's intake) converges back into the ordinary
-  pipeline, rather than leaving the reader to infer it.
-
-### Ownership and structure
-
-- Route to the owning rule rather than reproducing its workflow — a cross-reference stays accurate as
-  the owning rule evolves; a restatement drifts.
-- `SKILL.md` is an activation, pipeline, and ownership contract — not the place for downstream
-  mechanics or stack vocabulary, even incidentally.
-- `README.md` explains the lifecycle and reasoning without duplicating operational rules.
-- Rule files should optimize for conceptual cohesion, not identical templates — forcing every file into
-  the same section order regardless of what it explains produces worse files.
-- Parallel rules can share a conceptual contract (e.g. the checklists' "discover scope, don't dictate
-  issue count" discipline) without being forced into mechanically identical structures.
-- Replace obsolete policy rather than accumulating qualifications around it — the sequencing rewrite
-  replaced a fixed batching template outright rather than carving exceptions into it.
-- When an upstream contract changes, reconcile downstream summaries and references in the same pass —
-  the cross-rule cohesion pass existed specifically because `SKILL.md`, `README.md`, and one rule file
-  still described sequencing, plan-input scope, and the handoff boundary the way they worked *before*
-  the individual rule rewrites, after those rewrites had already changed the underlying contract.
-
-### Concision
-
-No artificial minimum:
-
-- Authoring guidance should state direction and constraints, not a minimum word count to fill.
-- A lower bound invites padding and preserves duplication instead of removing it.
-- Use a soft ceiling only when useful; there is no floor.
-- The correct length is the shortest complete expression of the contract.
-- Added text is justified only when it resolves a real ambiguity or preserves a necessary distinction.
-
-Also: an authoring instruction phrased as "open by distinguishing X from Y" is a direction to the
-author about what the resulting file must accomplish, not necessarily literal prose to paste into that
-file. And: never hard-wrap inside an inline code span.
-
-### Controlled technical English
-
-Write normative skill instructions in controlled technical English. Prefer active voice, direct
-subjects and actions, one stable term for each defined concept, and one operational instruction per
-sentence when practical. Split complex conditions, exceptions, and consequences into structured clauses
-or bullets. Preserve exact identifiers, paths, commands, quotations, and externally defined names. Do
-not sacrifice necessary authority, exceptions, or technical meaning merely to shorten a sentence.
-
-This is STE-inspired discipline, not a claim of ASD-STE100 compliance. Strict ASD-STE100 is a formal
-controlled language with its own approved-vocabulary and grammar rules — not merely a synonym for clear
-writing — and nothing in this skill or this dossier claims to satisfy it. Normative runtime rules (the
-`rules/*.md` files) benefit from stable terminology and limited stylistic synonym variation; READMEs,
-audits, and dossiers may use more natural explanatory prose. This observation does not retroactively
-impose mechanical requirements — banning every contraction, forcing every paragraph onto one physical
-line, or forcing every file into the same structure — and it does not justify expanding or rewriting
-the current skill merely to satisfy itself. The formal standard, if ever referenced directly, is here:
-[ASD-STE100 Issue 9](https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf).
+Reusable lessons from this authoring pass are consolidated in
+`skill-audits/skill-authoring-methodology.md`. This dossier keeps only their skill-specific
+manifestations, in the architecture and empirical-evidence sections above; §12 contains the evidence
+relevant to `my-feature-planning`.
 
 ## 14. Boundaries and open questions
 
