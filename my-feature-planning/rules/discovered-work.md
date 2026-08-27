@@ -115,23 +115,26 @@ An unresolved material product or architecture choice blocks the affected drafti
 the applicable owning decision gate; an open implementation detail may stay unresolved only under
 `rules/plan-md-input.md`'s executability test.
 
-## 8. Terminal outcomes
+## 8. Disposition and readiness
 
-1. **Validated defect or required change** — the finding becomes planning input and enters the normal
-   pipeline.
-2. **Intended behavior, no actionable gap** — record the conclusion; don't create an issue merely to
-   preserve the investigation.
-3. **Intended behavior, real remaining gap** — scope the actual gap (clarity, documentation, operational
-   handling, user experience) rather than mislabeling intended behavior as a defect.
-4. **Drift from an approved target** — the approved decision stays authoritative unless the user amends
-   it; scope the current-state drift.
-5. **Unresolved material decision** — stop the affected drafting and ask the user through the applicable
-   decision gate.
-6. **Bounded unresolved mechanism** — when §9's stopping condition is satisfied and the issue stays
-   coherent and executable, represent the uncertainty honestly through an investigation or
-   instrumentation Task.
-7. **Insufficient evidence, not scopeable** — report the blocker, access limitation, or required next
-   diagnostic step. Don't manufacture a vague issue.
+Classify the evidence, then assess drafting readiness separately.
+
+**A. Disposition**
+1. **Confirmed current defect** — violates an applicable expectation/guarantee; no unresolved
+   product/architecture decision blocks it (not 3, 4).
+2. **Intended behavior, no actionable gap** — record it; no issue.
+3. **Intended behavior, adjacent gap** — scope the gap (communication, documentation, operations, UX),
+   not a mislabeled defect.
+4. **Drift from an approved target** — approved decision stays authoritative unless amended; scope
+   drift.
+5. **Unresolved material decision** — outcomes diverge materially; stop drafting; route to owning gate.
+6. **Not yet classifiable** — state what's missing, what would resolve it; don't assume defect from
+   tone.
+
+**B. Readiness** — disposition alone doesn't authorize drafting: defect, gap, or drift proceeds once §6
+is met; an unresolved mechanism becomes a Task under §9 only. No gap needs no issue; unresolved decision
+blocks drafting regardless of evidence; not-yet-classifiable investigates or ends blocked, not automatic
+instrumentation.
 
 ## 9. Stopping condition
 
