@@ -1,9 +1,10 @@
 # Issue & Structural Review
 
 Semantic review and integrity validation are different jobs. Semantic review judges whether an
-issue or dependency is *right*; integrity validation checks whether a *rendered artifact* — a body,
-a manifest, live GitHub state — faithfully reflects what was already approved. Different artifacts
-require different validations; no one surface substitutes for another. Five surfaces cover this:
+issue or dependency is *right*; integrity validation checks canonical structure and whether a
+rendered body, rendered manifest, or live GitHub state reflects its canonical or approved source.
+Different artifacts require different validations; no one surface substitutes for another. Five
+surfaces cover this:
 
 1. semantic issue/dependency review;
 2. canonical structural integrity;
