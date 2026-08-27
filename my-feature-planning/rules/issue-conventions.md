@@ -1,9 +1,9 @@
 # Issue Conventions
 
 Format and metadata-approval methodology for every drafted issue, portable across GitHub-based
-projects. Title, assignment, milestone, label, and color conventions are supplied by the consuming
-project's own durable instructions or reliable user context — this file states the method, never a
-fixed convention of its own.
+projects. This rule owns the portable title shape and issue-body methodology below; the consuming
+project supplies its domain vocabulary, metadata conventions, taxonomy, palette, assignment rules, and
+live GitHub state.
 
 ## 1. Canonical definitions
 
@@ -21,17 +21,17 @@ or discovered-work):
 <Area/Capability>: <action or outcome>
 ```
 
-- Describe the change or observable outcome, not the implementation layer — never encode backend-vs-
-  frontend batching in the title itself; that distinction belongs to labels and milestone/dependency
-  metadata, not to the words a reader scans in GitHub's issue list.
+- Describe the change or observable outcome, not the implementation layer — never encode
+  implementation-layer batching in the title itself. Categorization may be represented through
+  approved project metadata (a label, a milestone), but none is guaranteed to exist.
 - Use a concise action ("add", "remove", "fix") or an observable outcome ("silently resets...",
   "returns invalid response for...") — whichever states the change most plainly.
 - Add a surface/location qualifier (a page name, a settings area) only when it materially improves
   clarity — not by default.
 - Keep it concise and scannable — a title is a label a developer scans in a list of thirty open
   issues, not a summary of the Context section.
-- No bracket prefixes. Titles are plain sentences — no `[Billing]`, `[Backend]`, etc. The milestone
-  and label already carry that categorization.
+- No bracket prefixes. Titles are plain sentences — no `[Billing]`, `[Backend]`, etc. The title shape
+  above already states the change or outcome; a prefix only breaks scannability.
 
 Examples:
 - `Billing: add invoice export`
@@ -77,8 +77,8 @@ checklist for whoever drafted it. Structure every body around this order:
 
    ```markdown
    ## Tasks
-   - [ ] <backend/data change>
-   - [ ] <interface/wiring change>
+   - [ ] <change 1>
+   - [ ] <change 2>
    - [ ] Tests
    ```
 
