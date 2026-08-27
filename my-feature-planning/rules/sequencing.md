@@ -33,6 +33,11 @@ Bundle work when:
 Do not split mechanically — by checklist question/track, file/class/route/component/layer, system-side
 vs. user-facing work, CRUD artifact, fixed count, or an earlier feature's structure.
 
+Separate verification is not sufficient reason to create a separate issue. Split work only when it
+also produces a durable, independently useful outcome or must land separately because of a real
+dependency. Treat baselines, upgrade tranches, migration stages, and verification checkpoints as Tasks
+or Tests within their coherent issue unless they pass that test.
+
 Collateral work is recorded distinctly in canonical scope (`rules/capability-checklist.md` question
 10); whether it becomes its own issue follows this same test, not an automatic default.
 
