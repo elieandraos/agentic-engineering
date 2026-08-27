@@ -1,38 +1,117 @@
 # Sequencing
 
-## Discovered work: sequence by the finding's own scope, not the planned-batch template
+## What this rule owns
 
-The backend/TDD-before-frontend convention below governs **planned feature work** — a whole capability's issues drafted together, with a real dependency graph running across the batch. A standalone Discovered-work issue (`rules/discovered-work.md`) is not automatically subject to it just because it happened to surface while a feature or milestone was in progress.
+This rule owns two connected decisions: decomposing canonical scope into coherent issues, and
+connecting and ordering those issues by real prerequisites. It does not decide implementation order,
+which ready issue gets worked next, branch strategy, or commit structure — those belong to
+`my-git-workflow`, particularly its own `rules/sequencing.md`.
 
-- Sequence a discovered finding according to its own actual dependency graph and scope — nothing more.
-- A frontend-only discovered bug with no backend prerequisite is implemented directly. It does not wait for, or get paired with, a backend batch that doesn't exist for it.
-- A backend-only discovered defect proceeds without inventing a frontend batch to go alongside it.
-- The backend/TDD-before-frontend convention still applies when the discovered finding is genuinely part of a larger planned capability already being batched that way — e.g. a gap discovered in a feature whose backend and frontend issues are still being drafted together. The test: is this finding actually entangled with that capability's own dependency graph, or did it just happen to surface while working on it? Only the former inherits the batching convention.
+## Decompose canonical scope into coherent issues
 
-Phase 22's three findings are the evidence this rule was extracted from, not a checklist to replay: #294 (stale `register()` references in two Vue files) was purely frontend, with no backend dependency to wait on. #295 (the silent 2FA reset) and #296 (the Inertia response mismatch, plus its small flash-message fix) were both backend-only, sequenced and implemented as their own single coherent issue with no frontend batch manufactured to match the planned-feature template. None of the three needed — or got — a two-batch structure; each was sequenced by what it actually depended on.
+Every classification shape — new resource, cross-cutting capability, extension, or refactor —
+decomposes the same way: by coherent outcome, real dependency, and independent provability. Checklist
+answers supply scope, not a mechanical map to issues or batches — a question number never determines an
+issue count.
 
-## Backend/TDD first, frontend second — as separate batches, shaped by the feature's dependency graph
+Each issue should represent one coherent outcome that's independently understandable and, where
+practical, independently landable and provable. Split work when:
 
-Backend/TDD work is drafted, created, and implemented before any frontend/UI issue — for both resource-shaped and capability-shaped features. An example from this project: Phase 17's history (issues #198–#210) is the resource-shaped template — every backend/TDD issue landed before any frontend/UI issue — and Phase 21 (Notifications, cross-cutting) confirms the same discipline holds for capability-shaped features too, even though the batch composition looks different there. There's no fixed "one issue per CRUD layer":
+- the parts produce independently meaningful outcomes;
+- they have materially different prerequisite chains;
+- one can be completed and verified without the other;
+- combining them would obscure distinct acceptance criteria, risk boundaries, or ownership.
 
-1. **Batch 1 — backend/TDD.**
-   - Resource feature (`rules/resource-feature-checklist.md`, Classification A/C): migrations, models, policies, requests, resources, actions, controllers, routes, seeders, and their tests. Vue pages can stay minimal stubs at this stage if useful for manually poking at the endpoint — that's what Phase 17 did.
-   - Cross-cutting capability (`rules/capability-checklist.md`, Classification B/D): a shared-infrastructure issue first — landable and testable in isolation, no user-visible change — then the integration issues that depend on it, each wiring one concrete business event or capability into that infrastructure. Questions 2–7 in `rules/capability-checklist.md` determine this batch's shape; nominal cleanup issues (renames, tenancy fixes) that surface along the way are their own small issues, not folded into a bigger one.
-2. **Batch 2 — frontend/UI wiring.** Drafted only after `rules/design-reconciliation.md` (when frontend is in scope at all — see that file's "conditional, not universal" note), so any design-vs-shipped-app disagreements are resolved before these issues are written.
-   - Resource feature: real Vue pages, empty states, filters, mobile/desktop structure, plus UI wiring for backend capability that already exists (e.g. Archive/Unarchive frontend wiring is its own issue, not assumed to ride along with the backend one).
-   - Cross-cutting capability: shared frontend plumbing (types/registry/listener fixes) first, then any shared UI component, then per-page/per-resource integration issues — never interleaved ahead of the backend capability they consume.
+Bundle work when:
 
-Dependencies determine the exact shape and count in both cases — don't force a feature into a fixed issue-per-layer template just to match a prior feature's count.
+- the pieces have no meaningful or provable outcome apart from each other;
+- a foundation can't be trusted without a real consumer exercising it — per
+  `rules/capability-checklist.md` question 2, bundle the smallest consumer needed to prove it unless
+  the foundation is independently provable on its own; never separate one just because separation
+  looks architecturally tidy;
+- splitting would create unused scaffolding;
+- the smallest coherent deliverable necessarily crosses more than one implementation area.
 
-## Draft first, create only on explicit approval — two separate review surfaces
+Do not split mechanically — by checklist question or track, file/class/route/component/layer,
+system-side vs. user-facing work, CRUD artifact, fixed issue count, or an earlier feature's structure.
 
-Default posture: build canonical issue definitions for the full milestone before creating anything (see `SKILL.md` — canonical definitions are the source of truth, never a previously rendered preview). Review happens in two stages, detailed in `rules/review.md`:
+Collateral work is recorded distinctly in canonical scope (`rules/capability-checklist.md` question
+10) — whether it becomes its own issue is decided by this same test, not an automatic default.
 
-- **Content review** — a full rendered draft (title, labels, dependencies, context, tasks, acceptance criteria) generated from the canonical definitions, immediately validated with `rules/review.md`'s issue-body content integrity check before it's shown, so the user reviews scope, acceptance criteria, and self-containedness together — not a draft that still has planning-only references or thin Context in it.
-- **Final creation review** — after any revision, re-run `rules/review.md`'s canonical structural-integrity check against the (revised) canonical definitions, render the compact manifest, then run `rules/review.md`'s rendered-manifest integrity check against that render before showing it. Never a full re-render, and never an unvalidated manifest — a manifest that fails this check is not shown; it's regenerated and re-checked.
+## Define a real dependency
 
-Immediately before `gh issue create` or `gh issue edit` actually runs — after manifest approval, right at the point of truth — render each issue body from its canonical definition one more time and re-run issue-body content integrity against it. A revision applied between content review and final approval could have reintroduced a problem the first pass already caught; this second pass is what stops it from ever reaching GitHub.
+Issue B depends on issue A only when A's outcome must exist before B can be safely completed, landed,
+or verified. A dependency is never a preferred order, shared subject matter, milestone membership,
+drafting order, an implementation-layer convention, or a wish to keep the same context. If B can
+proceed independently against a stable, already-approved contract, don't invent a dependency to
+serialize it.
 
-Don't run `gh issue create` until the user has explicitly approved the compact manifest and every issue body has passed issue-body content integrity. An example from this project: both Phase 17's gap-filling issues (#211–#223) and Phase 21's issues (#274–#284) were actually handled this way — drafted, shown, confirmed, then created.
+An external prerequisite this issue set doesn't itself own — a pending decision, a third-party
+integration, another team's work — is recorded as an external constraint or blocker, never fabricated
+as an internal issue.
 
-This skill's responsibility ends at issue creation. Commit structure and commit message conventions belong to whichever implementation skill picks up the approved issue — see `SKILL.md`'s closing note.
+## Build and validate the dependency graph
+
+Each canonical issue is a node; each real prerequisite is a directed edge. The result must satisfy:
+
+- every internal dependency points to another canonical issue;
+- root issues have no prerequisites;
+- the graph is acyclic, with unambiguous dependency direction;
+- a dependent issue's body summarizes any relied-upon behavior a reader needs for standalone
+  understanding, per `rules/issue-conventions.md`.
+
+A cycle means the boundaries or a dependency claim are wrong — resolve it by combining inseparable work
+or correcting a false dependency. Never accept a cycle, and never break one with an arbitrary ordering
+decision instead of fixing what produced it.
+
+## Preserve parallel-ready work
+
+A dependency graph is a partial order, not one total implementation sequence. Represent readiness as
+waves: roots are ready immediately, later issues become ready once their prerequisites close, and
+issues in the same ready set may proceed independently unless a project-supplied constraint says
+otherwise.
+
+Present and create issues in a stable topological order so every dependency reference points backward
+— an operational convenience for presentation and GitHub creation, not a claim that equally ready
+issues must be implemented serially. Don't ask the user to choose between equivalent topological orders
+unless the choice would materially change scope, boundaries, or risk. Choosing which ready issue to
+implement next belongs to `my-git-workflow`, not this rule.
+
+## Project-supplied delivery constraints
+
+A consuming project may supply a documented or explicitly approved sequencing convention (e.g. "ship
+behind a flag before wiring its trigger"). Treat it as project input, not methodology: identify it as
+project-supplied, decide whether it creates a real prerequisite or only a preferred order, encode only
+a real prerequisite as a dependency edge, and record a non-dependency preference separately rather than
+fold it into the graph as a false edge. Ask the user only when applying it would materially change
+scope or boundaries and its meaning is genuinely unclear.
+
+This rule prescribes no fixed implementation-layer order of its own — vertical slices, parallel work
+against a stable contract, interface-first delivery, or another approved model are all compatible with
+the reasoning above.
+
+## Planned and Discovered work use one method
+
+Origin doesn't determine issue count or order. A validated Discovered finding
+(`rules/discovered-work.md`) is decomposed from its own actual scope, using the same test as any other
+work: integrate it into an existing planned capability's graph only when it shares a genuine dependency
+with that capability; otherwise keep it independent — surfacing during a milestone doesn't entangle it
+with the surrounding feature. A finding may resolve to one issue or reveal several; the same
+decomposition test decides which.
+
+## Dependency-safe GitHub creation
+
+Before creation, canonical definitions may reference each other using canonical planning identifiers,
+and the full set still needs to pass `rules/review.md`'s gates. Nothing is created merely because the
+graph marks it ready.
+
+After approval, create issues in the stable topological order: capture each created issue's real GitHub
+number as it's created, resolve a dependent issue's canonical references to real `#N` references before
+creating it, and never derive the issue set back from created issues or a rendered preview.
+
+## Handoff
+
+`rules/review.md` owns issue quality, dependency-quality validation, structural/rendered integrity, and
+mutation validation. `SKILL.md` owns the two approval surfaces and the overall creation pipeline. Once
+issues are created and approved, `my-git-workflow` owns branch readiness, choosing the next ready
+issue, and recomputing the live dependency-ready set as issues close.
