@@ -9,10 +9,13 @@
 ## Branch readiness before starting an issue
 
 Before implementing a dependency-ready, approved issue, determine which branch that work happens on.
-Which of the two paths applies is read from the issue's own milestone — Backlog/persistent-catch-all
-vs. a delivery/phase milestone, exactly as `my-feature-planning`'s `rules/issue-conventions.md`
-("Backlog vs. delivery/phase milestones") already classifies it. This rule consumes that
-classification; it does not redefine it.
+`my-feature-planning`'s `rules/issue-conventions.md` (§6, "Milestones") classifies a milestone's
+purpose — a persistent catch-all/backlog-style milestone versus what that section calls a scoped
+delivery milestone, and what this file calls a delivery/phase milestone throughout; this rule
+consumes that classification and does not redefine it. It does not, however, classify a hotfix
+delivery path — mapping a hotfix, or any issue with no delivery/phase milestone, to branch/delivery
+behavior is this rule's own job: both take the Backlog/hotfix path below, alongside a persistent
+catch-all milestone, while a delivery/phase milestone takes the milestone-branch path.
 
 **Backlog or hotfix issue (no delivery/phase milestone).** This work happens directly on the
 repository's trunk branch — never a newly created feature branch, and never the milestone

@@ -131,10 +131,11 @@ Classify the evidence, then assess drafting readiness separately.
 6. **Not yet classifiable** — state what's missing, what would resolve it; don't assume defect from
    tone.
 
-**B.** Disposition alone doesn't authorize drafting:
+**B. Readiness.** Disposition alone doesn't authorize drafting:
 - defect, adjacent gap, or drift proceeds under §6; unresolved mechanism becomes a Task under §9;
 - no actionable gap: no issue; unresolved material decision blocks drafting;
-- not-yet-classifiable investigates or stays blocked, never an instrumentation issue.
+- a not-yet-classifiable finding requires further investigation or remains blocked — it never
+  automatically becomes an instrumentation issue.
 
 ## 9. Stopping condition
 
@@ -170,8 +171,10 @@ validated into honest planning input. From there the finding is ordinary plannin
 
 This rule doesn't fix code, and it doesn't create a second, lighter issue-authoring path.
 
-After approved issue creation, `my-git-workflow` owns implementation, live readiness, delivery, and
-closure. Approved canonical scope is the implementation starting point, and implementation shouldn't
+After approved issue creation, `my-git-workflow` owns the downstream Git/GitHub delivery
+workflow — branch readiness, live readiness, commits, verification, and closure — composing with the
+consuming project's own implementation skills, which own the actual application/framework code.
+Approved canonical scope is the implementation starting point, and implementation shouldn't
 repeat intake investigation by default — but new evidence that materially contradicts a confirmed fact,
 assumption, approved decision, or scoped outcome must not be ignored; route it through the applicable
 review, discovered-work, or human decision gate. An issue that explicitly includes investigation or

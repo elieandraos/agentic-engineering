@@ -33,8 +33,8 @@ never gets a lighter-weight issue.
    (`rules/resource-feature-checklist.md` or `rules/capability-checklist.md`).
 4. When frontend/UI is in scope, reconcile the project's available design artifacts against the
    shipped application and any approved architecture decisions (`rules/design-reconciliation.md`).
-5. Query existing GitHub milestones/labels and propose names/colors (`rules/issue-conventions.md`);
-   create nothing yet.
+5. Query existing GitHub milestones/labels and propose the applicable metadata — milestone,
+   label, and assignee fields (`rules/issue-conventions.md`); create nothing yet.
 6. Draft canonical issue definitions (`rules/issue-conventions.md`).
 7. Sequence the work by its actual dependency graph, run the review pass, and present the full draft
    for content review; then obtain final approval of the compact manifest and the proposed metadata
@@ -59,8 +59,8 @@ Full mechanics for all of the above: `rules/review.md`.
 ## What it owns
 
 Feature classification, scope discovery, discovered-work investigation/triage, design reconciliation,
-issue drafting, dependency-aware sequencing, review, milestone/label proposals, and GitHub issue
-creation after approval.
+issue drafting, dependency-aware sequencing, review, milestone/label/assignee proposals, and GitHub
+issue creation after approval.
 
 ## What it does not own
 
@@ -76,13 +76,16 @@ structure/messages, fixing a defect it discovers, and deciding when a milestone 
   questions.
 - `rules/design-reconciliation.md` — reconciling design artifacts against the shipped app when UI is
   in scope.
-- `rules/issue-conventions.md` — issue format, and milestone/label proposal-and-approval.
-- `rules/sequencing.md` — batch order and dependency-driven sequencing.
+- `rules/issue-conventions.md` — issue format, and milestone/label/assignee proposal-and-approval.
+- `rules/sequencing.md` — coherent-outcome decomposition, the real dependency graph, parallel-ready
+  planning waves, and dependency-safe creation order.
 - `rules/review.md` — issue quality, structural/rendered/content integrity, and post-mutation
   validation.
 
 ## Handoff
 
-Planning's responsibility ends at issue creation. Once an issue is approved and implementation
-starts, switch to the consuming project's own implementation skills — never write code from this
-skill alone.
+Planning's responsibility ends once approved GitHub metadata and issues are created and validated.
+From there, `my-git-workflow` owns the downstream Git/GitHub delivery workflow — branch readiness,
+review gates, commits, verification, issue closure, and release/milestone progression — and the
+consuming project's own implementation skills own the actual application/framework code. The two
+compose during delivery, neither replacing the other, and this skill writes no code itself.

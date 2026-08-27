@@ -15,8 +15,11 @@ scope → ask the important unanswered questions → draft issues.
 
 **From an approved `plan.md`.** When `my-architecture-laboratory` has already investigated the
 problem and the target architecture has been approved, this skill treats that architecture and its
-locked decisions as canonical instead of re-deriving them from conversation, and resolves only the
-remaining implementation-level details. It must not re-litigate a decision the plan already locked.
+locked decisions as canonical instead of re-deriving them from conversation. It resolves only the
+remaining open details that materially affect scope, dependencies, acceptance criteria, guarantees,
+or developer readiness. Other open implementation details may stay open for implementation, under
+the owning rule's executability test. It must not re-litigate a decision the plan already locked.
+Full detail: `rules/plan-md-input.md`.
 
 **From a Discovered finding.** Not every issue starts from known scope — sometimes the first thing
 that exists is a symptom: a blank page during manual testing, a stale reference found in review, an
@@ -35,10 +38,15 @@ needs answered. Shared infrastructure isn't automatically its own issue; that's 
 dependency graph, not a rule of thumb.
 
 When frontend/UI is in scope, it also reconciles the project's available design artifacts against
-what's actually shipped and any locked `plan.md` decision — going with the shipped app when a design
-is simply stale, following the design when the UI is genuinely new, and stopping to ask when the two
-genuinely disagree and neither clearly wins. Full detail: `rules/feature-classification.md`, the
-shape-specific checklist, and `rules/design-reconciliation.md`.
+what's actually shipped and any locked `plan.md` decision. An approved locked decision always governs
+what it covers; current code is authoritative for current-state facts and established shipped
+conventions, but shipping something is not by itself proof of a deliberate newer product decision. A
+design artifact is evidence of intended UI, not an automatic winner merely for existing. Where
+resolved authority or chronology can classify a mismatch, it does; a genuine unresolved disagreement
+blocks only the affected drafting, and the user decides. A missing design artifact is a normal,
+non-blocking outcome — unless its absence leaves a necessary product decision unresolved. Full
+detail: `rules/feature-classification.md`, the shape-specific checklist, and
+`rules/design-reconciliation.md`.
 
 ## What a good issue looks like
 
@@ -55,36 +63,51 @@ misplaced acceptance criteria) as it goes through a few rounds of revision.
 
 ## Sequencing
 
-Backend/TDD work is batched before frontend/UI work, for both resource-shaped and cross-cutting
-features — the default shape, not a fixed issue count. The feature's actual dependency graph decides
-how many issues exist in each batch. A Discovered-work finding isn't automatically bound by this
-template; it sequences by its own scope unless it's genuinely entangled with a feature already being
-batched this way. Full detail: `rules/sequencing.md`.
+Canonical scope is decomposed by coherent outcome, real dependency, and independent provability —
+never by a fixed template such as backend-before-frontend, or by checklist question, file, or layer.
+A shared foundation becomes its own issue only when it's independently coherent and provable on its
+own; otherwise the smallest real consumer bundles with it. Real prerequisites form a dependency graph
+(a DAG): roots, disconnected components, and parallel-ready work are all valid outcomes, not
+exceptions to explain away.
+
+The graph is presented as waves — issues whose prerequisites all sit in an earlier wave — which
+exposes possible parallelism and gives a dependency-safe order for presenting and creating issues.
+A wave says nothing about live implementation readiness or which issue to work next; no
+implementation-layer order is built into the portable methodology itself. Planned work and a
+validated Discovered-work finding (`rules/discovered-work.md`) use this same decomposition and
+dependency method once the finding is validated — origin never changes how work is decomposed or
+ordered. Live readiness, and choosing the next issue to implement, belong to `my-git-workflow` once
+issues exist. Full detail: `rules/sequencing.md`.
 
 ## Review and approval
 
 Two checkpoints gate GitHub: a **content review** of the full issue set, where scope, context, tasks,
-and acceptance criteria get fixed; and a **final approval** of the compact manifest plus the
-milestone/label proposal. Nothing — no milestone, no label, no issue — gets created until both are
-approved. Every issue body is checked once more immediately before it touches GitHub, and every
-mutation is re-fetched from GitHub and validated again afterward, at creation and on any later edit —
-a `gh` command succeeding is never treated as proof by itself. Full detail: `rules/review.md`.
+and acceptance criteria get fixed; and a **final approval** of the compact manifest plus the proposed
+metadata — milestone, labels, and assignee, including the approved absence of any of them. Nothing —
+no milestone, no label, no issue — gets created until both are approved. Every issue body is checked
+once more immediately before it touches GitHub, and every mutation is re-fetched from GitHub and
+validated again afterward, at creation and on any later edit — a `gh` command succeeding is never
+treated as proof by itself. Full detail: `rules/review.md`, and `rules/issue-conventions.md` for how
+metadata is proposed.
 
 ## What it owns
 
 Feature classification, scope discovery, discovered-work investigation and triage, design
-reconciliation, issue drafting, dependency planning, review, milestone/label proposals, and GitHub
-issue creation after approval.
+reconciliation, issue drafting, dependency planning, review, milestone/label/assignee proposals, and
+GitHub issue creation after approval.
 
 **It does not own** application implementation, fixing a defect it discovers, framework-specific
 coding conventions, test implementation details, commit structure/messages, or deciding when a
-milestone closes — those belong to the consuming project's implementation skills and, for milestone
-completion, to `my-git-workflow`.
+milestone closes. This skill's responsibility ends once approved issues are created and validated;
+`my-git-workflow` then owns the downstream Git/GitHub delivery workflow (branch readiness, review
+gates, commits, verification, closure, release, and milestone completion), and the consuming
+project's own implementation skills own the actual application/framework code. The two compose during
+delivery rather than replacing one another.
 
 ```
 my-architecture-laboratory → approved architecture / plan.md
   → my-feature-planning     → GitHub issues
-  → implementation skills
+  → my-git-workflow (Git/GitHub delivery) + implementation skills (application code)
 ```
 
 ## GitHub is the planning substrate
@@ -94,9 +117,11 @@ some other tracker. Portability, for this skill, means being reusable across Git
 projects with different application stacks and project conventions — not across issue trackers.
 
 Application-stack conventions, milestone-naming patterns, and label palettes are inputs the consuming
-project supplies to the methodology, not part of the portable method itself. Where a rule file still
-has a specific project's conventions folded into its methodology more deeply than a clearly-labeled
-example, that's being addressed as each rule file receives its own authoring pass.
+project supplies to the methodology, not part of the portable method itself. The portable rules in
+this skill carry the methodology; the consuming project supplies its own stack, domain, metadata,
+design, and live-repository inputs into it. Any project-specific convention found folded into a rule
+file's methodology more deeply than a clearly-labeled example should be treated as a defect to fix,
+not as expected unfinished work.
 
 ---
 

@@ -14,7 +14,7 @@ first real consumer of it as an external, canonical source. See `roadmap.md` for
 |---|---|
 | [`my-architecture-laboratory`](my-architecture-laboratory/) | Reconstructing and validating how a capability actually works, then handing that off as a published architecture guide, or as a canonical `plan.md` for a planning initiative. |
 | [`my-feature-planning`](my-feature-planning/) | Turning an approved feature ask or `plan.md` into a reviewed, drafted set of GitHub issues — classification, scope, design reconciliation, sequencing, review. |
-| [`my-git-workflow`](my-git-workflow/) | Moving an already-approved issue through implementation, review, commits, verification, closure, release, and milestone completion. |
+| [`my-git-workflow`](my-git-workflow/) | Moving an already-approved issue through implementation review, commits, verification, closure, release, and milestone completion. |
 
 Each owns a distinct stage and stops at an intentional boundary — architecture work never drafts a
 GitHub issue, planning never re-investigates architecture, and neither writes application code. See
@@ -96,21 +96,31 @@ installable and loadable from that published commit. Concretely:
 - `my-architecture-laboratory` (renamed from `architecture-laboratory`) had one literal
   `useOrbit` reference in its Artifact template's footer, replaced with a `{{Project}}` placeholder
   consistent with the template's existing convention — the only content fix made in this pass.
-- Two known couplings remain, deliberately left alone as fidelity-first evidence rather than
-  "fixed" into something more generic. These are observations noted during the Phase A pass, not a
-  completed classification of what's portable, stack-specific, or `useOrbit`-specific — that
-  classification is `roadmap.md` Phase C's job:
-  - `my-feature-planning`'s design-reconciliation rule depends on `_design/*.jsx`, a
-    `useOrbit`-local, gitignored convention (documented inline as project-specific already).
-  - All three skills name `useOrbit`-only implementation skills as what to load once implementation
-    starts, but those named skills are not all the same kind of thing: `my-laravel-patterns` and
-    `my-phpstorm-conventions` are custom stack knowledge genuinely owned by this ecosystem, while
-    `laravel-best-practices` and `pest-testing` are upstream Laravel Boost dependencies — external,
-    first-party capabilities this repository does not own and will not absorb, rename, or duplicate.
-    Distinguishing which of a skill's implementation-time references are custom versus external is
-    exactly the kind of seam `roadmap.md` Phase C is meant to classify; what (if anything) Phase D
-    extracts or refines from the custom side only follows once that evidence exists — not a defect
-    to patch now.
+- Two known couplings were noted during the Phase A pass, deliberately left alone at the time as
+  fidelity-first evidence rather than "fixed" into something more generic. That pass was an
+  observation, not a completed classification of what's portable, stack-specific, or
+  `useOrbit`-specific — that classification is `roadmap.md` Phase C's job. Since then,
+  `my-feature-planning`'s own rule-by-rule authoring pass has closed the first coupling for that
+  skill specifically; the second remains open, and unrelated to that authoring work, for all three
+  skills, since neither `my-architecture-laboratory` nor `my-git-workflow` was inspected or changed
+  by it:
+  - **Resolved for `my-feature-planning`.** Its design-reconciliation rule depended on
+    `_design/*.jsx`, a `useOrbit`-local, gitignored convention. Its
+    `design-reconciliation.md` rule no longer assumes any directory, filename, format, design tool,
+    or tracked-vs-untracked status — it discovers the consuming project's actual design-artifact
+    sources from project-supplied context instead. This finding is Phase A history for
+    `my-feature-planning`, not a current defect; whether the same coupling still holds for
+    `my-architecture-laboratory` or `my-git-workflow` was not part of this pass and remains for
+    Phase C to classify.
+  - **Still open, all three skills.** All three still name `useOrbit`-only implementation skills as
+    what to load once implementation starts, but those named skills are not all the same kind of
+    thing: `my-laravel-patterns` and `my-phpstorm-conventions` are custom stack knowledge genuinely
+    owned by this ecosystem, while `laravel-best-practices` and `pest-testing` are upstream Laravel
+    Boost dependencies — external, first-party capabilities this repository does not own and will
+    not absorb, rename, or duplicate. Distinguishing which of a skill's implementation-time
+    references are custom versus external is exactly the kind of seam `roadmap.md` Phase C is meant
+    to classify; what (if anything) Phase D extracts or refines from the custom side only follows
+    once that evidence exists — not a defect to patch now.
 - `my-architecture-laboratory`'s two style precedents (`Reusable Documents Architecture`,
   `Centralized Tagging Architecture`) are live `claude.ai` Artifact URLs tied to the user's account,
   not `useOrbit` repo files. This claim is now stale for the Tagging citation specifically:
