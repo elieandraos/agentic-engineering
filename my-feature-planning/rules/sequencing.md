@@ -44,12 +44,12 @@ implementation-layer convention, or a wish to share context. If B can proceed in
 stable, approved contract, don't invent a dependency to serialize it.
 
 An external prerequisite this issue set doesn't own — another team's deliverable, a third-party
-dependency — may be recorded as an external constraint when the issue stays developer-ready. A material
-unresolved product/architecture decision is not such a constraint: it follows the applicable decision
-gate (`rules/discovered-work.md`, `rules/plan-md-input.md`) and blocks the affected drafting, unless
-every viable option preserves the approved guarantees and the issue remains executable without picking
-one — that open-implementation-detail case follows `rules/plan-md-input.md`'s own test. Never fabricate
-an internal issue merely to represent an external prerequisite.
+dependency — may be recorded as an external constraint when the issue remains developer-ready. A
+material unresolved product/architecture decision is not an external constraint: it routes through the
+applicable owning decision gate and blocks the affected drafting. Separately, an open implementation
+detail may remain unresolved only when every viable option preserves the approved guarantees and the
+issue remains executable, per `rules/plan-md-input.md`. Never fabricate an internal issue merely to
+represent an external prerequisite.
 
 ## Build and validate the dependency graph
 
@@ -63,7 +63,7 @@ Each canonical issue is a node; each real prerequisite is a directed edge. The r
 
 A cycle means the boundaries or a dependency claim are wrong — resolve it by combining inseparable work
 or correcting the false dependency. Never accept a cycle, or break one with an arbitrary ordering
-decision instead of fixing what caused it.
+decision instead of fixing the cause.
 
 ## Preserve parallel-ready work
 
@@ -73,8 +73,8 @@ wave — exposing possible parallelism, not claiming an issue is currently autho
 implement. Present and create issues in that stable topological order, so every dependency reference
 points backward, as an operational convenience — not a claim that same-wave issues must be implemented
 serially. Ask the user to choose between equivalent topological orders only when it would materially
-change scope, boundaries, or risk. Live readiness, computed from actual issue closure, and the choice of
-which issue to implement next, are both `my-git-workflow`'s job after creation — not this rule's.
+change scope, boundaries, or risk. Live readiness, from actual issue closure, and the choice of which
+issue to implement next, are both `my-git-workflow`'s job after creation — not this rule's.
 
 ## Project-supplied delivery constraints
 
@@ -84,7 +84,7 @@ or only a preferred order, encode only a real prerequisite as a dependency edge,
 non-dependency preference separately rather than fold it in as a false edge. Ask the user only when
 applying it would materially change scope or boundaries and its meaning is genuinely unclear.
 
-This rule prescribes no fixed implementation-layer order of its own — vertical slices, parallel work
+This rule prescribes no fixed implementation-layer order — vertical slices, parallel work
 against a stable contract, interface-first delivery, or another approved model are all compatible with
 it.
 
@@ -104,16 +104,16 @@ decomposition test decides which.
 
 Before creation, canonical definitions may reference each other using canonical planning identifiers.
 The complete set must pass `rules/review.md`'s applicable validations, then `SKILL.md`'s approval
-gates, before creation in dependency-safe order — nothing is created merely because the graph marks it
-ready.
+gates, before creation in dependency-safe order — nothing is created merely because it has no internal
+prerequisites or appears in an earlier wave.
 
 Create issues in the stable topological order: capture each created issue's real GitHub number as it's
-created, resolve a dependent issue's canonical references to real `#N` references before creating it,
+created, resolve a dependent issue's canonical references to real `#N`s before creating it,
 and never derive the issue set back from created issues or a rendered preview.
 
 ## Handoff
 
 `rules/review.md` owns issue quality, dependency-quality validation, structural/rendered integrity, and
-mutation validation. `SKILL.md` owns the two approval surfaces and the creation pipeline. Once approved
+mutation validation. `SKILL.md` owns the two approval surfaces and creation pipeline. Once approved
 issues are created, `my-git-workflow` owns branch readiness, the next ready issue, and recomputing the
 live dependency-ready set as issues close.
