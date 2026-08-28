@@ -1,8 +1,9 @@
 # my-architecture-laboratory
 
-Before writing code, a guide, or a plan, this skill investigates how a system actually works and
-helps a human decide what it should become. Read this for the idea and the rationale; read
-`SKILL.md` and `references/` for the exact operational steps.
+This skill investigates a system to document it, refresh its guide as implementation changes, or
+settle feature architecture before planning or implementation, then helps a human decide what it
+should become. This file holds the idea and rationale; `SKILL.md` and `references/` hold the
+operational steps.
 
 ## What the skill does
 
@@ -129,9 +130,10 @@ supplies its own framework, directories, architecture, and concrete artifacts; t
 the method.
 
 Two dependencies are deliberate rather than leftover project-specificity: the guide workflow
-publishes to a Claude Artifact using the `artifact-design` capability, and the planning workflow
-writes `plan.md` and hands it to `my-feature-planning`. Both are named openly rather than hidden —
-this skill is not tracker-neutral or provider-neutral, and doesn't claim to be.
+publishes to a Claude Artifact using the `artifact-design` capability, and the planning
+workflow writes `plan.md` and hands it to `my-feature-planning`. Both are named openly.
+Neither makes this skill tracker-specific: GitHub is `my-feature-planning`'s substrate, not
+this skill's.
 
 ## References
 
