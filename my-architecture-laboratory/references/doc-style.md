@@ -35,9 +35,9 @@ and not the same set, every time. An empty or decorative block is worse than no 
 | Responsibility table | `.table-wrap > table.lc` | Responsibility mapping: component catalogs, decision/trade-off tables, security-concern tables, state tables — one row per concern. End an enforceable row with `<span class="src-ref">{{reference}}</span>` — a path, symbol, schema element, config key, protocol, or runtime boundary, whichever actually identifies where the rule lives. Don't force a class/method shape onto a rule implemented some other way, or genuinely distributed. |
 | Ordered timeline | `.flow-steps` | Chronological sequence: strictly ordered phases (bold), each with sub-bullets. Only for genuinely sequential steps — independent operations read better as separate tables or flows. |
 | Side card | `.callouts > .callout` | Supporting explanation: a status card, a short "why this architecture?" Q&A, or a boundary explanation. Not tied to a particular section or position. |
-| Equation recap | `.formula` | Composition or cost summary: `A + B + C ─── = outcome`, or a chained count. Closes whatever section summarizes a lifecycle or operation, and can reappear as a capstone recap. |
-| Variant badge | `.pill` (+ a variant class) | Recurring variants: short inline tags for 2–3 recurring variants, reusing the `--tag-current-*` / `--tag-illustrative-*` custom properties the template already defines. Add a new variant class only when actually needed. |
-| Clincher sentence | plain `<strong>` | Closing takeaway: one bolded sentence stating a reuse contract — "A caller integrates by composing X. It does not reimplement Y." Closes any section teaching a reuse contract; not tied to a section's name. |
+| Equation recap | `.formula` | Composition, cost, or lifecycle summary, used when a formula reads clearer than prose. May close a section or the guide; not required because a section covers an operation. |
+| Variant badge | `.pill` (+ a variant class) | Recurring variants: short inline tags for 2–3 recurring variants, using variant classes and custom properties from `references/template.html`. Add a new variant only when a recurring distinction genuinely needs one. |
+| Clincher sentence | plain `<strong>` | Closing takeaway: one bolded sentence stating a reuse contract — "A caller integrates by composing X. It does not reimplement Y." Useful for a contract worth a concise close; not required by subject, nor by section name. |
 
 ## Section structure
 
