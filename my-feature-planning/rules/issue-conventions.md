@@ -226,3 +226,75 @@ written.
 This section governs how the finding is *written*, not how deeply it's investigated — investigation
 depth and its stopping condition are `rules/discovered-work.md`'s job; don't duplicate that procedure
 here.
+
+## 10. Verification checkpoints inside a multi-group issue
+
+An issue whose Tasks span multiple implementation groups or checkpoints (a multi-tranche dependency
+upgrade, a multi-stage migration) may legitimately name a verification step after each group. What
+that step should ask for is a portable authoring question, distinct from how deeply `my-git-workflow`
+actually executes verification once implementation starts (`my-git-workflow/rules/verification.md`
+owns that).
+
+- **State what each intermediate checkpoint needs to prove, not a fixed command to run.** A checkpoint
+  after a frontend-only group needs to prove the frontend surface is sound; it does not automatically
+  need proof that an unrelated backend suite still passes.
+- **Do not copy the same full-regression instruction after every group merely for symmetry.** Wording
+  like "run the corrected CI gate and confirm green" after each of several groups, applied uniformly
+  regardless of which surface that group actually touches, reads as thorough but drives verification
+  disproportionate to what changed — re-running a full backend regression after a change that could
+  not have touched the backend proves nothing new each time.
+- **Scale the checkpoint to the affected surface.** A group that only touches one stack (frontend
+  tooling, a single package family) calls for verification scoped to that surface; a group that could
+  plausibly affect a different surface (a linter or type-checker major version, for instance, can
+  change results in files nobody touched) may legitimately warrant a broader check — justify the
+  broader ask by what that specific group could actually affect, not by habit.
+- **Reserve a full regression run for the issue's own completion, not every intermediate group.**
+  `my-git-workflow/rules/verification.md` already owns exactly this run, at the completed-issue
+  boundary, once all of the issue's commits exist — an issue's own Tasks/Tests should not duplicate
+  that requirement at every checkpoint along the way. Ask for a full regression run at an intermediate
+  checkpoint only when that specific intermediate state genuinely needs broader proof (for example, a
+  reconstructed or reordered intermediate state whose own correctness must independently be shown) —
+  not as the default per-checkpoint instruction.
+- **A concrete project command may appear when current repository evidence makes it material** — e.g.
+  naming the one aggregate command a project actually exposes, when no narrower one exists yet — but
+  state it as evidence for this issue's own wording, not as a portable checkpoint methodology. A
+  project's specific command name is never itself the rule; the rule is proportionality to affected
+  surface.
+
+This section governs what an issue's own Tasks/Tests ask for. It does not change what
+`my-git-workflow` actually runs once implementation starts — that remains
+`rules/verification.md`'s default narrowest-reliable-scope-per-commit model, with a full regression
+run reserved for the completed-issue boundary.
+
+## 11. Completion criteria must be satisfiable at their own closure boundary
+
+Before a canonical issue is finalized, check its Tasks, Acceptance Criteria, Tests, dependencies, and
+expected closure boundary together — not each in isolation. A completion requirement is only real if
+it can actually be satisfied at the point this issue is expected to close under the consuming
+project's own delivery workflow.
+
+`my-feature-planning` does not own that delivery workflow, and this section does not redesign it — see
+`SKILL.md`'s "Handoff" and `my-git-workflow/rules/milestone-completion.md`'s current contract for how
+and when a milestone issue actually closes relative to its milestone's PR. What this section owns is
+narrower: an issue's own stated completion bar must not describe proof that structurally cannot exist
+yet at that issue's own closure boundary.
+
+- **A per-issue Acceptance Criterion or Test that depends on evidence only available at a later
+  milestone boundary is not a valid per-issue completion requirement.** For example: a milestone
+  delivery workflow that closes each of its issues on a shared branch, before any PR exists for that
+  milestone, cannot produce a real CI run against a PR or push as proof for an issue closing earlier
+  in that same milestone — the PR, and the CI trigger it opens, don't exist yet at that issue's own
+  closure boundary, regardless of how the issue is worded.
+- **Route that proof to where it can actually happen.** If real, PR-triggered verification is a
+  genuine requirement of the work, state it as a requirement at the milestone/PR boundary it actually
+  belongs to — not as a per-issue closing condition, and not as something blocking a dependent issue
+  from starting. A dependent issue is unblocked by the prerequisite's actual outcome existing, not by
+  a proof that can only be produced later.
+- **Disclosing the gap in the issue body is not a substitute for not creating it.** Naming the
+  limitation honestly is better than hiding it, but an issue whose own Tests section states a
+  condition that cannot be met by its own closure is still an internally inconsistent contract — fix
+  the requirement's placement, don't just caveat it.
+- **This is a narrow check, not a license to redesign delivery.** It doesn't decide branch strategy,
+  when a milestone issue actually closes, or when a milestone's PR opens — those stay
+  `my-git-workflow`'s. It only stops planning from handing that workflow an issue whose own completion
+  bar was never satisfiable in the first place.

@@ -44,6 +44,12 @@ Validate that:
   restated Tasks;
 - Tests, when present, identify behavior-level proof obligations rather than implementation
   recipes;
+- verification instructions inside a multi-group issue's Tasks/Tests are proportional to each
+  checkpoint's affected surface, not a uniform full-regression instruction copied after every group
+  merely for symmetry (`rules/issue-conventions.md` §10);
+- every completion requirement (Acceptance Criteria or Tests) is satisfiable at this issue's own
+  expected closure boundary under the consuming delivery workflow — not stated as a per-issue gate
+  when it can only be proven at a later milestone/PR boundary (`rules/issue-conventions.md` §11);
 - non-goals are explicit where accidental scope growth is plausible;
 - technical references identify real seams without turning the issue into a code blueprint.
 
