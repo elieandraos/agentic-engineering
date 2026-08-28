@@ -150,14 +150,16 @@ approved the draft — only explicit user approval makes the plan canonical, per
 This is a Plan Synthesis-specific review, distinct from an architecture guide's review. Before
 presenting the plan for approval, confirm all of the following against your own draft:
 
-- Every locked decision from the conversation appears in the plan, worded so it still matches what
-  the user actually approved — not softened, not expanded, not reinterpreted.
+- Every locked decision established by the applicable approved context — the active conversation
+  or another reliable, identifiable prior context — appears in the plan, worded so it still
+  matches what the user actually approved — not softened, not expanded, not reinterpreted.
 - No material product or architecture decision is disguised as an open implementation detail.
 - Current-state facts, locked decisions, derived constraints, and open implementation details
   remain distinguishable throughout.
 - Each derived constraint actually follows from the premises it states.
 - No superseded proposal is presented as current or approved.
-- Current-state evidence references resolve against the codebase at synthesis time.
+- Current-state evidence references resolve against their authoritative source — the codebase,
+  configuration, schema, tests, runtime evidence, or external-system state — at synthesis time.
 - No "preserved behavior" claim conflicts with a described change.
 - Stated invariants are compatible with the target architecture.
 - The plan is sufficient for `my-feature-planning` to distinguish settled from open without
