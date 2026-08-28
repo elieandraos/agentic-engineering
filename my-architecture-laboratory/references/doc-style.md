@@ -1,89 +1,94 @@
-# Documentation style — grammar and precedent
+# Documentation style — grammar for architecture guides
 
-This file is the deep reference for Phase 3. It exists because the two source guides prove
-structure adapts to the capability — this file explains *how* to read that adaptation so you
-reproduce the reasoning, not the surface shape.
+This is the writing grammar for the guide-writing workflow — the vocabulary and rhythm
+architecture guides are built from, independent of which capability or stack a guide documents.
 
-## The rhythm every section follows
+A guide's structure follows the capability's architectural center of gravity — the one idea
+everything else hangs off (a shared contract, a pipeline, a runtime boundary, a data-ownership
+split) — not a template. Two guides for two different capabilities will legitimately have
+different section names, counts, and content blocks, because the architectures are actually
+different. Reproduce the reasoning and information hierarchy below for whatever capability you're
+documenting — not the shape of some other guide.
 
-Regardless of what a section is about, it opens the same way:
+## Section rhythm
+
+Regardless of what a section is about, it opens the same way — an Artifact design convention, not
+a per-capability choice:
 
 1. `section-head` — a two-digit stage number in a circle, then an `<h2>` naming the section.
-2. `section-prompt` — one italicized, first-person-omitted guiding question. Always a real
-   question the reader would actually ask, never a restatement of the heading:
-   - "What problem does this capability solve, and what architecture solves it?"
-   - "How can one document system support many different owner types?"
-   - "Who owns responsibility while a document moves through the running system?"
-   - "How does the architecture stay correct and secure as new taggable models are added?"
-3. `section-intro` — one muted paragraph that directly answers the prompt before any detail
-   follows. The reader should be able to stop after this paragraph and still have the right
-   mental model, just not the depth.
+2. `section-prompt` — one italicized guiding question, a real question the reader would actually
+   ask, never a restatement of the heading. E.g. "How does one shared foundation support many
+   different consumers of it?" or "Who owns responsibility as a unit of work moves through the
+   running system?"
+3. `section-intro` — one muted paragraph answering the prompt before any detail follows. A reader
+   who stops here should have the right mental model, just not the depth.
 
-Everything after that is composed from the content blocks below, chosen per section, not all of
-them every time.
+Everything after is composed from the content blocks below, chosen per section — not all of them,
+and not the same set, every time. An empty or decorative block is worse than no block.
 
-## Content block vocabulary
+## Content-block vocabulary
 
-| Block | CSS | Use for |
+| Block | CSS | Communicates |
 |---|---|---|
-| Spec strip | `.specsheet` (in the hero only) | 3–6 concrete operational facts grounding the reader before any prose — file size limits, retry counts, cascade behavior, "models implementing this today: 1". Pick facts that reveal scale or guarantees, not vanity metrics. |
-| Ownership/flow diagram | `.ascii` | Monospace box-and-arrow diagrams (`─│▼├└`) for both data relationships ("owner → Document") and runtime sequences. Keep it simple enough to read in one glance — this is not the place for exhaustive detail. |
-| Responsibility table | `.table-wrap > table.lc` | Component catalogs (name / type / responsibility), decision/trade-off tables, security-concern tables, state tables. One row per concern. End rows that map to a specific enforcement point with an `<span class="src-ref">Namespace\Class</span>`. |
-| Ordered timeline | `.flow-steps` | A sequence that happens in strict order over time, with named phases (bold, e.g. **Stage**, **Finalize**, **Process**) each carrying sub-bullets. Use only when steps are genuinely sequential — not for a bag of independent operations (see Tags' catalog/attachment tables instead). |
-| Side card | `.callouts > .callout` | A single-topic aside: the "Current reference implementation" status card in section 01, a "Why this architecture?" micro Q&A table, a boundary explanation ("Persistence boundary"), or the "Architectural principles" bullet list that sits between Decisions and Improvements in both reference guides. |
-| Equation recap | `.formula` | A monospace composition or cost formula — `A + B + C ─── = outcome`, or a chained count (`N files → N requests → 1 job → 1 notification`). Closes a lifecycle/operations section and reappears in the Summary as the capstone. |
-| Variant badge | `.pill` (+ a variant class, e.g. `.two-hop` / `.one-hop`) | Short inline tags distinguishing 2–3 recurring variants discussed across a section — reuses the `--tag-current-*` / `--tag-illustrative-*` CSS custom properties already defined in the template. Define new pill variant classes per capability only when you actually need to visually distinguish recurring cases; don't add pills for their own sake. |
-| Clincher sentence | plain `<strong>` | One bolded sentence closing Building Blocks and Integrating: states the reuse contract in a single line — "A page integrates X by composing Y. It does not reimplement Z." This is the sentence a skimming reader should walk away with. |
+| Spec strip | `.specsheet` (hero only) | Concrete facts or guarantees: 3–6 operational numbers grounding the reader before prose — a size limit, a retry count, a cascade behavior. Pick facts that reveal scale or guarantees, not vanity metrics. |
+| Ownership/flow diagram | `.ascii` | Ownership or topology: monospace box-and-arrow diagrams (`─│▼├└`) for data relationships and runtime sequences. Keep it readable in one glance. |
+| Responsibility table | `.table-wrap > table.lc` | Responsibility mapping: component catalogs, decision/trade-off tables, security-concern tables, state tables — one row per concern. End an enforceable row with `<span class="src-ref">{{reference}}</span>` — a path, symbol, schema element, config key, protocol, or runtime boundary, whichever actually identifies where the rule lives. Don't force a class/method shape onto a rule implemented some other way, or genuinely distributed. |
+| Ordered timeline | `.flow-steps` | Chronological sequence: strictly ordered phases (bold), each with sub-bullets. Only for genuinely sequential steps — independent operations read better as separate tables or flows. |
+| Side card | `.callouts > .callout` | Supporting explanation: a status card, a short "why this architecture?" Q&A, or a boundary explanation. Not tied to a particular section or position. |
+| Equation recap | `.formula` | Composition or cost summary: `A + B + C ─── = outcome`, or a chained count. Closes whatever section summarizes a lifecycle or operation, and can reappear as a capstone recap. |
+| Variant badge | `.pill` (+ a variant class) | Recurring variants: short inline tags for 2–3 recurring variants, reusing the `--tag-current-*` / `--tag-illustrative-*` custom properties the template already defines. Add a new variant class only when actually needed. |
+| Clincher sentence | plain `<strong>` | Closing takeaway: one bolded sentence stating a reuse contract — "A caller integrates by composing X. It does not reimplement Y." Closes any section teaching a reuse contract; not tied to a section's name. |
 
-## Section inventory is not fixed
+## Section structure
 
-Both reference guides return to the same recurring conceptual anchors — a purpose statement,
-security and integrity, architectural decisions paired with an "Architectural principles"
-callout, and a closing summary. A runtime-ownership table shows up in both, but only because both
-capabilities happen to have a meaningful runtime story; a capability without one shouldn't get a
-runtime anchor forced onto it. None of this fixes the numbering, placement, naming, or exact
-sequence of these anchors — the two reference guides put them at different section numbers, and a
-third guide is free to put them somewhere else again. The capability's architectural center of
-gravity decides where each anchor belongs and what it's called; the anchor list below is a set of
-recurring concerns, not a table of contents to reuse. Everything else was named and shaped for the
-capability:
+A guide's section list follows what the capability's information actually looks like, not a
+copied table of contents. Compact illustrations, not a checklist:
 
-| # | Documents (pipeline-oriented) | Tags (extension-oriented, two sub-capabilities) |
-|---|---|---|
-| 02 | **Reusable document model** — the polymorphic schema story (`documentable_type`/`documentable_id`), because the foundation *is* a data-model decision | **The Taggable contract** — a two-method interface, because the foundation is an interface decision (`ownerColumn(): ?string`), not a schema |
-| 03 | Building blocks — one backend table, one frontend section | Building blocks — explicitly **two** tables (catalog vs. attachment), because the capability genuinely is two independent things sharing one data model |
-| 04 | Integrating a page — narrative walkthrough of the one seam (`Documentable`) | Integrating a model — a **numbered 3-step checklist**, because integration here really is three discrete, ordered acts (implement contract → register morph alias → bind composable) |
-| 05 | **Upload lifecycle** — one `.flow-steps` sequence (Stage → Finalize → Process → Notify → Reconcile), because the capability *is* a pipeline | **Tag operations** — two independent `.table-wrap` tables (catalog ops, attachment ops) plus one `.flow-steps` for the single genuinely-sequential case (create-then-attach), because most operations are NOT sequential |
-| 06 | One runtime `.ascii` flow + one Document state-machine diagram | **Two** runtime `.ascii` flows (catalog management, attachment), because there are two independent runtime paths |
-| 08 | Testing organized around HTTP integration boundaries versus independently testable shared infrastructure | Testing — explicitly split **shared capability** vs. **integration-specific**, plus a named-and-justified untested branch |
-| 11 | One `.formula` (composition) + one `.formula` (request-count chain) | Two intro paragraphs (whole capability, then the two-sub-capability split) + two `.formula` blocks (composition, per-operation cost) |
+- A sequential lifecycle reads well as an ordered timeline (`.flow-steps`).
+- Independent responsibilities (several things true at once, not a sequence) read better as
+  separate tables or flows.
+- A real, ordered extension process reads well as numbered steps.
+- A capability with no runtime behavior of its own shouldn't get a runtime section just because
+  other guides have one.
 
-The lesson isn't "copy whichever row looks closest." It's: **name each section after what the
-capability actually does at that stage**, and let the number and shape of tables/diagrams follow
-from whether the capability is genuinely one linear thing or genuinely several independent
-things. A future notification-infrastructure guide might need a "Delivery channels" section that
-neither reference guide has at all — that's correct, not a deviation to correct.
+Keep recurring concerns conditional: purpose, security, runtime ownership, decisions, limitations,
+and a closing summary appear only when they materially improve understanding of *this*
+capability — never because a previous guide included them. Nothing here requires a section
+literally named Building Blocks, Integrating, Architectural principles, Focused Improvements,
+Runtime, or Summary — a guide may cover those concepts, but the capability decides what each is
+called, how many there are, and where they sit. A closing-takeaway block (the clincher sentence,
+the formula recap) can still end a guide; it just can't depend on that section being named
+"Summary."
 
-## Tone
+## Tone and evidence
 
-Declarative, technical, no hedging, no marketing language. State the mechanism, not just the
-claim: never "this is reusable" without naming the interface/class/method that makes it so right
-next to the claim. Prefer "X exists because Y" and "Not Z, because —" over softer framings.
-Numbers belong in the specsheet and in tables, not buried in prose.
+Declarative and technical; no marketing language — but declarative isn't the same as certain:
+
+- State verified facts directly; don't hedge what you've confirmed.
+- Label uncertainty, inference, and unresolved decisions honestly instead of smoothing them into
+  confident-sounding prose.
+- For claims that matter architecturally (a reuse guarantee, a security boundary, an ownership
+  rule), name the mechanism or evidence behind it — a symbol, a schema element, a config key, a
+  protocol, a runtime boundary, whichever is appropriate to the system — not a fixed shape like "a
+  class and a method" forced onto every claim.
+- Avoid unsupported certainty: don't state something as universal ("every X does Y") unless
+  you've verified it holds everywhere, and flag known exceptions instead of smoothing over them.
+
+Numbers can appear wherever they communicate best — a spec strip, a table, or plain prose.
 
 ## Choosing a favicon
 
-Pick one or two emoji from the capability's domain (📄 documents, 🏷️ tags) and keep it stable
-across every redeploy of that guide — the Artifact tool requires a favicon on every publish call,
-including updates, so re-supply the same one each time rather than omitting it. If you're
-resuming a guide you didn't originally publish and don't know which emoji was used, ask the user
-rather than guessing a new one — a changed favicon reads to them as a different document.
+Pick one or two emoji from the capability's own domain and keep it stable across every redeploy —
+the Artifact tool requires a favicon on every publish call, including updates, so re-supply the
+same one rather than omitting it. When maintaining a guide you didn't originally publish, discover
+or confirm its current favicon first — read the published Artifact, or ask the user if you can't
+tell — rather than silently picking a new one; a changed favicon reads as a different document.
 
-## Reviewing what you wrote
+## Responsibility routing
 
-This file covers the grammar to write *with* — it is not the methodology for critically
-evaluating what came out the other end. Once a guide is drafted (or after a maintenance edit),
-switch to `references/review.md` and run its checklist against the actual document. Don't
-self-check against this file's block vocabulary and call that a review — reviewing architectural
-communication is a separate pass with its own philosophy, and it's deliberately not loaded during
-Phase 1 or while you're still drafting.
+This file covers the grammar to write *with*. It doesn't own what belongs elsewhere:
+`references/template.html` owns the HTML/CSS scaffold and the classes named above;
+`references/review.md` owns critically evaluating a finished guide — don't mistake self-checking
+against this file's block vocabulary for a review, that's a separate pass run once a draft
+exists; `references/maintenance.md` owns changing an existing guide without breaking its
+narrative; `SKILL.md` owns which workflow you're in and how these references route together.
