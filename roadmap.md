@@ -257,6 +257,14 @@ This analysis produces evidence, not restructuring. Rewritten skills, file movem
 - Laravel Boost and other first-party capabilities remain confirmed external throughout — composed with, never absorbed, renamed, or duplicated.
 - `content-backlog` is genuinely owned and mature but does not confidently fit any of the three defined layers; it is deliberately left unresolved and outside the current Phase D stack scope, consistent with this roadmap's own prior framing (§9, "Future directions").
 
+The per-skill readiness scores above (7.3/10, 6.8/10, 6.3/10, 8.2/10, 5.8/10) describe the
+classification-time baseline `phase-discovery.md` measured, before any of the refinement it called
+for had happened — they are historical evidence of what needed fixing, not a current assessment.
+The portable-core authoring/refinement program recorded in "Current status" below has since
+addressed the targeted refinement needs found in all three portable methodology skills.
+`phase-discovery.md` itself is preserved unmodified as that classification-time record and is not
+updated to reflect the subsequent authoring passes.
+
 ---
 
 # 5. Phase D — Extract or refine the custom Laravel/Vue/Inertia stack layer, if justified
@@ -331,7 +339,9 @@ The root `README.md` may eventually explain the full planning-through-learning w
 
 # 7. Current methodology and observed patterns
 
-These describe methodology and patterns already in use. They're recorded here as current state and evidence for Phase C to classify — not as future phases.
+These describe methodology and patterns already in use. They're recorded here as current state;
+Phase C has since classified this material (see `phase-discovery.md`) — this section is not itself
+a future phase.
 
 ## Git / issue / release / milestone methodology
 
@@ -434,12 +444,15 @@ These are possibilities worth keeping in view — not phases, dependencies, comm
 - [x] Phase C classification + synthesis (2026-08-23): the mature custom `my-*` skill ecosystem (`my-architecture-laboratory`, `my-feature-planning`, `my-git-workflow`, `my-laravel-patterns`, `my-phpstorm-conventions`) plus the independently-discovered `content-backlog` inventoried and classified below whole-skill level across three iterations of increasing depth, then consolidated into a synthesis with independently re-verified, evidence-backed readiness dispositions. The three-skill portable lifecycle is confirmed a sound decomposition; all three portable methodology skills need targeted refinement; `my-phpstorm-conventions` (8.2/10) is the strongest current custom stack candidate and `my-laravel-patterns` (5.8/10) needs substantial refinement before reusable extraction; `resource-feature-checklist.md` is the ecosystem's heaviest mixed stack/project content, requiring a rewrite to separate; Laravel Boost and other first-party capabilities remain confirmed external; `content-backlog` stays deliberately unresolved and outside the current Phase D stack scope. Full evidence: `phase-discovery.md`. **Phase C is now complete.**
 - [x] Phase B refresh/update-and-verification cycle + genuine consumer exercise (2026-08-25): genuine methodology work warranted further refinement of `my-git-workflow`; the canonical skill was substantially refined in `agentic-engineering` and published to `main` @ `7ab1a1cd474bfe8af18769190069ba8d745ce4ec`. The `useOrbit` consumer snapshot was refreshed from the previously-consumed `12d9c1df75dde5fb1d944b62b0679c1e211137a4` using the established Phase B mechanism — independent canonical verification, fresh clone, exact-commit checkout, full directory copy, provenance update, byte-identical verification against canonical — with all nine `my-git-workflow` files changing; `my-feature-planning` and `my-architecture-laboratory` were not refreshed, and `useOrbit/.claude` remained gitignored with no tracked `useOrbit` state changed. The refreshed skill was then used, without Control Room coaching or smoke-test-specific instructions, on genuine `useOrbit#299` ("split the two-factor challenge code input into six digit boxes"): it identified the issue as Backlog work, detected and surfaced a stale feature-branch mismatch, the human approved switching to trunk, and the skill carried the work through implementation, repository-appropriate automated verification, required manual browser verification, Gate 2 semantic commit-plan review, one semantic commit, completed-issue verification, human-authorized closure, and a next-work recommendation — correctly recognizing Backlog work has no milestone-PR lifecycle to continue into. **Phase B is now complete.**
 - [x] Phase B second consumer exercise — `my-feature-planning` (2026-08-28): `useOrbit` consumed `my-feature-planning` from `agentic-engineering` @ `5ff489ca60c26ad971da926118701953fa75e41c`; the skill loaded from the natural instruction to feature-plan the already-approved `plan.md` and completed classification, canonical issue drafting, metadata approval, GitHub creation, dependency-reference resolution, and post-mutation validation, creating `useOrbit#300`, `#301`, and `#302` in milestone `Phase 23 — Composer & JavaScript Dependency Upgrade`. The first decomposition over-split verification checkpoints and package tranches into eight issues; review corrected this to three coherent outcomes — CI/baseline, Composer upgrades, and npm upgrades. The exercise succeeded end to end as a consumer exercise, and exposed a portable decomposition ambiguity — separate verification alone is not sufficient reason to split an issue — since corrected in `my-feature-planning/rules/sequencing.md`. This is evidence from one real consumer exercise, not a general dependency-upgrade decomposition rule; it does not by itself reopen or extend Phase B's already-complete status, and is not a new Phase B completion criterion.
+- [x] Portable-core authoring/refinement program (2026-08-28, reviewed by the repository owner, completed at `main` @ `2de0f88b41fdd5104cb931770c6e2092616b8480`): all three canonical portable skills — `my-git-workflow`, `my-feature-planning`, and `my-architecture-laboratory` — have now received the targeted authoring/refinement pass Phase C's synthesis found each of them needed, and each now has a current dossier under `skill-audits/`. `my-architecture-laboratory` now owns three explicit workflows (document existing architecture, update an existing guide, and plan feature architecture through Plan Synthesis into an approved `plan.md`), with guide writing, guide review, maintenance, and Plan Synthesis each owned by a distinct rule file; its runtime and supporting files were generalized away from source-guide, fixed-section, project, Phase, reusability, and stack assumptions, and its `references/` directory was renamed to `rules/` for repository consistency with the other two skills. The corresponding `my-feature-planning/rules/plan-md-input.md` Plan Synthesis consumer was reconciled to match. This pass supplied `skill-audits/skill-authoring-methodology.md`'s third real proving pass within this authoring program. Full evidence: `skill-audits/my-git-workflow.md`, `skill-audits/my-feature-planning.md`, `skill-audits/my-architecture-laboratory.md`, and `skill-audits/skill-authoring-methodology.md`.
 
 ## In progress / next
 
 Phase B is complete: consumption, local provenance, first genuine real use (`useOrbit#299`), retirement of the old copies from active discovery, and the refresh/update-and-verification cycle — also exercised through `useOrbit#299`, now implemented and closed — are all done; see "Completed" above.
 
 Phase C (classifying the mature custom skill ecosystem) is complete — see "Completed" above and `phase-discovery.md` for the full evidence base. Phase D — deciding what, if anything, Phase C's evidence justifies extracting, refining, combining, splitting, or leaving unchanged in the custom stack layer — is now the next active Agentic Engineering phase. No Phase D implementation decision has been made yet.
+
+The portable-core authoring/refinement program that Phase C's synthesis called for is also complete — see "Completed" above. This is refinement of the already-existing three-skill portable core, not a new roadmap phase and not part of Phase C or Phase D itself. No fresh `useOrbit` consumer exercise of the newly authored `my-architecture-laboratory` has occurred yet, and none is claimed here or required as a blocking criterion before Phase D proceeds — Phase D's evidence source remains Phase C's classification in `phase-discovery.md`.
 
 ## Future
 
@@ -486,3 +499,11 @@ Phase D — deciding what, if anything, Phase C's evidence justifies extracting,
 splitting, or leaving unchanged in the custom stack layer — is now the next active Agentic Engineering
 phase. No Phase D implementation decision has been made yet. `phase-discovery.md` is the evidence
 source Phase D should reason from. Anything in "Future directions" comes later still.
+
+The portable-core authoring/refinement program Phase C's synthesis identified as needed is now
+complete (see "Current status" → "Completed"): all three canonical skills have received their
+targeted authoring/refinement pass, `my-architecture-laboratory` now owns three explicit workflows,
+and all three have current dossiers under `skill-audits/`. This is refinement work on the existing
+portable core, not a new phase; it does not change Phase C's own evidence record in
+`phase-discovery.md`, and no fresh `useOrbit` consumer exercise of the refined
+`my-architecture-laboratory` has occurred or is required before Phase D proceeds.
