@@ -29,6 +29,27 @@ it now.
 - **If the answer is no or not yet**, leave the issue open and don't ask again unprompted. The human
   will raise it when they're ready; repeating the question uninvited is not this rule's job.
 
+## When a stated completion criterion can't be satisfied yet
+
+Before asking to close, check whether the issue's own Acceptance Criteria or Tests state a completion
+criterion that can't actually be satisfied at this point in this workflow — for example, a criterion
+that requires a real CI run against a PR/push, when this issue closes (per this workflow's own
+shared-milestone-branch model) before any PR for that milestone exists. This is
+`my-feature-planning`'s `rules/issue-conventions.md`'s own authoring contract ("Completion criteria
+must be satisfiable at their own closure boundary") — this rule doesn't redefine or duplicate it; it
+only makes sure a contradiction between an issue's own text and this workflow's actual closure timing
+gets surfaced instead of silently inherited.
+
+- **Surface it, don't silently close past it.** State plainly, before asking to close, that this
+  specific criterion cannot be met at this issue's own closure boundary under this workflow, and why.
+- **Route it, don't resolve it here.** Whether to close anyway with the gap disclosed, defer the
+  criterion explicitly to the actual milestone/PR boundary it can be proven at, or send the issue back
+  through `my-feature-planning` for a wording correction is the human's call — this rule reports the
+  contradiction; it doesn't pick among those outcomes.
+- **This is not a reason to invent a workflow change.** It doesn't move where or when real CI actually
+  runs, and it doesn't change this rule's own closure timing (see "Principle" above) — it only makes a
+  pre-existing issue/workflow mismatch visible before an issue closes underneath it.
+
 ## Closure procedure
 
 Once the human approves closing, run this four-part sequence in order. Don't skip ahead to closing
@@ -127,6 +148,8 @@ a link. Don't re-print the full issue body or the closing comment — the reader
 - Check off only genuinely completed tasks; explain deferred ones instead of checking them.
 - Record useful, durable discoveries in the closing comment.
 - Validate every GitHub mutation in this procedure by re-fetching and reading the result back.
+- Surface a completion criterion the issue's own text states but this workflow can't yet satisfy,
+  before asking to close, rather than closing past it silently.
 
 **Don't**
 - Close automatically because commits landed or verification passed.

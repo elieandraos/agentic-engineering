@@ -52,6 +52,58 @@ targeting each tool can reliably support is a property of the project's own tool
 this rule assumes in advance. Git and GitHub remain core substrate for this workflow; test, format,
 and static-analysis tooling is stack- and project-specific composition on top of it.
 
+## Discover the verification starting state, not just the tools
+
+Knowing what commands exist and how they scope (above) doesn't answer a separate, equally material
+question: does running them right now, on this checkout, actually start from the state the delivery
+boundary (CI, a fresh clone) would start from? Where it matters, check whether a local result could be
+masked by a difference between the current working tree and that boundary's actual starting state —
+for example:
+
+- generated files that are gitignored and present only because of earlier local activity, but
+  wouldn't exist on a fresh checkout;
+- build output retained locally from a previous run, rather than produced by the verification being
+  run right now;
+- installed dependency state (`node_modules`, vendor directories, a lockfile-resolved tree) that has
+  drifted from what a strict, reproducible install would actually produce;
+- caches or impact-analysis state (a test runner's cache, a linter's cache, test-impact-analysis
+  graphs) that can make a check pass by skipping or replaying work rather than re-executing it — see
+  "Cache, replay, and impact-analysis results are not execution proof" below;
+- environment or configuration state — an env value, a locally-set flag — that a fresh checkout would
+  not have.
+
+This is a judgment call proportional to actual risk, not a blanket requirement. Require
+clean-equivalent verification — reproducing the relevant piece of a fresh checkout's state before
+trusting a result — only where one of these differences could plausibly hide a real failure: a change
+that introduces or depends on a generated artifact, a dependency-manifest change, a check whose
+scoping mode might replay stale results, or similar. An ordinary change with no such exposure does not
+need a fresh clone, a full reinstall, or a cache purge before it can be verified — manufacturing that
+overhead for every change is exactly the kind of reflexive broadening this rule warns against
+elsewhere.
+
+## Reproducible install boundary
+
+A dependency install that only succeeds locally because of a bypass or compatibility override the
+delivery/CI path does not normally use — a lenient-resolution flag, a forced install, an equivalent
+mechanism on any package manager — is evidence, not a false alarm: the moment an override becomes
+*necessary* rather than merely convenient for a fresh install to succeed, the project's actual strict
+install mechanism at the delivery boundary may fail on that same tree even though the lenient local
+install just "worked."
+
+- The moment such an override becomes necessary for a dependency-manifest change to install cleanly,
+  verify using the project's actual strict, reproducible install mechanism at the delivery boundary —
+  whatever that project's own tooling calls it — before treating that dependency state as proven. Don't
+  leave this to individual habit, or defer it to whatever check happens to run next.
+- This is about install *reproducibility*, not banning a legitimate override. A project can have a
+  real, documented reason for a lenient install flag to be its own normal delivery-boundary mechanism —
+  if that's genuinely what the delivery boundary runs, using it is correct, not a violation of this
+  rule. What this flags is a *local-only* bypass diverging from what the delivery boundary actually
+  runs, never the existence of an override in general.
+- This generalizes the underlying risk without hard-coding one package manager or one incident: any
+  ecosystem's dependency resolver can have a strict mode (used at the delivery boundary) and a lenient
+  mode (convenient locally) that silently diverge on the same manifest — the check applies regardless
+  of which tool exhibits it.
+
 ## Regression baseline for lint/format/static checks
 
 > This rule does not require a project's full-project lint/format/static-analysis output to already
@@ -160,6 +212,30 @@ escalation, not the default for every multi-commit issue. An issue with no order
 reconstruction risk verifies each commit at its own narrowest reliable scope, same as the default
 loop, and needs isolation verification for none of them.
 
+## Cache, replay, and impact-analysis results are not execution proof
+
+A successful command is not, by itself, evidence that its underlying checks freshly executed. Caching,
+result replay, and test-impact analysis (running only a computed subset while still reporting a full
+tally) can each produce a green, complete-looking result without re-executing everything it appears to
+cover.
+
+Where the project's tooling can distinguish these, state which one actually happened rather than
+reporting only pass/fail:
+
+- **freshly executed** — every check actually ran against the current code, uncached;
+- **selected through impact analysis** — the tool determined a subset needed re-running and reported
+  the full tally alongside it, replaying the rest;
+- **cached or replayed** — the result came from a prior run, not from re-execution now.
+
+At a boundary that specifically requires a fresh full-regression proof — the completed-issue boundary
+above, or isolation verification's per-commit check — use the project's uncached/full mode when the
+tooling offers one, rather than trusting a result that could have been produced by cache or replay at
+that specific boundary. This does not mean disabling caching, impact analysis, or targeted
+verification generally — those remain the correct, efficient default everywhere else in this rule's
+narrowest-reliable-scope model (see "Default commit-building loop" above). It means the two moments
+that specifically claim to prove a full regression must actually be shown to be that, not merely
+consistent with it.
+
 ## Ordering commits to keep intermediate states valid
 
 Watch for any change to configuration, feature flags, environment-conditioned behavior, or another
@@ -210,6 +286,13 @@ if they do. Should that situation actually arise, it's a genuine unresolved deci
   can't scope — from the repository itself.
 - Judge a full-project lint/format/static-analysis result against the regression-baseline model:
   new failures block, pre-existing ones don't.
+- Check whether local state (generated files, retained build output, installed dependencies, caches/
+  impact-analysis graphs, environment) could mask a fresh-checkout-only failure, when a change is
+  actually exposed to that risk.
+- Escalate to the project's actual strict, reproducible install mechanism the moment a dependency
+  install needs a bypass or compatibility override to succeed locally.
+- Distinguish freshly executed results from cached, replayed, or impact-analysis-selected ones,
+  especially at a boundary that specifically requires a fresh full-regression proof.
 
 **Don't**
 - Treat the pre-Gate-1 and completed-issue full-suite runs as duplicates of each other.
@@ -223,3 +306,9 @@ if they do. Should that situation actually arise, it's a genuine unresolved deci
 - Invent a precedence rule for dependency ordering vs. activation ordering — none has been needed yet.
 - Require a project's full historical lint/format/static-analysis output to be violation-free before
   this workflow can run.
+- Require a fresh clone, full reinstall, or cache purge for every ordinary change regardless of
+  whether it's actually exposed to a starting-state difference.
+- Assume a locally lenient install succeeding proves the delivery boundary's strict install will also
+  succeed.
+- Report a cached, replayed, or impact-analysis-selected result as equivalent to a freshly executed
+  full regression without saying so.

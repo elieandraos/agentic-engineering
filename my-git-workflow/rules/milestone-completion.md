@@ -20,7 +20,17 @@ belongs in the milestone, and it does not create, review, or merge the PR either
 This rule has two distinct start points, for two distinct gates — do not collapse them:
 
 ```
-all milestone issues closed  →  MILESTONE PR READINESS  →  (human creates/reviews/merges the PR)
+all milestone issues closed  →  MILESTONE PR READINESS  →  (human creates/reviews the PR)
+                                                                          │
+                                                                          ▼
+                                                        real CI runs against the open PR
+                                                                          │
+                                                        fails? → see "CI failure on an open
+                                                        milestone PR" below → fix → re-verify →
+                                                        real CI re-runs → repeat until green
+                                                                          │
+                                                                          ▼
+                                                              (human merges once genuinely green)
                                                                           │
                                                                           ▼
                                                                     PR merged, human confirms it
@@ -175,6 +185,58 @@ Report the result compactly: which of the three conditions hold, and — if not 
 and why. This is a report, not a mutation, so there's nothing to seek approval for beyond confirming
 the manual-testing question with the human.
 
+## CI failure on an open milestone PR
+
+> A milestone's PR looking ready and a milestone's PR actually being green are different facts. Real
+> CI failing after the PR opens, before merge, is a distinct moment from either gate above — narrower
+> than PR readiness (which only checked local issue/testing state), and earlier than the post-merge
+> authorization (which hasn't happened yet because there's no merge to confirm).
+
+This is not a new gate with its own approval — it's this rule naming a moment its existing phase
+diagram would otherwise pass over silently: real CI running against an already-open, not-yet-merged
+milestone PR can fail, and the milestone stays in this in-between state — PR open, not merged, not
+authorized for post-merge progression — until it's resolved.
+
+1. **The PR stays unmerged.** A red CI run on an open PR is never a reason to merge anyway, wait it
+   out, or treat local green as sufficient — merge remains blocked until the PR is genuinely green
+   again.
+2. **Investigate the failure before choosing a remedy.** Root-cause it the same way any other
+   unexpected finding gets investigated before a fix is chosen — don't guess at a correction from the
+   failure message alone.
+3. **Determine whether the correction stays within already-approved milestone scope, or introduces new
+   scope or another decision.** A fix that only corrects what the milestone's own issues already
+   approved (a config/workflow file wired up incorrectly, a dependency pin that needs adjusting to what
+   was already intended) is different from one that touches something no issue in the milestone
+   scoped — check which this is before proceeding, per `rules/review-gates.md`'s "when to stop and ask"
+   (a commit decomposition or scope question with no clearly better answer is exactly that kind of
+   stop).
+4. **A correction applied directly on the milestone branch, when the affected issue's scope is already
+   closed, requires explicit human authorization first.** The issue that scope belongs to has already
+   gone through its own approved implementation, review, and closure (`rules/issue-closure.md`) —
+   reopening that work implicitly, without asking, would silently bypass the review this workflow
+   already gave it. Ask, and only proceed once the human explicitly authorizes a direct fix.
+5. **Otherwise, route the finding through the existing discovered-work intake.** A failure that reveals
+   real, unscoped work — not a correction to something already approved — is a Discovered-work finding
+   in exactly the sense `my-feature-planning`'s `rules/discovered-work.md` already defines (the same
+   intake this rule's "When manual testing finds something" section, above, also hands off to). Create
+   or attach an issue to the still-open milestone when that intake finds the finding
+   warrants one — this is not automatic for every CI failure; a narrow, already-scoped correction with
+   explicit human authorization (step 4) can be the legitimate direct-fix path instead, without a new
+   issue.
+6. **Re-run the relevant local and remote verification.** Verify the correction the same way any other
+   change in this workflow is verified (`rules/verification.md`), then push and let real CI run again
+   against the PR.
+7. **No merge, milestone closure, or release progression until the PR is genuinely green and the human
+   authorizes the next boundary.** A second (or later) real CI failure on the same PR repeats this
+   section from step 1 — there is no cap on how many times this can legitimately happen before the PR
+   is actually green.
+
+Not every CI failure on an open milestone PR demands a new issue — a narrow, in-scope, explicitly
+authorized direct fix (steps 3–4) is a legitimate outcome of this section, not a fallback to avoid.
+What this section prevents is the other failure mode: silently patching the milestone branch past a
+real CI failure with no authorization, or no investigation, because the milestone already looked
+PR-ready.
+
 ## The milestone stays open through discovered work
 
 A milestone is not complete merely because every issue known about it right now is closed — this
@@ -314,7 +376,13 @@ This rule sits downstream of several other contracts and does not redefine any o
   PR readiness's first condition consumes that closed state; this rule doesn't re-decide whether an
   issue should be closed.
 - **`my-feature-planning`'s `rules/discovered-work.md`** owns the intake for a manual-testing
-  finding — this rule hands off to it rather than defining its own investigation process.
+  finding — this rule hands off to it rather than defining its own investigation process. A CI failure
+  on an open milestone PR that reveals unscoped work hands off to the same intake (see "CI failure on
+  an open milestone PR" above).
+- **`rules/review-gates.md`** owns the "when to stop and ask" standard this rule's CI-failure section
+  applies to decide whether a correction stays in scope or needs a new decision, and
+  **`rules/verification.md`**/**`rules/commit-boundaries.md`** own how that correction is actually
+  verified and committed once authorized — this rule doesn't restate either.
 - **`rules/release.md`** owns release drafting, publication, and post-publication validation, and
   its step 0 owns asking the post-merge authorization this rule's condition 2 also consumes. Neither
   rule's completion is a precondition for the other's gate — see "Milestone closure and release do
@@ -340,6 +408,9 @@ This rule sits downstream of several other contracts and does not redefine any o
 - It does not ask for a second, separate human approval before closing. The post-merge authorization
   already covers it; this rule only re-verifies that authorization and eligibility are both actually
   present before acting.
+- It does not require every real CI failure on an open milestone PR to produce a new issue — a
+  narrow, already-approved-scope correction with explicit human authorization is a legitimate direct
+  fix (see "CI failure on an open milestone PR" above).
 
 ## Do / Don't
 
@@ -354,6 +425,9 @@ This rule sits downstream of several other contracts and does not redefine any o
 - Confirm post-merge authorization was already given and actually covers closure — don't ask for it
   again — before running the closure mutation.
 - Verify the resulting state by re-fetching the milestone after closing it.
+- Keep an open milestone PR unmerged through a real CI failure, investigate before remedying, and get
+  explicit human authorization before correcting an already-closed issue's scope directly on the
+  branch.
 
 **Don't**
 - Infer PR readiness or completion from zero open issues alone.
@@ -364,6 +438,10 @@ This rule sits downstream of several other contracts and does not redefine any o
   milestone closure as something `rules/release.md` must wait for.
 - Propose or run either gate against Backlog.
 - Trust the closure command's exit code as proof of the resulting state.
+- Merge, close the milestone, or start release progression while an open milestone PR's CI is red.
+- Patch an already-closed issue's scope directly on the milestone branch without explicit human
+  authorization, or force every CI failure through a new issue when an authorized direct fix is the
+  legitimate path.
 - Close a milestone without re-checking issue state and authorization fresh, immediately before the
   mutation.
 - Ask for a second, separate approval to close once post-merge authorization already covers it.
