@@ -131,12 +131,18 @@ installable and loadable from that published commit. Concretely:
 
 **Phase B (`roadmap.md`) is complete.** The three canonical skills were consumed into gitignored
 `useOrbit/.claude/skills/` as the active local snapshots, with upstream commit provenance recorded
-locally and the pre-Phase-A originals preserved as rollback material rather than deleted. Two
-genuine consumer exercises have since occurred: a subsequently-refined `my-git-workflow` was
-refreshed into the consumer, verified byte-identical to canonical, and carried real Backlog/hotfix
-work end to end ([`useOrbit#299`](https://github.com/elieandraos/useOrbit/issues/299)); and
-`my-feature-planning`'s approved-`plan.md` input path was later exercised, producing
-`useOrbit#300`–`#302` and one portable sequencing correction. Full evidence: `roadmap.md`, Phase B.
+locally and the pre-Phase-A originals preserved as rollback material rather than deleted. Three
+genuine consumer exercises have since occurred, each exercising a distinct part of the pipeline:
+a subsequently-refined `my-git-workflow` was refreshed into the consumer, verified byte-identical to
+canonical, and carried real Backlog/hotfix work end to end
+([`useOrbit#299`](https://github.com/elieandraos/useOrbit/issues/299)); `my-feature-planning`'s
+approved-`plan.md` input path was then exercised, producing `useOrbit#300`–`#302` and one portable
+sequencing correction; and those same three issues were subsequently carried through
+`my-git-workflow`'s full scoped-delivery-milestone path for the first time — shared milestone branch,
+PR [`#303`](https://github.com/elieandraos/useOrbit/pull/303), two real-CI failure-and-recovery
+cycles, merge, milestone closure, and a published, validated release `v0.17.1` — surfacing reusable
+evidence behind several narrow rule corrections across both skills. Full evidence: `roadmap.md`,
+Phase B; `skill-audits/my-git-workflow.md` and `skill-audits/my-feature-planning.md`.
 
 **Portable-core authoring is complete.** All three canonical skills — `my-git-workflow`,
 `my-feature-planning`, and `my-architecture-laboratory` — have now received the targeted
