@@ -1,15 +1,20 @@
 <!--
-  Architecture handoff scaffold — reverse-engineered from the "Reusable Documents Architecture"
-  and "Centralized Tagging Architecture" artifacts. This is a starting point for Phase 3, not a
-  form to fill in blindly: delete sections/blocks that don't fit the capability, add none of the
-  CSS classes below that you don't end up using, and re-read references/doc-style.md before
-  deciding the section list. Once a draft exists, run references/review.md against it before
+  Starting HTML/CSS scaffold for the my-architecture-laboratory guide-writing workflow. This is a
+  starting point, not a form to fill in blindly: references/doc-style.md decides a guide's actual
+  section structure, content-block choices, and writing grammar — read it before deciding what
+  this guide contains. references/review.md checks a finished guide; references/maintenance.md
+  governs editing an existing one; SKILL.md owns which workflow you're in and how these pieces
+  route together. Delete every block below a given guide doesn't need; add none of the CSS
+  classes here that go unused. Once a draft exists, run references/review.md against it before
   calling it done.
 
-  This file is written for the Artifact tool: no DOCTYPE/html/head/body wrapper (added at publish
-  time), no external requests, no CDN — everything is inline. Publish via the Artifact tool with
-  title="{Capability} Architecture", a one-sentence description, and a stable domain emoji as
-  favicon. Load the artifact-design skill before your first publish of a new guide.
+  Current operational constraints, required by the Artifact publish workflow:
+  - no DOCTYPE/html/head/body wrapper — the Artifact tool supplies them at publish time;
+  - no external requests or CDN dependencies — everything below is inline CSS/JS;
+  - the <title> below is a placeholder, replaced with the real capability name;
+  - a stable, domain-appropriate favicon emoji, supplied through the Artifact publish call and
+    re-supplied unchanged on every redeploy — see references/doc-style.md#choosing-a-favicon;
+  - load the artifact-design skill before publishing a new guide.
 -->
 <title>{{Capability}} Architecture</title>
 <style>
@@ -26,20 +31,14 @@
     --code-ink: #e7e9ee;
     --code-muted: #8891a3;
 
-    /* Optional: only needed if the capability has a state machine with terminal outcomes
-       (pending/completed/failed-style). Drop these three trios if it doesn't. */
-    --status-pending: #9a6b00;
-    --status-completed: #1f8a55;
-    --status-failed: #c23b3b;
-    --status-pending-bg: #f7ecd2;
-    --status-completed-bg: #dff2e7;
-    --status-failed-bg: #f8e2e1;
-
-    /* Optional: only needed if the guide uses .pill badges to distinguish recurring variants. */
-    --tag-current-bg: #ecedf2;
-    --tag-current-ink: #5b6472;
-    --tag-illustrative-bg: #e4ecff;
-    --tag-illustrative-ink: #24398f;
+    /* Optional: only needed if the guide uses .pill badges to distinguish recurring variants.
+       --pill-* backs the base .pill class; --pill-alt-* backs the .pill-alt example below.
+       Rename or drop .pill-alt, or add another modifier class, only when the guide actually has
+       a recurring distinction that needs a second variant — don't build a universal taxonomy. */
+    --pill-bg: #e4ecff;
+    --pill-ink: #24398f;
+    --pill-alt-bg: #ecedf2;
+    --pill-alt-ink: #5b6472;
 
     /* Code token colors are fixed, not theme-dependent — the code surface itself (--code-bg)
        stays dark in both page themes. */
@@ -66,29 +65,23 @@
       --bg: #12161d; --surface: #1a2028; --surface-2: #212836; --ink: #e6e9ef;
       --muted: #8b95a5; --border: #2b3240; --accent: #8aa2ff; --accent-ink: #b6c4ff;
       --code-bg: #0c0f14; --code-ink: #dbdfe8; --code-muted: #6d7688;
-      --status-pending: #e0b23f; --status-completed: #4fd694; --status-failed: #f0736f;
-      --status-pending-bg: #332907; --status-completed-bg: #0f2c1f; --status-failed-bg: #341313;
-      --tag-current-bg: #212836; --tag-current-ink: #8b95a5;
-      --tag-illustrative-bg: #1c2740; --tag-illustrative-ink: #b6c4ff;
+      --pill-bg: #1c2740; --pill-ink: #b6c4ff;
+      --pill-alt-bg: #212836; --pill-alt-ink: #8b95a5;
     }
   }
   :root[data-theme="dark"] {
     --bg: #12161d; --surface: #1a2028; --surface-2: #212836; --ink: #e6e9ef;
     --muted: #8b95a5; --border: #2b3240; --accent: #8aa2ff; --accent-ink: #b6c4ff;
     --code-bg: #0c0f14; --code-ink: #dbdfe8; --code-muted: #6d7688;
-    --status-pending: #e0b23f; --status-completed: #4fd694; --status-failed: #f0736f;
-    --status-pending-bg: #332907; --status-completed-bg: #0f2c1f; --status-failed-bg: #341313;
-    --tag-current-bg: #212836; --tag-current-ink: #8b95a5;
-    --tag-illustrative-bg: #1c2740; --tag-illustrative-ink: #b6c4ff;
+    --pill-bg: #1c2740; --pill-ink: #b6c4ff;
+    --pill-alt-bg: #212836; --pill-alt-ink: #8b95a5;
   }
   :root[data-theme="light"] {
     --bg: #f5f6f8; --surface: #ffffff; --surface-2: #ecedf2; --ink: #1b2430;
     --muted: #5b6472; --border: #dadfe6; --accent: #3457d5; --accent-ink: #24398f;
     --code-bg: #1b2430; --code-ink: #e7e9ee; --code-muted: #8891a3;
-    --status-pending: #9a6b00; --status-completed: #1f8a55; --status-failed: #c23b3b;
-    --status-pending-bg: #f7ecd2; --status-completed-bg: #dff2e7; --status-failed-bg: #f8e2e1;
-    --tag-current-bg: #ecedf2; --tag-current-ink: #5b6472;
-    --tag-illustrative-bg: #e4ecff; --tag-illustrative-ink: #24398f;
+    --pill-bg: #e4ecff; --pill-ink: #24398f;
+    --pill-alt-bg: #ecedf2; --pill-alt-ink: #5b6472;
   }
 
   * { box-sizing: border-box; }
@@ -144,6 +137,10 @@
     letter-spacing: 0.06em; padding: 0.1rem 0.45rem; border-radius: 4px;
     background: rgba(255, 255, 255, 0.07);
   }
+  /* Renderer capability, not a stack requirement: only these five data-lang values get a tinted
+     label and enhanced token coloring (see the script below). Any other data-lang value — or
+     none — keeps this default label color and renders through the plain-code fallback: escaped,
+     unhighlighted, still labeled. */
   pre[data-lang="php"]::before { color: var(--lang-php); }
   pre[data-lang="ts"]::before { color: var(--lang-ts); }
   pre[data-lang="vue"]::before { color: var(--lang-vue); }
@@ -160,8 +157,6 @@
 
   .src-ref { display: block; margin-top: 0.3rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
 
-  .diagram-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.4rem 1.5rem; overflow-x: auto; }
-  .diagram-caption { font-size: 0.84rem; color: var(--muted); margin: 0.6rem 0 0; }
   .ascii { font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.65; white-space: pre; overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.4rem; color: var(--ink); }
 
   .flow-steps { counter-reset: flow; list-style: none; margin: 1.6rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
@@ -186,16 +181,12 @@
   table.lc td { background: var(--surface); }
   table.lc tr:last-child td { border-bottom: none; }
 
-  /* Optional: only needed for a document that shows a state machine as a vertical rung stack
-     instead of an .ascii diagram. */
-  .lifetime-stack { display: flex; flex-direction: column; gap: 0; max-width: 46ch; margin: 1.4rem 0; font-family: var(--font-mono); font-size: 0.86rem; }
-  .lifetime-stack .rung { border: 1px solid var(--border); background: var(--surface); border-radius: 8px; padding: 0.75rem 1rem; }
-  .lifetime-stack .arrow { text-align: center; color: var(--muted); font-size: 0.78rem; padding: 0.3rem 0; }
-
-  /* Optional: only needed if the guide uses .pill badges (see --tag-current-*/--tag-illustrative-*
-     above). Add one modifier class per variant the guide needs to distinguish; reuse the same two
-     color pairs rather than inventing new ones. */
-  .pill { display: inline-flex; align-items: center; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.72rem; padding: 0.15rem 0.55rem; border-radius: 999px; background: var(--tag-illustrative-bg); color: var(--tag-illustrative-ink); }
+  /* .pill is the public content-block class references/doc-style.md's grammar names. .pill-alt
+     demonstrates the mechanism for a second variant using --pill-alt-*; rename it to a
+     capability-appropriate name, drop it, or add another modifier class — only when a recurring
+     distinction genuinely needs one. Don't build a universal variant taxonomy here. */
+  .pill { display: inline-flex; align-items: center; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.72rem; padding: 0.15rem 0.55rem; border-radius: 999px; background: var(--pill-bg); color: var(--pill-ink); }
+  .pill-alt { background: var(--pill-alt-bg); color: var(--pill-alt-ink); }
 
   .formula { font-family: var(--font-mono); font-size: 0.88rem; background: var(--code-bg); color: var(--code-ink); border-radius: 8px; padding: 1.05rem 1.25rem; line-height: 1.85; overflow-x: auto; }
   .formula .op { color: var(--code-muted); }
@@ -211,12 +202,13 @@
     <p class="nav-mark">{{Capability}} / Architecture</p>
     <ol>
       <!--
-        One <li> per section, in document order. Number and name these after you've decided the
-        actual section list in Phase 3 — do not ship the two reference guides' section names.
-        Keep the five stable anchors (see references/doc-style.md#section-inventory-is-not-fixed):
-        Purpose first, Security, Decisions + principles, Improvements, Summary last.
+        One <li> per real section, in document order, added only after references/doc-style.md's
+        section-structure guidance has decided this guide's actual section list — there is no
+        fixed section inventory to ship. Each href must match its section's id exactly. The
+        single <li> below is illustrative scaffolding: duplicate and rename it once per real
+        section, then delete this placeholder.
       -->
-      <li><a href="#purpose"><span class="num">01</span> Purpose &amp; scope</a></li>
+      <li><a href="#section-one"><span class="num">01</span> {{Section heading}}</a></li>
     </ol>
   </nav>
 
@@ -225,138 +217,45 @@
       <p class="eyebrow">Architecture handoff</p>
       <h1>{{Capability}} Architecture</h1>
       <p class="dek">
-        One sentence: what this capability is, and the one architectural idea that makes it reusable.
+        {{One or two sentences: what this system or capability does, and the central
+        architectural idea that shapes it.}}
       </p>
-      <!-- 3-6 concrete operational facts. Delete the whole block if the capability has none worth grounding the reader with. -->
+      <!-- Optional: 3-6 durable operational facts or guarantees. Delete the whole block if this capability has none worth grounding the reader with. -->
       <div class="specsheet">
         <div><span class="label">{{Fact label}}</span><span class="value">{{value}}</span></div>
       </div>
     </header>
 
-    <!-- 01 — keep this section first in every guide -->
-    <section id="purpose">
-      <div class="section-head"><span class="stage-num">01</span><h2>Purpose &amp; scope</h2></div>
-      <p class="section-prompt">What problem does this capability solve, and what architecture solves it?</p>
-      <p>State the problem in terms of what would be duplicated without this capability.</p>
-
-      <p class="section-intro">
-        State the solution: the one shared model/contract/pipeline, and the rule for what stays
-        shared vs. what stays at the integration boundary.
-      </p>
-
-      <div class="callouts" style="margin-top:1.75rem;">
-        <div class="callout">
-          <h3>Current reference implementation</h3>
-          <h4>Backend</h4>
-          <p>✓ {{concrete implementer}}</p>
-          <h4>Frontend</h4>
-          <p>✓ {{concrete page/component}}</p>
-          <h4>Architecture</h4>
-          <p>✓ {{what it's designed to extend to next}}</p>
-        </div>
-      </div>
-    </section>
-
     <!--
-      Sections 02 through N-3: build these from the content-block vocabulary in
-      references/doc-style.md. Typical anchors seen in both reference guides, reshape freely:
-        - the core contract/model section (interface code block + "why this shape" list)
-        - shared backend & frontend building blocks (table.lc per layer; split into multiple
-          tables if the capability is genuinely more than one sub-capability)
-        - integrating a new adopter (narrative walkthrough, or a numbered ol.plain checklist if
-          integration really is an ordered list of discrete steps)
-        - lifecycle/operations (flow-steps for sequential pipelines; table.lc for independent
-          CRUD-shaped operations; both if the capability has one sequential case among otherwise
-          independent ones)
-        - runtime architecture (one .ascii flow per independent runtime path + a runtime
-          ownership table.lc: Concern | Runtime owner | Implementation)
+      Illustrative section skeleton — not a mandated position, title, or the whole section list.
+      Decide this guide's real section structure from references/doc-style.md first (section
+      rhythm, content-block vocabulary, and "structure follows the center of gravity"), then
+      duplicate and adapt this skeleton once per real section, in whatever order and count the
+      architecture actually needs. Add only the content blocks (spec strip, .ascii diagram,
+      table, flow-steps, callout, formula, pill) that section actually needs — an empty or
+      decorative block is worse than no block.
     -->
+    <section id="section-one">
+      <div class="section-head"><span class="stage-num">01</span><h2>{{Section heading}}</h2></div>
+      <p class="section-prompt">{{The real question a reader would ask about this section's subject.}}</p>
+      <p class="section-intro">{{The direct answer to that question, before any supporting detail.}}</p>
 
-    <!-- Keep near the end: Security -->
-    <section id="security">
-      <div class="section-head"><span class="stage-num">NN</span><h2>Security &amp; {{failure handling / data integrity — whichever fits}}</h2></div>
-      <p class="section-prompt">How does the architecture stay correct and secure as it's extended?</p>
-      <div class="table-wrap">
-        <table class="lc">
-          <thead><tr><th>Concern</th><th>How it is enforced</th></tr></thead>
-          <tbody>
-            <tr><td>{{concern}}</td><td>{{enforcement mechanism}}<span class="src-ref">{{Namespace\Class}}</span></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Keep near the end: Testing -->
-    <section id="testing">
-      <div class="section-head"><span class="stage-num">NN</span><h2>Testing strategy</h2></div>
-      <p class="section-prompt">How is the shared capability verified independently of each integration?</p>
-      <div class="callouts">
-        <div class="callout">
-          <p class="section-intro" style="margin:0 0 0.9rem;">The testing structure mirrors the architecture's boundaries.</p>
-          <ul>
-            <li>{{shared-capability tests}}</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Keep near the end: Decisions, immediately followed by the principles callout -->
-    <section id="decisions">
-      <div class="section-head"><span class="stage-num">NN</span><h2>Architecture decisions &amp; trade-offs</h2></div>
-      <p class="section-prompt">Why was the architecture designed this way, and what trade-offs were accepted?</p>
-      <div class="table-wrap">
-        <table class="lc">
-          <thead><tr><th>Decision</th><th>Why</th><th>Trade-off</th></tr></thead>
-          <tbody>
-            <tr><td>{{decision}}</td><td>{{reason}}</td><td>{{accepted cost}}</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <div class="callouts" style="margin-bottom:4rem;">
-      <div class="callout">
-        <h3>Architectural principles</h3>
-        <ul>
-          <li>{{principle stated as a preference, e.g. "Reusable capability over page-specific implementations"}}</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Second-to-last: Focused improvements — genuine, justified deferrals, not a wishlist -->
-    <section id="improvements">
-      <div class="section-head"><span class="stage-num">NN</span><h2>Focused improvements</h2></div>
-      <p class="section-prompt">What intentional limitations remain, and where could the architecture evolve?</p>
-      <ol class="plain">
-        <li><strong>{{limitation}}</strong> {{why it's an accepted, deliberate deferral rather than an oversight}}</li>
-      </ol>
-    </section>
-
-    <!-- Last: Summary, closing with a bolded one-line capstone and a .formula recap -->
-    <section id="summary">
-      <div class="section-head"><span class="stage-num">NN</span><h2>Summary</h2></div>
-      <p class="section-prompt">The complete {{capability}} capability at a glance.</p>
-      <p class="section-intro">
-        Restate the architecture end to end in one paragraph: the shared foundation, how an
-        integration adopts it, and what stays constant regardless of the integration.
-      </p>
-
-      <p><strong>{{One-sentence capstone: what a new adopter gets by integrating vs. reimplementing.}}</strong></p>
-
-      <div class="formula">{{Foundation}}<br>
-<span class="op">+</span> {{shared piece}}<br>
-<span class="op">──────────────────────────────────</span><br>
-<span class="op">=</span> {{outcome without duplicating the capability}}</div>
+      <!-- Add only the content blocks this section needs; see references/doc-style.md's content-block vocabulary. -->
     </section>
 
     <footer>
-      {{Capability}} Architecture — {{Project}}
+      {{Capability}} Architecture
     </footer>
   </main>
 </div>
 
 <script>
 (function () {
+  // Renderer capability, not a stack requirement: enhanced token coloring exists only for these
+  // five data-lang values. Every other value — including an absent or unrecognized data-lang —
+  // takes the plain-code fallback below: HTML-escaped, unhighlighted, still labeled.
+  var SUPPORTED = { php: true, ts: true, vue: true, json: true, http: true };
+
   var KEYWORDS = {
     php: ['declare', 'strict_types', 'namespace', 'use', 'final', 'class', 'interface', 'trait',
       'abstract', 'extends', 'implements', 'function', 'public', 'private', 'protected',
@@ -376,7 +275,16 @@
     var codeEl = pre.querySelector('code');
     if (!codeEl) { return; }
 
-    var out = escapeHtml(codeEl.textContent);
+    var escaped = escapeHtml(codeEl.textContent);
+
+    if (!SUPPORTED[lang]) {
+      // Explicit plain-code fallback: escaped and labeled, but never tokenized — an unsupported
+      // or missing data-lang must not be processed by any supported-language rule below.
+      codeEl.innerHTML = escaped;
+      return;
+    }
+
+    var out = escaped;
     var stash = [];
     function keep(html) {
       stash.push(html);
