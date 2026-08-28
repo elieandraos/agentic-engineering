@@ -16,9 +16,10 @@ results:
 | Reconcile a guide with changed implementation    | Updated existing Artifact                          |
 | Design feature architecture through conversation | Approved `plan.md` handed to `my-feature-planning` |
 
-Investigation and user validation come first in every workflow, and sometimes that's the whole
-job: when the user only wants to understand a system, the skill stops after investigating and
-recapping — no guide and no `plan.md` gets produced just because an investigation happened.
+Investigation comes first in every workflow — whether user confirmation follows, and when, is
+conditional; see "Shared investigation and decision discipline" below. Investigation and recap
+alone may be the complete result: no guide and no `plan.md` gets produced just because an
+investigation happened.
 
 ## Shared investigation and decision discipline
 
@@ -92,11 +93,12 @@ planning feature architecture.
 Use this workflow when a guide already exists and its underlying implementation has changed — not
 as an automatic fourth stage after creating a new guide.
 
-Route (formerly Phase 4 — Maintenance): locate the existing Claude Artifact, rather than minting a
-new one → compare its claims with verified current implementation → identify changed architectural
-guarantees → update the existing guide's affected sections as current-state fact, not as a
-changelog of what happened → preserve its identity and stable presentation metadata (same `url`,
-same favicon) → run `references/review.md` against the sections touched.
+Route (formerly Phase 4 — Maintenance): locate the existing Claude Artifact, rather than
+minting a new one → compare its claims with verified current implementation → identify
+changed architectural guarantees → update the guide's affected sections to describe how the
+architecture works now, not as a changelog → preserve its identity and stable presentation
+metadata (same `url`, same favicon) → run `references/review.md` against the sections
+touched.
 
 `references/maintenance.md` governs every judgment call in this route — read it before making any
 edit. It is not an editing how-to; it is the methodology for changing what a guide says without
