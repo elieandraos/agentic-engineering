@@ -195,11 +195,11 @@ approval.
 |---|---|---|---|---|
 | `review-gates.md` | The approval-boundary procedure — Gate 1, Gate 2, and the standing "genuine unknown" escalation. | Once implementation is ready to report (Gate 1); again once a commit plan is ready (Gate 2). | Reports verification results (`verification.md`) and commit-plan content (`commit-boundaries.md`) rather than deciding them. | Verification scope, commit-splitting logic, sequencing choice. |
 | `commit-boundaries.md` | Commit-decomposition semantics: the coherence test, the derivation procedure, message content, `Refs #N`, test placement, correction-folding. | While inspecting the diff and building the commit plan, after Gate 1. | `verification.md` for the negative-proof mechanism behind an intentionally inert commit. | Verification execution/scope, the review-gate procedure, issue closure. |
-| `verification.md` | Verification scope at each lifecycle boundary (full / narrowest-reliable / isolation-escalation), the regression-baseline model, activation-risk commit ordering. | While implementing, and while building/ordering commits. | Layers activation-safety ordering on top of `commit-boundaries.md`'s dependency ordering. | Commit boundaries, gate reporting. |
-| `issue-closure.md` | Whether/when to ask about closing, the four-part closure recipe, post-mutation validation. | After the completed-issue full-suite pass, once commits exist. | `milestone-completion.md`'s "When manual testing finds something" for what a later finding does instead of reopening. | Deciding closure beyond the ask, issue creation, issue reopening. |
+| `verification.md` | Verification scope at each lifecycle boundary (full / narrowest-reliable / isolation-escalation), the regression-baseline model, activation-risk commit ordering, discovering the verification starting state (not only the tools), the reproducible-install boundary, and cache/TIA-vs-fresh-execution evidence. | While implementing, and while building/ordering commits. | Layers activation-safety ordering on top of `commit-boundaries.md`'s dependency ordering. | Commit boundaries, gate reporting. |
+| `issue-closure.md` | Whether/when to ask about closing, the four-part closure recipe, post-mutation validation, surfacing (not resolving) a stated completion criterion the issue's own text can't yet satisfy. | After the completed-issue full-suite pass, once commits exist. | `milestone-completion.md`'s "When manual testing finds something" for what a later finding does instead of reopening; `my-feature-planning/rules/issue-conventions.md`'s completion-criterion-feasibility contract for what "can't yet satisfy" means. | Deciding closure beyond the ask, issue creation, issue reopening, rewriting the issue's stated criterion. |
 | `sequencing.md` | Branch readiness before an issue starts (trunk vs. shared milestone branch); recomputing and reporting the dependency-ready set after a validated closure. | Before implementing an approved issue; again after every validated closure. | Consumes `my-feature-planning`'s milestone classification and dependency representation, never redefines them. | Dependency-graph design, milestone PR-readiness/closure, starting the next issue. |
 | `release.md` | The post-merge authorization gate (shared with milestone closure), release-policy discovery, drafting at release altitude, the content-approval gate, publishing, post-publication validation. | Once a PR carrying committed work has merged. | Its step 0 authorization is the same one `milestone-completion.md`'s closure gate consumes. | Issue closure, PR creation/merge, milestone closure, invented deployment/rollback/changelog machinery. |
-| `milestone-completion.md` | Milestone PR readiness (a factual gate); the closure gate (eligibility, not a second approval); the closure mutation and its validation; the milestone-PR reference convention. | PR readiness once `sequencing.md` reports an empty ready set; closure once the post-merge authorization has been given. | Consumes `release.md`'s step 0 authorization and `my-feature-planning`'s milestone classification/description. | Milestone scope/naming, PR creation/review/merge, release drafting/publication. |
+| `milestone-completion.md` | Milestone PR readiness (a factual gate); the closure gate (eligibility, not a second approval); the closure mutation and its validation; the milestone-PR reference convention; handling a real CI failure on an already-open, not-yet-merged milestone PR. | PR readiness once `sequencing.md` reports an empty ready set; closure once the post-merge authorization has been given; CI-failure handling once real CI runs against an open milestone PR. | Consumes `release.md`'s step 0 authorization, `my-feature-planning`'s milestone classification/description, `review-gates.md`'s stop-and-ask standard, and hands unscoped findings to `discovered-work.md`. | Milestone scope/naming, PR creation/review/merge, release drafting/publication. |
 
 **Why seven rules, and not more or fewer.** The decomposition tracks genuinely distinct questions —
 approval procedure, commit semantics, verification scope, closure, sequencing, release, and milestone
@@ -392,8 +392,9 @@ Should one actually arise, it's exactly the kind of genuine unresolved decision 
 | Milestone scope/description, when one exists, is planning's | Consumed convention | `milestone-completion.md` treats an existing description as the scope contract for judging whether a later finding belongs in the still-open milestone — it doesn't draft, redraft, or reinterpret it. |
 | A manual-testing finding's intake is planning's (Discovered-work) | Genuine contract, matched | `milestone-completion.md` hands a finding straight to that intake rather than defining its own investigation process; planning's own stated boundary confirms it owns exactly this. |
 | Issue reopening | Deliberately unowned by both | Neither skill claims it. This is coherent, not a gap: the default path for a later finding is always a new issue referencing the original, so reopening is never actually needed in the normal case. |
+| A per-issue completion criterion is satisfiable at that issue's own closure boundary | Genuine contract, bidirectional | `my-feature-planning/rules/issue-conventions.md` §11 owns checking this at drafting time; `issue-closure.md`'s "When a stated completion criterion can't be satisfied yet" owns surfacing (never resolving) a contradiction that slipped through anyway, routing it back to planning or the human rather than silently closing past it. |
 
-Four of these are unusually explicit, bidirectional contracts — each skill names the other correctly,
+Five of these are unusually explicit, bidirectional contracts — each skill names the other correctly,
 a real strength of this pipeline rather than a coincidence. The one deliberately unowned item
 (reopening) stays that way because the workflow's own default behavior makes ownership unnecessary,
 not because it was overlooked.
@@ -444,6 +445,68 @@ that may or may not fit a different project's own constraints — the regression
 particular is explicitly framed as a choice about what standard to hold a project to, not an
 immutable methodology law.
 
+**Grounded in a real end-to-end milestone-delivery exercise (`useOrbit`, 2026-08-28):**
+
+The milestone-branch delivery path — previously exercised only for Backlog/hotfix work (see above) —
+has since run end to end in a real consumer, not just as internally coherent design. `useOrbit`
+consumed this skill from `agentic-engineering@3abacd3ff887efcc98fd052b4e8cb3d2142b7264` and carried its
+`Phase 23 — Composer & JavaScript Dependency Upgrade` milestone (issues #300–#302, one shared milestone
+branch) through the complete path this dossier describes architecturally in §4:
+
+- **Per-issue delivery** — all three issues each passed Gate 1, Gate 2, narrowest-reliable-scope
+  commit verification, and the completed-issue full-suite check, then closed with the same validation
+  discipline `rules/issue-closure.md` requires, across eight semantic commits total. One explicit user
+  override of the default finer-grained boundary reasoning occurred (one issue's four implementation
+  groups collapsed into a single commit at the user's direct, in-session request) — evidence the gate
+  correctly treats an explicit human instruction as authoritative over the rule's own default, not a
+  defect in the default.
+- **Isolation verification's escalation fired exactly once, for real** — one issue's Composer upgrades
+  required reconstructing a semantic commit from an already-implemented diff after the fact, precisely
+  the trigger `rules/verification.md` names for this escalation; that reconstructed commit was verified
+  in isolation. Every other commit in the milestone used the default narrowest-reliable-scope loop
+  instead, confirming the escalation stays a deliberate exception in real use rather than something
+  that silently becomes the default the moment an issue has multiple commits.
+- **A genuine completed-issue verification deviation was also observed, not just the ideal path.** One
+  issue's single combined commit never received the distinct post-commit completed-issue full-suite run
+  `rules/verification.md` requires — the pre-commit result was reused and confirmed only via an empty
+  diff check, not by re-executing the suite against the assembled commit. This is recorded as an
+  execution miss against an already-clear rule, not evidence the rule needed strengthening or
+  duplicating (see `skill-audits/my-feature-planning.md`'s corresponding entry).
+- **Two distinct real CI failures occurred on the resulting PR (#303), before merge**, and both were
+  resolved through exactly the path `rules/milestone-completion.md`'s new "CI failure on an open
+  milestone PR" section now names explicitly: the PR stayed unmerged, each failure was investigated
+  before a remedy was chosen, both corrections stayed within already-approved scope and were explicitly
+  authorized as direct fixes (the affected issues were already closed), each was re-verified locally
+  and by pushing to re-trigger real CI, and the PR reached a genuinely green state — on the third CI
+  run — before the human merged it. This is the first real evidence of that moment; it was previously
+  unmodeled in this skill's text even though it was handled correctly in practice. The first of the two
+  failures (a dependency-install peer conflict a lenient local install had silently tolerated) was both
+  an execution miss — the same reproducible-install check already used earlier in the same session
+  would have caught it before the PR ever opened — and a contributing project/issue verification gap,
+  since neither the project's own aggregate check command nor the originating issue's task list named
+  install-reproducibility as something to re-confirm. `rules/verification.md`'s new "Reproducible
+  install boundary" section targets exactly that class of gap going forward; it does not retroactively
+  make the original miss anything other than a real execution deviation in this instance.
+- **Post-merge authorization, milestone closure, and release ran exactly as designed** — one bundled
+  human authorization covered both branches; closure re-verified eligibility fresh and closed without a
+  second approval; release policy was discovered from real prior-release precedent (a comparable
+  dependency-upgrade release that had taken a patch bump), drafted, approved, published as `v0.17.1`,
+  and re-fetched/validated field-by-field against the approved draft.
+- **Evidence-aware verification judgment beyond any rule's explicit mandate at the time**: an
+  uncached, forced-full-suite re-run was chosen, unprompted, after a cache-eligible green result,
+  specifically to avoid trusting a replayed result as proof of a fresh regression pass — exactly the
+  discipline `rules/verification.md`'s new cache/TIA section now states explicitly rather than leaving
+  to individual habit.
+- **A fresh-checkout/generated-state finding** — local verification never reproduced real CI's actual
+  starting state (no locally-generated, gitignored artifacts) for the entire milestone, which is what
+  let one of the two real CI failures go undetected locally — the exact gap `rules/verification.md`'s
+  new "Discover the verification starting state" section now names.
+- **What this exercise did not exercise.** A milestone with genuinely conflicting sequencing choices
+  forcing a real architectural stop; a manual-testing-discovered finding actually routed to a *new*
+  issue (the one discovered-work moment that occurred took the direct-fix path instead); and any
+  release beyond a straightforward, single-theme patch version. These remain open, narrower evidence
+  gaps — not signs that the paths this exercise did cover are unreliable.
+
 ## 12. Authoring observations
 
 Reusable authoring observations extracted from this skill are consolidated in
@@ -471,22 +534,33 @@ Genuinely unresolved by current evidence — not carried forward out of habit:
   already closed by the time such a rejection could happen; neither this skill nor
   `my-feature-planning` currently owns walking that back. This is narrower than it might sound — it
   requires a PR rejection *after* closure, not merely a finding surfacing late (that case is already
-  resolved: see §8's "default is a new issue").
+  resolved: see §8's "default is a new issue"). Note this is distinct from a real CI *failure* on an
+  open PR before merge, which §11's real exercise did produce and which
+  `rules/milestone-completion.md`'s "CI failure on an open milestone PR" section now covers — what
+  remains open here is specifically a PR being rejected or revised, a different and so-far unobserved
+  event.
 
 Not carried forward as open, because current evidence resolves them: whether pre-existing lint/static
 debt should block this workflow (resolved — tolerated, §9); whether a milestone's post-closure/
 pre-merge gap was an oversight (resolved — intentional, with a defined default for the ordinary case,
-§8); whether milestone closure needs its own separate approval (resolved — no, §6); and an earlier
+§8); whether milestone closure needs its own separate approval (resolved — no, §6); an earlier
 one-sided assumption that issue reopening belonged to `my-feature-planning` (resolved by softening the
-claim rather than assigning explicit ownership to either side, §10).
+claim rather than assigning explicit ownership to either side, §10); and whether the milestone-branch
+delivery path could actually be exercised end to end in a real consumer, including a real CI
+failure-and-recovery cycle before merge (resolved — yes, §11).
 
 ## 14. Current assessment
 
 **Methodology maturity.** High for the paths with real repeated evidence (milestone branching,
-issue-before-PR closure, Backlog/hotfix bypass, release-mechanism discovery); intentionally
-provisional for paths still marked as not-yet-designed (PR mechanics, hotfix release cadence,
-deployment). The skill is explicit about which is which rather than filling gaps with invented
-machinery.
+issue-before-PR closure, Backlog/hotfix bypass, release-mechanism discovery), now joined by the
+milestone-branch delivery path itself, which has been exercised end to end in a real consumer — every
+issue through both gates, milestone PR-readiness, two real CI failure-and-recovery cycles on an open
+PR before merge, merge, bundled post-merge authorization, milestone closure, and a published,
+validated release (§11). This does not mean every branch through this lifecycle is now proven: a
+genuinely conflicting-sequencing-choice stop, a manual-testing finding actually routed to a new issue,
+and a release beyond a single-theme patch version remain unexercised (§11). Still intentionally
+provisional for paths marked as not-yet-designed (PR mechanics, hotfix release cadence, deployment).
+The skill is explicit about which is which rather than filling gaps with invented machinery.
 
 **Architectural coherence.** Strong. Seven rules divide genuinely distinct questions with no
 duplicated authority and no rule claiming a boundary another file actually owns. Two rounds of real

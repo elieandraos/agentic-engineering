@@ -90,7 +90,7 @@ point.
 | `capability-checklist.md` | The thirteen-question scope set for cross-cutting/architectural work. | Concrete implementation reuse decisions. | Feeds canonical scope for `sequencing.md`. |
 | `design-reconciliation.md` | Comparing design artifacts, shipped app, and approved decisions; classifying drift; the separate drafting-readiness gate. | Amending `plan.md` or design files; implementing UI. | Its outcome becomes scope/constraint input to issue drafting. |
 | `discovered-work.md` | Raw-finding intake: reproduction, evidence discipline, depth bands, checkpoints, disposition, readiness, stopping condition. | Fixing code; a second, lighter issue-authoring path. | Hands a validated finding to `feature-classification.md`. |
-| `issue-conventions.md` | Title/body shape; the four GitHub-reference categories; the metadata proposal-and-approval workflow. | Decomposition; milestone lifecycle/closure. | `review.md` validates its output against `SKILL.md`'s approval gates. |
+| `issue-conventions.md` | Title/body shape; the four GitHub-reference categories; the metadata proposal-and-approval workflow; verification-checkpoint proportionality and closure-boundary-feasible completion criteria inside a drafted issue (§10, §11). | Decomposition; milestone lifecycle/closure; how `my-git-workflow` actually executes verification. | `review.md` validates its output against `SKILL.md`'s approval gates. |
 | `sequencing.md` | Coherent-outcome decomposition; building and validating the real dependency graph; presenting it as dependency-safe waves. | Implementation order; which issue is worked next; branch strategy; commit structure. | `review.md`'s dependency-quality check; `SKILL.md`'s creation step. |
 | `review.md` | Five validation surfaces around `SKILL.md`'s two approval gates: semantic, canonical structural, rendered-body, rendered-manifest, post-mutation live-state. | Issue syntax/metadata policy; decomposition; raw-finding investigation; design/product decisions. | `SKILL.md`'s pipeline steps 7–8 directly. |
 
@@ -382,6 +382,43 @@ something surviving in a current rule — not a chronological record of what cha
   file every invocation loads regardless of which downstream rule applies, unlike the labeled
   illustrations the rule files used elsewhere. The current `SKILL.md` carries no such vocabulary.
 
+**A real consumer exercise — the approved-`plan.md` path (`useOrbit`, 2026-08-28).** `roadmap.md`
+Phase B records that `useOrbit` consumed this skill from
+`agentic-engineering@5ff489ca60c26ad971da926118701953fa75e41c` and used it, from the natural
+instruction to feature-plan an already-approved `plan.md` initiative, to run classification, canonical
+issue drafting, metadata approval, GitHub creation, dependency-reference resolution, and post-mutation
+validation end to end, producing `useOrbit#300`, `#301`, and `#302` in the milestone `Phase 23 —
+Composer & JavaScript Dependency Upgrade`. Those three issues were then carried through the full
+downstream `my-git-workflow` delivery lifecycle to a merged PR (`#303`) and a published release
+(`v0.17.1`) — see `skill-audits/my-git-workflow.md` §11 for that downstream evidence, not restated
+here. The relevant findings for *this* skill are what that later execution revealed about the issue
+contracts this skill produced, not about the downstream delivery itself:
+
+- **The three-issue decomposition itself held up.** Nothing in the downstream execution required
+  re-splitting, re-merging, or re-sequencing #300, #301, or #302 — the coherent-outcome boundaries
+  (CI/baseline, Composer upgrades, npm upgrades) that review corrected the original eight-way
+  over-split down to (recorded in `roadmap.md`, Phase B) survived real implementation unchanged.
+- **#302's uniform per-group verification wording caused disproportionate repeated verification
+  downstream.** Its Tasks named the same full-project regression gate after each of four npm-only
+  implementation groups, regardless of which stack a given group actually touched — driving four full
+  backend-regression re-runs that no npm-only change in that issue could plausibly have required. This
+  is precisely the gap `rules/issue-conventions.md`'s new §10 ("Verification checkpoints inside a
+  multi-group issue") now addresses: state what each checkpoint needs to prove and scale it to the
+  affected surface, rather than repeating one full-project command after every group by default.
+- **#300's own completion criterion could not be satisfied at its own closure boundary.** Its Tests
+  section required a real, PR-triggered CI run as a condition of that issue's own completion, but the
+  downstream milestone-branch delivery model closes every issue before any PR for that milestone
+  exists — making the criterion structurally unsatisfiable at #300's own closure, regardless of
+  sequencing choice. This is precisely the gap `rules/issue-conventions.md`'s new §11 ("Completion
+  criteria must be satisfiable at their own closure boundary") now addresses: check a completion
+  requirement against the issue's own expected closure boundary before finalizing it, and route
+  boundary-dependent proof to the milestone/PR boundary it actually belongs to instead.
+- **These are issue-contract quality findings, not evidence that this skill's core mechanics failed.**
+  Classification, GitHub issue/milestone creation, dependency resolution, and metadata proposal/
+  approval/post-mutation validation all worked as designed in this exercise — the two findings above
+  are about what the drafted issue *text* asked for, not about whether planning correctly classified,
+  sequenced, created, or validated the issues it produced.
+
 ## 13. Authoring observations
 
 Reusable lessons from this authoring pass are consolidated in
@@ -448,6 +485,11 @@ skill — the heavily mixed checklist file, two private-memory dependencies, and
 `SKILL.md`'s always-loaded activation surface — were checked directly against the current files for
 this dossier and are absent from all of them.
 
-**Whether further authoring changes are presently justified.** No further authoring pass is indicated
-by current evidence. The rule-by-rule authoring pass and the cross-rule cohesion pass that followed it
-appear to have resolved every concrete coupling `phase-discovery.md` identified for this skill.
+**Whether further authoring changes are presently justified.** The rule-by-rule authoring pass and the
+cross-rule cohesion pass resolved every concrete coupling `phase-discovery.md` identified for this
+skill; no further authoring was indicated by that evidence. A real downstream execution
+(`useOrbit#300`–`#302`, §12 above) has since produced two narrow, evidence-backed corrections beyond
+that baseline — `rules/issue-conventions.md` §10 and §11 — both scoped to what that one execution
+actually showed (disproportionate per-group verification wording; a completion criterion unsatisfiable
+at its own closure boundary), not a reopening of the broader authoring pass. No further authoring
+change is indicated beyond those two.
