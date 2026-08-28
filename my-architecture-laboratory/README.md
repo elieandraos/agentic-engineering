@@ -1,7 +1,7 @@
 # my-architecture-laboratory
 
 This skill investigates how a system actually works. It can document existing architecture,
-reconcile an existing guide after implementation changes, or help the user settle feature
+reconcile an existing guide with verified changed reality, or help the user settle feature
 architecture before downstream planning or implementation. This file explains the idea and
 rationale; `SKILL.md` and `references/` contain the operational instructions.
 
@@ -12,7 +12,7 @@ The skill turns a real investigation into one of three results:
 | User intention                                          | Result                                             |
 | --------------------------------------------------------- | ---------------------------------------------------- |
 | Understand and document existing architecture           | New Claude Artifact architecture guide             |
-| Reconcile an existing guide with changed implementation | Updated existing Artifact                          |
+| Reconcile an existing guide with verified changed reality | Updated existing Artifact                          |
 | Design feature architecture through conversation        | Approved `plan.md` handed to `my-feature-planning` |
 
 Investigation and a recap can also be the complete result on their own: when the user only wants
@@ -23,16 +23,20 @@ ask for, not something an investigation produces automatically.
 
 Every workflow starts with the same discipline:
 
-1. Inspect the real, current system.
-2. Reconcile implementation, tests, runtime evidence, and reliable history.
+1. Inspect the real, current system — not conventions or assumptions.
+2. Reconcile implementation, configuration, schema, tests, runtime evidence, and reliable history.
 3. Explain the architecture, including what's still uncertain.
 4. Obtain user decisions when the requested output would settle target architecture.
 
-> The codebase establishes what exists; the user decides what it should become.
+> The system establishes what exists; the user decides what it should become.
 
 Tests carry real weight — they often surface the actual behavioral boundary faster than the
 implementation alone — but they aren't infallible authority. They get reconciled with the
-implementation and relevant runtime evidence, because a test can be incomplete or stale.
+implementation and other relevant evidence, because a test can be incomplete or stale.
+Implementation is authoritative for implementation facts; configuration, schema, runtime
+observations, and external-system state are authoritative for whatever they each govern. History
+explains rationale, not current behavior — a plan recorded in history is never proof of what exists
+now.
 
 What step 4 requires differs by workflow, deliberately:
 
@@ -56,14 +60,18 @@ universal section template every guide gets poured into.
 
 ### Update an existing architecture guide
 
-Use this when a guide already exists and the implementation underneath it has moved on. This is
-its own workflow, not something that automatically follows creating a new guide.
+Use this when a published guide needs reconciling with verified current reality — a stale claim, a
+stale evidence reference, changed configuration or runtime behavior, or a prior documentation
+defect, not only a changed implementation. This is its own workflow, not something that
+automatically follows creating a new guide.
 
-It locates the existing Artifact rather than minting a new one, reconciles its claims against the
-verified current implementation, and updates only the guide's affected sections — presenting the
-architecture as it works now, not as a changelog of what happened. The guide keeps its identity
-(same URL, same favicon), and the sections touched get reviewed again before the update is done.
-`references/maintenance.md` governs the judgment calls involved.
+It locates the existing Artifact rather than minting a new one, reconciles its architectural claims
+against verified current evidence, and follows the complete affected claim graph rather than only
+the section where the change was first noticed — presenting the architecture as it works now, not
+a changelog. A claim that genuinely changed can move the guide's structure, not just its wording;
+an unaffected claim stays as it was. The guide keeps its identity (same URL, same favicon), and the
+whole updated guide is reviewed again, with emphasis on the changed claims and whatever depends on
+them. `references/maintenance.md` governs the judgment calls involved.
 
 ### Plan feature architecture
 
@@ -79,14 +87,20 @@ resolved just to look finished.
 Once the architecture is understood well enough and the material decisions are approved, the
 workflow's final step — **Plan Synthesis** — writes the approved result into a canonical
 `plan.md`. Plan Synthesis names that last step, not the whole workflow: everything before it is
-ordinary investigation and decision-making. `plan.md` then goes to `my-feature-planning`.
+ordinary investigation and decision-making. The written section states that it is the source of
+truth for the subsequent `my-feature-planning` pass — but that statement only marks intended
+handoff; it is not proof of approval. The plan becomes canonical only once the user has actually
+approved it, and only then does it go to `my-feature-planning`.
 
 Every claim in `plan.md` is exactly one of four things, kept visibly distinct:
 
-- **current-state fact** — what the code does today;
+- **current-state fact** — verified present reality, grounded in whatever evidence actually governs
+  it (code, configuration, schema, tests, runtime behavior), not just what the code does today;
 - **locked decision** — something the user explicitly approved;
-- **derived constraint** — something that necessarily follows from a locked decision;
-- **open implementation detail** — a real choice nobody has made yet, left for later.
+- **derived constraint** — something that necessarily follows from verified current-state facts
+  plus one or more locked decisions;
+- **open implementation detail** — a real choice nobody has made yet, left open only because every
+  viable option preserves the approved architecture and guarantees.
 
 ## Outputs and handoffs
 
@@ -98,9 +112,9 @@ classification, scope, issue decomposition, sequencing, metadata, and GitHub iss
 Application implementation and Git workflow sit outside this skill either way.
 
 `my-feature-planning` treats an approved plan as canonical — it doesn't silently reopen a locked
-decision. It can still validate a current-state fact against the code as it exists when issues are
-actually drafted, and it can flag a derived constraint whose premise no longer holds. Neither of
-those is re-deciding something the user already settled.
+decision. It can still validate a current-state fact against current evidence when issues are
+drafted, and it can flag a derived constraint whose premise no longer holds. Neither of those is
+re-deciding something the user already settled.
 
 ## Ownership
 

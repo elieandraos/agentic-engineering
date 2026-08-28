@@ -1,6 +1,6 @@
 ---
 name: my-architecture-laboratory
-description: "Investigates and validates how an existing system or capability actually works, from real implementation, tests, and current evidence — never conventions or guesses — then produces one of three results: a new Claude Artifact architecture guide documenting existing architecture, an updated existing architecture guide reconciled with the current implementation, or an approved `plan.md`, handed to `my-feature-planning`, capturing feature-architecture decisions reached with the user. Trigger to document existing architecture, update an existing architecture guide, resolve architecture or design decisions for a proposed feature, or synthesize approved findings into `plan.md`. Not for explaining one function, debugging, reviewing a diff, or writing API reference docs."
+description: "Investigates and validates how an existing system or capability actually works, from real implementation, tests, and current evidence — never conventions or guesses — then produces one of three results: a new Claude Artifact architecture guide documenting existing architecture, an updated existing architecture guide reconciled with verified current reality, or an approved `plan.md`, handed to `my-feature-planning`, capturing feature-architecture decisions reached with the user. Trigger to document existing architecture, update an existing architecture guide, resolve architecture or design decisions for a proposed feature, or synthesize approved findings into `plan.md`. Not for explaining one function, debugging, reviewing a diff, or writing API reference docs."
 ---
 
 # My Architecture Laboratory
@@ -13,7 +13,7 @@ results:
 | User intention                                   | Result                                             |
 | ------------------------------------------------ | --------------------------------------------------- |
 | Understand and document existing architecture    | New Claude Artifact architecture guide             |
-| Reconcile a guide with changed implementation    | Updated existing Artifact                          |
+| Reconcile a guide with verified changed reality  | Updated existing Artifact                          |
 | Design feature architecture through conversation | Approved `plan.md` handed to `my-feature-planning` |
 
 Investigation comes first in every workflow — whether user confirmation follows, and when, is
@@ -25,18 +25,20 @@ investigation happened.
 
 Every workflow below starts with the same evidence discipline:
 
-1. Inspect the real current system and relevant evidence.
-2. Reconcile implementation, tests, runtime evidence, and reliable history.
+1. Inspect the real current system and relevant evidence — not conventions or assumptions.
+2. Reconcile implementation, configuration, schema, tests, runtime evidence, and reliable history.
 3. Explain the current architecture and identify uncertainty.
 
-> The codebase establishes what exists; the user decides what it should become.
+> The system establishes what exists; the user decides what it should become.
 
 Tests are strong evidence — often surfacing real boundaries faster than implementation alone —
-but not infallible authority: reconcile them with the implementation and relevant runtime
-evidence, since tests can be incomplete or stale. If asked, check issue and commit history for
-*why* — but the current codebase is the source of truth for *what*. Never document something
-history says was planned but the code doesn't show. Do not begin drafting a guide or a `plan.md`
-during this step.
+but not infallible authority: reconcile them with the implementation and other relevant evidence,
+since tests can be incomplete or stale. Implementation is authoritative for implementation facts;
+configuration, schema, runtime observations, and external-system state are authoritative for
+whatever they each actually govern. If asked, check issue and commit history for *why* — reliable
+history explains rationale, it doesn't establish current behavior. Never document something
+history says was planned but the evidence doesn't show. Do not begin drafting a guide or a
+`plan.md` during this step.
 
 What happens next is conditional, not uniform, per workflow: creating a new guide requires recap
 confirmation before publication; planning feature architecture requires explicit, user-approved
@@ -50,7 +52,7 @@ Route: investigate the real system → recap and obtain confirmation → decide 
 center of gravity → load the guide-writing and Artifact-design instructions → use the template →
 publish the Claude Artifact → run the architecture-guide review.
 
-1. **Investigate** (formerly Phase 1 — Explore). Inspect every architectural surface the system
+1. **Investigate.** Inspect every architectural surface the system
    actually has before writing anything. Typical concerns: persistence and data relationships;
    business rules and lifecycle behavior; request or interaction boundaries; authorization and
    security; background or asynchronous work; external integrations; user-facing surfaces and
@@ -60,7 +62,7 @@ publish the Claude Artifact → run the architecture-guide review.
    hangs off (a polymorphic contract, a queue pipeline, a runtime subsystem boundary, a
    sync-vs-async split) — as a hypothesis the guide-writing step will need.
 
-2. **Recap and confirm** (formerly Phase 2 — Recap and validate). Write the recap directly as chat
+2. **Recap and confirm.** Write the recap directly as chat
    output, not a file or an artifact. Cover, with concrete implementation references threaded
    throughout, whichever of these actually apply to the system: the problem being solved, the core
    architecture, reusable pieces versus integration-specific code, runtime behavior, the data
@@ -70,7 +72,7 @@ publish the Claude Artifact → run the architecture-guide review.
    gaps. **Stop here and wait for the user to confirm before this investigation becomes a
    published guide.** A correction here is real signal about what the guide needs to get right.
 
-3. **Write and publish the guide** (formerly Phase 3 — Architecture guide). Only after the recap
+3. **Write and publish the guide.** Only after the recap
    is approved:
    - Decide the document's structure from the confirmed center of gravity. Architecture guides do
      not use one fixed section inventory: structure follows the system being explained. See
@@ -90,19 +92,22 @@ planning feature architecture.
 
 ## Update an existing architecture guide
 
-Use this workflow when a guide already exists and its underlying implementation has changed — not
-as an automatic fourth stage after creating a new guide.
+Use this workflow when a published guide needs reconciling with verified current reality —
+triggered by a stale architectural claim, a stale evidence reference, changed configuration or
+runtime behavior, or a prior documentation defect, not only a changed implementation. This is its
+own workflow, not an automatic fourth stage after creating a new guide.
 
-Route (formerly Phase 4 — Maintenance): locate the existing Claude Artifact, rather than
-minting a new one → compare its claims with verified current implementation → identify
-changed architectural guarantees → update the guide's affected sections to describe how the
-architecture works now, not as a changelog → preserve its identity and stable presentation
-metadata (same `url`, same favicon) → run `references/review.md` against the sections
-touched.
+Route: locate the existing Claude Artifact, rather than minting a new one → compare its
+architectural claims against verified current implementation, configuration, runtime evidence, and
+tests → follow the complete affected claim graph, not only the section where the change was first
+noticed → update to describe how the architecture works now, not as a changelog → preserve its
+identity and stable presentation metadata (same `url`, same favicon) → run `references/review.md`
+against the whole updated guide, with emphasis on the changed claims and whatever depends on them.
 
 `references/maintenance.md` governs every judgment call in this route — read it before making any
-edit. It is not an editing how-to; it is the methodology for changing what a guide says without
-changing the architectural story it tells.
+edit. It preserves a guide's unaffected architectural meaning without freezing architecture the
+evidence shows has genuinely changed: the center of gravity, structure, ownership, or reasoning can
+move when verified reality requires it.
 
 ## Plan feature architecture
 
@@ -134,13 +139,16 @@ user-approved decisions about the target state. If either is missing, do that wo
 Synthesis never manufactures a decision on the user's behalf.
 
 Every claim in the plan must fall into exactly one of four categories — see "Output-specific
-non-negotiables" for the rule. Full methodology, the canonical section list, and the
-pre-finalization review checklist live in `references/plan-synthesis.md` — read it before writing
+non-negotiables" for the rule. `references/plan-synthesis.md` owns the full methodology: the
+four-category claim model, the flexible initiative-driven content model, evidence and placement
+rules, the internal review pass, and the approval/handoff contract — read it before writing
 anything.
 
 State at the top of the written section that it is the source of truth for the subsequent
-`my-feature-planning` pass — `my-feature-planning/rules/plan-md-input.md` checks for this
-statement before treating a plan as canonical input.
+`my-feature-planning` pass. That statement marks the section's intended handoff role — it does not
+by itself prove approval. `my-feature-planning` treats a plan as canonical only once the initiative
+matches and the user's explicit approval is established; see
+`my-feature-planning/rules/plan-md-input.md` for the full recognition procedure.
 
 **Skill boundary.** This workflow stops at an approved `plan.md` — see "Ownership and handoff" for
 what belongs to `my-feature-planning` instead.
