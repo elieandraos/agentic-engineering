@@ -99,8 +99,9 @@ installable and loadable from that published commit. Concretely:
   consistent with the template's existing convention — the only content fix made in this pass.
 - Two couplings were noted during the Phase A pass, recorded as fidelity-first observations rather
   than "fixed" into something more generic. That pass was an observation, not a completed
-  classification of what's portable, stack-specific, or `useOrbit`-specific — that classification is
-  `roadmap.md` Phase C's job. `my-feature-planning`'s own rule-by-rule authoring pass has since closed
+  classification of what's portable, stack-specific, or `useOrbit`-specific — that classification was
+  `roadmap.md` Phase C's job, and Phase C has since completed it. `my-feature-planning`'s own
+  rule-by-rule authoring pass has since closed
   the first coupling for that skill specifically. Both couplings are now historical, not current:
   - **Resolved for `my-feature-planning`.** Its design-reconciliation rule depended on
     `_design/*.jsx`, a `useOrbit`-local, gitignored convention. Its `design-reconciliation.md` rule
@@ -115,8 +116,8 @@ installable and loadable from that published commit. Concretely:
     observation no longer describes current active skill content. Neither of the other two skills was
     touched by `my-feature-planning`'s authoring pass, so that pass does not explain the change.
     Whether to distinguish custom stack knowledge from external first-party capabilities generally —
-    and ensure the latter is never absorbed, renamed, or duplicated — remains a broader
-    classification question for `roadmap.md` Phase C.
+    and ensure the latter is never absorbed, renamed, or duplicated — is a boundary `roadmap.md`
+    Phase C has since classified; Phase D now decides what action, if any, that evidence justifies.
 - `my-architecture-laboratory`'s two original style precedents (`Reusable Documents Architecture`,
   `Centralized Tagging Architecture`) were live `claude.ai` Artifact URLs tied to the user's account,
   not `useOrbit` repo files. `roadmap.md` Phase C (`phase-discovery.md`) directly re-verified the
@@ -134,9 +135,8 @@ locally and the pre-Phase-A originals preserved as rollback material rather than
 genuine consumer exercises have since occurred: a subsequently-refined `my-git-workflow` was
 refreshed into the consumer, verified byte-identical to canonical, and carried real Backlog/hotfix
 work end to end ([`useOrbit#299`](https://github.com/elieandraos/useOrbit/issues/299)); and
-`my-feature-planning` was consumed for the first time to plan an already-approved `plan.md`,
-producing `useOrbit#300`–`#302` and one portable sequencing correction. Full evidence: `roadmap.md`,
-Phase B.
+`my-feature-planning`'s approved-`plan.md` input path was later exercised, producing
+`useOrbit#300`–`#302` and one portable sequencing correction. Full evidence: `roadmap.md`, Phase B.
 
 **Portable-core authoring is complete.** All three canonical skills — `my-git-workflow`,
 `my-feature-planning`, and `my-architecture-laboratory` — have now received the targeted
