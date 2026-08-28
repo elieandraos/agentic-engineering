@@ -1,9 +1,9 @@
 # my-architecture-laboratory
 
-This skill investigates a system to document it, refresh its guide as implementation changes, or
-settle feature architecture before planning or implementation, then helps a human decide what it
-should become. This file holds the idea and rationale; `SKILL.md` and `references/` hold the
-operational steps.
+This skill investigates how a system actually works. It can document existing architecture,
+reconcile an existing guide after implementation changes, or help the user settle feature
+architecture before downstream planning or implementation. This file explains the idea and
+rationale; `SKILL.md` and `references/` contain the operational instructions.
 
 ## What the skill does
 
