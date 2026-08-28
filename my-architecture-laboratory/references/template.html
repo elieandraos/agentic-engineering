@@ -138,9 +138,11 @@
     background: rgba(255, 255, 255, 0.07);
   }
   /* Renderer capability, not a stack requirement: only these five data-lang values get a tinted
-     label and enhanced token coloring (see the script below). Any other data-lang value — or
-     none — keeps this default label color and renders through the plain-code fallback: escaped,
-     unhighlighted, still labeled. */
+     label and enhanced token coloring (see the script below). An unsupported but present
+     data-lang value still renders a label (in this default color) plus the escaped,
+     unhighlighted plain-code fallback. A <pre> with no data-lang attribute at all gets no label
+     — pre[data-lang]::before never matches it — but still gets the same escaped, unhighlighted
+     plain-code fallback. */
   pre[data-lang="php"]::before { color: var(--lang-php); }
   pre[data-lang="ts"]::before { color: var(--lang-ts); }
   pre[data-lang="vue"]::before { color: var(--lang-vue); }
@@ -252,8 +254,9 @@
 <script>
 (function () {
   // Renderer capability, not a stack requirement: enhanced token coloring exists only for these
-  // five data-lang values. Every other value — including an absent or unrecognized data-lang —
-  // takes the plain-code fallback below: HTML-escaped, unhighlighted, still labeled.
+  // five data-lang values. An unsupported but present data-lang takes the same HTML-escaped,
+  // unhighlighted plain-code fallback below and keeps its ordinary (untinted) label; a <pre>
+  // with no data-lang attribute at all takes that same fallback but renders no label at all.
   var SUPPORTED = { php: true, ts: true, vue: true, json: true, http: true };
 
   var KEYWORDS = {
@@ -278,8 +281,10 @@
     var escaped = escapeHtml(codeEl.textContent);
 
     if (!SUPPORTED[lang]) {
-      // Explicit plain-code fallback: escaped and labeled, but never tokenized — an unsupported
-      // or missing data-lang must not be processed by any supported-language rule below.
+      // Explicit plain-code fallback: escaped, never tokenized — an unsupported or missing
+      // data-lang must not be processed by any supported-language rule below. Present-but-
+      // unsupported still shows its ordinary label (via pre[data-lang]::before); a genuinely
+      // absent data-lang shows no label, since that CSS rule never matches it.
       codeEl.innerHTML = escaped;
       return;
     }
