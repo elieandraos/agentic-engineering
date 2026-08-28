@@ -1,211 +1,143 @@
 # my-architecture-laboratory
 
-A "before we code, document, or redesign" skill for understanding important parts of a system and
-deciding what should happen next. Read this if you want to understand what the skill is for and why
-it works the way it does. For the exact steps it follows, read `SKILL.md` and the files in
-`references/` — this document explains the idea, not the operational detail.
+Before writing code, a guide, or a plan, this skill investigates how a system actually works and
+helps a human decide what it should become. Read this for the idea and the rationale; read
+`SKILL.md` and `references/` for the exact operational steps.
 
-## Two main ways to use it
+## What the skill does
 
-### 1. Understand and document an existing capability
+The skill turns a real investigation into one of three results:
 
-Use this when the goal is to understand how an existing subsystem works — nothing is changing yet,
-you just need the real picture.
+| User intention                                          | Result                                             |
+| --------------------------------------------------------- | ---------------------------------------------------- |
+| Understand and document existing architecture           | New Claude Artifact architecture guide             |
+| Reconcile an existing guide with changed implementation | Updated existing Artifact                          |
+| Design feature architecture through conversation        | Approved `plan.md` handed to `my-feature-planning` |
 
-```
-existing capability → investigate → validate understanding with the human → architecture guide
-```
+Investigation and a recap can also be the complete result on their own: when the user only wants
+to understand a system, the skill stops there. A guide and a `plan.md` are outputs someone has to
+ask for, not something an investigation produces automatically.
 
-**Output:** a published Architecture Artifact that explains how the existing system works, why
-it's shaped that way, and how it can be extended.
+## Shared method
 
-### 2. Understand and plan a new capability or a major change
+Every workflow starts with the same discipline:
 
-Use this when the goal is to change an existing system or build something new, and the
-architecture needs to be settled before anyone plans issues or writes code.
+1. Inspect the real, current system.
+2. Reconcile implementation, tests, runtime evidence, and reliable history.
+3. Explain the architecture, including what's still uncertain.
+4. Obtain user decisions when the requested output would settle target architecture.
 
-```
-existing system / new capability → investigate → discuss target architecture
-→ make product/architecture decisions → plan.md → my-feature-planning
-```
+> The codebase establishes what exists; the user decides what it should become.
 
-**Output:** a canonical `plan.md` that captures the agreed target state and the constraints the
-next planning step has to respect.
+Tests carry real weight — they often surface the actual behavioral boundary faster than the
+implementation alone — but they aren't infallible authority. They get reconciled with the
+implementation and relevant runtime evidence, because a test can be incomplete or stale.
 
-The distinction in one line each:
+What step 4 requires differs by workflow, deliberately:
 
-> **Architecture guide** → "How does this system work, and why?"
-> **`plan.md`** → "What are we agreeing to build or change, and what must stay true?"
+- A **new guide** needs the user to confirm the investigation's recap before it gets published.
+- **Planning feature architecture** needs explicit, user-approved decisions for every material
+  question before `plan.md` gets written.
+- **Updating an existing guide** only asks the user when authority, intent, or a material decision
+  is unclear. Refreshing an already-settled fact doesn't reopen a decision.
 
-Sometimes both are involved. A capability may already have an architecture guide, and a planned
-change to it may still need fresh investigation before a `plan.md` can be written. After the change
-ships, the same architecture guide can be updated to reflect the new reality.
+## Three workflows
 
-## How the investigation works
+### Document existing architecture
 
-Both branches start the same way: understand the real system before touching it. The difference
-comes after the investigation. Branch 1 turns that understanding into an Architecture Artifact.
-Branch 2 uses that understanding as the starting point for target-state discussion, user decisions,
-and eventually `plan.md`. Plan Synthesis itself does not investigate or make new decisions; it
-consolidates what we have already learned and decided.
+Use this to understand and record how something already works. The skill investigates the real
+implementation, recaps its understanding for the user to confirm, then writes and publishes a new
+Claude Artifact architecture guide and runs a review pass against it.
 
-```
-inspect the real system → understand how it actually works → identify boundaries and existing precedents
-→ form a target-state hypothesis → surface decisions for the human → validate before writing the final artifact
-```
+The guide teaches how the system works, why it's shaped that way, and — where extension is
+relevant — how it can be extended. Its structure follows the architecture itself; there's no
+universal section template every guide gets poured into.
 
-The guiding principle:
+### Update an existing architecture guide
 
-> **The codebase tells us what exists. The human decides what it should become.**
+Use this when a guide already exists and the implementation underneath it has moved on. This is
+its own workflow, not something that automatically follows creating a new guide.
 
-Tests get special weight here. They're not just extra reading — they're evidence of the real
-behavioral contract. Code can look like it does one thing while a test proves the actual boundary
-is somewhere else; tests win.
+It locates the existing Artifact rather than minting a new one, reconciles its claims against the
+verified current implementation, and updates only the guide's affected sections — presenting the
+architecture as it works now, not as a changelog of what happened. The guide keeps its identity
+(same URL, same favicon), and the sections touched get reviewed again before the update is done.
+`references/maintenance.md` governs the judgment calls involved.
 
-This is also why the skill isn't a code generator. It doesn't start by picking an implementation —
-writing anything (guide or plan) is the last step, not the first, and it only happens after the
-human has validated the understanding it's based on.
+### Plan feature architecture
 
-## Branch 1 in detail: the architecture guide workflow
+Use this when the point of the work is preparing a real change, not teaching a system. It can
+start from a feature idea raised in conversation, an architecture question, an existing
+investigation, or decisions already approved elsewhere.
 
-Four phases, always in order:
+The skill investigates how the current system supports or constrains the proposed feature,
+discusses viable target approaches with the user, and surfaces the decisions that genuinely need a
+human call. An implementation detail that stays open under every viable option is left open, not
+resolved just to look finished.
 
-**Phase 1 — Explore**
-Read the backend, frontend, tests, database, routes, policies, jobs — whatever is actually part of
-this capability. Look for its architectural center of gravity: the one idea everything else in the
-system hangs off. Nothing gets written for the human yet — no draft, no outline.
+Once the architecture is understood well enough and the material decisions are approved, the
+workflow's final step — **Plan Synthesis** — writes the approved result into a canonical
+`plan.md`. Plan Synthesis names that last step, not the whole workflow: everything before it is
+ordinary investigation and decision-making. `plan.md` then goes to `my-feature-planning`.
 
-**Phase 2 — Recap and validate**
-Tell the human what was found, in plain chat, not a document. This is the important checkpoint.
-It's much cheaper to catch a wrong assumption here than after a whole guide has been built around
-it. If the human corrects something, that correction is real signal — it means the final artifact
-needs to get that part right.
+Every claim in `plan.md` is exactly one of four things, kept visibly distinct:
 
-**Phase 3 — Architecture guide**
-Only starts after the recap is approved. The result is a **published Artifact** — not just a
-Markdown file — built using the visual/document design system in `references/template.html` and
-`references/doc-style.md`, following the `artifact-design` workflow before publishing. Once
-published, the skill runs an architecture review checklist (`references/review.md`) against it
-before calling it done. The exact template and document grammar aren't repeated here — that's what
-`SKILL.md` and the reference files are for. The one thing worth knowing at this level: the guide's
-structure is shaped around *this capability's* center of gravity, not poured into one fixed,
-universal section list.
+- **current-state fact** — what the code does today;
+- **locked decision** — something the user explicitly approved;
+- **derived constraint** — something that necessarily follows from a locked decision;
+- **open implementation detail** — a real choice nobody has made yet, left for later.
 
-**Phase 4 — Maintenance**
-When the implementation changes later, the skill can update the existing guide instead of writing a
-new one. It compares the current code against what the guide currently claims, updates only the
-architectural guarantees that actually changed, keeps the guide's existing narrative and its URL,
-and re-runs the review checklist on the sections it touched.
+## Outputs and handoffs
 
-## Branch 2 in detail: Plan Synthesis
+A new or updated architecture guide is the finished output of its own workflow. Publishing or
+updating one doesn't automatically hand anything to `my-feature-planning`.
 
-Plan Synthesis is the planning branch (use case 2 above) — a separate path from the architecture
-guide workflow, not a Phase 5 that always happens after Phase 3. It's used when the point of the
-architecture work isn't teaching — it's preparing a real implementation initiative.
+Only an approved `plan.md` crosses that boundary. From there, `my-feature-planning` owns feature
+classification, scope, issue decomposition, sequencing, metadata, and GitHub issue creation.
+Application implementation and Git workflow sit outside this skill either way.
 
-```
-investigation → target-state discussion → user-approved decisions → plan.md → my-feature-planning
-```
+`my-feature-planning` treats an approved plan as canonical — it doesn't silently reopen a locked
+decision. It can still validate a current-state fact against the code as it exists when issues are
+actually drafted, and it can flag a derived constraint whose premise no longer holds. Neither of
+those is re-deciding something the user already settled.
 
-`plan.md` is the handoff document into `my-feature-planning`. It is:
+## Ownership
 
-- The **source of truth** the next planning pass starts from.
-- **Implementation-aware** — it names real files and classes, not vague descriptions.
-- **Not a literal list of code edits**, and **not a list of GitHub issues.** Those come later.
+This skill owns:
 
-The part that's easy to get wrong, and matters most: every claim in the plan has to be clearly one
-of four kinds, and they must never blur together:
+- architecture investigation and explanation;
+- surfacing material architecture decisions;
+- new architecture guides;
+- maintenance of existing guides;
+- synthesis of approved feature architecture into `plan.md`.
 
-- **current-state fact** — what the code does today
-- **locked decision** — something the human explicitly approved
-- **derived constraint** — something that necessarily follows from a locked decision, even though
-  no one said it in those words
-- **open implementation detail** — a real choice nobody has made yet, left for later
+It does not own:
 
-Example:
+- application implementation;
+- debugging or diff review;
+- API reference documentation;
+- downstream issue planning;
+- GitHub mutation;
+- delivery or Git workflow.
 
-> "Public signup is being removed" — **locked decision**.
-> "Something else must now create the first Owner" — **derived constraint** (follows from the
-> decision above).
-> "Use a boolean column or a timestamp to represent it" — **open implementation detail**, left
-> unresolved on purpose.
+## Portability
 
-The plan must never quietly pick an answer to an open implementation detail just to look more
-finished. If it's genuinely undecided, it stays listed as open, with the real options named.
+The investigation discipline, the decision gates, the guide's structure-follows-architecture
+principle, and Plan Synthesis's fact/decision/constraint/detail categories are stack-neutral —
+none of them assume a particular language, framework, or project layout. A consuming project
+supplies its own framework, directories, architecture, and concrete artifacts; the skill supplies
+the method.
 
-## What the skill owns
+Two dependencies are deliberate rather than leftover project-specificity: the guide workflow
+publishes to a Claude Artifact using the `artifact-design` capability, and the planning workflow
+writes `plan.md` and hands it to `my-feature-planning`. Both are named openly rather than hidden —
+this skill is not tracker-neutral or provider-neutral, and doesn't claim to be.
 
-**my-architecture-laboratory owns:**
-- Investigating the real architecture
-- Reasoning about the target state
-- Surfacing the decisions that need a human
-- Recording the decisions once made
-- Writing the architecture guide
-- Synthesizing `plan.md`
+## References
 
-**my-architecture-laboratory does NOT own:**
-- Writing application code
-- Classifying or scoping a feature
-- Drafting or creating GitHub issues
-- Managing milestones or labels
-- Sequencing a batch of issues
-
-Everything in that second list is `my-feature-planning`'s job. The handoff is simple:
-
-```
-my-architecture-laboratory → approved architecture guide OR approved plan.md → my-feature-planning
-```
-
-## What a good result looks like
-
-- A good investigation **tells us how the system really works** — not how it's supposed to work,
-  not how similar things usually work.
-- A good architecture discussion **makes the important choices explicit**, instead of leaving them
-  implied.
-- A good architecture guide **explains how the system works and why**, so a future engineer can
-  extend it correctly without re-deriving the reasoning.
-- A good `plan.md` **records the agreed target so the next planning step doesn't have to
-  reconstruct the conversation** — no missing decisions, no ambiguity about what's locked vs. open.
-
-## What it should avoid
-
-- Guessing from framework conventions instead of reading the actual code.
-- Trusting an old plan, PR description, or ticket over what the code does today.
-- Inventing a "cleaner" abstraction because it looks nicer, not because it's actually there.
-- Making a product decision on the user's behalf instead of asking.
-- Writing the final guide or plan before the system is genuinely understood.
-- Turning the architecture guide into an API or endpoint reference.
-- Turning `plan.md` into a task checklist.
-- Mixing architecture work with GitHub issue planning — that boundary belongs to
-  `my-feature-planning`.
-
-## Is this portable?
-
-The way of thinking — understand before you document, validate before you write, keep facts and
-decisions and open questions separate, find the center of gravity — isn't specific to this project
-and could apply to any codebase.
-
-The skill as it's actually written today is not that generic yet. It assumes things specific to
-this project: this project's Laravel/Vue stack, its particular Artifact publishing workflow for
-architecture guides, the existence of `plan.md`, and a handoff to `my-feature-planning`.
-
-> The methodology is reusable. The current implementation of the skill is still project-specific.
-
-If portability ever becomes a real goal, that would mean separating the reusable reasoning from
-these project-specific pieces — that separation hasn't happened yet.
-
-## Relationship to the other skill
-
-```
-my-architecture-laboratory  →  understand / decide / document / synthesize plan
-my-feature-planning      →  classify / scope / reconcile / sequence / draft issues / GitHub
-```
-
-The two skills stop at different, intentional boundaries. `my-architecture-laboratory` never drafts a
-GitHub issue; `my-feature-planning` never re-investigates architecture or re-decides something this
-skill already settled. Each one trusts the other to do its part.
-
----
-
-`my-architecture-laboratory` helps us understand what the system is, decide what it should become, and
-capture that decision as either an architecture guide or a planning-ready `plan.md`.
+- `SKILL.md` — operational routing and decision gates.
+- `references/doc-style.md` — guide-writing grammar.
+- `references/template.html` — guide scaffold.
+- `references/review.md` — guide review checklist.
+- `references/maintenance.md` — guide maintenance methodology.
+- `references/plan-synthesis.md` — `plan.md` synthesis contract.
