@@ -125,9 +125,9 @@ The workflow may need to:
 
 Only after the architecture is sufficiently investigated and the material decisions are approved
 does this workflow perform its final writing step, **Plan Synthesis** — consolidating an
-already-investigated current state and already-approved user decisions into a canonical
-`plan.md`, the input `my-feature-planning` needs instead of reconstructing decisions from
-conversation history.
+already-investigated current state and already-approved user decisions into a draft `plan.md`
+intended to become canonical, the input `my-feature-planning` needs instead of reconstructing
+decisions from conversation history.
 
 **Only perform Plan Synthesis when the user asks for it.** Never produce a `plan.md` as an
 automatic next step after investigation, and never treat a plain "document/explain X" request as
@@ -196,8 +196,8 @@ guide"):
   explicit in whatever structure the guide already uses — never a mandated section or table.
 - Explain runtime ownership and lifecycle wherever the system has either — don't invent one for a
   capability with no runtime story.
-- Ground security and decision claims in concrete enforcement references where one clearly exists;
-  never force a misleading one.
+- Ground material architectural claims in concrete evidence or enforcement references when an
+  identifiable mechanism exists; never force a misleading one.
 - No API documentation, no endpoint inventories, no line-by-line implementation walkthroughs, no
   duplicated explanations across sections.
 - Not every guide needs a limitations section. When limitations or deferred work materially affect

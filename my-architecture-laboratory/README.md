@@ -85,12 +85,12 @@ human call. An implementation detail that stays open under every viable option i
 resolved just to look finished.
 
 Once the architecture is understood well enough and the material decisions are approved, the
-workflow's final step — **Plan Synthesis** — writes the approved result into a canonical
-`plan.md`. Plan Synthesis names that last step, not the whole workflow: everything before it is
-ordinary investigation and decision-making. The written section states that it is the source of
-truth for the subsequent `my-feature-planning` pass — but that statement only marks intended
-handoff; it is not proof of approval. The plan becomes canonical only once the user has actually
-approved it, and only then does it go to `my-feature-planning`.
+workflow's final step — **Plan Synthesis** — writes the approved result into a draft `plan.md`
+intended to become canonical. Plan Synthesis names that last step, not the whole workflow:
+everything before it is ordinary investigation and decision-making. The written section states
+that it is the source of truth for the subsequent `my-feature-planning` pass — but that statement
+only marks intended handoff; it is not proof of approval. The plan becomes canonical only once the
+user has actually approved it, and only then does it go to `my-feature-planning`.
 
 Every claim in `plan.md` is exactly one of four things, kept visibly distinct:
 
