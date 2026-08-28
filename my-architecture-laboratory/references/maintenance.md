@@ -1,114 +1,123 @@
 # Maintaining an architecture guide
 
-This is not a guide to editing documents. It's the methodology developed while keeping the
-Documents and Tags guides accurate as their implementations kept moving — how to change what a
-guide says without changing the story it's telling. `references/review.md` judges whether a
-document communicates its architecture; this file governs how you're allowed to touch a document
-that already does, so a maintenance pass doesn't quietly undo that.
+This file governs `SKILL.md`'s "Update an existing architecture guide" workflow: how to reconcile
+a published architecture guide with verified current reality without breaking the identity and
+architectural meaning it already carries. `references/review.md` judges whether a finished guide
+communicates its architecture; this file governs what you're allowed to touch when a guide already
+does, so a maintenance pass doesn't quietly undo that.
 
-## When to consult this file
+Maintenance fails in two opposite directions: leaving stale documentation in place for the sake of
+continuity, and rewriting or restructuring the guide beyond what the verified change actually
+requires. Both are defects this file exists to prevent.
 
-Whenever the user asks to update, refresh, or maintain an existing architecture guide — this is
-required reading for Phase 4, not optional background. Not during Phase 1, 2, or 3: this file is
-about *changing* an established narrative, and there's no established narrative yet on a first
-pass.
+## The maintenance unit: architectural claims
 
-## Philosophy
+Treat every statement the guide makes as an **architectural claim** — a center of gravity, a
+responsibility or ownership, a boundary, an invariant or guarantee, a lifecycle or state, an
+integration or extension seam, a decision and its trade-off, a limitation or deferred item, or a
+concrete evidence reference. A claim, not the section, table, or paragraph carrying it, is the unit
+of maintenance — the same claim routinely repeats across several of those.
 
-An architecture guide is a long-lived engineering document, not a snapshot of a pull request. An
-implementation change should update the guide's *guarantees* without changing its *narrative* —
-the same central idea, the same section names, the same reasoning, just accurate again. The goal
-of a maintenance pass is continuity. If you find yourself rewriting a section, stop and ask
-whether the architecture actually changed, or just one fact within it.
+## Reconcile before editing
 
-## Preserve the architecture
+Locate the existing Artifact rather than assuming its content. Compare its claims against verified
+current implementation, configuration, runtime evidence, and relevant tests — the same evidence
+discipline `SKILL.md` requires before any investigation-based output; don't repeat that workflow
+here, use it.
 
-- Do not rewrite a section whose architectural meaning hasn't changed, even if you're already
-  editing the section next to it. Touching prose you don't need to touch is how narrative drifts
-  across a document's lifetime without anyone deciding it should.
-- If an implementation change strengthens an existing guarantee — a retry count went up, a
-  checksum check got added, a policy got stricter — update that guarantee exactly where it
-  already lives (the same table row, the same sentence). Don't give it a new section just because
-  it's new information; it's a fact changing, not a new architectural idea arriving.
-- Avoid moving content between sections unless the architecture itself changed. A fact migrating
-  from "Security" to "Runtime architecture" should only happen because what it describes actually
-  moved responsibility — never as a tidiness pass.
+Classify what you find:
 
-## Update only affected guarantees
+1. **No documentation event** — neither a claim nor its evidence reference changed. Leave the guide
+   alone; not every commit is a documentation event.
+2. **A narrow update** — one fact or evidence reference is now wrong, with no architectural shift
+   behind it. Correct it in place.
+3. **A connected architectural change** — several claims or structural elements depend on each
+   other and must move together (see "Follow the claim graph," below).
+4. **Unresolved authority, intent, or a material decision** — stop. Return it to the user through
+   `SKILL.md`'s investigation and decision discipline rather than deciding it during maintenance.
+   Maintenance updates a guide to match an already-resolved reality; it does not resolve product or
+   architecture questions itself.
 
-Before editing anything, identify which architectural guarantees actually changed. Then touch
-only the sections that state those guarantees, and nothing else.
+## Preserve continuity without freezing the guide
 
-Maintenance scope is determined by the architectural guarantees themselves, not by the sections a
-GitHub issue, PR description, or implementation request happens to mention. An issue write-up
-naturally focuses on the one symptom that was visible — it is not a map of which sections teach
-the underlying guarantee, and it is not a ceiling on the pass. Do not constrain the maintenance
-pass to sections implied by the issue description. Once a changed guarantee is identified, update
-every section that teaches it, not just the section where the bug was reported or the fix landed.
-The same guarantee routinely surfaces in more than one place — a contract, a shared building
-block, an integration section, a runtime description, a security row, a testing classification, a
-decision's trade-off, the summary — and every section that states it needs to move together.
-Follow the architecture, not the issue.
+Preserve every unaffected claim, explanation, section, and presentation choice. Don't rewrite
+nearby prose merely because the file is already open, and don't restructure for taste, tidiness, or
+conformity with another guide's shape.
 
-Common shapes this takes:
+Continuity is not the same as freezing the guide's center of gravity, ownership, boundaries, or
+reasoning in place. If verified architecture actually changed one of those, the guide must change
+with it: a strengthened guarantee updates exactly where it already lives, but a moved
+responsibility, a new center of gravity, or a shifted boundary requires restructuring that section,
+a connected set of sections, or — rarely — the whole guide, in proportion to what actually changed.
+A prior documentation defect — a claim that was always misplaced or wrong, independent of any new
+implementation change — can also justify moving or restructuring content.
 
-- a new runtime guarantee (something now happens atomically, idempotently, or in a defined order
-  that didn't before) → update the runtime ownership table or the relevant flow description
-- a strengthened security control → update the one row in the security table, add an `src-ref`
-  if there wasn't one
-- an additional lifecycle state → update the state diagram and the state table, and check whether
-  a decision row needs a new trade-off
-- an improved integrity guarantee (a new verification step, a new invariant) → update the
-  guarantee's own sentence, not the surrounding narrative
-- an updated testing boundary (a test moved from integration-specific to shared-capability, or a
-  previously-deferred branch is now covered) → update the testing section's classification
-- a completed improvement → see *Improvements are living*, below
+Preserve the Artifact's identity. A maintenance pass evolves the existing guide; it does not mint a
+new one.
 
-If a change doesn't map to one of these — if it's purely internal refactoring with no observable
-guarantee shift — the guide may not need an edit at all. Not every commit is a documentation
-event.
+## Follow the claim graph, not the triggering issue
 
-## Improvements are living
+An issue, PR, or request names the trigger, not the documentation scope. Once a changed claim is
+identified, find every place that depends on or repeats it, wherever the guide actually has them:
+hero or introductory framing, navigation or section labels, prose, diagrams, tables, counts or
+spec-strip facts, source references, decisions and trade-offs, limitations or deferred work, and
+closing material. None of these is mandatory in every guide — update whichever the guide actually
+uses to state the claim, forming the smallest complete connected set, not just the section the
+issue happened to name.
 
-Focused Improvements must always describe genuine, current future work — never a historical
-record of what's already shipped. When an implementation change completes one of those items:
+## Implementation-only changes
 
-- remove it from Focused Improvements entirely; don't strike it through or leave it as a note
-- update whatever section the completed work actually strengthens, using the same "update only
-  affected guarantees" rule above
-- never leave completed work sitting in the improvements list — a stale "still to do" item that's
-  actually done is a worse failure than an outdated guarantee, because it actively misleads the
-  next engineer about what's safe to build on
+Not every implementation change requires a guide edit — but treat the guide as unaffected only when
+both hold:
 
-## Avoid release notes
+- the architecture the guide communicates remains accurate;
+- every concrete evidence reference, path, symbol, configuration key, count, or other durable fact
+  the guide prints remains valid.
 
-A maintenance pass is not a changelog entry. Don't describe the commit, the pull request, or the
-chronological sequence of what happened ("as of PR #142, retries now..."). Don't narrate the
-history of the implementation. Instead, update the architecture as though the new guarantee had
-always existed — write it the way you'd have written it if you were documenting this system for
-the first time today. The guide describes the system that exists now, not the story of how it got
-there; that story belongs in commit messages and PR descriptions, not here.
+A refactor with no architectural effect can still invalidate a printed reference. When it does, the
+guide needs an edit even though the architecture itself didn't move.
 
-## Preserve architectural continuity
+## Keep deferred work current
 
-The document should read as one coherent guide when you're done, not as a sequence of edits from
-different points in time. A reader should not be able to tell which sections were written months
-apart. Every maintenance pass is a refinement of one architectural story, not an addendum to it —
-if a change can't be woven into the existing narrative without seams showing, that's a sign the
-architecture itself changed enough to warrant reconsidering the section's structure (still scoped
-to that section — see *Preserve the architecture*, above — not an excuse to restructure the whole
-guide).
+Wherever the guide records limitations or deferred work, it must describe current reality:
 
-## Before you redeploy
+- remove an item once it's completed — don't strike it through or leave it as a note;
+- update whatever claim the completed work actually changed, using the rules above;
+- don't retain completed work as release notes.
 
-Run through this in order:
+No section is required for this, and none should be added to hold a single completed-item note. A
+guide with no materially useful limitations doesn't need one.
 
-1. What architectural guarantee actually changed? State it in one sentence before touching the
-   document.
-2. Which section(s) state that guarantee today? Touch only those.
-3. Did this complete anything listed in Focused Improvements? Remove it if so.
-4. Read the edited section(s) as if encountering them fresh — does anything now read like a
-   changelog entry, or reference "before" and "after"? Rewrite it as a present-tense statement of
-   how the system works.
-5. Redeploy through the `Artifact` tool with the same `url` and the same `favicon`, then run
-   `references/review.md` against the sections you touched.
+## Present-tense architecture, not changelog
+
+Describe the architecture as it works now — write it the way you'd write it if documenting the
+system for the first time today. Don't narrate commits, pull requests, or before/after
+implementation history.
+
+This doesn't erase rationale. When a past decision or a rejected alternative materially explains
+why the current architecture is shaped the way it is, preserve that reasoning as durable
+architectural content, not chronology. Omit only the parts that serve solely as release history.
+
+## Redeployment and review
+
+Before editing: locate the existing Artifact, note its current `url`, and discover its current
+favicon — read the published Artifact, or ask the user if you can't tell — per
+`references/doc-style.md`. Don't silently mint a replacement.
+
+After editing: redeploy through the `Artifact` tool with the same `url` and the same favicon, then
+run `references/review.md` against the whole updated guide, not only the sections you touched,
+paying particular attention to the claims you changed and whatever depends on them. Confirm the
+changes don't contradict untouched material elsewhere in the guide.
+
+## Sequence
+
+1. Locate the existing Artifact and gather current evidence.
+2. State the changed claim or evidence reference in one sentence.
+3. Classify it (see "Reconcile before editing") and determine the complete connected scope.
+4. Stop for unresolved authority or a material decision — route it to the user through `SKILL.md`.
+5. Update only the affected claim graph.
+6. Preserve unaffected narrative and the Artifact's identity.
+7. Remove stale deferred-work claims and update whatever they affected.
+8. Reread the edit as present-tense architecture, not release notes.
+9. Redeploy the same Artifact — same `url`, same favicon.
+10. Run `references/review.md` against the whole updated guide.
