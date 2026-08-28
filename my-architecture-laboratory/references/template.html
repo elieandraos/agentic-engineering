@@ -339,7 +339,9 @@
     codeEl.innerHTML = out;
   }
 
-  var blocks = document.querySelectorAll('pre[data-lang]');
+  // Select every <pre>, not just pre[data-lang] — a <pre> with no data-lang attribute at all
+  // must still reach highlight()'s missing-language fallback below, not be skipped entirely.
+  var blocks = document.querySelectorAll('pre');
   for (var i = 0; i < blocks.length; i++) {
     highlight(blocks[i]);
   }
