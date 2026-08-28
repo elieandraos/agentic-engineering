@@ -1,84 +1,146 @@
 ---
 name: my-architecture-laboratory
-description: "Reconstructs and validates how an existing system or capability actually works — from real implementation, tests, and current evidence — before any documentation is written, then hands that understanding off as a published architecture guide or as an approved `plan.md` for `my-feature-planning`. Trigger to investigate or document existing architecture, to resolve unresolved architecture or design decisions with the user, to write or maintain an architecture guide, or to synthesize already-investigated findings and already-approved decisions into `plan.md`. Not for explaining one function, debugging, reviewing a diff, or writing API reference docs."
+description: "Investigates and validates how an existing system or capability actually works, from real implementation, tests, and current evidence — never conventions or guesses — then produces one of three results: a new Claude Artifact architecture guide documenting existing architecture, an updated existing architecture guide reconciled with the current implementation, or an approved `plan.md`, handed to `my-feature-planning`, capturing feature-architecture decisions reached with the user. Trigger to document existing architecture, update an existing architecture guide, resolve architecture or design decisions for a proposed feature, or synthesize approved findings into `plan.md`. Not for explaining one function, debugging, reviewing a diff, or writing API reference docs."
 ---
 
 # My Architecture Laboratory
 
-Phases 1 and 2 are the hard part: reconstruct an accurate understanding, then validate it with the
-user before writing anything. Phase 3 hands that off as a written guide — the artifact this
-methodology produces, not the goal it aims at.
+## What this skill does
 
-A new guide moves through three sequential stages: Explore (Phase 1), Recap and validate (Phase 2),
-and Architecture guide (Phase 3). Do not skip Explore, do not skip the Phase 2 pause, and do not force
-a fixed template onto Phase 3 — the system determines the document, not the other way around. Phase 4
-(Maintenance) activates later, only when an existing guide's underlying system has changed — not a
-required fourth stage of every run. Plan Synthesis (below) is a separate output track, not a stage in
-either sequence. Phase numbering is kept for continuity, not a fixed four-step run.
+This skill investigates a real system and turns the resulting understanding into one of three
+results:
 
-This skill owns architecture exploration, evidence-based current-state analysis, surfacing unresolved
-decisions, the human decision gate, and guide/`plan.md` production and maintenance — never
-application code, GitHub issue drafting or mutation, feature classification or decomposition,
-delivery sequencing, or Git workflow.
+| User intention                                   | Result                                             |
+| ------------------------------------------------ | --------------------------------------------------- |
+| Understand and document existing architecture    | New Claude Artifact architecture guide             |
+| Reconcile a guide with changed implementation    | Updated existing Artifact                          |
+| Design feature architecture through conversation | Approved `plan.md` handed to `my-feature-planning` |
+
+Investigation and user validation come first in every workflow, and sometimes that's the whole
+job: when the user only wants to understand a system, the skill stops after investigating and
+recapping — no guide and no `plan.md` gets produced just because an investigation happened.
+
+This skill owns architecture exploration, evidence-based current-state analysis, surfacing
+unresolved decisions, the human decision gate, and guide/`plan.md` production and maintenance —
+never application code, GitHub issue drafting or mutation, feature classification or
+decomposition, delivery sequencing, or Git workflow. See "Ownership and handoff" below.
+
+## Shared investigation and decision discipline
+
+Every workflow below follows the same method before it produces anything:
+
+1. Inspect the real current system and relevant evidence.
+2. Reconcile implementation, tests, runtime evidence, and reliable history.
+3. Explain the current architecture and identify uncertainty.
+4. Surface material target-state decisions.
+5. Obtain user confirmation before writing an output that presents those decisions as settled.
 
 > The codebase establishes what exists; the user decides what it should become.
 
-It shares Phase 1's investigation discipline and Phase 2's validate-before-writing discipline, but
-produces a different artifact for a different reader — `plan.md` for `my-feature-planning`, not a
-teaching guide. See "Plan Synthesis" below.
+Tests are strong evidence — often surfacing real boundaries faster than implementation alone —
+but not infallible authority: reconcile them with the implementation and relevant runtime
+evidence, since tests can be incomplete or stale. If asked, check issue and commit history for
+*why* — but the current codebase is the source of truth for *what*. Never document something
+history says was planned but the code doesn't show.
 
-References are loaded only when their phase or track applies — none is a universal prerequisite:
-`references/doc-style.md` (guide-creation writing grammar, Phase 3), `references/review.md` (critical
-review after guide creation, run again during maintenance), `references/maintenance.md` (Phase 4
-only), `references/plan-synthesis.md` (Plan Synthesis only).
+Do not begin drafting a guide or a `plan.md` during investigation. Creating a new guide and
+planning feature architecture each pause for the user's recap/decision confirmation before
+producing their output — see their sections below. Maintenance follows its own reference
+(`references/maintenance.md`) and asks the user when authority, intent, or a material decision is
+unclear; it does not mechanically require a new product decision just because verified
+current-state documentation changed.
 
-## Phase 1 — Explore
+## Document existing architecture
 
-Before writing any documentation, inspect every architectural surface the system actually has.
-Typical concerns: persistence and data relationships; business rules and lifecycle behavior; request
-or interaction boundaries; authorization and security; background or asynchronous work; external
-integrations; user-facing surfaces and reusable UI logic; schema and operational constraints. These
-are investigation categories, not a fixed checklist — the consuming project supplies its own
-framework, directories, and concrete artifacts.
+Route: investigate the real system → recap and obtain confirmation → decide structure from the
+center of gravity → load the guide-writing and Artifact-design instructions → use the template →
+publish the Claude Artifact → run the architecture-guide review.
 
-- Read the tests — strong evidence of asserted and verified behavior, often surfacing real boundaries
-  faster than implementation alone. Reconcile them with the implementation and relevant runtime
-  evidence; tests can be incomplete or stale.
-- If asked, check issue and commit history for *why* — but the current codebase is the source of
-  truth for *what*. Never document something history says was planned but the code doesn't show.
-- Identify the **architectural center of gravity** — the one idea everything else hangs off (a
-  polymorphic contract, a queue pipeline, a runtime subsystem boundary, a sync-vs-async split). Form
-  a hypothesis now; Phase 3 will need it.
+1. **Investigate** (formerly Phase 1 — Explore). Inspect every architectural surface the system
+   actually has before writing anything. Typical concerns: persistence and data relationships;
+   business rules and lifecycle behavior; request or interaction boundaries; authorization and
+   security; background or asynchronous work; external integrations; user-facing surfaces and
+   reusable UI logic; schema and operational constraints. These are investigation categories, not
+   a fixed checklist — the consuming project supplies its own framework, directories, and concrete
+   artifacts. Identify the **architectural center of gravity** — the one idea everything else
+   hangs off (a polymorphic contract, a queue pipeline, a runtime subsystem boundary, a
+   sync-vs-async split) — as a hypothesis the guide-writing step will need.
 
-Do not begin writing documentation in this phase.
+2. **Recap and confirm** (formerly Phase 2 — Recap and validate). Write the recap directly as chat
+   output, not a file or an artifact. Cover, with concrete implementation references threaded
+   throughout: the problem being solved, the core architecture, reusable pieces versus
+   integration-specific code, runtime behavior, the data model, the integration seam, security,
+   testing, architectural decisions, and remaining gaps. Keep it bullet-driven and honest about
+   gaps. **Stop here and wait for the user to confirm before this investigation becomes a
+   published guide.** A correction here is real signal about what the guide needs to get right.
 
-## Phase 2 — Recap and validate
+3. **Write and publish the guide** (formerly Phase 3 — Architecture guide). Only after the recap
+   is approved:
+   - Decide the document's structure from the confirmed center of gravity. Architecture guides do
+     not use one fixed section inventory: structure follows the system being explained. See
+     `references/doc-style.md` for the writing grammar and content-block vocabulary.
+   - Load the `artifact-design` skill (required before writing any Artifact page).
+   - Write the HTML using `references/template.html` as the starting scaffold. Replace content;
+     keep the design system unless the system genuinely needs a new block type.
+   - Publish with the `Artifact` tool: title `"{Capability} Architecture"`, a one-sentence
+     description, and a stable, domain-appropriate favicon (see
+     `references/doc-style.md#choosing-a-favicon`).
+   - Explain architecture, not implementation — why and how it's extended. Code blocks exist only
+     at genuine extension seams, never as a walkthrough of a whole method body.
+   - Before considering the guide complete, run `references/review.md`'s checklist against the
+     published guide. This reviews architectural communication, not writing quality.
 
-Write the recap directly as chat output, not a file or an artifact. Its only purpose is to prove you
-understood the system before spending effort teaching it.
+Publishing to a Claude Artifact is specific to this workflow (and to updating an existing guide,
+below) — investigating and recapping don't depend on it, and neither does the `plan.md` output of
+planning feature architecture.
 
-Cover, with concrete implementation references threaded throughout: the problem being solved, the
-core architecture, reusable pieces versus integration-specific code, runtime behavior, the data
-model, the integration seam, security, testing, architectural decisions, and remaining gaps.
+## Update an existing architecture guide
 
-Keep it bullet-driven and honest about gaps. **Stop here and wait for the user to confirm before this
-investigation becomes either a Phase 3 architecture guide or a synthesized `plan.md`.** A correction
-here is real signal about what either output needs to get right — never present an unresolved
-architecture choice as settled without it.
+Use this workflow when a guide already exists and its underlying implementation has changed — not
+as an automatic fourth stage after creating a new guide.
 
-## Plan Synthesis — consolidating findings and decisions into `plan.md`
+Route (formerly Phase 4 — Maintenance): locate the existing Claude Artifact → compare its claims
+with verified current implementation → identify changed architectural guarantees → update the
+existing guide without rewriting it as history → preserve its identity and stable presentation
+metadata → review the affected result.
 
-A different destination than Phase 3: Phase 3 teaches a system to a future engineer; Plan Synthesis
-consolidates an already-investigated current state and already-approved user decisions into a
-canonical `plan.md` — the input `my-feature-planning` needs instead of reconstructing decisions from
+`references/maintenance.md` governs every judgment call in this route — read it before making any
+edit. It is not an editing how-to; it is the methodology for changing what a guide says without
+changing the architectural story it tells. Skeleton: locate the existing guide (`Artifact` tool
+`action: "list"`, or ask the user) rather than minting a new one; identify which guarantees
+actually changed; update only the sections stating those guarantees; when the guide has an
+improvements, limitations, or future-work section, remove completed items from it instead of
+leaving them stale; redeploy through the `Artifact` tool with the same `url` and `favicon`; run
+`references/review.md` against the sections touched.
+
+## Plan feature architecture
+
+Use this workflow when the point of the architecture work is to prepare a real implementation
+initiative, not to teach a system. It can begin from a feature idea discussed in conversation, an
+architecture question, an existing investigation, or already-approved findings and decisions.
+
+The workflow may need to:
+
+- investigate how the current system supports or constrains the proposed feature;
+- discuss viable target approaches with the user;
+- distinguish current facts from proposed choices;
+- obtain explicit decisions for material product/architecture questions;
+- leave implementation details open when every viable option preserves the approved guarantees.
+
+Only after the architecture is sufficiently investigated and the material decisions are approved
+does this workflow perform its final writing step, **Plan Synthesis** — consolidating an
+already-investigated current state and already-approved user decisions into a canonical
+`plan.md`, the input `my-feature-planning` needs instead of reconstructing decisions from
 conversation history.
 
-**Only do this when the user asks for it.** Never produce a `plan.md` as an automatic next step after
-Phase 2, and never treat a plain "document/explain X" request as implicitly asking for one.
+**Only perform Plan Synthesis when the user asks for it.** Never produce a `plan.md` as an
+automatic next step after investigation, and never treat a plain "document/explain X" request as
+implicitly asking for one.
 
-**Preconditions**, both required: a Phase 1-quality current-state investigation (concrete references,
-not conventions or guesses), and explicit, user-approved decisions about the target state. If either
-is missing, do that work first — Plan Synthesis never manufactures a decision on the user's behalf.
+**Preconditions**, both required: an investigation of the same quality "Document existing
+architecture" requires (concrete references, not conventions or guesses), and explicit,
+user-approved decisions about the target state. If either is missing, do that work first — Plan
+Synthesis never manufactures a decision on the user's behalf.
 
 Every claim in the plan is exactly one of: a **current-state fact**, a **locked decision**, a
 **derived constraint**, or an **open implementation detail** — never blur these together. Full
@@ -86,49 +148,48 @@ methodology, the canonical section list, and the pre-finalization review checkli
 `references/plan-synthesis.md` — read it before writing anything.
 
 State at the top of the written section that it is the source of truth for the subsequent
-`my-feature-planning` pass — `my-feature-planning/rules/plan-md-input.md` checks for this statement
-before treating a plan as canonical input.
+`my-feature-planning` pass — `my-feature-planning/rules/plan-md-input.md` checks for this
+statement before treating a plan as canonical input.
 
-**Skill boundary.** Plan Synthesis stops at an approved `plan.md`. Feature classification, scope
-checklists, design reconciliation, canonical issue definitions, sequencing, and GitHub issue creation
-belong to `my-feature-planning` — never pull those responsibilities into this skill.
+**Skill boundary.** This workflow stops at an approved `plan.md`. Feature classification, scope
+checklists, design reconciliation, canonical issue definitions, sequencing, and GitHub issue
+creation belong to `my-feature-planning` — never pull those responsibilities into this skill.
 
-## Phase 3 — Architecture guide
+## Ownership and handoff
 
-Only after Phase 2 is approved.
+This skill owns:
 
-1. Decide the document's structure from the center of gravity (Phase 1, confirmed in Phase 2).
-   Architecture guides do not use one fixed section inventory: structure follows the system being
-   explained. Reproduce the reasoning and information hierarchy behind a well-structured guide, not
-   the surface shape of any prior one. See `references/doc-style.md` for the writing grammar and
-   content-block vocabulary.
-2. Load the `artifact-design` skill (required before writing any Artifact page).
-3. Write the HTML using `references/template.html` as the starting scaffold. Replace content; keep
-   the design system unless the system genuinely needs a new block type.
-4. Publish with the `Artifact` tool: title `"{Capability} Architecture"`, a one-sentence description,
-   and a stable, domain-appropriate favicon (see `references/doc-style.md#choosing-a-favicon`).
-5. Explain architecture, not implementation — why and how it's extended. Code blocks exist only at
-   genuine extension seams, never as a walkthrough of a whole method body.
-6. Before considering the guide complete, run `references/review.md`'s checklist against the
-   published guide. This reviews architectural communication, not writing quality.
+- architecture investigation;
+- architectural explanation;
+- surfacing and resolving material decisions with the user;
+- new architecture guides;
+- maintenance of existing guides;
+- synthesis of approved architecture into `plan.md`.
 
-Artifact publication is specific to this track — Explore, Recap, and Plan Synthesis's `plan.md`
-output don't depend on it.
+This skill does not own:
 
-## Phase 4 — Maintenance
+- application implementation;
+- debugging or diff review;
+- API reference documentation;
+- feature classification and issue decomposition;
+- GitHub issue mutation;
+- delivery sequencing;
+- Git workflow.
 
-When the implementation changes after a guide exists, this phase is governed by
-`references/maintenance.md` — read it before making any edit. It is not an editing how-to; it is the
-methodology for changing what a guide says without changing the architectural story it tells.
+## Reference routing
 
-Skeleton: locate the existing guide (`Artifact` tool `action: "list"`, or ask the user) rather than
-minting a new one; identify which guarantees actually changed; update only the sections stating those
-guarantees; when the guide has an improvements, limitations, or future-work section, remove completed
-items from it instead of leaving them stale; redeploy through the `Artifact` tool with the same `url`
-and `favicon`; run `references/review.md` against the sections touched. `references/maintenance.md`
-governs every judgment call inside this skeleton.
+References are loaded only when their workflow needs them — none is a universal prerequisite:
 
-## Non-negotiables (apply in every phase of the guide pipeline)
+- guide writing → `references/doc-style.md`
+- guide scaffold → `references/template.html`
+- guide review → `references/review.md`
+- guide maintenance → `references/maintenance.md`
+- plan writing → `references/plan-synthesis.md`
+
+## Output-specific non-negotiables
+
+Guide rules (apply to "Document existing architecture" and "Update an existing architecture
+guide"):
 
 - Prefer architecture over implementation; explain concepts before code.
 - When a real line exists between reusable infrastructure and integration-specific code, make it
@@ -139,11 +200,16 @@ governs every judgment call inside this skeleton.
   never force a misleading one.
 - No API documentation, no endpoint inventories, no line-by-line implementation walkthroughs, no
   duplicated explanations across sections.
-- Finish with intentional limitations, not a generic TODO list — a stated reason beats a bare "should
-  add Y eventually."
-- A guide is never done until it has passed a `references/review.md` pass — writing and reviewing are
-  two separate steps.
+- Finish with intentional limitations, not a generic TODO list — a stated reason beats a bare
+  "should add Y eventually."
+- A guide is never done until it has passed a `references/review.md` pass — writing and reviewing
+  are two separate steps.
 
-Plan Synthesis has its own, separate non-negotiables (the locked-vs-open rule above all) — see
-`references/plan-synthesis.md`. Don't apply the guide's rules to a plan, or the plan's rules to a
-guide.
+Plan rules (apply to "Plan feature architecture"; full contract in
+`references/plan-synthesis.md`):
+
+- Keep current-state facts, locked decisions, derived constraints, and open implementation details
+  visually and textually distinct — the locked-vs-open rule above all.
+- Never present an unresolved decision as settled without the user's explicit confirmation.
+
+Don't apply the guide rules to a `plan.md`, or the plan rules to a guide.
