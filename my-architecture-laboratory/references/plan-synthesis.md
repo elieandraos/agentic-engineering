@@ -1,180 +1,184 @@
 # Synthesizing a plan.md
 
-This is the methodology for the Plan Synthesis track referenced from `SKILL.md`. It turns an
-already-investigated current state plus a set of already-approved user decisions into a canonical
-`plan.md` — a handoff document, not a teaching document. Nothing here is specific to any one
-initiative; the same procedure applies whether the subject is a cross-cutting capability, an
-existing subsystem redesign, a major refactor, a new architectural initiative, an integration, or
-a security/auth-shaped piece of work.
+This is the methodology for the Plan Synthesis track referenced from `SKILL.md`. It converts
+verified current-state evidence and explicit, approved target-state decisions into an
+initiative-specific `plan.md` handoff for `my-feature-planning`. The same procedure applies to a
+narrow fix, a major redesign, a new integration, a migration, security-shaped work, or a
+single-purpose system.
 
 ## What this is for, and what it is not for
 
-A `plan.md` produced here exists to let `my-feature-planning` start from settled architecture and
-settled product decisions instead of reconstructing them from conversation history. It is:
+Plan Synthesis consolidates reasoning that is already complete. A `plan.md` produced here lets
+`my-feature-planning` start from settled architecture and settled product decisions instead of
+reconstructing them from conversation history. It is:
 
 - A **consolidation** of what's already been investigated and decided — not a place to do new
   investigation or make new decisions.
-- **Implementation-aware** — it names real files, classes, and conventions the eventual issues
-  will touch — but **not an implementation checklist**. It states what must be true, not the
-  literal sequence of edits.
-- The **source of truth** for the subsequent feature-planning pass. Once approved, `my-feature-planning`
-  should not need to re-derive architecture or re-litigate decisions from this conversation.
+- **Implementation-aware** — it names real evidence the eventual issues will touch — but **not an
+  implementation checklist**. It states what must be true, not the literal sequence of edits.
+- The **source of truth** for the subsequent feature-planning pass. Once approved,
+  `my-feature-planning` should not need to re-derive architecture or re-litigate decisions from
+  this conversation.
 
 It is not:
-- A replacement for Phase 3's architecture guide. A guide teaches a reusable capability to a
-  future engineer, independent of any particular change. A plan exists to unblock one specific
-  initiative's move into issue planning, and has no reason to outlive that initiative.
-- A place to classify the feature, scope it, reconcile it against design files, draft issues, or
-  touch GitHub. All of that is `my-feature-planning`'s job, done *after* the plan is approved.
+- An architecture guide. A guide explains verified existing architecture for ongoing
+  understanding and may document any architecture shape — not necessarily a reusable capability. A
+  plan records the approved target architecture and decision boundary for one implementation
+  initiative and has no reason to outlive it.
+- A place to classify the feature, scope it, reconcile it against design files, decompose it into
+  issues, sequence delivery, or touch GitHub — all of that is `my-feature-planning`'s job, done
+  *after* the plan is approved.
+- A place to do implementation planning or make new product/architecture decisions.
 
 ## Preconditions
 
 Don't start writing until both of these are actually true — don't paper over a gap in either:
 
-1. **A real current-state investigation exists.** Concrete file/class/route/test references, not
-   conventions or assumptions. If this hasn't happened, that's Phase 1 work, not Plan Synthesis.
+1. **A real current-state investigation exists.** Concrete evidence — paths, symbols, schema
+   elements, configuration, tests, runtime behavior — not conventions or assumptions.
 2. **The user has made explicit decisions about the target state.** Not implied by the
-   investigation, not inferred from "what would make sense" — stated by the user, in this
-   conversation or a prior one you can point to. If target-state reasoning hasn't happened yet,
-   do that reasoning first (informally — it doesn't need a named phase of its own) and surface the
-   decisions that actually need the user's input before synthesizing anything.
+   investigation, not inferred because a solution seems obvious or a draft looks polished —
+   approval stated by the user, in the active conversation or another reliable, identifiable
+   context you can point to.
 
-If the user asks for a plan before either precondition is met, say so and do the missing work
-first rather than synthesizing around the gap.
+If either precondition is missing, stop synthesis and return to the applicable investigation or
+decision conversation through `SKILL.md`. Plan Synthesis must not paper over missing evidence, and
+must not embed an unresolved product or architecture decision in the plan as though it were an
+implementation detail.
 
 ## The locked-vs-open decision rule
 
 This is the single most important discipline in Plan Synthesis, and the one most likely to be
-violated by accident under time pressure. Every claim in the plan falls into exactly one of four
-buckets, and the plan must keep them visually and textually distinguishable — never let a
-paragraph blur two of them together:
+violated by accident under time pressure. Every material claim in the plan falls into exactly one
+of four categories, kept visually and textually distinguishable — a table, labels, headings, or
+another clear structure all work; never let a paragraph blur two of them together:
 
-- **Current-state fact** — what the code does today. Falsifiable by reading the repo right now.
-- **Locked decision** — something the user explicitly approved as a constraint on the target
-  state. Falsifiable only by asking the user again.
-- **Derived architectural constraint** — something that necessarily follows from a locked decision
-  plus the current-state facts, even though the user never stated it in those exact words (e.g. a
-  decision to remove a code path implies a consumer of that path now needs a new source of the
-  same data). Mark these as derived, not as if the user had stated them directly.
-- **Open implementation detail** — a genuine implementation choice the user has *not* made, that
-  doesn't change the target architecture regardless of which way it's resolved. Left for
-  feature-planning or implementation to resolve against actual codebase conventions at build time.
+- **Current-state fact** — verified present reality, confirmed against the codebase or other
+  authoritative evidence. Falsifiable by checking that source right now.
+- **Locked decision** — a target-state product or architecture choice explicitly approved by the
+  user. Its authority comes from that approval, and it changes only through another explicit user
+  decision.
+- **Derived architectural constraint** — a necessary consequence of verified current-state facts
+  plus one or more locked decisions. State its premises so downstream planning can detect a stale
+  one later — e.g. removing a code path implies its consumer needs a new data source; that
+  dependency is the premise.
+- **Open implementation detail** — an unresolved implementation choice whose viable outcomes all
+  preserve the approved target architecture and guarantees. Left for feature-planning or
+  implementation to resolve against actual codebase conventions at build time.
 
-A rough test for locked vs. open: if flipping the choice would change what the system *guarantees*
-or *promises* to its users/operators, it's a product decision — surface it as locked-or-still-open,
-don't quietly decide it yourself. If flipping the choice only changes *how* that guarantee is
-implemented (a column type, which of two existing classes absorbs a few lines of logic, a CLI flag
-name, which of several equally-valid UI treatments a recommendation gets), it's an open
-implementation detail — record it as open, with the real options on the table, and stop there.
+A material product or architecture decision cannot remain classified as an open implementation
+detail. Use this test: if changing the choice would alter approved behavior, guarantees,
+operator/user promises, security boundaries, ownership, lifecycle, or the target architecture, it
+is material — resolve it with the user before synthesis. If every viable choice preserves those
+outcomes, it may remain open.
+
+The test turns on consequences, not on what kind of choice it is. A column type, which of two
+classes absorbs a few lines of logic, a CLI flag name, or a choice between UI treatments can be
+open or material depending on what changing it would break — don't treat any category of choice as
+inherently implementation-only.
 
 **Never silently convert an open implementation choice into a locked product decision** by writing
-it as though the user had approved one specific solution. If a section needs to reference an
-undecided detail to stay coherent, name the open question and the candidate options inline, and
-point to the "Open Implementation Decisions" section rather than picking one.
+it as though the user had approved one specific solution. If a section must reference an undecided
+detail, name the open question and its candidate options inline rather than picking one.
 
-**Never invent an unresolved requirement merely to make the plan look complete.** A short "Open
-Implementation Decisions" list beats a padded one. If everything about a section really is
-settled, say so plainly and move on — don't manufacture a question for symmetry.
+Record an open detail only when leaving it open materially helps downstream planning — not for
+every ordinary coding choice, and not to manufacture symmetry with the locked decisions. Don't
+require candidate options to be exhaustive; name known viable options only when doing so clarifies
+the remaining choice. If everything about a section really is settled, say so and move on.
 
-## Canonical plan structure
+## Plan content model
 
-Use only the sections that carry real content for this initiative. A plan with three sections
-because the initiative is narrow is correct; forcing all of these into a small change just because
-the list exists is the failure mode to avoid — the same "don't force a fixed template" discipline
-Phase 3 applies to guides applies here to plans.
+Structure follows the initiative, not a fixed template — three short sections for a narrow change
+is correct; forcing a large heading inventory onto it is the failure mode to avoid. No exact
+headings, order, or one-section-per-concern are required, but the following must be communicated
+somewhere, in whatever structure is clearest:
 
-```
-# <Initiative>
+- the initiative and the problem or goal;
+- the verified current state relevant to the change;
+- the approved target architecture;
+- the locked decisions;
+- any derived constraints;
+- what must remain true or unchanged;
+- the conceptual change boundary — what gets introduced, removed, moved, or rewired;
+- material open implementation details, if any;
+- the evidence grounding the current-state claims.
 
-## Context / Problem
-What exists today and what problem or goal motivates the change.
+Include the following only when relevant to this initiative: security, failure, or recovery
+behavior; lifecycle or before/after comparison; test and behavioral consequences; external
+dependencies; limitations or migration constraints.
 
-## Current State
-Relevant existing behavior, architecture, constraints, and coupling discovered in the investigation.
+It must not become a file-by-file edit sequence, an implementation checklist, an issue
+decomposition, or a delivery plan, regardless of heading structure.
 
-## Approved Target Architecture
-The agreed future-state design.
+## Evidence
 
-## Locked Decisions
-Explicit product/architecture decisions made by the user.
+Ground current-state claims in architecture-neutral evidence: paths or symbols, schema elements,
+configuration keys, protocols or contracts, runtime boundaries or observed behavior, relevant
+tests, or authoritative external-system state. Don't force one evidence shape (a class-and-method
+pair, a route) onto a system that expresses the same fact some other way.
 
-## Preserved Behavior / Existing Pieces
-What must remain unchanged or be reused.
-
-## Changes
-What needs to be introduced, removed, moved, or rewired conceptually.
-
-## Invariants / Boundaries
-Security, tenancy, state-model, authorization, lifecycle, or architectural rules implementation
-must preserve.
-
-## Open Implementation Decisions
-Implementation details deliberately left unresolved for feature-planning/implementation to
-resolve against codebase conventions.
-
-## Security / Failure / Recovery
-Only when relevant.
-
-## Tests / Behavioral Impact
-What existing behavior must remain valid and what new behavior needs proof.
-
-## Before → After
-A concise lifecycle/system comparison when useful.
-
-## Source References
-Concrete files/classes/routes/tests used as evidence.
-```
-
-Thread concrete references (`path/to/File.php:method`, route names, test names) through the
-sections where they're actually relevant, the same way Phase 2 threads them through a recap —
-don't cluster everything into "Source References" and leave the rest of the document abstract.
-`Source References` exists for material that doesn't have one natural home in the sections above,
-not as the only place citations are allowed to live.
+Thread evidence through the claims it supports, rather than clustering it apart from them. A
+separate source-reference area is optional, and should hold only evidence with no more natural
+home next to a claim. Avoid brittle line-number references unless a specific line is genuinely
+stable and useful.
 
 ## Where the plan lives
 
-Default to a `plan.md` at the repository root. If one already exists for the project (general
-context, other initiatives), append a clearly-scoped new top-level section rather than overwriting
-or restructuring what's there — preserve existing content exactly as Phase 4 preserves a guide's
-established narrative when maintaining it. If it's unclear whether the user wants a new file, a
-new section in the existing file, or something else, ask rather than guessing.
+Default to a `plan.md` at the repository root, unless the project supplies a different convention.
 
-State explicitly, at the top of whatever section you write, that it is the source of truth for the
-subsequent `my-feature-planning` pass, and that implementation details still need verifying
-against the codebase when individual issues are actually built (the codebase will have moved on by
-then; the plan captures decisions, not a frozen snapshot of every line number).
+Before writing, inspect whether `plan.md` already exists, and if so what it contains: the same
+initiative, a different initiative, durable project context, stale material, or an empty
+placeholder. Never overwrite or restructure unrelated content merely because the file exists. If
+it holds a different, unrelated initiative or durable project context, add a clearly-scoped new
+section rather than disturbing what's there. If it already covers the same initiative, update the
+relevant section in place instead of creating a duplicate — existing content isn't immutable when
+the user has asked to revise that same initiative. Ask rather than guess when ownership or
+placement is materially ambiguous.
 
-## Review pass — required before presenting the plan
+## The handoff statement
 
-Do not write the plan and immediately consider it finished. Before presenting it for approval, run
-this checklist against your own draft:
+State explicitly, near the top of the initiative-specific plan or section, that it is the source
+of truth for the subsequent `my-feature-planning` pass, and that implementation details still need
+verifying against the codebase when individual issues are built.
 
-- **Locked decisions preserved** — does every locked decision from the conversation appear in the
-  plan, worded so it still matches what the user actually approved (not softened, not expanded)?
-- **No open decision accidentally resolved** — for every item that should be open, does the plan
-  actually leave it open, with real options named, rather than picking one and moving on?
-- **No current-state fact presented as future-state design** — could a reader mistake "what the
-  code does today" for "what we've decided it should do"? These need to read differently, not just
-  live in different sections.
-- **No superseded architecture described as current** — if target-state reasoning went through
-  more than one iteration in conversation, does the plan reflect only the final approved shape, not
-  an earlier draft that was later corrected?
-- **References resolve** — do the file/class/route/test references actually exist, at the paths
-  named, in the current codebase? Don't carry forward a reference from memory without checking it
-  against what you actually read during the investigation.
-- **Internal consistency** — does any section contradict another (a "Preserved Behavior" item that
-  a "Changes" item quietly removes; an "Invariant" that a described change would violate)?
-- **Fit for feature-planning** — could `my-feature-planning` start from this plan without needing
-  to ask the user (or re-derive from conversation) what was decided versus what's still open?
+This statement marks the document's intended handoff role. It is not evidence that the user has
+approved the draft — only explicit user approval makes the plan canonical, per
+`my-feature-planning/rules/plan-md-input.md`.
 
-Report findings from this pass the same way Phase 3's review does — a short list, not a rewrite —
-then fix what the findings surface before presenting the plan. If the user later asks for
-corrections, apply them precisely and re-run the parts of this checklist the correction could have
-affected (see the pattern of a targeted consistency pass, not a full re-review, for a small fix).
+## Internal review before presenting the plan
+
+This is a Plan Synthesis-specific review, distinct from an architecture guide's review. Before
+presenting the plan for approval, confirm all of the following against your own draft:
+
+- Every locked decision from the conversation appears in the plan, worded so it still matches what
+  the user actually approved — not softened, not expanded, not reinterpreted.
+- No material product or architecture decision is disguised as an open implementation detail.
+- Current-state facts, locked decisions, derived constraints, and open implementation details
+  remain distinguishable throughout.
+- Each derived constraint actually follows from the premises it states.
+- No superseded proposal is presented as current or approved.
+- Current-state evidence references resolve against the codebase at synthesis time.
+- No "preserved behavior" claim conflicts with a described change.
+- Stated invariants are compatible with the target architecture.
+- The plan is sufficient for `my-feature-planning` to distinguish settled from open without
+  re-deriving from conversation.
+- The plan performs no classification, issue decomposition, sequencing, or GitHub work.
+
+Report findings from this pass as a short list, not a rewrite, then fix what the findings surface
+before presenting the plan. If review exposes missing evidence, unresolved authority, or a
+material decision, stop and return to the user rather than silently resolving it.
+
+For a later narrow correction, recheck every claim or section the correction could affect. Run the
+complete review again only when the correction changes or potentially invalidates broader plan
+reasoning.
 
 ## Approval gate
 
-Present the synthesized plan (or the specific sections changed, for a revision) and wait for the
-user's explicit approval before treating `plan.md` as finalized. A plan that hasn't been approved
-is a draft, not a source of truth — don't hand it to `my-feature-planning` and don't imply it's
-settled in any other way until the user has actually signed off.
+Present the synthesized plan — or the specific sections changed, for a revision — and wait for the
+user's explicit approval.
+
+Before approval, the plan is a draft: the handoff statement does not make it canonical, don't hand
+it to `my-feature-planning`, and don't imply its decisions are settled. After approval, the
+matching initiative-specific section becomes canonical input under
+`my-feature-planning/rules/plan-md-input.md`. Don't invent a persistent approval marker or an
+exact required phrase to check for.
