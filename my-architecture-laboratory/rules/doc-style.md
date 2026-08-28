@@ -36,7 +36,7 @@ and not the same set, every time. An empty or decorative block is worse than no 
 | Ordered timeline | `.flow-steps` | Chronological sequence: strictly ordered phases (bold), each with sub-bullets. Only for genuinely sequential steps — independent operations read better as separate tables or flows. |
 | Side card | `.callouts > .callout` | Supporting explanation: a status card, a short "why this architecture?" Q&A, or a boundary explanation. Not tied to a particular section or position. |
 | Equation recap | `.formula` | Composition, cost, or lifecycle summary, used when a formula reads clearer than prose. May close a section or the guide; not required because a section covers an operation. |
-| Variant badge | `.pill` (+ a variant class) | Recurring variants: short inline tags for 2–3 recurring variants, using variant classes and custom properties from `references/template.html`. Add a new variant only when a recurring distinction genuinely needs one. |
+| Variant badge | `.pill` (+ a variant class) | Recurring variants: short inline tags for 2–3 recurring variants, using variant classes and custom properties from `rules/template.html`. Add a new variant only when a recurring distinction genuinely needs one. |
 | Clincher sentence | plain `<strong>` | Closing takeaway: one bolded sentence stating a reuse contract — "A caller integrates by composing X. It does not reimplement Y." Useful for a contract worth a concise close; not required by subject, nor by section name. |
 
 ## Section structure
@@ -87,8 +87,8 @@ tell — rather than silently picking a new one; a changed favicon reads as a di
 ## Responsibility routing
 
 This file covers the grammar to write *with*. It doesn't own what belongs elsewhere:
-`references/template.html` owns the HTML/CSS scaffold and the classes named above;
-`references/review.md` owns critically evaluating a finished guide — don't mistake self-checking
+`rules/template.html` owns the HTML/CSS scaffold and the classes named above;
+`rules/review.md` owns critically evaluating a finished guide — don't mistake self-checking
 against this file's block vocabulary for a review, that's a separate pass run once a draft
-exists; `references/maintenance.md` owns changing an existing guide without breaking its
-narrative; `SKILL.md` owns which workflow you're in and how these references route together.
+exists; `rules/maintenance.md` owns changing an existing guide without breaking its
+narrative; `SKILL.md` owns which workflow you're in and how these files route together.

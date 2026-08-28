@@ -1,11 +1,11 @@
 <!--
   Starting HTML/CSS scaffold for the my-architecture-laboratory guide-writing workflow. This is a
-  starting point, not a form to fill in blindly: references/doc-style.md decides a guide's actual
+  starting point, not a form to fill in blindly: rules/doc-style.md decides a guide's actual
   section structure, content-block choices, and writing grammar — read it before deciding what
-  this guide contains. references/review.md checks a finished guide; references/maintenance.md
+  this guide contains. rules/review.md checks a finished guide; rules/maintenance.md
   governs editing an existing one; SKILL.md owns which workflow you're in and how these pieces
   route together. Delete every block below a given guide doesn't need; add none of the CSS
-  classes here that go unused. Once a draft exists, run references/review.md against it before
+  classes here that go unused. Once a draft exists, run rules/review.md against it before
   calling it done.
 
   Current operational constraints, required by the Artifact publish workflow:
@@ -13,7 +13,7 @@
   - no external requests or CDN dependencies — everything below is inline CSS/JS;
   - the <title> below is a placeholder, replaced with the real capability name;
   - a stable, domain-appropriate favicon emoji, supplied through the Artifact publish call and
-    re-supplied unchanged on every redeploy — see references/doc-style.md#choosing-a-favicon;
+    re-supplied unchanged on every redeploy — see rules/doc-style.md#choosing-a-favicon;
   - load the artifact-design skill before publishing a new guide.
 -->
 <title>{{Capability}} Architecture</title>
@@ -183,7 +183,7 @@
   table.lc td { background: var(--surface); }
   table.lc tr:last-child td { border-bottom: none; }
 
-  /* .pill is the public content-block class references/doc-style.md's grammar names. .pill-alt
+  /* .pill is the public content-block class rules/doc-style.md's grammar names. .pill-alt
      demonstrates the mechanism for a second variant using --pill-alt-*; rename it to a
      capability-appropriate name, drop it, or add another modifier class — only when a recurring
      distinction genuinely needs one. Don't build a universal variant taxonomy here. */
@@ -204,7 +204,7 @@
     <p class="nav-mark">{{Capability}} / Architecture</p>
     <ol>
       <!--
-        One <li> per real section, in document order, added only after references/doc-style.md's
+        One <li> per real section, in document order, added only after rules/doc-style.md's
         section-structure guidance has decided this guide's actual section list — there is no
         fixed section inventory to ship. Each href must match its section's id exactly. The
         single <li> below is illustrative scaffolding: duplicate and rename it once per real
@@ -230,7 +230,7 @@
 
     <!--
       Illustrative section skeleton — not a mandated position, title, or the whole section list.
-      Decide this guide's real section structure from references/doc-style.md first (section
+      Decide this guide's real section structure from rules/doc-style.md first (section
       rhythm, content-block vocabulary, and "structure follows the center of gravity"), then
       duplicate and adapt this skeleton once per real section, in whatever order and count the
       architecture actually needs. Add only the content blocks (spec strip, .ascii diagram,
@@ -242,7 +242,7 @@
       <p class="section-prompt">{{The real question a reader would ask about this section's subject.}}</p>
       <p class="section-intro">{{The direct answer to that question, before any supporting detail.}}</p>
 
-      <!-- Add only the content blocks this section needs; see references/doc-style.md's content-block vocabulary. -->
+      <!-- Add only the content blocks this section needs; see rules/doc-style.md's content-block vocabulary. -->
     </section>
 
     <footer>

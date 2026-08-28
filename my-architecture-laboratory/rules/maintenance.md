@@ -2,7 +2,7 @@
 
 This file governs `SKILL.md`'s "Update an existing architecture guide" workflow: how to reconcile
 a published architecture guide with verified current reality without breaking the identity and
-architectural meaning it already carries. `references/review.md` judges whether a finished guide
+architectural meaning it already carries. `rules/review.md` judges whether a finished guide
 communicates its architecture; this file governs what you're allowed to touch when a guide already
 does, so a maintenance pass doesn't quietly undo that.
 
@@ -102,10 +102,10 @@ architectural content, not chronology. Omit only the parts that serve solely as 
 
 Before editing: locate the existing Artifact, note its current `url`, and discover its current
 favicon — read the published Artifact, or ask the user if you can't tell — per
-`references/doc-style.md`. Don't silently mint a replacement.
+`rules/doc-style.md`. Don't silently mint a replacement.
 
 After editing: redeploy through the `Artifact` tool with the same `url` and the same favicon, then
-run `references/review.md` against the whole updated guide, not only the sections you touched,
+run `rules/review.md` against the whole updated guide, not only the sections you touched,
 paying particular attention to the claims you changed and whatever depends on them. Confirm the
 changes don't contradict untouched material elsewhere in the guide.
 
@@ -120,4 +120,4 @@ changes don't contradict untouched material elsewhere in the guide.
 7. Remove stale deferred-work claims and update whatever they affected.
 8. Reread the edit as present-tense architecture, not release notes.
 9. Redeploy the same Artifact — same `url`, same favicon.
-10. Run `references/review.md` against the whole updated guide.
+10. Run `rules/review.md` against the whole updated guide.

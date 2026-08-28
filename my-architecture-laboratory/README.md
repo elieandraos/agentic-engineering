@@ -3,7 +3,7 @@
 This skill investigates how a system actually works. It can document existing architecture,
 reconcile an existing guide with verified changed reality, or help the user settle feature
 architecture before downstream planning or implementation. This file explains the idea and
-rationale; `SKILL.md` and `references/` contain the operational instructions.
+rationale; `SKILL.md` and `rules/` contain the operational instructions.
 
 ## What the skill does
 
@@ -71,7 +71,7 @@ the section where the change was first noticed — presenting the architecture a
 a changelog. A claim that genuinely changed can move the guide's structure, not just its wording;
 an unaffected claim stays as it was. The guide keeps its identity (same URL, same favicon), and the
 whole updated guide is reviewed again, with emphasis on the changed claims and whatever depends on
-them. `references/maintenance.md` governs the judgment calls involved.
+them. `rules/maintenance.md` governs the judgment calls involved.
 
 ### Plan feature architecture
 
@@ -149,11 +149,11 @@ workflow writes `plan.md` and hands it to `my-feature-planning`. Both are named 
 Neither makes this skill tracker-specific: GitHub is `my-feature-planning`'s substrate, not
 this skill's.
 
-## References
+## Rules and supporting files
 
 - `SKILL.md` — operational routing and decision gates.
-- `references/doc-style.md` — guide-writing grammar.
-- `references/template.html` — guide scaffold.
-- `references/review.md` — guide review checklist.
-- `references/maintenance.md` — guide maintenance methodology.
-- `references/plan-synthesis.md` — `plan.md` synthesis contract.
+- `rules/doc-style.md` — guide-writing grammar.
+- `rules/template.html` — guide scaffold (supporting file, not a rule).
+- `rules/review.md` — guide review checklist.
+- `rules/maintenance.md` — guide maintenance methodology.
+- `rules/plan-synthesis.md` — `plan.md` synthesis contract.

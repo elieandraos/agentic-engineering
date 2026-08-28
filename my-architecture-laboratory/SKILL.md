@@ -76,14 +76,14 @@ publish the Claude Artifact → run the architecture-guide review.
    is approved:
    - Decide the document's structure from the confirmed center of gravity. Architecture guides do
      not use one fixed section inventory: structure follows the system being explained. See
-     `references/doc-style.md` for the writing grammar and content-block vocabulary.
+     `rules/doc-style.md` for the writing grammar and content-block vocabulary.
    - Load the `artifact-design` skill (required before writing any Artifact page).
-   - Write the HTML using `references/template.html` as the starting scaffold. Replace content;
+   - Write the HTML using `rules/template.html` as the starting scaffold. Replace content;
      keep the design system unless the system genuinely needs a new block type.
    - Publish with the `Artifact` tool: title `"{Capability} Architecture"`, a one-sentence
      description, and a stable, domain-appropriate favicon (see
-     `references/doc-style.md#choosing-a-favicon`).
-   - Run `references/review.md`'s checklist against the published guide before considering it
+     `rules/doc-style.md#choosing-a-favicon`).
+   - Run `rules/review.md`'s checklist against the published guide before considering it
      complete — see "Output-specific non-negotiables" for what the guide itself must do.
 
 Publishing to a Claude Artifact is specific to this workflow (and to updating an existing guide,
@@ -101,10 +101,10 @@ Route: locate the existing Claude Artifact, rather than minting a new one → co
 architectural claims against verified current implementation, configuration, runtime evidence, and
 tests → follow the complete affected claim graph, not only the section where the change was first
 noticed → update to describe how the architecture works now, not as a changelog → preserve its
-identity and stable presentation metadata (same `url`, same favicon) → run `references/review.md`
+identity and stable presentation metadata (same `url`, same favicon) → run `rules/review.md`
 against the whole updated guide, with emphasis on the changed claims and whatever depends on them.
 
-`references/maintenance.md` governs every judgment call in this route — read it before making any
+`rules/maintenance.md` governs every judgment call in this route — read it before making any
 edit. It preserves a guide's unaffected architectural meaning without freezing architecture the
 evidence shows has genuinely changed: the center of gravity, structure, ownership, or reasoning can
 move when verified reality requires it.
@@ -139,7 +139,7 @@ user-approved decisions about the target state. If either is missing, do that wo
 Synthesis never manufactures a decision on the user's behalf.
 
 Every claim in the plan must fall into exactly one of four categories — see "Output-specific
-non-negotiables" for the rule. `references/plan-synthesis.md` owns the full methodology: the
+non-negotiables" for the rule. `rules/plan-synthesis.md` owns the full methodology: the
 four-category claim model, the flexible initiative-driven content model, evidence and placement
 rules, the internal review pass, and the approval/handoff contract — read it before writing
 anything.
@@ -174,15 +174,15 @@ This skill does not own:
 - delivery sequencing;
 - Git workflow.
 
-## Reference routing
+## Rule and supporting-file routing
 
-References are loaded only when their workflow needs them — none is a universal prerequisite:
+These are loaded only when their workflow needs them — none is a universal prerequisite:
 
-- guide writing → `references/doc-style.md`
-- guide scaffold → `references/template.html`
-- guide review → `references/review.md`
-- guide maintenance → `references/maintenance.md`
-- plan writing → `references/plan-synthesis.md`
+- guide writing → `rules/doc-style.md`
+- guide scaffold → `rules/template.html`
+- guide review → `rules/review.md`
+- guide maintenance → `rules/maintenance.md`
+- plan writing → `rules/plan-synthesis.md`
 
 ## Output-specific non-negotiables
 
@@ -202,11 +202,11 @@ guide"):
   duplicated explanations across sections.
 - Not every guide needs a limitations section. When limitations or deferred work materially affect
   understanding, state the reason rather than adding a generic TODO list.
-- A guide is never done until it has passed a `references/review.md` pass — writing and reviewing
+- A guide is never done until it has passed a `rules/review.md` pass — writing and reviewing
   are two separate steps.
 
 Plan rules (apply to "Plan feature architecture"; full contract in
-`references/plan-synthesis.md`):
+`rules/plan-synthesis.md`):
 
 - Keep current-state facts, locked decisions, derived constraints, and open implementation details
   visually and textually distinct — the locked-vs-open rule above all.

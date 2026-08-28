@@ -12,7 +12,7 @@ prose can pass it. Wording is not the subject.
   architecturally misleading.
 
 **Not** while a guide is still being drafted — this is a review of a finished artifact, not a
-drafting aid. Drafting uses `references/doc-style.md`; switch to this file once there's a document
+drafting aid. Drafting uses `rules/doc-style.md`; switch to this file once there's a document
 to hold up to the light.
 
 ## Philosophy
