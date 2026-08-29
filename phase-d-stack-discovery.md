@@ -589,7 +589,7 @@ if the goal is for this correction to actually persist and be discoverable by an
 | `when()` query conditionals | Companion workflow knowledge | Companion skill | None | Retain; fix broken example |
 | Resource-wrapping/`whenLoaded()` discipline | Companion workflow knowledge | Companion skill | None (self-flagged dependency on an unadopted Boost practice) | Retain; fix Inertia-call examples for internal consistency, not because either API is invalid |
 | PhpStorm/Pest IDE-workaround set | Companion workflow knowledge | Companion skill (decision guidance + prerequisite check) | None | Retain; disclose `getDiagnostics`'s active-IDE-integration dependency and a fallback |
-| `final`-by-default PHP class policy | Companion workflow knowledge (if it recurs) and/or persistent project rule (today) | `.ai/rules` now; companion skill pending cross-project evidence | None | Human decision on companion-skill inclusion; `.ai/rules` recording does not require that decision first |
+| `final`-by-default PHP class policy | Persistent project rule (today) — single-project evidence only; possible promotion to companion workflow knowledge if cross-project recurrence is shown | `.ai/rules` now (pending adoption approval); companion skill pending cross-project evidence | None | Human decision on companion-skill inclusion; `.ai/rules` recording is contingent on adopting that mechanism, not decided here |
 | No-tests-for-framework-behavior preference | Persistent project rule (today); possibly companion workflow knowledge later | `.ai/rules` now | Conflicts with Boost `review.md`'s plain reading | Human decision on the Boost conflict; `.ai/rules` recording does not require it resolved first |
 | Migration `->notNull()` trap | Persistent project rule | `.ai/rules` | None | Too narrow for a skill; good `.ai/rules` fit |
 | Removed `useOrbit` design-system content | `useOrbit`-specific | `useOrbit`'s own `_docs/` or `.ai/rules` | N/A | Out of `agentic-engineering` scope |
@@ -635,10 +635,14 @@ mechanism is chosen by any option above.
 5. Name `getDiagnostics`'s actual nature (Claude Code's built-in capability, active only with a
    connected supported IDE integration) and state a fallback for a session without it.
 
-**Tier 3 — can start now, independent of any companion-skill decision:**
-6. Record `feedback_final_classes.md`'s policy, `feedback_no_tests_for_framework_behavior.md`'s
-   testing preference, and `feedback_migration_notnull.md`'s trap into `useOrbit/.ai/rules` via
-   `record-rule` — the mechanism is live today and needs no Phase D skill decision first (§13, option 2).
+**Tier 3 — strong `.ai/rules` candidates, ready to proceed independently of any companion-skill
+decision, but only once the user approves adopting `.ai/rules` as a practice (§15 — that adoption is
+not decided by this document):**
+6. `feedback_final_classes.md`'s policy, `feedback_no_tests_for_framework_behavior.md`'s testing
+   preference, and `feedback_migration_notnull.md`'s trap are each a good fit for `record-rule` into
+   `useOrbit/.ai/rules` — the mechanism is technically live today (§1.2) and their eventual recording
+   needs no Phase D companion-skill decision first (§13, option 2). Recording them is contingent on the
+   separate, still-open decision to start using `.ai/rules` at all.
 
 **Tier 4 — human decisions this evidence surfaces but does not resolve (§15):**
 7. Whether to write down, rather than silently apply, `my-laravel-patterns`' precedence rule at the
