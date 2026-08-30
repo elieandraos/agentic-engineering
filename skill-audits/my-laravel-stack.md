@@ -29,7 +29,7 @@ education.
 - It loads **alongside** Laravel Boost's `laravel-best-practices` and `testing-best-practices`, and
   alongside `inertia-vue-development`, never instead of them. It contains only what those skills don't
   already cover.
-- **Current evidence is strongest for Laravel, Inertia, and Pest.** Every conventions, blueprint, and
+- **Current evidence is strongest for Laravel, Inertia, and Pest.** Every convention, blueprint, and
   template file in the current tree rests on verified application behavior, tests, or framework source.
 - **Vue 3 is part of the declared stack boundary, but the skill currently owns no mature independent
   Vue-specific rules.** This is stated openly in both `SKILL.md` and `README.md`, not implied as equal
@@ -234,9 +234,14 @@ prose guidance.
   `test-ownership.md`, promoting `filters-and-sorting.md` to a blueprint, and clarifying the controller
   composition as a reference shape (`59c9b9b`), followed by one further rename correcting
   `actions-pattern.md` to `actions.md` (`4609cd5`).
-- **The owner reviewed the macro structure and rule content** during this pass, prompting the
-  Action/provider corrections in `43b5d8a` and `2778643` rather than leaving the initial authored draft
-  as final.
+- **The review proceeded in stages, not as a single pass.** Focused technical review produced the
+  early correctness corrections through `1cdfd46` — Action HTTP/transaction accuracy, the PHPDoc
+  typing-derivation model, and the narrowed queue-driver caveat — before the owner had read the skill
+  files. The owner's own review then began with the macro structure, driving the README and
+  `rules/`/`blueprints`/`templates` taxonomy work in `8c5f8ef` and its wording follow-up in `38a4d0a`.
+  The owner went on to complete a rule-content review, identifying the test-ownership naming concern.
+  The final whole-skill consistency review, together with the owner's own naming observations,
+  produced the ownership, classification, and naming corrections in `59c9b9b` and `4609cd5`.
 - Current endpoint: `4609cd50eb4f002036b5e1eb9e8a5c4ab01e7121`.
 
 Keep `useOrbit` evidence here, in this dossier, never in the runtime skill's public-facing examples —
