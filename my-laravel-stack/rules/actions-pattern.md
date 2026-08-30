@@ -152,7 +152,16 @@ has no reliable way to know that from the inside.
 | A worker picks up the job before the transaction commits | It runs against data that isn't committed yet, or that doesn't yet exist from its own connection's point of view | Not possible — the job isn't enqueued until after the commit |
 | The transaction rolls back after the job was already enqueued | The job remains queued and will still run — against data that was rolled back and no longer exists | The dispatch was never enqueued — nothing runs |
 
-The `database` queue driver is a partial exception to the rollback row: because it inserts the job row through the same connection, that insert can itself roll back with the enclosing transaction even without `afterCommit()`. Don't rely on that as a substitute for `afterCommit()` — a different queue driver (Redis, SQS, and similar) enqueues over a separate connection and will not roll back with it.
+The `database` queue driver is a partial exception to the table above, but only when its configured
+queue connection is the same database connection participating in the application transaction. In that
+configuration, the uncommitted job row is normally invisible to other connections until commit, and a
+rollback removes it along with everything else the transaction wrote — so the caveat applies to both
+rows in the table: a worker generally can't pick the job up before commit, and rollback discards it. If
+the database queue driver is configured to use a different connection than the one running the
+transaction, its enqueue is independent of the application transaction — the same as Redis, SQS, and
+similar drivers for these purposes — and the table's stated risks apply in full. Either way, projects
+should still use `afterCommit()` rather than relying on queue-driver or connection-specific behavior to
+get this right.
 
 ## Testing
 
