@@ -1,7 +1,7 @@
 # my-laravel-stack
 
-A personal, portable companion for a **Laravel + InertiaJS + Vue 3 + Pest** stack. It carries the
-conventions, implementation blueprints, and reusable code templates this user has settled on for that
+A personal, portable companion for a **Laravel + InertiaJS + Vue 3 + Pest** stack. It carries
+evidence-backed conventions, implementation blueprints, and reusable code templates established for that
 stack — the delta genuinely additive to Laravel Boost, not a standalone Laravel education. This file
 explains the idea and how the skill is organized; `SKILL.md` is the operational activation and routing
 entrypoint agents actually load from.
@@ -18,10 +18,10 @@ documentation for any one consuming project. It doesn't declare a universal arch
 must adopt — its blueprints stay conditional (tenancy, non-CRUD shapes, filters and sorters) rather than
 mandatory for every feature.
 
-Current evidence behind this skill is strongest for **Laravel, Inertia, and Pest** — every rule and
-template here is grounded in real controller, Action, Policy, Resource, and Pest code. Vue 3 is part of
-the declared stack boundary, but this skill does not claim mature, independent Vue-specific guidance;
-Vue implementation questions route to `inertia-vue-development` instead.
+The contents were derived from verified application behavior, tests, and relevant framework evidence,
+with current evidence strongest for **Laravel, Inertia, and Pest**. Vue 3 is part of the declared stack
+boundary, but this skill does not claim mature, independent Vue-specific guidance; Vue implementation
+questions route to `inertia-vue-development` instead.
 
 ## Three kinds of content
 
