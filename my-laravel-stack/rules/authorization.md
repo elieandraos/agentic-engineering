@@ -89,6 +89,6 @@ that never inspects which parent is involved.
 
 ## Testing
 
-See `testing-strategy.md` for what a Policy test asserts and where it lives. A controller test confirms
+See `test-ownership.md` for what a Policy test asserts and where it lives. A controller test confirms
 the gate is wired up with a single `assertForbidden()` — it does not duplicate the Policy test's full
 permission matrix.

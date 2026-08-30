@@ -2,12 +2,13 @@
 
 ## Boundary
 
-This file defines the target `tests/Unit`/`tests/Feature` execution-boundary taxonomy and per-layer
-responsibility for this stack. `testing-best-practices` owns the general layer-ownership/de-duplication
-principle, record-level test-data minimalism, and the general framework-vs-project testing distinction —
-this file does not restate any of them. `testing-strategy.md` owns the concrete
-Action/Policy/Filter/Sorter/Resource/Model/HTTP class-taxonomy mapping (test locations and per-class
-assertion focus) — load it alongside this file when writing a layer-specific test.
+This file defines the target `tests/Unit`/`tests/Feature` execution-boundary taxonomy for this stack.
+`testing-best-practices` owns the general layer-ownership/de-duplication principle, record-level
+test-data minimalism, and the general framework-vs-project testing distinction — this file does not
+restate any of them. `rules/test-ownership.md` is the single source of truth for the concrete
+Action/Policy/Filter/Sorter/Resource/Model/HTTP class-taxonomy mapping, per-layer assertion focus,
+existence-versus-exact-value assertions, and the no-redundancy rule — load it alongside this file when
+writing a layer-specific test.
 
 ## Unit vs. Feature — classify by execution boundary first
 
@@ -32,34 +33,13 @@ Keep one Pest file per HTTP endpoint or closely related group (`IndexTest.php`, 
 `tests/Feature/Http/{Domain}/`. Do not force every controller's tests into one oversized
 `{Controller}Test.php` file merely for consolidation.
 
-## Per-layer responsibility
-
-- **HTTP tests** own public endpoint behavior: authentication, authorization wiring, validation, tenant
-  boundaries (when applicable), route-model behavior, response status, redirects, flash messages, and
-  the Inertia component/prop contract.
-- **Action tests** own complete mutation behavior: defaults, transaction outcome, audit fields,
-  derivation/slug rules, branches, side effects.
-- **Policy tests** own the complete permission matrix; HTTP keeps representative cases proving
-  authorization is wired, not the full matrix.
-- **Filter and sorter tests** own their complete query matrices; HTTP keeps representative wiring and
-  request-validation cases.
-- **Resource tests** own non-trivial project-defined transformations and conditional-field behavior;
-  HTTP proves the correct Resource contract reaches Inertia.
-- **Model tests** cover project-owned behavior, scopes, and meaningful relationship constraints — not
-  Laravel, Pest, or Inertia internals. A cast, relationship, or scope is eligible for a test; it does not
-  need one merely because it exists — write one only when its failure would materially affect
-  application behavior.
-
-> When a lower layer owns a complete behavioral matrix, the HTTP layer should retain enough evidence to
-> prove integration without duplicating that matrix.
-
 ## Warning: don't let a resource-built comparison stand in for the value a test is specifically responsible for proving
 
 The reusable `assertHasResource`/`assertHasPaginatedResource` macros (below) compare the actual Inertia
 prop against a value built by instantiating the same production Resource the endpoint itself uses. That
 comparison is appropriate when what an HTTP test needs to prove is integration — the correct Resource
 class wraps the correct model instance for this route — because the Resource's own field-level
-correctness is the Resource test's job (see "Per-layer responsibility" above). It stops being appropriate
+correctness is the Resource test's job (see `rules/test-ownership.md`). It stops being appropriate
 when the HTTP test is specifically responsible for proving a field's value or a transformation the
 Resource performs: building the expected side of that assertion from the same Resource makes the
 comparison self-referential — if the Resource's shape regresses in a way that stays internally
@@ -77,11 +57,6 @@ attribute-level rule it doesn't cover:
 > filtering, tenant isolation, a collision, an absence, or complete field mapping. "Minimal" does not mean
 > incomplete coverage: a test specifically proving field mapping may intentionally provide the complete
 > relevant payload.
-
-## Existence vs. exact-value assertions
-
-Use `assertModelExists()` for existence (Boost's default). Use `assertDatabaseHas()` only when a test
-genuinely needs to prove an exact persisted value.
 
 ## Reusable Inertia testing macros
 

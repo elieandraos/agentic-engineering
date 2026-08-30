@@ -1,6 +1,8 @@
-# Testing Strategy — Class Ownership Mapping
+# Test Ownership
 
-This file states where each class type's test lives and what it asserts, for this stack's
+This is the single source of truth for where each class type's test lives, what behavior each test layer
+owns, when to assert existence versus an exact value, and the no-redundancy boundary between HTTP tests
+and the lower-layer tests they must not duplicate — for this stack's
 Action/Controller/Policy/Filter/Sorter/Resource/Model taxonomy. See `blueprints/pest-testing.md` for the
 general `tests/Unit`/`tests/Feature` execution-boundary taxonomy, the self-referential-expected-value
 warning, and Pest capability gating — this file does not restate any of that.

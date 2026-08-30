@@ -12,7 +12,7 @@ other concrete application classes.
 **Does not apply to:**
 
 - **Abstract classes** — designed for extension by definition. `QueryFilter` and `QuerySorter` (see
-  `filters-pattern.md`) stay non-`final`.
+  `blueprints/filters-and-sorting.md`) stay non-`final`.
 - **Interfaces, traits, and enums** — finality doesn't apply to these constructs.
 
 **This is a default, not an absolute:**

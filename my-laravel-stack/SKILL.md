@@ -37,11 +37,11 @@ than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `temp
 | Task | Load |
 |---|---|
 | Composing a CRUD or single-action controller | `blueprints/resource-controller.md` |
-| Writing or organizing a Pest test | `blueprints/pest-testing.md`, then `rules/testing-strategy.md` for the concrete class-ownership mapping |
+| Writing or organizing a Pest test | `blueprints/pest-testing.md`, then `rules/test-ownership.md` for the concrete class-ownership mapping |
 | Wiring Form Request -> Action -> Controller | `rules/actions-pattern.md` |
 | Authorizing a controller method | `rules/authorization.md` |
 | Defining an Eloquent local scope | `rules/eloquent-attributes.md` |
-| Adding index filtering and/or sorting | `rules/filters-pattern.md` + `rules/request-normalization.md` (a sort `direction` must be defaulted, not left nullable) + `templates/app/Filters/QueryFilter.php`, `templates/app/Sorts/QuerySorter.php`, `templates/app/Models/Concerns/Filterable.php`, `templates/app/Models/Concerns/Sortable.php` |
+| Adding index filtering and/or sorting | `blueprints/filters-and-sorting.md` + `rules/request-normalization.md` (a sort `direction` must be defaulted, not left nullable) + `templates/app/Filters/QueryFilter.php`, `templates/app/Sorts/QuerySorter.php`, `templates/app/Models/Concerns/Filterable.php`, `templates/app/Models/Concerns/Sortable.php` |
 | Exposing a backed enum as select options | `rules/enum-options.md` |
 | Coercing or defaulting request input | `rules/request-normalization.md` |
 | Building a JsonResource for Inertia | `rules/resources.md` |

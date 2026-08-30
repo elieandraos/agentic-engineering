@@ -1,9 +1,12 @@
-# Filters & Sorting Pattern
+# Filters & Sorting Blueprint
 
 ## Purpose
 
 Reusable, class-based query filtering and sorting for index endpoints, without ad-hoc query building in
-the controller.
+the controller. This is a multi-component implementation blueprint: it coordinates query-parameter
+validation in a Form Request, concrete Filter and Sorter classes, reusable base-class and model-trait
+templates, model scope wiring, controller query composition, and direct database-backed tests into one
+implementation shape.
 
 ## Responsibility split
 
@@ -19,7 +22,7 @@ like Actions trust `$request->validated()`.
 ## Naming and location
 
 - `app/Filters/QueryFilter.php` — abstract base class shared by every domain filter. Not `final` — it's
-  designed for extension (see `php-conventions.md`). Ships as a reusable implementation template:
+  designed for extension (see `rules/php-conventions.md`). Ships as a reusable implementation template:
   [`templates/app/Filters/QueryFilter.php`](../templates/app/Filters/QueryFilter.php).
 - `app/Filters/{Model}Filter.php` — one concrete filter per model, flat in `app/Filters/`. Name:
   `{Model}Filter`. Always `final`.
@@ -120,7 +123,7 @@ final class IndexOrderRequest extends FormRequest
 ```
 
 `QuerySorter`'s `$direction` constructor parameter is a non-nullable `string` — default it in
-`prepareForValidation()` as shown above (see `request-normalization.md`) rather than leaving it
+`prepareForValidation()` as shown above (see `rules/request-normalization.md`) rather than leaving it
 `nullable` and reading a possibly-`null` value from `validated()`. Skipping this step is the most common
 way to wire a `QuerySorter` incorrectly: an omitted `direction` query param passes `null` straight into a
 `string` parameter and throws a `TypeError`.
@@ -149,12 +152,12 @@ pattern does not prescribe one.
 ## Explicitly out of the core
 
 Filtering and sorting are optional capabilities loaded only when an index endpoint genuinely needs
-them — see `blueprints/resource-controller.md`'s "Explicitly out of the core" section for why they,
+them — see `resource-controller.md`'s "Explicitly out of the core" section for why they,
 exports, and admin-table tooling are not part of every CRUD controller's mandatory shape.
 
 ## Testing
 
-See `testing-strategy.md` for full conventions. In short: filter and sorter classes are tested directly
+See `rules/test-ownership.md` for full conventions. In short: filter and sorter classes are tested directly
 against a real query and database — no HTTP — which places them in `tests/Feature` under this stack's
 Pest taxonomy (see `blueprints/pest-testing.md`), not `tests/Unit`; "direct" here means without going
 through the HTTP layer, not genuinely framework-isolated. Controller tests stay thin — a wiring smoke

@@ -165,4 +165,4 @@ get this right.
 
 ## Testing
 
-See `testing-strategy.md` for what an Action test asserts and where it lives.
+See `test-ownership.md` for what an Action test asserts and where it lives.

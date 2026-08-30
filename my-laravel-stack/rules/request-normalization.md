@@ -7,9 +7,10 @@ Where to put input coercion and defaulting for request params — `prepareForVal
 
 ## Why the FormRequest, not the controller
 
-Actions and Filters (see `filters-pattern.md`) trust `$request->validated()` as already correct. If the
-controller has to fall back with `??` or cast with `$request->boolean(...)` after calling `validated()`,
-the FormRequest didn't finish its job — an ambiguous shape leaked past the boundary it's supposed to own.
+Actions and Filters (see `blueprints/filters-and-sorting.md`) trust `$request->validated()` as already
+correct. If the controller has to fall back with `??` or cast with `$request->boolean(...)` after calling
+`validated()`, the FormRequest didn't finish its job — an ambiguous shape leaked past the boundary it's
+supposed to own.
 
 ```php
 // ❌ Normalization leaking into the controller
@@ -64,5 +65,5 @@ $search = $request->validated('search');
 ```
 
 Still call `$request->validated()` (no key) when a whole array is needed as-is, e.g. passing it straight
-into a Filter (see `filters-pattern.md`) — the point is to stop hand-rolling per-field defaults the
-accessor already does.
+into a Filter (see `blueprints/filters-and-sorting.md`) — the point is to stop hand-rolling per-field
+defaults the accessor already does.

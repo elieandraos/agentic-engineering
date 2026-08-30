@@ -58,7 +58,7 @@ public function index(): Response
 public function show(Order $order): Response
 {
     return Inertia::render('Orders/Show', [
-        'order' => new OrderResource($order),
+        'order' => OrderResource::make($order),
     ]);
 }
 ```

@@ -38,12 +38,14 @@ questions route to `inertia-vue-development` instead.
 ## What's here today
 
 - **Rules** cover the Actions pattern, `#[Authorize]`-based authorization, `#[Scope]`-based Eloquent
-  scopes, filters and sorters, query conditionals (`when()` over `if`), request normalization in
-  `prepareForValidation()`, JsonResource conventions, enum option lists, factory/seeder realism, PHP
-  class finality, and Laravel migration column nullability.
-- **Blueprints** cover the CRUD/single-action controller composition (Controller → Form Request →
-  Policy/`#[Authorize]` → Action → Resource → Inertia) and the Pest testing taxonomy (execution-boundary
-  classification, per-layer test ownership, and the Boost boundary for testing guidance).
+  scopes, query conditionals (`when()` over `if`), request normalization in `prepareForValidation()`,
+  JsonResource conventions, enum option lists, factory/seeder realism, PHP class finality, Laravel
+  migration column nullability, and per-layer test ownership.
+- **Blueprints** cover the conditional CRUD/single-action controller composition (Controller → Form
+  Request → Policy/`#[Authorize]` → Action → Resource → Inertia, included only where an endpoint actually
+  needs each stage), filtering and sorting, and the Pest testing taxonomy (execution-boundary
+  classification and the Boost boundary for testing guidance — concrete per-layer test ownership lives in
+  its own rule).
 - **Templates** provide generalized, installable versions of `QueryFilter`, `Filterable`, `QuerySorter`,
   `Sortable`, and the Inertia testing macros bundled in `TestingServiceProvider`.
 

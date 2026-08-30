@@ -11,17 +11,27 @@ classes.
 
 **Controller → Form Request → Policy/`#[Authorize]` → Action → Resource → Inertia/HTTP response.**
 
+This is the reference composition for a full CRUD endpoint — not a mandatory sequence every endpoint must
+implement. Include each component only when the endpoint actually needs what it does; see "Non-CRUD and
+single-action controllers" below for real, non-exceptional endpoints that omit some of them. Never
+manufacture a component merely to make an endpoint structurally symmetrical with this reference shape.
+
 - **Controller** — coordinates HTTP/Inertia behavior only: resolve the Form Request, authorize
   (declaratively, before the method body runs), delegate the mutation to an Action, build the Resource
-  for a read path, and return the Inertia response or redirect. No business logic in the method body.
-- **Form Request** — owns validation and request normalization (`prepareForValidation()` — see
-  `request-normalization.md`), never business logic.
-- **Policy / `#[Authorize]`** — owns access enforcement, resolved before the method body runs (see
-  `authorization.md`).
-- **Action** — owns mutations and business workflows: DB writes wrapped in `DB::transaction()`, audit
+  for a read path, and return the appropriate response. No business logic in the method body.
+- **Form Request** — used when input requires validation or normalization; owns that validation and
+  request normalization (`prepareForValidation()` — see `rules/request-normalization.md`), never business
+  logic.
+- **Policy / `#[Authorize]`** — the authorization boundary where authorization is required, resolved
+  before the method body runs (see `rules/authorization.md`).
+- **Action** — used for mutations or business workflows: DB writes wrapped in `DB::transaction()`, audit
   fields, external side effects deferred with `->afterCommit()` so they never execute until the
-  transaction commits (see `actions-pattern.md`).
-- **Resource** — owns the response/Inertia data contract (see `resources.md`).
+  transaction commits (see `rules/actions-pattern.md`).
+- **Resource** — used when model data requires an explicit response contract; owns that contract (see
+  `rules/resources.md`).
+- **Response** — Inertia is used for Inertia page responses; a valid endpoint may instead return a
+  Resource directly, a binary response, a no-content response, or another appropriate HTTP response — see
+  "Non-CRUD and single-action controllers" below for real examples of each.
 
 ### Worked example — full CRUD
 
@@ -122,7 +132,7 @@ return to_route('orders.show', $order);
 State explicitly, for each authorized method, whether the model instance is already bound by the route
 (authorize against the route parameter directly — `view`/`update`/`delete`) or must be resolved via a
 named child policy plus the parent's route parameter (`create`/`viewAny` on a child resource — see
-`authorization.md`). This distinction is not obvious from the attribute's own signature and is easy to
+`rules/authorization.md`). This distinction is not obvious from the attribute's own signature and is easy to
 get wrong silently.
 
 ### Tenant boundaries — only when the project is multi-tenant
@@ -233,7 +243,8 @@ needs them:
 
 - **Exports** (PDF/Excel) — a real, separate pattern (see the single-action export example above), not a
   CRUD requirement.
-- **Filters and sorters** — see `filters-pattern.md`; the base classes ship as reusable implementation
-  templates (`templates/app/Filters/`, `templates/app/Sorts/`), not as part of this blueprint's core.
+- **Filters and sorters** — see `blueprints/filters-and-sorting.md`; the base classes ship as reusable
+  implementation templates (`templates/app/Filters/`, `templates/app/Sorts/`), not as part of this
+  blueprint's core.
 - **Admin-oriented list tooling** — bulk operations, admin tables, and similar administration-specific
   capabilities.
