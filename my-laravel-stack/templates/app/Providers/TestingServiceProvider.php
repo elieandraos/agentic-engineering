@@ -11,7 +11,7 @@ use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia;
 
 /**
- * Reusable support asset — my-laravel-stack.
+ * Reusable implementation template — my-laravel-stack.
  *
  * Target path in a consuming project: app/Providers/TestingServiceProvider.php
  *

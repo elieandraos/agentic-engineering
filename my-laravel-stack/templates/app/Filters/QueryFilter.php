@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 /**
- * Reusable support asset — my-laravel-stack.
+ * Reusable implementation template — my-laravel-stack.
  *
  * Target path in a consuming project: app/Filters/QueryFilter.php
  *
@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
  * overwriting the existing file.
  *
  * Requires: a project-defined "filter" scope wired through the Filterable trait
- * (see Filterable.php in this same asset set) on every filterable model.
+ * (see Filterable.php in this same template set) on every filterable model.
  */
 abstract class QueryFilter
 {

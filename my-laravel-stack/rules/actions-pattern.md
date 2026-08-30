@@ -3,7 +3,7 @@
 ## Purpose
 
 Business logic and mutations live in an **Action**, not the controller or the Form Request. See
-`resource-controller-blueprint.md` for how an Action fits between the Form Request and the Resource in
+`blueprints/resource-controller.md` for how an Action fits between the Form Request and the Resource in
 the full controller composition — this file owns only the Action's own shape.
 
 ## Naming and location

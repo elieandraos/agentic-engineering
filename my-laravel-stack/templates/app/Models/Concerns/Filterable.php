@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Reusable support asset — my-laravel-stack.
+ * Reusable implementation template — my-laravel-stack.
  *
  * Target path in a consuming project: app/Models/Concerns/Filterable.php
  *

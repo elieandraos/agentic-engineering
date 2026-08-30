@@ -233,7 +233,7 @@ needs them:
 
 - **Exports** (PDF/Excel) — a real, separate pattern (see the single-action export example above), not a
   CRUD requirement.
-- **Filters and sorters** — see `filters-pattern.md`; the base classes ship as reusable assets
-  (`assets/app/Filters/`, `assets/app/Sorts/`), not as part of this blueprint's core.
+- **Filters and sorters** — see `filters-pattern.md`; the base classes ship as reusable implementation
+  templates (`templates/app/Filters/`, `templates/app/Sorts/`), not as part of this blueprint's core.
 - **Admin-oriented list tooling** — bulk operations, admin tables, and similar administration-specific
   capabilities.

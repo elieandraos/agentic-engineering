@@ -30,17 +30,18 @@ to `inertia-vue-development`.
 
 ## Routing
 
-Load only the rule file(s) the current task needs — do not read every file for every Laravel task.
-Resolved decisions live in the file that owns them; this table routes to them rather than repeating them.
+Load only the rule, blueprint, or template file(s) the current task needs — do not read every file for
+every Laravel task. Resolved decisions live in the file that owns them; this table routes to them rather
+than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `templates/` each mean.
 
 | Task | Load |
 |---|---|
-| Composing a CRUD or single-action controller | `rules/resource-controller-blueprint.md` |
-| Writing or organizing a Pest test | `rules/pest-testing-blueprint.md`, then `rules/testing-strategy.md` for the concrete class-ownership mapping |
+| Composing a CRUD or single-action controller | `blueprints/resource-controller.md` |
+| Writing or organizing a Pest test | `blueprints/pest-testing.md`, then `rules/testing-strategy.md` for the concrete class-ownership mapping |
 | Wiring Form Request -> Action -> Controller | `rules/actions-pattern.md` |
 | Authorizing a controller method | `rules/authorization.md` |
 | Defining an Eloquent local scope | `rules/eloquent-attributes.md` |
-| Adding index filtering and/or sorting | `rules/filters-pattern.md` + `rules/request-normalization.md` (a sort `direction` must be defaulted, not left nullable) + `assets/app/Filters/QueryFilter.php`, `assets/app/Sorts/QuerySorter.php`, `assets/app/Models/Concerns/Filterable.php`, `assets/app/Models/Concerns/Sortable.php` |
+| Adding index filtering and/or sorting | `rules/filters-pattern.md` + `rules/request-normalization.md` (a sort `direction` must be defaulted, not left nullable) + `templates/app/Filters/QueryFilter.php`, `templates/app/Sorts/QuerySorter.php`, `templates/app/Models/Concerns/Filterable.php`, `templates/app/Models/Concerns/Sortable.php` |
 | Exposing a backed enum as select options | `rules/enum-options.md` |
 | Coercing or defaulting request input | `rules/request-normalization.md` |
 | Building a JsonResource for Inertia | `rules/resources.md` |
@@ -48,7 +49,7 @@ Resolved decisions live in the file that owns them; this table routes to them ra
 | Adding a mid-chain conditional query clause | `rules/query-conditionals.md` |
 | Declaring a new concrete application class | `rules/php-conventions.md` |
 | Writing a schema migration column | `rules/migrations.md` |
-| Asserting an Inertia prop or flash message in a Pest HTTP test | `rules/pest-testing-blueprint.md` + `assets/app/Providers/TestingServiceProvider.php` |
+| Asserting an Inertia prop or flash message in a Pest HTTP test | `blueprints/pest-testing.md` + `templates/app/Providers/TestingServiceProvider.php` |
 
 ## Boundary
 

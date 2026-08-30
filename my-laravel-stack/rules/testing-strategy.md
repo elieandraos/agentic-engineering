@@ -1,7 +1,7 @@
 # Testing Strategy — Class Ownership Mapping
 
 This file states where each class type's test lives and what it asserts, for this stack's
-Action/Controller/Policy/Filter/Sorter/Resource/Model taxonomy. See `pest-testing-blueprint.md` for the
+Action/Controller/Policy/Filter/Sorter/Resource/Model taxonomy. See `blueprints/pest-testing.md` for the
 general `tests/Unit`/`tests/Feature` execution-boundary taxonomy, the self-referential-expected-value
 warning, and Pest capability gating — this file does not restate any of that.
 

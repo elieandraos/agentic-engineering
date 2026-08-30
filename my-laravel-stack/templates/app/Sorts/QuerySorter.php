@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 /**
- * Reusable support asset — my-laravel-stack.
+ * Reusable implementation template — my-laravel-stack.
  *
  * Target path in a consuming project: app/Sorts/QuerySorter.php
  *
@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
  * already exists in the target project. Reconcile rather than overwrite it.
  *
  * Requires: a project-defined "sort" scope wired through the Sortable trait
- * (see Sortable.php in this same asset set) on every sortable model.
+ * (see Sortable.php in this same template set) on every sortable model.
  */
 abstract class QuerySorter
 {

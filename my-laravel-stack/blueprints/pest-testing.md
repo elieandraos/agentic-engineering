@@ -86,8 +86,9 @@ genuinely needs to prove an exact persisted value.
 ## Reusable Inertia testing macros
 
 `hasResource`, `hasPaginatedResource`, `assertHasResource`, `assertHasPaginatedResource`, and
-`assertHasInertiaFlash` are custom Pest/Inertia-testing macros this stack ships as a reusable asset — see
-[`assets/app/Providers/TestingServiceProvider.php`](../assets/app/Providers/TestingServiceProvider.php)
+`assertHasInertiaFlash` are custom Pest/Inertia-testing macros this stack ships as a reusable
+implementation template — see
+[`templates/app/Providers/TestingServiceProvider.php`](../templates/app/Providers/TestingServiceProvider.php)
 for the implementation, required packages, and registration/guard instructions. Install and register that
 provider before writing a test that calls any of these macros; do not write a test that assumes they
 exist without checking first.

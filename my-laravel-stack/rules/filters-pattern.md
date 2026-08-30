@@ -19,20 +19,23 @@ like Actions trust `$request->validated()`.
 ## Naming and location
 
 - `app/Filters/QueryFilter.php` — abstract base class shared by every domain filter. Not `final` — it's
-  designed for extension (see `php-conventions.md`). Ships as a reusable asset:
-  [`assets/app/Filters/QueryFilter.php`](../assets/app/Filters/QueryFilter.php).
+  designed for extension (see `php-conventions.md`). Ships as a reusable implementation template:
+  [`templates/app/Filters/QueryFilter.php`](../templates/app/Filters/QueryFilter.php).
 - `app/Filters/{Model}Filter.php` — one concrete filter per model, flat in `app/Filters/`. Name:
   `{Model}Filter`. Always `final`.
 - `app/Models/Concerns/Filterable.php` — trait adding the `filter` scope to a model. Ships as a reusable
-  asset: [`assets/app/Models/Concerns/Filterable.php`](../assets/app/Models/Concerns/Filterable.php).
+  implementation template:
+  [`templates/app/Models/Concerns/Filterable.php`](../templates/app/Models/Concerns/Filterable.php).
 - `app/Sorts/QuerySorter.php` — abstract base class shared by every domain sorter. Not `final`. Ships as
-  a reusable asset: [`assets/app/Sorts/QuerySorter.php`](../assets/app/Sorts/QuerySorter.php).
+  a reusable implementation template:
+  [`templates/app/Sorts/QuerySorter.php`](../templates/app/Sorts/QuerySorter.php).
 - `app/Sorts/{Model}Sort.php` — one concrete sorter per model, flat in `app/Sorts/`. Name: `{Model}Sort`.
   Always `final`.
 - `app/Models/Concerns/Sortable.php` — trait adding the `sort` scope to a model. Ships as a reusable
-  asset: [`assets/app/Models/Concerns/Sortable.php`](../assets/app/Models/Concerns/Sortable.php).
+  implementation template:
+  [`templates/app/Models/Concerns/Sortable.php`](../templates/app/Models/Concerns/Sortable.php).
 
-Before installing any of these assets into a project, inspect whether an equivalent already exists
+Before installing any of these templates into a project, inspect whether an equivalent already exists
 (`app/Filters/`, `app/Sorts/`, `app/Models/Concerns/`) and reconcile rather than overwrite it.
 
 ## Filtering
@@ -59,7 +62,7 @@ validated array key and calls the same-named method on the concrete filter — n
 with no matching method, or a `null`/`''` value, is silently skipped.
 
 ```php
-// app/Models/Concerns/Filterable.php — see the reusable asset for the exact trait
+// app/Models/Concerns/Filterable.php — see the reusable implementation template for the exact trait
 #[Scope]
 protected function filter(Builder $query, QueryFilter $filters): Builder
 {
@@ -146,13 +149,13 @@ pattern does not prescribe one.
 ## Explicitly out of the core
 
 Filtering and sorting are optional capabilities loaded only when an index endpoint genuinely needs
-them — see `resource-controller-blueprint.md`'s "Explicitly out of the core" section for why they,
+them — see `blueprints/resource-controller.md`'s "Explicitly out of the core" section for why they,
 exports, and admin-table tooling are not part of every CRUD controller's mandatory shape.
 
 ## Testing
 
 See `testing-strategy.md` for full conventions. In short: filter and sorter classes are tested directly
 against a real query and database — no HTTP — which places them in `tests/Feature` under this stack's
-Pest taxonomy (see `pest-testing-blueprint.md`), not `tests/Unit`; "direct" here means without going
+Pest taxonomy (see `blueprints/pest-testing.md`), not `tests/Unit`; "direct" here means without going
 through the HTTP layer, not genuinely framework-isolated. Controller tests stay thin — a wiring smoke
 test plus validation-error cases.
