@@ -53,8 +53,8 @@ Content is classified by purpose, not forced into a single "prose rule" shape:
    attributes, resource boundaries, query conditionals, scopes, test ownership), scoped to only the
    delta not already owned by Boost.
 2. **Implementation blueprints** — repeatable implementation shapes the user recreates across
-   projects. Enum options belong here. These may remain documented examples where no shared
-   executable file exists.
+   projects. Enum options belong here, as does the resource-controller blueprint (§3). These may
+   remain documented examples where no shared executable file exists.
 3. **Reusable support templates** — actual code intended to be copied and adapted into consuming
    projects: `QueryFilter`, `Filterable`, and the Inertia testing macros/`TestingServiceProvider`.
    These are part of the stack companion even though they aren't coding-style rules.
@@ -85,6 +85,7 @@ as before.
 | `rules/request-normalization.md` | convention | keep, caveated | No Boost overlap (Boost's `validation.md` covers rule syntax, not coercion/defaulting discipline). Checked only for internal consistency in discovery, not against live FormRequest code (discovery §8.8). |
 | `rules/resources.md` | convention | repair | Its cited example (`ClientsController.php`) uses `inertia()` throughout while the file's own examples use `Inertia::render()`, inconsistent with it and with `filters-pattern.md` (discovery §6.2, §8.5, Tier 1 #2). Fix is a consistency correction — `Inertia::render()` isn't being declared invalid. The `whenLoaded()`/no-`$with` discipline is unchanged. |
 | `rules/testing-strategy.md` | convention | repair + narrow | Defer to Boost for general assertion and framework-testing guidance: adopt `assertModelExists()` as the default for existence checks; don't restate "do not test framework behavior." Retain only the concrete Action/Controller/Policy/Filter/Resource/macro ownership mapping, `assertDatabaseHas()`'s narrowed role (only when a test needs to prove an exact persisted value the resource assertion doesn't cover), and the macro-support prerequisite pointing at §4. |
+| `rules/resource-controller-blueprint.md` (new) | blueprint | author | Captures the portable core of the resourceful/"CRUDdy" controller shape used across `useOrbit`: use resourceful methods when the domain operation genuinely maps to CRUD; keep controllers thin; use FormRequests for validation/normalization; declare authorization at the controller boundary with `#[Authorize]`; compose read operations as query → `JsonResource` → Inertia page props; normally delegate project-owned mutations to Actions; return redirects/flash responses after mutations; use predictable controller/request/action/resource/Inertia-page naming; include only the operations the resource actually needs; never introduce a generic shared `CrudController` base merely to remove repeated structure. Boost owns the general resource-controller, thin-controller, FormRequest, policy, Resource, and CRUD-organization guidance; this file owns only the concrete composition of those parts with our Action contract, `#[Authorize]`, `JsonResource` wire boundary, and Inertia response flow. An adaptable blueprint, not a universal fixed recipe and not a reusable PHP support asset — it excludes `useOrbit`/admin-specific dimensions (exports, mandatory filtering/sorting, archive/unarchive, tenant-scoping implementation, slug infrastructure, fixed layer/page inventories, and specific models, roles, routes, pagination counts, issue links, or design-system components). References `actions-pattern.md`, `authorization.md`, `resources.md`, `request-normalization.md`, and `testing-strategy.md` instead of duplicating them. |
 
 **`my-phpstorm-conventions`** — deferred in full. Its one known stale finding (`SKILL.md` states the
 `getDiagnostics` prerequisite with no fallback for its absence, discovery §6.3/§10, Tier 2 #5) stays
@@ -112,7 +113,8 @@ reconciles against that existing code rather than reinstalling it.
 ## 5. Implementation sequence
 
 1. Author and rename `my-laravel-patterns` → `my-laravel-stack`, applying the approved repairs,
-   Boost-delta narrowing, and the simplified internal classification (§2, §3).
+   Boost-delta narrowing, and the simplified internal classification (§2, §3) — including authoring
+   the new `rules/resource-controller-blueprint.md`.
 2. Add the generic reusable support templates (§4) and their usage/prerequisite instructions
    atomically with the skill authoring — don't create instructions that reference a template not yet
    present.
