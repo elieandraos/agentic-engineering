@@ -1,0 +1,120 @@
+# Pest Testing Blueprint
+
+## Boundary
+
+This file defines the target `tests/Unit`/`tests/Feature` execution-boundary taxonomy and per-layer
+responsibility for this stack. `testing-best-practices` owns the general layer-ownership/de-duplication
+principle, record-level test-data minimalism, and the general framework-vs-project testing distinction —
+this file does not restate any of them. `testing-strategy.md` owns the concrete
+Action/Policy/Filter/Sorter/Resource/Model/HTTP class-taxonomy mapping (test locations and per-class
+assertion focus) — load it alongside this file when writing a layer-specific test.
+
+## Unit vs. Feature — classify by execution boundary first
+
+- **`tests/Unit`** — genuinely isolated only: no Laravel application boot, no database or factories, no
+  service container, no Laravel facades. A plain enum, a plain value object, or any class with no
+  framework dependency belongs here.
+- **`tests/Feature`** — anything that boots Laravel or uses the database. This includes Action, Policy,
+  Filter, Sorter, Resource, and Model tests in this stack, since they typically use factories, the
+  database, or Laravel's container — not only HTTP tests. Mirror the owning application area inside
+  `Feature` only where useful (`Http`, `Actions`, `Policies`, `Filters`, `Sorts`, `Resources`, `Models`)
+  — never force a category a feature has nothing to put in.
+
+Before relying on this distinction, confirm what the project's `tests/Pest.php` actually binds database
+refresh to. A suite that applies it uniformly to both `Feature` and `Unit` has not drawn this boundary in
+practice yet, regardless of the directory names — treat a directory name as aspirational until the
+binding matches it, and don't assume a class under `tests/Unit` is actually isolated without checking.
+
+## Preserve endpoint-oriented HTTP test files
+
+Keep one Pest file per HTTP endpoint or closely related group (`IndexTest.php`, `ShowTest.php`,
+`StoreTest.php`, `UpdateTest.php`, `DestroyTest.php`, and any custom-action endpoint's own file) inside
+`tests/Feature/Http/{Domain}/`. Do not force every controller's tests into one oversized
+`{Controller}Test.php` file merely for consolidation.
+
+## Per-layer responsibility
+
+- **HTTP tests** own public endpoint behavior: authentication, authorization wiring, validation, tenant
+  boundaries (when applicable), route-model behavior, response status, redirects, flash messages, and
+  the Inertia component/prop contract.
+- **Action tests** own complete mutation behavior: defaults, transaction outcome, audit fields,
+  derivation/slug rules, branches, side effects.
+- **Policy tests** own the complete permission matrix; HTTP keeps representative cases proving
+  authorization is wired, not the full matrix.
+- **Filter and sorter tests** own their complete query matrices; HTTP keeps representative wiring and
+  request-validation cases.
+- **Resource tests** own non-trivial project-defined transformations and conditional-field behavior;
+  HTTP proves the correct Resource contract reaches Inertia.
+- **Model tests** cover project-owned behavior, scopes, and meaningful relationship constraints — not
+  Laravel, Pest, or Inertia internals. A cast, relationship, or scope is eligible for a test; it does not
+  need one merely because it exists — write one only when its failure would materially affect
+  application behavior.
+
+> When a lower layer owns a complete behavioral matrix, the HTTP layer should retain enough evidence to
+> prove integration without duplicating that matrix.
+
+## Warning: don't let a resource-built comparison stand in for the value a test is specifically responsible for proving
+
+The reusable `assertHasResource`/`assertHasPaginatedResource` macros (below) compare the actual Inertia
+prop against a value built by instantiating the same production Resource the endpoint itself uses. That
+comparison is appropriate when what an HTTP test needs to prove is integration — the correct Resource
+class wraps the correct model instance for this route — because the Resource's own field-level
+correctness is the Resource test's job (see "Per-layer responsibility" above). It stops being appropriate
+when the HTTP test is specifically responsible for proving a field's value or a transformation the
+Resource performs: building the expected side of that assertion from the same Resource makes the
+comparison self-referential — if the Resource's shape regresses in a way that stays internally
+self-consistent, the test cannot catch it. In that case, assert the literal expected value instead of
+deriving it from the Resource under test.
+
+## Minimal test data — the attribute-level delta
+
+`testing-best-practices`'s `test-data.md` already owns record-level minimalism ("create only the records
+required to arrange the behavior or support an assertion"). This file adds the narrower, additive
+attribute-level rule it doesn't cover:
+
+> Each test sets only the attributes required to establish its preconditions and prove the behavior under
+> test. Set additional attributes only when they are material to the case — for example ordering,
+> filtering, tenant isolation, a collision, an absence, or complete field mapping. "Minimal" does not mean
+> incomplete coverage: a test specifically proving field mapping may intentionally provide the complete
+> relevant payload.
+
+## Existence vs. exact-value assertions
+
+Use `assertModelExists()` for existence (Boost's default). Use `assertDatabaseHas()` only when a test
+genuinely needs to prove an exact persisted value.
+
+## Reusable Inertia testing macros
+
+`hasResource`, `hasPaginatedResource`, `assertHasResource`, `assertHasPaginatedResource`, and
+`assertHasInertiaFlash` are custom Pest/Inertia-testing macros this stack ships as a reusable asset — see
+[`assets/app/Providers/TestingServiceProvider.php`](../assets/app/Providers/TestingServiceProvider.php)
+for the implementation, required packages, and registration/guard instructions. Install and register that
+provider before writing a test that calls any of these macros; do not write a test that assumes they
+exist without checking first.
+
+```php
+test('an authenticated user can view an order', function () {
+    $user = User::factory()->create();
+    $order = Order::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('orders.show', $order))
+        ->assertOk()
+        ->assertHasResource('order', OrderResource::make($order));
+});
+```
+
+This proves integration — the `show` route wraps the requested `$order` in `OrderResource` — which is
+exactly the case the warning above allows. It would stop being appropriate if the test's actual
+responsibility were proving a specific field transformation `OrderResource` performs; that case calls for
+a literal expected value instead.
+
+## Capability gating
+
+Treat Pest TIA (`pest()->tia()->always()->locally()` — a core Pest 5 feature) and any other optional Pest
+plugin (architecture testing, type coverage, and similar) as capability-gated: check what the consuming
+project has actually installed and configured before assuming any of them is available. Never
+universally prescribe one.
+
+`LazilyRefreshDatabase` is a measured future candidate for a suite that currently binds `RefreshDatabase`
+uniformly across `Feature` and `Unit` — record it for evaluation, not as a requirement to adopt.
