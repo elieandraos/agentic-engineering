@@ -37,7 +37,7 @@ questions route to `inertia-vue-development` instead.
 
 ## What's here today
 
-- **Rules** cover the Actions pattern, `#[Authorize]`-based authorization, `#[Scope]`-based Eloquent
+- **Rules** cover Action conventions, `#[Authorize]`-based authorization, `#[Scope]`-based Eloquent
   scopes, query conditionals (`when()` over `if`), request normalization in `prepareForValidation()`,
   JsonResource conventions, enum option lists, factory/seeder realism, PHP class finality, Laravel
   migration column nullability, and per-layer test ownership.

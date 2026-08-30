@@ -38,7 +38,7 @@ than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `temp
 |---|---|
 | Composing a CRUD or single-action controller | `blueprints/resource-controller.md` |
 | Writing or organizing a Pest test | `blueprints/pest-testing.md`, then `rules/test-ownership.md` for the concrete class-ownership mapping |
-| Wiring Form Request -> Action -> Controller | `rules/actions-pattern.md` |
+| Wiring Form Request -> Action -> Controller | `rules/actions.md` |
 | Authorizing a controller method | `rules/authorization.md` |
 | Defining an Eloquent local scope | `rules/eloquent-attributes.md` |
 | Adding index filtering and/or sorting | `blueprints/filters-and-sorting.md` + `rules/request-normalization.md` (a sort `direction` must be defaulted, not left nullable) + `templates/app/Filters/QueryFilter.php`, `templates/app/Sorts/QuerySorter.php`, `templates/app/Models/Concerns/Filterable.php`, `templates/app/Models/Concerns/Sortable.php` |

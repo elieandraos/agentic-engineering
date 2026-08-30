@@ -26,7 +26,7 @@ manufacture a component merely to make an endpoint structurally symmetrical with
   before the method body runs (see `rules/authorization.md`).
 - **Action** — used for mutations or business workflows: DB writes wrapped in `DB::transaction()`, audit
   fields, external side effects deferred with `->afterCommit()` so they never execute until the
-  transaction commits (see `rules/actions-pattern.md`).
+  transaction commits (see `rules/actions.md`).
 - **Resource** — used when model data requires an explicit response contract; owns that contract (see
   `rules/resources.md`).
 - **Response** — Inertia is used for Inertia page responses; a valid endpoint may instead return a

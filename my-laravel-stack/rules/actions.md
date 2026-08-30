@@ -1,4 +1,4 @@
-# Actions Pattern
+# Actions
 
 ## Purpose
 
