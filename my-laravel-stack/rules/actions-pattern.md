@@ -33,6 +33,10 @@ final class CreateOrderAction
 }
 ```
 
+`customer_id` is typed `int` here only because the corresponding Form Request's `prepareForValidation()`
+normalizes it explicitly (see "Data payload convention" below and `request-normalization.md`) — the
+`integer` validation rule alone would not justify that type.
+
 ## No HTTP concerns inside an Action
 
 An Action must never resolve its own state by calling `request()`, `Auth::user()`, or any other
@@ -45,23 +49,50 @@ HTTP request to resolve state from.
 ## Data payload convention
 
 - Name the validated-array parameter `$attributes` — not `$data`, `$input`, or `$payload`.
-- Add a `@param array{...}` PHPDoc shape on `handle()`, derived from the corresponding Form Request's
-  `rules()` and its actual validated shape — not from a fixed rule-to-type table. Presence and
-  nullability are separate axes:
-  - **Key presence** — whether the key is guaranteed to appear in the array at all — comes from
-    `required`, `present`, and `sometimes`. A `sometimes` rule, or a rule only conditionally applied
-    (`Rule::when()`, `exclude_unless`, and similar), makes the key optional (`?`) in the shape regardless
-    of nullability.
-  - **Nullability** — whether the value itself may be `null` when the key is present — comes from
-    `nullable`. It is independent of presence: a required, nullable field is always present but may be
-    `null` (`key: string|null`); an optional, non-nullable field may be absent but is never `null` when
-    it is present (`key?: string`).
-  - **Type** each key from its actual validation rule, not a blanket mapping to `string`: `integer` →
-    `int`; `boolean` → `bool`; `array`/`array:...` → `array` (refine the shape further when the array's
-    own structure is known); `numeric`/`decimal` → `int|float`, or the project's actual numeric type; a
-    backed-enum rule (`new Enum(...)`) → that enum's backing type, or the enum class itself when the
-    Action consumes the enum instance directly; `string`, `date`, and other string-shaped rules →
-    `string`.
+- Add a `@param array{...}` PHPDoc shape on `handle()`. Derive it from two independent things: which
+  keys the Form Request's `rules()` guarantees will be present, and what runtime type each key's value
+  actually has by the time `validated()` returns it — not from a fixed rule-to-type table, because a
+  validation rule constrains a value; in general it does not cast it.
+
+### Key presence
+
+- A `required` or `present` rule guarantees the key exists in `validated()` whenever validation
+  succeeds — the request never reaches `handle()` otherwise.
+- A field with no presence-requiring rule is normally optional (`?`) in the shape: it may be absent
+  entirely.
+- `sometimes`, a conditionally applied rule (`Rule::when()`, `required_if`, and similar), and an
+  exclusion rule (`exclude_unless`, `exclude_if`, and similar) can also make presence conditional even
+  when the field's rule set elsewhere looks like `required` — base the shape on what actually controls
+  presence for that specific field, not merely on whether the word `required` appears in its rule list.
+
+### Nullability
+
+`nullable` controls only whether a *present* value may be `null` — it says nothing about whether the key
+exists at all. A required, nullable field is always present but may be `null` (`key: string|null`); a
+present, non-nullable field is guaranteed not to be `null` when it appears. Presence and nullability
+combine independently: `key: string`, `key: string|null`, `key?: string`, and `key?: string|null` are
+four distinct, individually valid shapes depending on the field's actual rules.
+
+### Type
+
+A validation rule constrains the value; most rules do not cast it. `integer` validates that the input is
+integer-like — it does not itself guarantee the value is a PHP `int` by the time `validated()` returns
+it. The same applies to `boolean` (does not itself guarantee PHP `bool`), `numeric`/`decimal` (does not
+itself guarantee `int|float`), and an enum rule such as `new Enum(OrderStatus::class)` (validates that
+the value matches one of the enum's backing values — it does not transform the value into an
+`OrderStatus` instance).
+
+Type each key from the actual value the Action receives, not from the validation rule that merely
+checked it:
+
+- If the Form Request's `prepareForValidation()`, or any other explicit transformation, casts or
+  replaces the value, type it as that transformation's real output (see `request-normalization.md` for
+  where that coercion belongs).
+- If nothing normalizes the field, represent its real accepted runtime type instead of a narrower type
+  the validation rule doesn't guarantee — for most HTTP input this is `string`, even behind an `integer`,
+  `boolean`, or `numeric` rule.
+- Use a narrow scalar or enum type (`int`, `bool`, `OrderStatus`) in the shape only when a normalization
+  step genuinely produces it. Don't infer that type from the rule name alone.
 
 ## Reusing an Action from another Action
 
@@ -86,34 +117,42 @@ final class CreateOrderAction
 }
 ```
 
-## Keep external side effects out of the transaction; dispatch them with `afterCommit()`
+## Keep external side-effect execution out of the transaction; defer it with `afterCommit()`
 
 `DB::transaction()` may contain whatever reads, locks, and writes the atomic unit of work actually
-needs — a transaction is not limited to a single write. What it must not contain is a side effect
-external to the database: sending mail, dispatching a queued job, calling another service. Those run
-outside the transaction, chained with `->afterCommit()` so Laravel defers them until the transaction
-actually commits.
+needs — a transaction is not limited to a single write. What must not happen inside it is the actual
+*execution* of an external side effect: sending mail synchronously, calling another service, or a queued
+job actually running. Invoking `dispatch()` chained with `->afterCommit()` from inside the transaction is
+safe, and often the natural place for it: `afterCommit()` does not push the job onto the queue
+immediately — it registers the dispatch to run only once the outermost active transaction commits.
 
 ```php
 $order = DB::transaction(function () use ($attributes): Order {
     $order = Order::query()->create($attributes);
     $order->lineItems()->createMany($attributes['line_items']);
 
+    SendOrderConfirmation::dispatch($order)->afterCommit();
+
     return $order;
 });
-
-SendOrderConfirmation::dispatch($order)->afterCommit();
 ```
 
-`afterCommit()` queues the dispatch to run once the outermost transaction it was chained within
-commits — not immediately, and not at all if that transaction rolls back. It has no effect on the
-transaction itself and cannot retroactively undo a commit that already happened; it only controls when
-the dispatch fires relative to that commit.
+The `dispatch()->afterCommit()` call itself executes inside the transaction — it only registers a
+deferred callback. The actual queue push, and the job's later execution by a worker, both happen only
+after the transaction commits. If the transaction rolls back, the registered callback is discarded and
+the job is never enqueued at all.
 
-| Scenario | Behavior without `afterCommit()` (dispatched synchronously, inside the transaction) | Behavior with `afterCommit()` |
+If a dispatch is only ever invoked after every enclosing transaction has already committed,
+`afterCommit()` adds nothing. Chain it whenever the dispatching code could still be running inside a
+transaction — including one opened by a caller the Action doesn't control — since `handle()` generally
+has no reliable way to know that from the inside.
+
+| Scenario | Without `afterCommit()` | With `afterCommit()` |
 |---|---|---|
-| DB write succeeds, then the dispatched job/mail throws | The exception can trigger a rollback of the just-written data, discarding a persisted record to unwind a failure in an unrelated side effect | The write already committed before the dispatch could run; the side effect firing or failing afterward cannot affect it |
-| DB write fails | The dispatch never runs — correct either way | The dispatch never runs — correct either way |
+| A worker picks up the job before the transaction commits | It runs against data that isn't committed yet, or that doesn't yet exist from its own connection's point of view | Not possible — the job isn't enqueued until after the commit |
+| The transaction rolls back after the job was already enqueued | The job remains queued and will still run — against data that was rolled back and no longer exists | The dispatch was never enqueued — nothing runs |
+
+The `database` queue driver is a partial exception to the rollback row: because it inserts the job row through the same connection, that insert can itself roll back with the enclosing transaction even without `afterCommit()`. Don't rely on that as a substitute for `afterCommit()` — a different queue driver (Redis, SQS, and similar) enqueues over a separate connection and will not roll back with it.
 
 ## Testing
 

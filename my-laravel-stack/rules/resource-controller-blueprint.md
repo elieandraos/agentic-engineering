@@ -19,8 +19,8 @@ classes.
 - **Policy / `#[Authorize]`** — owns access enforcement, resolved before the method body runs (see
   `authorization.md`).
 - **Action** — owns mutations and business workflows: DB writes wrapped in `DB::transaction()`, audit
-  fields, side effects dispatched with `->afterCommit()` outside the transaction (see
-  `actions-pattern.md`).
+  fields, external side effects deferred with `->afterCommit()` so they never execute until the
+  transaction commits (see `actions-pattern.md`).
 - **Resource** — owns the response/Inertia data contract (see `resources.md`).
 
 ### Worked example — full CRUD
@@ -35,6 +35,13 @@ final class StoreOrderRequest extends FormRequest
             'customer_id' => ['required', 'integer', 'exists:customers,id'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'customer_id' => $this->integer('customer_id'),
+        ]);
     }
 }
 ```
