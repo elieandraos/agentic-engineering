@@ -6,9 +6,12 @@ code was installed, no Composer package was created, and no file was renamed to 
 See `roadmap.md` §5 for Phase D's charter, `phase-discovery.md` for the original Phase C classification,
 and `phase-d-stack-discovery.md` for the reconciliation this synthesis acts on.
 
-This document does not restate discovery's evidence ledger, source reads, or per-file Boost-overlap
-analysis — it cites `phase-d-stack-discovery.md` by section (`§n`) wherever a decision rests on a
-specific finding, and states only the decision.
+This document does not reproduce discovery's complete evidence ledger, source reads, or per-file
+Boost-overlap analysis — it cites `phase-d-stack-discovery.md` by section (`§n`) wherever a decision
+rests on a finding already established there. Where a new decision (the two blueprints, the two
+recovered conventions, the minimal-test-data ownership call) needed verification discovery didn't
+already supply, this pass performed focused fresh reads and states that evidence inline rather than
+citing a section that doesn't exist yet.
 
 **This reconciliation pass** was produced against current source, not prior summaries: full reads of
 `useOrbit/app/Http/Controllers/Clients/ClientsController.php` and representative non-CRUD controllers
@@ -113,9 +116,9 @@ against `ClientsController` and its collaborators:
   the second argument (`#[Authorize('create', [Document::class, 'client'])]`) — passing only the parent's
   route parameter would resolve the parent's policy, not the child's.
 - **Actions** own mutations and business workflows: DB writes wrapped in `DB::transaction()`, audit
-  fields, tenant stamping, side effects dispatched with `->afterCommit()` outside the transaction.
-  Verified: `ArchiveClientAction` sends a `Notification` with `->afterCommit()` after the transaction
-  closes, never inside it.
+  fields, creation-time tenant assignment where the project is multi-tenant, side effects dispatched
+  with `->afterCommit()` outside the transaction. Verified: `ArchiveClientAction` sends a `Notification`
+  with `->afterCommit()` after the transaction closes, never inside it.
 - **Resources** own the response/Inertia data contract — verified: `ClientResource` (`final class`,
   `/** @mixin Client */`) wraps every field the controller passes to Inertia; relation fields use
   `whenLoaded()` to avoid a silent N+1 for any caller that didn't eager-load.
@@ -129,12 +132,22 @@ against `ClientsController` and its collaborators:
   against the route parameter directly) or must be resolved via a named child policy plus parent
   parameter (§3.1) — this distinction is not obvious from Laravel's own attribute API and has caused
   real defects when skipped (discovery §8.4).
-- **Tenant boundaries** — verified: tenant isolation is enforced at the Policy layer (`organization_id`
-  equality checks against the authenticated user, e.g. `ClientPolicy::view/update/delete`) and at the
-  Action layer (`OrganizationContext`, a request-scoped singleton, stamps `organization_id` on create).
-  It is **not** enforced via a scoped route-model binding or a global Eloquent scope on the controller's
-  bound model. The blueprint must state this explicitly so a new controller doesn't assume tenant
-  scoping happens implicitly at the routing layer.
+- **Tenant boundaries, where tenancy applies** — tenancy is **conditional, not a requirement of every
+  project or every controller**. The blueprint does not prescribe a single portable tenancy mechanism.
+  When a project genuinely is multi-tenant, the blueprint requires the author to identify, for the
+  resource at hand, where each of the following is actually enforced: read scoping (does the index/show
+  query itself filter by tenant, or is that left to a global scope?), authorization (does the Policy
+  check tenant membership?), creation-time tenant assignment (does the Action stamp the tenant, and from
+  what source?), and route-model isolation (can a route parameter resolve to another tenant's record at
+  all, and if so, what rejects it?). The blueprint must not assert that Policy checks plus a
+  request-scoped context object is *the* mechanism, and must not reject a scoped route binding, a global
+  Eloquent scope, or another verified design — any of those can be the right answer for a given project.
+  `useOrbit`'s own approach (Policy-layer `organization_id` equality checks, e.g.
+  `ClientPolicy::view/update/delete`, plus `OrganizationContext` — a request-scoped singleton — stamping
+  `organization_id` at Action creation time, with no scoped route-model binding or global scope in the
+  read path) is recorded here as this synthesis's evidence for what an "identify where each boundary is
+  enforced" answer looks like in one real project, and as a later smoke-test subject (§10) — not as
+  portable skill guidance to prescribe elsewhere.
 
 ### 3.3 Non-CRUD and single-action controllers are first-class, not an exception
 
@@ -364,8 +377,8 @@ Legend: **convention** (convention/decision guidance) · **blueprint** (implemen
 | `rules/query-conditionals.md` | convention | repair | Broken example and a dead `TagAttachment::forTaggableType()` citation (discovery §8.10, Tier 1 #3); the underlying `when()`-over-`if` rule needs no content change. |
 | `rules/request-normalization.md` | convention | keep, caveated | No Boost overlap (Boost's `validation.md` covers rule syntax, not coercion/defaulting discipline). Checked only for internal consistency in discovery, not against live FormRequest code (discovery §8.8) — this pass's `IndexClientRequest::prepareForValidation()` read is consistent with the file's content but doesn't constitute the fuller re-audit still owed. |
 | `rules/resources.md` | convention | repair | Its cited example (`ClientsController.php`) uses `inertia()` throughout while the file's own examples use `Inertia::render()`, inconsistent with it and with `filters-pattern.md` (discovery §6.2, §8.5, Tier 1 #2) — this pass reconfirms the controller still uses `inertia()` at every call site. Fix is a consistency correction — `Inertia::render()` isn't being declared invalid. The `whenLoaded()`/no-`$with` discipline is unchanged and reconfirmed. |
-| `rules/testing-strategy.md` | convention | repair + narrow | Defer to Boost for record-level test-data minimalism and general layer-ownership de-duplication (§0, §5, §6 above); don't restate either. Retain only the concrete Action/Controller/Policy/Filter/Resource/Model class-taxonomy ownership mapping (§4.3), `assertDatabaseHas()`'s narrowed role, and a cross-reference to `pest-testing-blueprint.md` (§4) for the target Unit/Feature taxonomy and execution-boundary discipline — this file no longer independently states where Action/Filter/Policy tests should live. |
-| `rules/resource-controller-blueprint.md` (new) | blueprint | author | Content specified in full in §3. Boost owns general resource/CRUD organization, thin controllers, and FormRequest boundaries; this file owns only the concrete composition with this stack's Action/`#[Authorize]`/Resource/Inertia contract, explicit redirect/flash/tenant-boundary conventions, and the non-CRUD/single-action allowance (§3.3). Excludes exports, filters/sorters, and admin-table capabilities from its core (§3.4). |
+| `rules/testing-strategy.md` | convention | repair + narrow | Defer to Boost for record-level test-data minimalism and general layer-ownership de-duplication (§0, §4, §5 above); don't restate either. Retain only the concrete Action/Controller/Policy/Filter/Resource/Model class-taxonomy ownership mapping (§4.3), `assertDatabaseHas()`'s narrowed role, and a cross-reference to `pest-testing-blueprint.md` (§4) for the target Unit/Feature taxonomy and execution-boundary discipline — this file no longer independently states where Action/Filter/Policy tests should live. |
+| `rules/resource-controller-blueprint.md` (new) | blueprint | author | Content specified in full in §3. Boost owns general resource/CRUD organization, thin controllers, and FormRequest boundaries; this file owns only the concrete composition with this stack's Action/`#[Authorize]`/Resource/Inertia contract, explicit redirect/flash conventions, conditional tenant-boundary identification when a project is multi-tenant (§3.2 — no single mechanism prescribed), and the non-CRUD/single-action allowance (§3.3). Excludes exports, filters/sorters, and admin-table capabilities from its core (§3.4). |
 | `rules/pest-testing-blueprint.md` (new) | blueprint | author | Content specified in full in §4. Defines the target Unit/Feature taxonomy by execution boundary, per-layer testing responsibility, the self-referential-expected-value warning, and capability gating for optional Pest plugins — without prescribing a migration of the current tree. |
 | `rules/php-conventions.md` (new) | convention | author | Content specified in full in §6.1: final-by-default for concrete application classes, with stated exceptions. |
 | `rules/migrations.md` (new) | convention | author | Content specified in full in §6.2: the migration column-nullability default and the `->notNull()` correctness warning. |
