@@ -1,8 +1,8 @@
 # Authorization Pattern
 
-Requires a Laravel version that ships `Illuminate\Routing\Attributes\Controllers\Authorize` — verify
-against the project's installed `laravel/framework` version before relying on this pattern, the same way
-`eloquent-attributes.md` pins `#[Scope]` to `^13.7`.
+Requires a Laravel version that ships `Illuminate\Routing\Attributes\Controllers\Authorize` — confirm
+this class exists in the project's installed `laravel/framework` version before relying on this pattern,
+the same way `eloquent-attributes.md` asks for `Illuminate\Database\Eloquent\Attributes\Scope`.
 
 ## Use `#[Authorize]` attributes
 

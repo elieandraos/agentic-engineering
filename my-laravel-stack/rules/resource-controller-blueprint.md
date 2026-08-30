@@ -82,9 +82,9 @@ final class OrdersController extends Controller
     }
 
     #[Authorize('delete', 'order')]
-    public function destroy(Order $order): RedirectResponse
+    public function destroy(Order $order, DeleteOrderAction $action): RedirectResponse
     {
-        $order->delete();
+        $action->handle($order);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Order deleted.')]);
 

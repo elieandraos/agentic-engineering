@@ -1,6 +1,6 @@
 ---
 name: my-laravel-stack
-description: "Personal companion conventions for a Laravel + InertiaJS + Vue 3 + Pest stack, additive to Laravel Boost's laravel-best-practices and testing-best-practices skills — never a replacement for them. Covers the Controller-to-Form-Request-to-Policy/#[Authorize]-to-Action-to-Resource-to-Inertia composition, the Pest Unit/Feature execution-boundary taxonomy and per-layer test ownership, #[Authorize] attribute authorization, #[Scope]-based Eloquent scopes, class-based QueryFilter/QuerySorter query conditioning with reusable installable base classes, enum option lists, factory/seeder realism, request normalization in prepareForValidation(), final-by-default application classes, and Laravel migration column-nullability behavior. Activate for Laravel, Inertia, or Pest work on this stack — always alongside the matching Boost skill(s), never alone."
+description: "Personal companion conventions for a Laravel + InertiaJS + Vue 3 + Pest stack, additive to Laravel Boost's laravel-best-practices and testing-best-practices skills — never a replacement for them. Activate for Laravel, Inertia, or Pest work on this stack — always alongside the matching Boost skill(s), never alone. See the routing table inside for the specific capabilities covered."
 ---
 
 # My Laravel Stack

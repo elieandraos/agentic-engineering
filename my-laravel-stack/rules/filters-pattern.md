@@ -151,5 +151,8 @@ exports, and admin-table tooling are not part of every CRUD controller's mandato
 
 ## Testing
 
-See `testing-strategy.md` for full conventions. In short: filter and sorter classes are unit-tested
-directly (no HTTP); controller tests stay thin — a wiring smoke test plus validation-error cases.
+See `testing-strategy.md` for full conventions. In short: filter and sorter classes are tested directly
+against a real query and database — no HTTP — which places them in `tests/Feature` under this stack's
+Pest taxonomy (see `pest-testing-blueprint.md`), not `tests/Unit`; "direct" here means without going
+through the HTTP layer, not genuinely framework-isolated. Controller tests stay thin — a wiring smoke
+test plus validation-error cases.

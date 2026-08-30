@@ -1,11 +1,11 @@
 # Eloquent Attributes
 
 `laravel-best-practices`'s `eloquent.md` already demonstrates `#[Scope]` mechanics by example. This file
-owns only the narrow delta: migrating off the legacy `scope`-prefixed naming convention, and the version
-requirement.
+owns only the narrow delta: migrating off the legacy `scope`-prefixed naming convention.
 
 Define local Eloquent scopes with the `#[Scope]` attribute, not the legacy `scope`-prefixed method-name
-convention. Requires Laravel `^13.7` or later, where the attribute was introduced.
+convention. Requires a Laravel version that provides `Illuminate\Database\Eloquent\Attributes\Scope` —
+confirm this class exists in the project's installed `laravel/framework` version before relying on it.
 
 ```php
 // ✅ attribute-based
