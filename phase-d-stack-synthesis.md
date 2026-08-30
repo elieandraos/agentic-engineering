@@ -37,8 +37,12 @@ schema grammars) for the migration-nullability finding in §6.2.
 - Laravel Boost owns the broader Laravel and Pest ecosystem baseline. `my-laravel-stack` contains only
   material genuinely additive to Boost.
 - `my-phpstorm-conventions` stays a **separate**, **fully deferred** companion — not authored or
-  changed in this pass or its implementation sequence. Its already-identified stale finding (the
-  missing `getDiagnostics`-absence fallback, discovery §6.3/§10 Tier 2 #5) stays listed as deferred.
+  changed in this pass or its implementation sequence. Its known findings, all deferred rather than
+  resolved here: its `SKILL.md` still names the retired `pest-testing` Boost skill and will eventually
+  need `testing-best-practices` (discovery §8.11); its `SKILL.md`'s `getDiagnostics` prerequisite still
+  states no fallback for its absence (discovery §6.3/§10, Tier 2 #5); and its content has not been
+  freshly exercised against a live PhpStorm integration in this or any prior pass. The entire skill
+  stays deferred and untouched.
 - **`.ai/rules` is out of the current direction**, including as an override mechanism for Boost. This
   doesn't declare it permanently invalid — it's simply not part of this target model or sequence. Do
   not reintroduce it.
@@ -51,6 +55,14 @@ schema grammars) for the migration-nullability finding in §6.2.
   matching checklist items) and `test-data.md` fully owns record-level test-data minimalism (§5). Don't
   restate either. Retain only the concrete Action/Controller/Policy/Filter/Resource/Model class-taxonomy
   ownership mapping this stack actually uses, and the narrow attribute-level test-data delta (§5).
+- **Framework-behavior testing is resolved, not merely flagged** (closing discovery §11.4's tension, not
+  restating it as still open): do not retest Laravel, Pest, or Inertia internals. Test project-owned
+  configuration, composition, integrations, macros, and contracts when their failure would materially
+  affect application behavior. A cast, relationship, scope, or other configuration is eligible for
+  testing — it does not require a test merely because it exists. Boost's `review.md` already owns the
+  general framework-vs-project distinction (discovery §11.4); `my-laravel-stack` retains only the
+  stack-specific applications of it — the Model-test scope in §4.3 and the macro tests it implies — not
+  a restatement of the boundary itself.
 
 ---
 
@@ -236,7 +248,9 @@ that remains a later, reviewed application decision (§10).
 - **Resource tests** own non-trivial project-defined transformations and conditional-field behavior;
   HTTP proves the correct Resource contract reaches Inertia.
 - **Model tests** cover project-owned behavior, scopes, and meaningful relationship constraints — not
-  Laravel framework behavior.
+  Laravel, Pest, or Inertia internals. A cast, relationship, or scope is eligible for a test; it does
+  not need one merely because it exists — write one only when its failure would materially affect
+  application behavior (§0's resolved framework-behavior-testing decision).
 - **Reusable Inertia testing macros and `TestingServiceProvider`** belong to the skill's reusable
   support templates (§8), with explicit installation and prerequisite guidance — verified registration:
   `bootstrap/providers.php`, guarded by a `runningUnitTests()` boot check so the macros exist only while
@@ -376,16 +390,18 @@ Legend: **convention** (convention/decision guidance) · **blueprint** (implemen
 | `rules/filters-pattern.md` | convention (wiring), referencing templates | repair | The FormRequest → `QueryFilter` → `Filterable` wiring pattern has no Boost overlap. Scrub the live `useOrbit` issue links (`#76`, `#71`) and the arbitrary `paginate(7)` literal (discovery §8.7) — those are `useOrbit` fingerprints, not part of the pattern. `QueryFilter`/`Filterable` themselves ship as reusable support templates (§8), not merely narrated prose. Excluded from the controller blueprint's core (§3.4). |
 | `rules/query-conditionals.md` | convention | repair | Broken example and a dead `TagAttachment::forTaggableType()` citation (discovery §8.10, Tier 1 #3); the underlying `when()`-over-`if` rule needs no content change. |
 | `rules/request-normalization.md` | convention | keep, caveated | No Boost overlap (Boost's `validation.md` covers rule syntax, not coercion/defaulting discipline). Checked only for internal consistency in discovery, not against live FormRequest code (discovery §8.8) — this pass's `IndexClientRequest::prepareForValidation()` read is consistent with the file's content but doesn't constitute the fuller re-audit still owed. |
-| `rules/resources.md` | convention | repair | Its cited example (`ClientsController.php`) uses `inertia()` throughout while the file's own examples use `Inertia::render()`, inconsistent with it and with `filters-pattern.md` (discovery §6.2, §8.5, Tier 1 #2) — this pass reconfirms the controller still uses `inertia()` at every call site. Fix is a consistency correction — `Inertia::render()` isn't being declared invalid. The `whenLoaded()`/no-`$with` discipline is unchanged and reconfirmed. |
-| `rules/testing-strategy.md` | convention | repair + narrow | Defer to Boost for record-level test-data minimalism and general layer-ownership de-duplication (§0, §4, §5 above); don't restate either. Retain only the concrete Action/Controller/Policy/Filter/Resource/Model class-taxonomy ownership mapping (§4.3), `assertDatabaseHas()`'s narrowed role, and a cross-reference to `pest-testing-blueprint.md` (§4) for the target Unit/Feature taxonomy and execution-boundary discipline — this file no longer independently states where Action/Filter/Policy tests should live. |
+| `rules/resources.md` | convention | repair | Its cited example (`ClientsController.php`) uses `inertia()` throughout while the file's own examples use `Inertia::render()`, inconsistent with it and with `filters-pattern.md` (discovery §6.2, §8.5, Tier 1 #2) — this pass reconfirms the controller still uses `inertia()` at every call site. Fix is a consistency correction — `Inertia::render()` isn't being declared invalid. Retain the `whenLoaded()`/no-`$with` discipline itself — the core additive pattern, still correct and reconfirmed — but authoring must remove or generalize the file's `useOrbit`-specific claim that `Model::preventLazyLoading()` is absent from `AppServiceProvider.php` (discovery §8.5): Boost's own `db-performance.md` already owns general lazy-loading-prevention guidance, and this pass does not enable `preventLazyLoading()` in `useOrbit` — that stays a separate, unstarted decision, not something this document or its authoring step presupposes or acts on. |
+| `rules/testing-strategy.md` | convention | repair + narrow | Defer to Boost for record-level test-data minimalism, general layer-ownership de-duplication, and the general framework-vs-project testing distinction (§0, §4, §5 above); don't restate any of them. Retain only the concrete Action/Controller/Policy/Filter/Resource/Model class-taxonomy ownership mapping (§4.3, including its now-resolved Model-test scope), `assertDatabaseHas()`'s narrowed role, and a cross-reference to `pest-testing-blueprint.md` (§4) for the target Unit/Feature taxonomy and execution-boundary discipline — this file no longer independently states where Action/Filter/Policy tests should live, nor restates the framework-behavior boundary Boost's `review.md` already owns. |
 | `rules/resource-controller-blueprint.md` (new) | blueprint | author | Content specified in full in §3. Boost owns general resource/CRUD organization, thin controllers, and FormRequest boundaries; this file owns only the concrete composition with this stack's Action/`#[Authorize]`/Resource/Inertia contract, explicit redirect/flash conventions, conditional tenant-boundary identification when a project is multi-tenant (§3.2 — no single mechanism prescribed), and the non-CRUD/single-action allowance (§3.3). Excludes exports, filters/sorters, and admin-table capabilities from its core (§3.4). |
 | `rules/pest-testing-blueprint.md` (new) | blueprint | author | Content specified in full in §4. Defines the target Unit/Feature taxonomy by execution boundary, per-layer testing responsibility, the self-referential-expected-value warning, and capability gating for optional Pest plugins — without prescribing a migration of the current tree. |
 | `rules/php-conventions.md` (new) | convention | author | Content specified in full in §6.1: final-by-default for concrete application classes, with stated exceptions. |
 | `rules/migrations.md` (new) | convention | author | Content specified in full in §6.2: the migration column-nullability default and the `->notNull()` correctness warning. |
 
-**`my-phpstorm-conventions`** — deferred in full. Its one known stale finding (`SKILL.md` states the
-`getDiagnostics` prerequisite with no fallback for its absence, discovery §6.3/§10, Tier 2 #5) stays
-listed here as a deferred repair, not authored in this pass or its sequence.
+**`my-phpstorm-conventions`** — deferred in full. Three known findings stay listed as deferred, not
+authored in this pass or its sequence: `SKILL.md` still names the retired `pest-testing` Boost skill
+rather than `testing-best-practices` (discovery §8.11); `SKILL.md` states the `getDiagnostics`
+prerequisite with no fallback for its absence (discovery §6.3/§10, Tier 2 #5); and its content has not
+been freshly exercised against a live PhpStorm integration.
 
 ---
 
