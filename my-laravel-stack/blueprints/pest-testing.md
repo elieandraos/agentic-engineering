@@ -26,6 +26,33 @@ refresh to. A suite that applies it uniformly to both `Feature` and `Unit` has n
 practice yet, regardless of the directory names — treat a directory name as aspirational until the
 binding matches it, and don't assume a class under `tests/Unit` is actually isolated without checking.
 
+## Binding `tests/Pest.php` to the boundary
+
+Confirming the mismatch above is not the end state — the binding has to change to match it. Once every
+framework-dependent test has been moved out of `tests/Unit`, narrow the project's `tests/Pest.php`
+accordingly:
+
+- the project's Laravel `TestCase` binding applies only to `Feature`;
+- its chosen database-refresh trait (`RefreshDatabase` below is illustrative — `LazilyRefreshDatabase` or
+  another project-selected mechanism applies the same way) applies only to `Feature`;
+- genuinely isolated `Unit` tests receive no separate Laravel `TestCase` binding at all, and fall back to
+  Pest/PHPUnit's default test case.
+
+```php
+pest()->extend(Tests\TestCase::class)
+    ->use(RefreshDatabase::class)
+    ->in('Feature');
+```
+
+Binding the Laravel `TestCase` to `Unit` without the database trait does not satisfy the isolated
+boundary either: `Illuminate\Foundation\Testing\TestCase` boots the full application in `setUp()`
+regardless of whether a database-refresh trait is attached, so a `Unit` test bound to it still boots
+Laravel.
+
+Order matters when migrating an existing suite: move every framework-dependent test out of `Unit` first,
+then narrow this binding. Narrowing it before the move is complete strips `TestCase` and the database
+trait from tests still sitting in `Unit` mid-migration, breaking them.
+
 ## Preserve endpoint-oriented HTTP test files
 
 Keep one Pest file per HTTP endpoint or closely related group (`IndexTest.php`, `ShowTest.php`,
