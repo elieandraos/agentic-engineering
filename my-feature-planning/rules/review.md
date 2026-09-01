@@ -126,8 +126,8 @@ inventory, named members, an exact count, or "all/every" wording — validate:
   set;
 - any count claimed for that set reconciles with the canonical issues' actual membership.
 
-This validates fidelity to a membership approved scope already established — it does not require
-searching for members beyond what that source defines. When the affected set itself isn't
+This validates fidelity to the membership already established by the approved scope — it does not
+require searching for members beyond what that source defines. When the affected set itself isn't
 established, resolving it stays `rules/feature-classification.md`'s and the applicable scope
 checklist's (`rules/resource-feature-checklist.md`, `rules/capability-checklist.md`) job, or
 `rules/discovered-work.md`'s when the origin is a finding; this check must not be used to silently
@@ -177,8 +177,9 @@ the compact manifest.
 - The body matches the current canonical definition after authorized substitutions such as real
   dependency numbers.
 - Where Context, Tasks, Acceptance Criteria, or Tests present members of a canonical exhaustive set
-  (§5's member-level closed-set coverage), the rendered body preserves that set's exact membership
-  and count — a missing, duplicated, or additional member blocks presentation or creation.
+  (§5's member-level closed-set coverage), the rendered body preserves the exact membership and
+  count assigned to that canonical issue — a missing, duplicated, or additional member blocks
+  presentation or creation.
 
 **If the check fails:** block presentation or mutation at the applicable stage; report the exact
 issue and failing field; revise the canonical definition, never the rendered body directly;
