@@ -45,7 +45,8 @@ branching, or side-effect matrix already covered there. A higher-layer assertion
 proves nothing beyond what the lower layer already proves.
 
 For example, on an endpoint that attaches a member to a team through a pivot table: the Action test owns
-the complete attach behavior (validation, authorization side effects, any derived pivot fields). The HTTP
+the complete attach mutation behavior, including the transaction outcome, any derived pivot fields, and
+dispatched side effects. The HTTP
 test retains the exact pivot pair — `assertDatabaseHas('team_user', ['team_id' => $team->id, 'user_id' =>
 $user->id])` — to prove the endpoint wired the correct team and user into the Action, but omits any other
 mapped field the Action test already covers.
