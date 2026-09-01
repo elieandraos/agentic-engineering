@@ -117,6 +117,22 @@ Validate the canonical definitions themselves — never a rendered preview:
 - canonical order is dependency-safe;
 - no canonical definition was reconstructed from an earlier render.
 
+**Member-level closed-set coverage.** When approved scope defines an exhaustive set — through an
+inventory, named members, an exact count, or "all/every" wording — validate:
+
+- every in-scope member from that source appears exactly once across the canonical issues, checked
+  against the actual members and never inferred from a matching headline total;
+- any member the approved scope explicitly defers or excludes remains outside the canonical issue
+  set;
+- any count claimed for that set reconciles with the canonical issues' actual membership.
+
+This validates fidelity to a membership approved scope already established — it does not require
+searching for members beyond what that source defines. When the affected set itself isn't
+established, resolving it stays `rules/feature-classification.md`'s and the applicable scope
+checklist's (`rules/resource-feature-checklist.md`, `rules/capability-checklist.md`) job, or
+`rules/discovered-work.md`'s when the origin is a finding; this check must not be used to silently
+expand approved scope.
+
 If this check fails, revise the canonical definitions and rerun every semantic or structural check
 the change affects.
 
@@ -160,6 +176,9 @@ the compact manifest.
 - Technical references do not become an implementation walkthrough.
 - The body matches the current canonical definition after authorized substitutions such as real
   dependency numbers.
+- Where Context, Tasks, Acceptance Criteria, or Tests present members of a canonical exhaustive set
+  (§5's member-level closed-set coverage), the rendered body preserves that set's exact membership
+  and count — a missing, duplicated, or additional member blocks presentation or creation.
 
 **If the check fails:** block presentation or mutation at the applicable stage; report the exact
 issue and failing field; revise the canonical definition, never the rendered body directly;
@@ -177,7 +196,10 @@ it, verify:
 - no canonical issue is missing;
 - no extra or duplicated row exists;
 - every dependency or metadata value the manifest displays matches the current canonical or
-  proposed state.
+  proposed state;
+- where a canonical issue's Tasks, Acceptance Criteria, or Tests represent an approved exhaustive
+  set (§5's member-level closed-set coverage), the manifest's stated count for that set matches the
+  canonical issues' actual membership — never accepted merely because a headline total matches.
 
 This says nothing about body quality — issue-body integrity owns that.
 
