@@ -92,7 +92,7 @@ point.
 | `discovered-work.md` | Raw-finding intake: reproduction, evidence discipline, depth bands, checkpoints, disposition, readiness, stopping condition. | Fixing code; a second, lighter issue-authoring path. | Hands a validated finding to `feature-classification.md`. |
 | `issue-conventions.md` | Title/body shape; the four GitHub-reference categories; the metadata proposal-and-approval workflow; verification-checkpoint proportionality and closure-boundary-feasible completion criteria inside a drafted issue (§10, §11). | Decomposition; milestone lifecycle/closure; how `my-git-workflow` actually executes verification. | `review.md` validates its output against `SKILL.md`'s approval gates. |
 | `sequencing.md` | Coherent-outcome decomposition; building and validating the real dependency graph; presenting it as dependency-safe waves. | Implementation order; which issue is worked next; branch strategy; commit structure. | `review.md`'s dependency-quality check; `SKILL.md`'s creation step. |
-| `review.md` | Five validation surfaces around `SKILL.md`'s two approval gates: semantic, canonical structural, rendered-body, rendered-manifest, post-mutation live-state. | Issue syntax/metadata policy; decomposition; raw-finding investigation; design/product decisions. | `SKILL.md`'s pipeline steps 7–8 directly. |
+| `review.md` | Five validation surfaces around `SKILL.md`'s two approval gates: semantic, canonical structural (including member-level closed-set coverage — an approved exhaustive set's whole membership reconciled against the canonical issues it's distributed across), rendered-body (the exact subset of that set assigned to one issue, preserved in its rendered body), rendered-manifest (any set/count claim the manifest states, reconciled against actual canonical membership where applicable), post-mutation live-state. | Issue syntax/metadata policy; decomposition; raw-finding investigation; design/product decisions. | `SKILL.md`'s pipeline steps 7–8 directly. |
 
 These are separate conceptual contracts, not arbitrary file boundaries, because each answers a distinct
 question no other file answers: *which shape* (classification) is a different question from *which
@@ -326,6 +326,18 @@ Canonical structure and live GitHub state are **not** "rendered artifacts" — t
 their own criteria (internal structural correctness, and actual mutation outcome respectively), not
 checked for fidelity to something else the way a rendered preview or manifest is.
 
+**Member-level closed-set coverage.** When approved scope establishes an exhaustive set — through an
+inventory, named members, an exact count, or "all"/"every" wording — three of the five surfaces carry a
+matching check rather than accepting a matching headline total on its own: canonical structural
+integrity (surface 2) confirms every in-scope member from that source appears exactly once across the
+canonical issues, checked against the actual members, with any member the approved scope explicitly
+defers or excludes kept outside the canonical set; rendered issue-body integrity (surface 3) confirms
+each rendered body preserves the exact subset of that set assigned to its own canonical issue — not the
+whole exhaustive set, since scope may legitimately be distributed across multiple issues; rendered-
+manifest integrity (surface 4) confirms any set/count the manifest states reconciles with the canonical
+issues' actual membership. This validates fidelity to scope the approved source already established — it
+does not authorize searching for members beyond that source, or silently expanding approved scope.
+
 **Why a successful mutation is not proof.** A `gh` command's exit code proves only that GitHub accepted
 the request, not that the intended state now exists. Every mutation episode is independently re-fetched
 and compared against the exact approved target — including an approved absence of a field — with no
@@ -419,6 +431,69 @@ contracts this skill produced, not about the downstream delivery itself:
   are about what the drafted issue *text* asked for, not about whether planning correctly classified,
   sequenced, created, or validated the issues it produced.
 
+**A second real consumer exercise — the approved-`plan.md` path, architectural/refactor classification
+(`useOrbit`, 2026-09-01).** The immutable approved `plan.md` at `useOrbit@0f905cf313301a372a00f24cce684e442590a75f`
+defines `useOrbit`'s `tests/` restructuring: an exhaustive 74-file set of Unit-to-Feature dispositions
+(§1, §4), an exhaustive 7-file set of HTTP tests to trim of duplication with their paired Action test
+(§4a, §8), and an exhaustive 7-file set of HTTP tests needing an added persisted-state assertion (F12,
+§4a, §8). A natural instruction activated `my-feature-planning` from this approved plan; it classified
+the work as an architectural/refactor initiative (`rules/feature-classification.md` shape D — a test
+suite reorganization with no new user-facing capability) and proposed four coherent issues in two
+dependency waves, rather than one oversized issue spanning all three exhaustive sets:
+
+- `#305`, `#306`, and `#307` are independent roots — the relocation, the HTTP-trim, and the
+  persisted-state-addition outcomes are each independently coherent and provable without depending on
+  one another.
+- `#308` (dropping `'Unit'` from `tests/Pest.php`'s `->in()` chain) has the single real dependency on
+  `#305`, since a file still sitting in `Unit` mid-migration would otherwise lose `TestCase`/
+  `RefreshDatabase` if the config change landed first.
+
+Existing Testing metadata and project conventions were reused rather than invented: all four issues were
+created under the milestone `Phase 24 — Tests Restructuring`, labeled `Testing`, and assigned to
+`elieandraos` — the project's own existing label and assignment conventions, not new methodology-side
+policy. Post-mutation validation confirmed live state matches this target: `useOrbit#305`, `#306`,
+`#307`, and `#308` all carry milestone `Phase 24 — Tests Restructuring`, label `Testing`, and assignee
+`elieandraos`, and are open. Direct inspection of the live bodies confirms complete membership: live
+`#305`'s Tasks cover all 74 Unit-to-Feature dispositions, including the one `Listeners/` file
+(`UpdateLastLoginTimestampTest.php`); live `#306`'s Tasks cover all 7 HTTP-trim files, including
+`Carriers/StoreTest.php`; live `#307`'s Tasks cover all 7 persisted-state-addition files; live `#308`
+both references and declares a real dependency on `#305` (`"Depends on #305"`, a real GitHub issue
+number, not a canonical planning identifier).
+
+This exercise revealed two findings, and preserving the distinction between them is the point of
+recording this evidence:
+
+1. **Portable rule gap.** Exhaustive member-level task coverage was not explicit enough in
+   `rules/review.md` before this exercise: a draft or render pass could omit individual members from a
+   canonical issue's Tasks while still reporting a headline total that matched the approved count,
+   because nothing checked actual membership against the approved source. This justified the narrow
+   `rules/review.md` correction landed in `9dc5b6d` ("Add exhaustive task coverage validation"),
+   clarified in `4a9557c` ("Clarify closed-set validation wording") — see §4, §11, above.
+2. **Execution misses already covered by existing rules.** In the course of this same exercise, a
+   rendered manifest temporarily omitted a canonical issue, and some validation reports claimed checks
+   had passed despite visible mismatches on inspection. Both are failures the existing canonical-
+   structural-integrity and rendered-manifest-integrity rules (§5, §7 of `rules/review.md`, already in
+   force before this exercise) already prohibited outright — an execution miss against a standing rule,
+   not evidence of a gap in the rule itself. They did not justify any duplicate guidance beyond the one
+   correction above.
+
+**This exercise's live issues predate the correction — they are not evidence the corrected rule
+produced them.** `useOrbit#305`–`#308` were created on 2026-09-01 at 08:29–08:30 UTC; `9dc5b6d` and
+`4a9557c` were committed the same day at 08:34 and 08:42 UTC respectively — after issue creation, not
+before it. What this exercise shows is that the final live issue bodies are complete against the
+approved plan's exhaustive sets (confirmed above by direct inspection), that the rule correction the
+exercise motivated was subsequently authored and published upstream, and that `useOrbit` then refreshed
+its installed `my-feature-planning` snapshot and provenance record from
+`24b288caf62f4d83b74d741a1cb96583cb1877fe` to `4a9557c372bc68d4fba89b37eb4e8f4ce7ad902d`, verified as
+exact 11-file parity (sorted file list, per-file SHA-256 manifest, and `diff -rq` all matching the
+canonical directory at `4a9557c3...` exactly; `UPSTREAM_PROVENANCE.md`, "Refresh: `my-feature-planning`
+— 2026-09-01 (second refresh, same day)").
+
+**No independent forward test has occurred yet.** No genuinely new, fresh-initiative exercise of the
+corrected rule has been run since — the only post-correction activity against these four issues was a
+read-only recheck confirming already-correct live bodies, which does not itself constitute a forward
+test of the corrected rule drafting a new issue set from scratch.
+
 ## 13. Authoring observations
 
 Reusable lessons from this authoring pass are consolidated in
@@ -487,9 +562,19 @@ this dossier and are absent from all of them.
 
 **Whether further authoring changes are presently justified.** The rule-by-rule authoring pass and the
 cross-rule cohesion pass resolved every concrete coupling `phase-discovery.md` identified for this
-skill; no further authoring was indicated by that evidence. A real downstream execution
-(`useOrbit#300`–`#302`, §12 above) has since produced two narrow, evidence-backed corrections beyond
-that baseline — `rules/issue-conventions.md` §10 and §11 — both scoped to what that one execution
-actually showed (disproportionate per-group verification wording; a completion criterion unsatisfiable
-at its own closure boundary), not a reopening of the broader authoring pass. No further authoring
-change is indicated beyond those two.
+skill; no further authoring was indicated by that evidence. Two real downstream executions have since
+produced three narrow, evidence-backed corrections beyond that baseline, each scoped to what its own
+execution actually showed, not a reopening of the broader authoring pass:
+
+- `rules/issue-conventions.md` §10 — proportional verification checkpoints — and §11 — completion
+  criteria satisfiable at their own closure boundary — from the first exercise (`useOrbit#300`–`#302`,
+  §12 above): disproportionate per-group verification wording, and a completion criterion unsatisfiable
+  at its own closure boundary.
+- `rules/review.md`'s member-level closed-set coverage validation (§4, §11 above) from the second
+  exercise (`useOrbit#305`–`#308`, §12 above): exhaustive member-level task coverage was not explicit
+  enough to catch a draft or render pass omitting individual members while still reporting a matching
+  headline total.
+
+Both exercises' evidence comes from the same real consumer, `useOrbit` — this is not yet corroborated by
+a second consuming project. No independent fresh-initiative forward test of the third correction has
+occurred yet (§12 above). No further authoring change is indicated beyond those three.
