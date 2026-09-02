@@ -1,428 +1,247 @@
-# my-laravel-stack — Skill Dossier
+# my-laravel-stack — Architecture Dossier
 
 Status: Current
-Scope: `my-laravel-stack` as it stands at `agentic-engineering@main` (`560556f8a87a9ec5f9b6bb02ec964d88daaee1aa`)
-Purpose: Supporting analysis of the current skill — purpose, ownership boundaries, package
-architecture, evidence, authoring history, and open questions. The operational authority remains
-`my-laravel-stack/SKILL.md`, its `rules/`, `blueprints/`, and `templates/` files — this document is
-supporting analysis, not a runtime instruction file and not a changelog. Canonical authoring closed at
-`4609cd5`; `useOrbit`'s exhaustive `tests/` audit then supplied this skill's first real consumer
-exercise, correcting two portable rule gaps (`c424c3f`, `560556f`) that a subsequent, independent
-reconciliation pass forward-tested against the corrected guidance (§8). The restructuring that exercise
-proposes is owner-approved but not yet executed — implementation, its test-suite verification, and a
-second consumer are still pending.
+Scope: `my-laravel-stack` as it stands in this repository
+Purpose: A compact architecture artifact for the skill — what it provides, where it sits in the
+ecosystem, what it owns versus what it deliberately leaves to others, how its package is organized,
+how its rules/blueprints/templates cooperate, where each decision has a single owner, how an agent
+consumes it, and its current confidence and limits. [`SKILL.md`](../my-laravel-stack/SKILL.md) remains
+the operational activation and routing entrypoint; [`README.md`](../my-laravel-stack/README.md) is the
+human-facing orientation. This document does neither of those jobs again — it explains the
+architecture behind them.
 
-## 1. Purpose and status
-
-This is supporting analysis, not the operational skill. `SKILL.md`, `README.md`, and the files under
-`rules/`, `blueprints/`, and `templates/` remain the authoritative source of what the skill says and
-does; where anything here disagrees with them, this document is stale, not the other way around. It
-describes the skill as it currently stands.
-`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-d-stack-synthesis.md` and the authoring commits
-between it and the current endpoint appear only where they explain why a current contract is shaped
-the way it is — never as a chronological account of how the skill got here. This is not an operational
-rule file, not a `SKILL.md` replacement, not a change log, and not an invitation to reopen the
-completed authoring pass.
-
-## 2. Purpose and boundary
+## 1. Purpose and activation boundary
 
 `my-laravel-stack` is a personal, portable companion for a **Laravel + InertiaJS + Vue 3 + Pest**
-stack. It carries evidence-backed conventions, implementation blueprints, and reusable code templates
-established for that stack — the delta genuinely additive to Laravel Boost, never a standalone Laravel
-education.
+stack. It is additive only: Laravel Boost's `laravel-best-practices` and `testing-best-practices`
+skills already own the general Laravel and Pest baseline, and `inertia-vue-development` owns
+Inertia/Vue client-side patterns. `my-laravel-stack` never substitutes for any of them — it activates
+*alongside* the matching Boost skill(s), carrying only the delta genuinely additive to what they
+already cover.
 
-- It loads **alongside** Laravel Boost's `laravel-best-practices` and `testing-best-practices`, and
-  alongside `inertia-vue-development`, never instead of them. It contains only what those skills don't
-  already cover.
-- **Current evidence is strongest for Laravel, Inertia, and Pest.** Every convention, blueprint, and
-  template file in the current tree rests on verified application behavior, tests, or framework source.
-- **Vue 3 is part of the declared stack boundary, but the skill currently owns no mature independent
-  Vue-specific rules.** This is stated openly in both `SKILL.md` and `README.md`, not implied as equal
-  coverage. Vue implementation questions route to `inertia-vue-development` instead.
-- It is **stack knowledge**, not portable cross-stack methodology (that is `skill-audits/
-  skill-authoring-methodology.md`'s domain) and not `useOrbit` project documentation (that belongs to
-  `useOrbit` itself, not this repository).
+It activates for implementation and review work that needs this stack's concrete conventions:
+composing or reviewing a controller, Form Request, Action, Policy, or Resource; adding index
+filtering or sorting; writing or organizing a Pest test; defining an Eloquent local scope, a migration
+column, or a backed enum's option list; generating factory or seeder data. If a task needs a Boost
+skill this installation doesn't have, the skill says so explicitly rather than silently filling the
+gap with improvised baseline guidance — it is an incomplete companion for that area, not a substitute
+author for it.
 
-## 3. Three-layer ownership model
+## 2. Ownership model
 
-| Layer | Owns |
+Three parties hold three distinct, non-overlapping kinds of knowledge:
+
+| Owner | Owns |
 |---|---|
-| **Laravel Boost** (`laravel-best-practices`, `testing-best-practices`, `inertia-vue-development`) | The general Laravel/Pest/Inertia-Vue baseline: validation, Eloquent mechanics, resource/CRUD controller organization, thin-controller and FormRequest-boundary philosophy, migrations, layer-ownership test de-duplication, record-level test-data minimalism, security, style. External dependency — never extracted, renamed, or duplicated into this skill. |
-| **`my-laravel-stack`** | The verified custom stack delta: conventions, implementation blueprints, and reusable support templates genuinely additive to Boost. Travels across this user's projects by copy/reinstall. |
-| **Consuming projects** (e.g. `useOrbit`) | Installed/adapted implementations of the skill's blueprints and templates, plus genuinely project-specific decisions (product facts, literals, one-off rules with no cross-project generality claim). |
+| **Laravel Boost** (`laravel-best-practices`, `testing-best-practices`, `inertia-vue-development`) | The general Laravel/Pest/Inertia-Vue baseline — validation, Eloquent mechanics, resource/CRUD organization, thin-controller and FormRequest-boundary philosophy, migrations in general, layer-ownership test de-duplication, record-level test-data minimalism, security, style. An external dependency, never extracted, renamed, or duplicated here. |
+| **`my-laravel-stack`** | The reusable custom stack delta — conventions, implementation blueprints, and reusable support templates verified for this stack, portable across this user's own projects by copy/reinstall. |
+| **Consuming project** | Its own domain model, product rules, repository policy, and any project-specific adaptation of a blueprint or template — tenancy mechanism, naming, UI decisions, deployment conventions. None of this is the skill's to prescribe. |
 
-`useOrbit` supplied the empirical evidence this skill's content was verified against (§8), but that
-does not make `useOrbit`'s own implementation choices universally correct — a project's specific
-tenancy mechanism, pagination size, or route naming is evidence for what one real project did, not a
-portable rule this skill imposes on every consumer. Where the skill states a delta as conditional
-(tenancy, filters/sorters, non-CRUD shapes), that conditionality is deliberate, not an oversight to
-tighten later.
+A corollary of this split: `my-laravel-stack` states several of its own delta items as conditional
+rather than universal — tenancy, filters/sorters, non-CRUD controller shapes. That conditionality is a
+deliberate architectural boundary between what this skill can responsibly generalize and what only a
+concrete project can decide, not an omission to tighten later.
 
-`my-phpstorm-conventions` is a separate, fully deferred companion (IDE/static-analysis knowledge) — not
-a fourth layer of this architecture and not touched by this pass.
+`my-phpstorm-conventions` is a separate, unrelated companion (IDE/static-analysis knowledge) — not a
+fourth layer of this model.
 
-## 4. Package architecture
+## 3. Package architecture
 
-Content is classified by purpose, not forced into one prose-rule shape:
+The package is organized by what kind of resource each file *is*, not merely by directory convention:
 
 - **`rules/`** — independently applicable conventions and invariants. Each file stands alone: a rule
   about Eloquent scope attributes, request normalization, or PHP class finality doesn't require any
-  other file to make sense.
+  other file to make sense on its own.
 - **`blueprints/`** — multi-component implementation shapes that compose several rules and
-  responsibilities into one recognizable pattern, such as a full controller composition or a Pest test
-  taxonomy. A blueprint is where several rules meet in one worked structure.
-- **`templates/`** — complete, installable PHP starting points structured to mirror their intended
-  project-relative path (`templates/app/...` mirrors `app/...` in a consuming project). These are
-  inspected, reconciled against whatever a project already has, and copied or adapted — never installed
-  blindly on the assumption a project has nothing there already.
+  responsibilities into one recognizable pattern. A blueprint is where several independently valid
+  rules meet in one worked structure — a full controller composition, a filter/sorter wiring across a
+  Form Request/model/controller, a Pest execution-boundary taxonomy.
+- **`templates/`** — complete, installable PHP starting points, structured to mirror their intended
+  project-relative path (`templates/app/...` mirrors `app/...` in a consuming project).
 
-**`README.md` vs. `SKILL.md`.** `README.md` is the human-facing conceptual map: what the skill is (and
-isn't), the three-kind content model, what's here today at a glance, and the general installation
-discipline for a template. `SKILL.md` is the operational activation and routing entrypoint — the
-frontmatter description, activation conditions, and the routing table that sends a given task to
-exactly the file(s) it needs. The two are read together during reconciliation specifically to confirm
-they stay complementary rather than duplicating each other: `README.md` never repeats `SKILL.md`'s
-routing table, and `SKILL.md` never repeats `README.md`'s conceptual framing.
+These are semantically different resources, not an arbitrary three-way split of the same content. A
+rule answers "what is the invariant." A blueprint answers "how do several invariants compose into one
+shape, and in what order." A template answers neither — it is executable code, meant to be inspected,
+reconciled against what a project already has, and copied or adapted, never installed blindly on the
+assumption a project has nothing there already.
 
-Current tree:
+## 4. Operational architecture
 
-```text
-my-laravel-stack/
-├── README.md
-├── SKILL.md
-├── blueprints/
-│   ├── filters-and-sorting.md
-│   ├── pest-testing.md
-│   └── resource-controller.md
-├── rules/
-│   ├── actions.md
-│   ├── authorization.md
-│   ├── eloquent-attributes.md
-│   ├── enum-options.md
-│   ├── factories-and-seeders.md
-│   ├── migrations.md
-│   ├── php-conventions.md
-│   ├── query-conditionals.md
-│   ├── request-normalization.md
-│   ├── resources.md
-│   └── test-ownership.md
-└── templates/app/
-    ├── Filters/QueryFilter.php
-    ├── Models/Concerns/Filterable.php
-    ├── Models/Concerns/Sortable.php
-    ├── Providers/TestingServiceProvider.php
-    └── Sorts/QuerySorter.php
-```
+### Resource controller composition
 
-## 5. Operational ownership
+[`blueprints/resource-controller.md`](../my-laravel-stack/blueprints/resource-controller.md) states
+the reference composition — **Controller → Form Request → Policy/`#[Authorize]` → Action → Resource →
+Inertia/HTTP response** — and immediately qualifies it: this is a reference shape a full CRUD endpoint
+follows, not a mandatory sequence every endpoint must implement in full. Each stage is included only
+when the endpoint actually needs what it does, and the blueprint treats single-action controllers,
+non-Inertia responses (a binary export), a Resource returned directly from an XHR endpoint, and a
+controller implementing fewer than the seven resourceful methods as first-class shapes — not
+exceptions to patch around. Within this composition:
 
-The skill's architectural centers of gravity, without reproducing every runtime rule:
+- The **Form Request** owns validation and request normalization
+  ([`rules/request-normalization.md`](../my-laravel-stack/rules/request-normalization.md)) —
+  `prepareForValidation()` is where coercion and defaulting happen once, so an Action or Filter can
+  trust `validated()` as already correct rather than re-defaulting downstream.
+- **Authorization** is declarative and resolved before the method body runs
+  ([`rules/authorization.md`](../my-laravel-stack/rules/authorization.md)) — the `#[Authorize]`
+  attribute, never `$this->authorize()`, with the array form required specifically for `create`/
+  `viewAny` on a child resource, where no bound instance exists yet to infer a policy from.
+- The **Action** owns the mutation itself
+  ([`rules/actions.md`](../my-laravel-stack/rules/actions.md)) — a fixed `handle()` entry point, no
+  HTTP-layer globals inside it, and external side effects deferred with `->afterCommit()` so they
+  never execute until the enclosing transaction actually commits.
+- The **Resource** owns the response contract
+  ([`rules/resources.md`](../my-laravel-stack/rules/resources.md)) — a controller never passes a raw
+  Eloquent result to Inertia, and a relation field is exposed through `whenLoaded()`, never a bare
+  accessor or a model-wide `$with`, so the Resource stays safe regardless of which caller reaches it.
 
-- **Conditional Resource Controller composition** (`blueprints/resource-controller.md`) — Controller →
-  Form Request → Policy/`#[Authorize]` → Action → Resource → Inertia/HTTP response, stated explicitly as
-  a *reference composition*, not a mandatory sequence: an endpoint includes only the components it
-  actually needs, and single-action, non-Inertia, and partial-resourceful controllers are first-class,
-  not exceptions to the shape.
-- **Action conventions** (`rules/actions.md`) — naming/location, the fixed `handle()` entry point, the
-  `$attributes` PHPDoc-shape derivation (presence and nullability and type are three independent
-  questions, never inferred from a validation rule name alone), no HTTP-layer globals inside `handle()`,
-  and the `DB::transaction()`/`->afterCommit()` discipline for external side effects.
-- **`#[Authorize]` authorization** (`rules/authorization.md`) — the attribute over `$this->authorize()`,
-  never adding `AuthorizesRequests` to the base controller, and the array-form requirement for a child
-  resource's `create`/`viewAny` where no bound instance exists yet.
-- **Resource boundaries** (`rules/resources.md`) — a JsonResource always sits between the query and the
-  view; `whenLoaded()` over a bare accessor or model `$with` for any relation field.
-- **Form Request normalization** (`rules/request-normalization.md`) — coercion and defaulting belong in
-  `prepareForValidation()`, not `??` fallbacks scattered across the controller.
-- **Filters/sorting composition and templates** (`blueprints/filters-and-sorting.md` +
-  `templates/app/Filters/QueryFilter.php`, `templates/app/Sorts/QuerySorter.php`,
-  `templates/app/Models/Concerns/{Filterable,Sortable}.php`) — a multi-component blueprint: query-param
-  validation, concrete Filter/Sorter classes, reusable base-class and trait templates, model scope
-  wiring, and controller query composition, explicitly optional and loaded only when an index endpoint
-  needs it.
-- **Pest execution-boundary blueprint** (`blueprints/pest-testing.md`) — classify by execution boundary
-  first (does the suite's own `tests/Pest.php` actually isolate `Unit` from `Feature`, or bind both to
-  the database?), then mirror the owning application area; preserve endpoint-oriented HTTP test files;
-  the self-referential-expected-value warning against building a test's expected value from the same
-  production Resource under test; capability-gate optional Pest plugins.
-- **The separate test-ownership rule** (`rules/test-ownership.md`) — the single source of truth for
-  where each class type's test lives, what each layer owns, existence-versus-exact-value assertion
-  choice, and the no-redundancy boundary between HTTP tests and the lower layers they must not duplicate.
-- **Supporting conventions** — final-by-default concrete classes (`rules/php-conventions.md`), `when()`
-  over `if` for mid-chain query conditionals (`rules/query-conditionals.md`), enum `all()` over
-  inline `::cases()` mapping (`rules/enum-options.md`), realistic dependent-field factories and seeder
-  structure (`rules/factories-and-seeders.md`), Eloquent `#[Scope]` over the legacy `scope`-prefixed
-  method name (`rules/eloquent-attributes.md`), and non-nullable-by-default migration columns with the
-  `->notNull()` correctness warning (`rules/migrations.md`).
+### Filtering and sorting
 
-The full controller pipeline is a reference composition, not a checklist every endpoint must satisfy in
-full; filters and sorting are optional capabilities loaded only when an index endpoint needs them;
-tenancy guidance in `blueprints/resource-controller.md` applies only when a consuming project is
-actually multi-tenant, and prescribes no single mechanism; optional Pest capabilities (TIA, arch
-testing, `LazilyRefreshDatabase`) must be detected in the consuming project before use, never assumed;
-and every template requires inspecting and reconciling an existing project implementation before
-installing, never a blind copy.
+[`blueprints/filters-and-sorting.md`](../my-laravel-stack/blueprints/filters-and-sorting.md) is itself
+conditional — loaded only when an index endpoint genuinely needs filtering or sorting, not a mandatory
+part of every controller. It composes: query-parameter validation in the Form Request (including the
+`direction` default from `rules/request-normalization.md`, since `QuerySorter`'s constructor takes a
+non-nullable `string`); a concrete `{Model}Filter`/`{Model}Sort` class per model; the reusable
+`QueryFilter`/`QuerySorter` base classes and `Filterable`/`Sortable` model traits shipped as templates;
+and controller-level query composition that stays a no-op when no query params are present. Filter and
+Sorter classes never validate — they trust an already-validated value exactly as an Action trusts
+`validated()`.
 
-## 6. Single-owner model
+### Testing
 
-Final ownership decisions, each stated once and cross-referenced rather than restated:
+Two distinct decisions compose here, deliberately kept apart:
 
-- **`rules/actions.md`** owns an Action's own conventions — naming, `handle()`'s shape, the
-  transaction/`afterCommit()` discipline. It does not restate the controller composition an Action sits
-  inside; that's `blueprints/resource-controller.md`'s job.
-- **`blueprints/resource-controller.md`** owns how controllers, Form Requests, authorization, Actions,
-  Resources, and responses compose into one endpoint — not any single component's own internal rules,
-  each of which it cross-references instead of restating.
-- **`rules/test-ownership.md`** owns concrete test locations, per-layer behavior, assertion selection
-  (existence vs. exact value), and the no-redundancy rule between HTTP tests and lower layers — the
-  single source of truth for this stack's Action/Controller/Policy/Filter/Sorter/Resource/Model
-  taxonomy.
-- **`blueprints/pest-testing.md`** owns suite structure: the Unit/Feature execution-boundary taxonomy,
-  endpoint-oriented HTTP test-file organization, the Resource-assertion self-reference warning, the
-  reusable Inertia testing macros, and Pest capability gating. It explicitly does not restate the
-  concrete class-ownership mapping `rules/test-ownership.md` owns.
-- **`blueprints/filters-and-sorting.md`** owns the multi-component filter/sorter implementation shape —
-  the wiring across a Form Request, concrete Filter/Sorter classes, the reusable base-class/trait
-  templates, model scope wiring, and controller composition.
+- [`blueprints/pest-testing.md`](../my-laravel-stack/blueprints/pest-testing.md) owns the
+  **execution-boundary configuration** — classifying `tests/Unit` versus `tests/Feature` by what a
+  test actually boots (database, container, facades), confirming what the project's own
+  `tests/Pest.php` binds a database-refresh trait to before trusting a directory name, and the safe
+  order for narrowing that binding during a migration. It also owns endpoint-oriented HTTP test-file
+  organization, the warning against building a test's expected value from the same production Resource
+  it's supposed to verify, and gating optional Pest capabilities (TIA, architecture testing) behind
+  what a project actually has installed.
+- [`rules/test-ownership.md`](../my-laravel-stack/rules/test-ownership.md) owns **per-layer test
+  responsibility** — the concrete Action/Policy/Filter/Sorter/Resource/Model/HTTP location-and-scope
+  mapping, when to assert existence versus an exact persisted value, and the no-redundancy rule that a
+  higher layer proves only what a lower layer doesn't already prove (with the minimal-wiring exception:
+  an HTTP test may keep one persisted identity/association assertion to prove the correct route-bound
+  model, actor, or pivot pair reached the Action — a bare row-count assertion cannot prove that).
 
-This boundary matters because two files that each describe part of the same decision can drift
-independently while each still believes the other owns it — the exact failure the authoring pass
-corrected once (§8): `blueprints/pest-testing.md` originally duplicated `rules/test-ownership.md`'s
-concrete ownership mapping and existence-vs-exact-value rule; the consistency pass removed the
-duplicate from the blueprint and left the rule as sole owner.
+A test file therefore answers "where does this test physically live and what does the suite boot for
+it" from the blueprint, and "what does this specific layer's test assert, and where does its
+responsibility stop" from the rule — two different questions with two different owners, composed
+rather than duplicated.
 
-## 7. Templates
+### Supporting rules
 
-Five current templates, each a valid, complete PHP implementation, not a generator stub:
+The remaining rules apply independently wherever their narrow subject appears: `#[Scope]` over the
+legacy `scope`-prefixed method name for Eloquent local scopes
+([`rules/eloquent-attributes.md`](../my-laravel-stack/rules/eloquent-attributes.md)); `when()` over an
+`if` block for a mid-chain query conditional
+([`rules/query-conditionals.md`](../my-laravel-stack/rules/query-conditionals.md)); a static `all()`
+on a backed enum instead of mapping `::cases()` at each call site
+([`rules/enum-options.md`](../my-laravel-stack/rules/enum-options.md)); deriving dependent factory
+fields from one source of truth and structuring dev-only seeders
+([`rules/factories-and-seeders.md`](../my-laravel-stack/rules/factories-and-seeders.md)); `final`-by-
+default concrete application classes
+([`rules/php-conventions.md`](../my-laravel-stack/rules/php-conventions.md)); and non-nullable-by-
+default migration columns, including why `->notNull()` silently does nothing across every schema
+grammar ([`rules/migrations.md`](../my-laravel-stack/rules/migrations.md)).
 
-- **`templates/app/Filters/QueryFilter.php`** — the abstract base class every domain filter extends;
-  convention-over-configuration dispatch (`Str::camel()`s a validated array key onto a same-named
-  method), silently skipping a key with no matching method or a `null`/`''` value.
-- **`templates/app/Models/Concerns/Filterable.php`** — the trait wiring a `#[Scope]`-based `filter` scope
-  onto a model, delegating to an injected `QueryFilter`.
-- **`templates/app/Sorts/QuerySorter.php`** — the abstract base class every domain sorter extends;
-  resolves a requested column the same way `QueryFilter` resolves a key, falls back to an abstract
-  `default()` implementation, and breaks ties on the model's primary key for stable pagination.
-- **`templates/app/Models/Concerns/Sortable.php`** — the trait wiring a `#[Scope]`-based `sort` scope
-  onto a model, delegating to an injected `QuerySorter`.
-- **`templates/app/Providers/TestingServiceProvider.php`** — registers five Inertia-testing Pest macros
-  (`hasResource`, `hasPaginatedResource`, `assertHasResource`, `assertHasPaginatedResource`,
-  `assertHasInertiaFlash`), guarded by a `runningUnitTests()` boot check so the macros exist only while
-  the suite runs.
+## 5. Single-owner boundaries
 
-They remain `.php` files, not `.stub` files, because they represent intended final implementations —
-each is syntactically valid PHP that can be lint-checked and reasoned about directly, not a
-placeholder-substitution artifact. Calling something a generator stub is accurate only when an actual
-generator or substitution contract consumes named placeholders; none of these five files has one.
-Their project-relative directory structure (`templates/app/Filters/...` mirroring `app/Filters/...`)
-mirrors their intended installation path directly, and each file's own docblock states its target path,
-its prerequisites (a required Laravel version for the `#[Scope]` attribute; the paired trait or base
-class it depends on), and the reconciliation instruction to check for an existing equivalent before
-installing. This is not a universal claim that every skill should ship a `templates/` directory —
-it is this skill's evidence-backed answer for content that is complete, installable PHP rather than
-prose guidance.
+Every architectural decision in this package has exactly one file that states it; every other file
+that touches the same territory cross-references that owner instead of restating it:
 
-## 8. Evidence and authoring history
+| Decision | Owner |
+|---|---|
+| An Action's own shape — naming, `handle()`, the `$attributes` PHPDoc derivation, transaction/`afterCommit()` discipline | `rules/actions.md` |
+| How Controller, Form Request, Policy, Action, Resource, and response compose into one endpoint | `blueprints/resource-controller.md` |
+| `#[Authorize]` mechanics, including the child-resource array-form requirement | `rules/authorization.md` |
+| The JsonResource contract and safe relation exposure | `rules/resources.md` |
+| Where input coercion/defaulting happens | `rules/request-normalization.md` |
+| The multi-component filter/sorter wiring across Form Request, model, and controller | `blueprints/filters-and-sorting.md` |
+| `tests/Unit`/`tests/Feature` execution-boundary classification and suite binding | `blueprints/pest-testing.md` |
+| Concrete per-class test location, ownership, and the no-redundancy rule | `rules/test-ownership.md` |
+| Eloquent local-scope attribute convention | `rules/eloquent-attributes.md` |
+| Mid-chain query conditionals | `rules/query-conditionals.md` |
+| Backed-enum option lists | `rules/enum-options.md` |
+| Factory/seeder realism and structure | `rules/factories-and-seeders.md` |
+| Concrete-class finality | `rules/php-conventions.md` |
+| Migration column nullability | `rules/migrations.md` |
 
-- **Phase D discovery and synthesis**
-  (`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-d-stack-discovery.md`,
-  `56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-d-stack-synthesis.md`) supplied the initial
-  classification and evidence: full reads of `useOrbit`'s controllers, Form
-  Requests, Actions, Policies, Resources, and Pest test tree; the complete installed
-  `laravel-best-practices`/`testing-best-practices` rule files (Boost v2.7.0); and the installed Laravel
-  framework source (v13.29.0) for the migration-nullability finding.
-- **The authoring pass** (`ee72858` through `4609cd5`, eight commits scoped to `my-laravel-stack/`)
-  rewrote the gitignored origin skill into the current tree, then corrected it across several rounds:
-  Action HTTP/transaction accuracy, `destroy()` routed through an Action, testing-taxonomy wording,
-  provider finality (`43b5d8a`); the PHPDoc typing-derivation model (presence, nullability, and type as
-  three independent questions) and the `afterCommit()`/transaction model (`2778643`); a narrower
-  database-queue-driver caveat (`1cdfd46`); the `rules/`/`blueprints/`/`templates/` taxonomy plus
-  `README.md` (`8c5f8ef`); a README wording fix (`38a4d0a`); and a whole-skill consistency pass renaming
-  `test-ownership.md`, promoting `filters-and-sorting.md` to a blueprint, and clarifying the controller
-  composition as a reference shape (`59c9b9b`), followed by one further rename correcting
-  `actions-pattern.md` to `actions.md` (`4609cd5`).
-- **The review proceeded in stages, not as a single pass.** Focused technical review produced the
-  early correctness corrections through `1cdfd46` — Action HTTP/transaction accuracy, the PHPDoc
-  typing-derivation model, and the narrowed queue-driver caveat — before the owner had read the skill
-  files. The owner's own review then began with the macro structure, driving the README and
-  `rules/`/`blueprints`/`templates` taxonomy work in `8c5f8ef` and its wording follow-up in `38a4d0a`.
-  The owner went on to complete a rule-content review, identifying the test-ownership naming concern.
-  The final whole-skill consistency review, together with the owner's own naming observations,
-  produced the ownership, classification, and naming corrections in `59c9b9b` and `4609cd5`.
-- **`useOrbit`'s exhaustive `tests/` audit — the skill's first real consumer exercise.** After canonical
-  authoring closed at `4609cd5` and this dossier was first written (`b3cf5e8`, `b361f50`), `useOrbit`
-  underwent a no-edit, repository-wide conformance audit of its complete 156-file `tests/` tree against
-  `my-laravel-stack`'s blueprints and rules (`useOrbit@92290e2`, "Replace plan.md with the tests/
-  audit-reconciliation report"). This is the first time the skill was tested against real project code
-  rather than authored and reviewed in isolation, and it correctly drove the great majority of the
-  audit's classification and ownership decisions (the Unit/Feature disposition of all 156 files, the
-  Action/HTTP duplication pairing in §8 of `useOrbit`'s `plan.md`, the Model-test naming/merge findings)
-  unmodified — see `useOrbit@plan.md` §13 for the audit's own account of which observations were
-  consumer-level applications of general rules, not skill gaps.
-- **Two portable rule gaps the audit exposed:**
-  1. An HTTP test sometimes needs one exact persisted association/identity assertion to prove
-     route-model or controller-to-Action wiring (which parent, child, actor, tenant, or pivot pair was
-     wired in) — a global `assertDatabaseCount()` is not sufficient proof, since it passes just as well
-     when the wrong identity was wired in, as long as the row count matches.
-  2. The Unit/Feature execution-boundary blueprint stopped at the taxonomy check and stopped short of
-     stating the operational `tests/Pest.php` outcome (narrow the `TestCase`/database-refresh binding to
-     `Feature` only; genuinely isolated `Unit` tests get no separate binding) and the safe migration
-     order (move the files out of `Unit` first, narrow the binding only afterward — narrowing first
-     strips `TestCase`/the database trait from files still sitting in `Unit` mid-migration).
-- **Both gaps were corrected upstream, in canonical `my-laravel-stack`, not left as project-local
-  workarounds:** `c424c3f` ("Clarify HTTP wiring-proof exception and Pest.php Unit/Feature binding
-  guidance in my-laravel-stack") added the minimal-wiring-proof exception to `rules/test-ownership.md`'s
-  no-redundancy rule and the binding/migration-order guidance to `blueprints/pest-testing.md`; `560556f`
-  ("Correct Action ownership in test example") followed with a one-sentence correction to
-  `rules/test-ownership.md`'s own pivot-attach illustration — the Action test's owned scope is "the
-  complete attach mutation behavior, including the transaction outcome, any derived pivot fields, and
-  dispatched side effects," not the narrower "validation, authorization side effects, any derived pivot
-  fields" the example previously stated.
-- **`useOrbit` refreshed its installed snapshot the same day**, from provenance `b361f50` to `560556f`
-  (`useOrbit`'s `UPSTREAM_PROVENANCE.md`, "Refresh: `my-laravel-stack` — 2026-09-01"), with exact 21-file
-  parity against the canonical tree in §4 above.
-- **A subsequent, independent reconciliation pass forward-tested the corrections** — distinct evidence
-  from the original audit that exposed the gaps. Re-reading only the refreshed skill text,
-  `useOrbit`'s own `plan.md` reconciliation (`useOrbit@230a54b`, "Reconcile tests/ audit findings against
-  the corrected my-laravel-stack skill") independently re-derived findings F5, F6, F7, F8, F10, and F14
-  and changed every one of them correctly against the corrected guidance: F7 and F8 flipped from flagged
-  duplication to resolved minimal wiring-proof; F5, F6, and F10 narrowed from "collapse to a raw
-  `assertDatabaseCount()`" to "drop only the one plain mapped field, keep the wiring-relevant identity
-  columns"; F14 kept the same proposed fix but gained the citation for an outcome it had previously only
-  inferred. Because this pass worked from the corrected text alone rather than re-deriving the same
-  conclusions from the original audit's quotes, it is a genuine forward test of whether the upstream
-  corrections actually resolve what they claim to, not a restatement of the audit that motivated them.
-- **The final owner-approved artifact is `useOrbit@0f905cf`** ("Convert plan.md into an approved
-  implementation source of truth for the tests/ restructuring"): the reconciled F1–F14 findings, the
-  155-file target manifest, and the required F12 persisted-state additions are approved implementation
-  scope. Every §7 Resource-test finding remains deliberately deferred evidence for a future pass, not
-  promoted into a universal skill rule. **The restructuring itself has not been executed** against
-  `useOrbit`'s `tests/` tree — no file has moved, no content edit has landed, and no test-suite run
-  confirms the corrected guidance holds up under real execution. `useOrbit` issues #305–#308 are
-  `my-feature-planning` output decomposing this approved plan into GitHub issues; they are
-  feature-planning evidence, not proof that the restructuring works or has been implemented.
-- Current endpoint: `560556f8a87a9ec5f9b6bb02ec964d88daaee1aa`.
+This matters because two files that each describe part of the same decision can drift independently
+while each still assumes the other owns it. The clearest example still visible in the package's shape
+is the test-ownership split above: `blueprints/pest-testing.md` states outright that it does not
+restate the concrete class-taxonomy mapping, and `rules/test-ownership.md` states that it does not
+restate the general execution-boundary or de-duplication principles already owned elsewhere. A
+cross-reference composes the two into one coherent testing story without either file duplicating the
+other's authority.
 
-Keep `useOrbit` evidence here, in this dossier, never in the runtime skill's public-facing examples —
-`SKILL.md` states this explicitly, and every code example across `rules/` and `blueprints/` uses
-neutral, invented domain concepts (orders, customers, tasks, projects) rather than `useOrbit`'s own
-models, routes, or literals.
+## 6. Templates
 
-## 9. Authoring observations
+Five templates, each a complete, syntactically valid PHP implementation rather than a placeholder or
+generator stub:
 
-Reusable lessons from this pass are consolidated in `skill-audits/skill-authoring-methodology.md`. This
-dossier retains only the skill-specific evidence for them:
+- [`templates/app/Filters/QueryFilter.php`](../my-laravel-stack/templates/app/Filters/QueryFilter.php)
+  — the abstract base every domain filter extends. Dispatch is convention over configuration:
+  `apply()` camel-cases each validated array key and calls the same-named method on the concrete
+  filter, silently skipping a key with no matching method or a `null`/`''` value.
+- [`templates/app/Models/Concerns/Filterable.php`](../my-laravel-stack/templates/app/Models/Concerns/Filterable.php)
+  — the trait wiring a `#[Scope]`-based `filter` scope onto a model, delegating to an injected
+  `QueryFilter`.
+- [`templates/app/Sorts/QuerySorter.php`](../my-laravel-stack/templates/app/Sorts/QuerySorter.php) —
+  the abstract base every domain sorter extends. Resolves a requested column the same way
+  `QueryFilter` resolves a key, falls back to an abstract `default()` implementation the concrete
+  sorter must supply, and always breaks ties on the model's primary key so pagination and tests get a
+  stable order regardless of the database's query plan.
+- [`templates/app/Models/Concerns/Sortable.php`](../my-laravel-stack/templates/app/Models/Concerns/Sortable.php)
+  — the trait wiring a `#[Scope]`-based `sort` scope onto a model, delegating to an injected
+  `QuerySorter`.
+- [`templates/app/Providers/TestingServiceProvider.php`](../my-laravel-stack/templates/app/Providers/TestingServiceProvider.php)
+  — registers five Inertia-testing Pest macros (`hasResource`, `hasPaginatedResource`,
+  `assertHasResource`, `assertHasPaginatedResource`, `assertHasInertiaFlash`), guarded by a
+  `runningUnitTests()` boot check so they exist only while the test suite runs.
 
-- **One canonical owner per decision** — demonstrated by the `test-ownership.md`/`pest-testing.md`
-  duplication found and corrected in `59c9b9b` (§6).
-- **Semantic classification over historical filenames** — `filters-pattern.md` lived under `rules/`
-  from the initial authoring commit but was always a multi-component implementation shape; it was
-  reclassified to `blueprints/filters-and-sorting.md` in the consistency pass. `actions-pattern.md`
-  stayed a rule throughout, but its `-pattern` filename incorrectly suggested blueprint semantics and
-  was corrected to `actions.md` in `4609cd5` — a distinct, later correction from the same taxonomy pass
-  that reclassified the filter file, not the same fix applied twice.
-- **Conditionality must survive diagrams, summaries, examples, and blueprints** — `59c9b9b` corrected
-  `blueprints/resource-controller.md`'s opening composition statement to say explicitly that the full
-  Controller → Form Request → Policy → Action → Resource → Inertia chain is a reference composition,
-  not a mandatory sequence, even though the file's own later sections already documented non-CRUD and
-  single-action controllers that omit stages of it.
-- **Examples must remain coherent across a skill** — `rules/resources.md`'s single-resource example was
-  standardized to `OrderResource::make($order)` in the same consistency pass, matching
-  `blueprints/resource-controller.md`'s and `blueprints/pest-testing.md`'s own usage rather than leaving
-  an inconsistent construction style across files that all illustrate the same Resource contract.
-- **Cross-directory references need unambiguous paths and actual validation** — moving the two
-  blueprints and renaming `assets/app` to `templates/app` in `8c5f8ef` required updating `SKILL.md`'s
-  routing table, every blueprint-to-rule and rule-to-blueprint cross-reference, and every template
-  installation path in the same commit, not a partial move left for a later pass to reconcile.
-- **A README is justified when it supplies a necessary human-facing conceptual map** — `8c5f8ef` added
-  `README.md` specifically to explain the `rules`/`blueprints`/`templates` taxonomy and installation
-  discipline for a human maintainer, distinct from `SKILL.md`'s routing table, which stays focused on
-  activation and file selection.
-- **Complete copy/adapt implementations are templates, not generator stubs** — the five `.php` files
-  under `templates/app/` were kept as complete, syntactically valid implementations with inline
-  installation docblocks, never abstracted into a placeholder-substitution format no generator actually
-  consumes (§7).
+Each carries its own prerequisites inline: the `#[Scope]`-based traits require confirming that the
+target project's installed `laravel/framework` version actually provides
+`Illuminate\Database\Eloquent\Attributes\Scope`; the filter/sorter templates require the paired
+base-class-and-trait pairing to be installed together; the testing provider requires
+`inertiajs/inertia-laravel` and Pest, and must be registered in `bootstrap/providers.php`. Every
+template's docblock also states the reconciliation instruction: check whether an equivalent already
+exists at the target path before installing, and reconcile rather than overwrite. They are inspectable
+starting points meant to be read, adapted, and validated in the consuming project — not instructions
+to overwrite existing project code blindly, and not a generator contract with placeholders to
+substitute.
 
-## 10. Known boundaries and pending evidence
+## 7. Consumption and adaptation
 
-Stated honestly, not carried forward as resolved or silently dropped:
+An agent working in this stack loads only the rule, blueprint, or template file(s) the current task
+needs — `SKILL.md`'s routing table is the entrypoint for that selection, and this dossier does not
+repeat it. The skill is always combined with the matching Boost skill(s) for the same task, never
+loaded as a substitute for them, and any project-specific context the consuming project supplies
+(existing code, product decisions, repository policy) sits above the skill's own defaults.
 
-- **The current canonical skill has been refreshed into `useOrbit`.** As of 2026-09-01, `useOrbit`'s
-  installed snapshot/provenance matches canonical `560556f` with exact 21-file parity (§8) — this is no
-  longer an open gap.
-- **Template *content* parity is refreshed; template *usage* parity is still unverified.** The
-  2026-09-01 refresh confirms `useOrbit`'s installed skill snapshot matches the canonical
-  `templates/app/` files byte-for-byte. It does not re-verify
-  `56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-d-stack-synthesis.md`'s earlier finding that
-  `useOrbit` already has working equivalents of all five templates in its own `app/` tree —
-  whether those live implementations still match the corrected template content is unverified, and the
-  `tests/` audit (§8) didn't touch `app/` code to check.
-- **The conformance-audit stage of the two-stage consumer exercise has run.** `useOrbit`'s exhaustive
-  `tests/` audit (§8) *is* that no-edit, repository-wide conformance audit — completed, not pending. What
-  remains: the audit's own approved restructuring (`useOrbit@0f905cf`) has not been executed against
-  `useOrbit`'s `tests/` tree, so no file move, content edit, or test-suite run yet confirms the corrected
-  guidance holds up under real execution; and the second stage — the representative Clients CRUD
-  vertical-slice exercise, which would build on §7's deferred Resource-test findings — remains deferred
-  and unstarted, not promoted into a universal skill rule.
-- **Restructuring `useOrbit`'s test directory is a real application mutation.** It has now been
-  proposed and owner-approved (`useOrbit@0f905cf`, §8), which authorizes the described moves and
-  content edits — it does not mean they have been carried out. Nothing in this dossier claims the
-  restructuring has been implemented or that `useOrbit`'s test suite has been run against it; `useOrbit`
-  issues #305–#308 document planning decomposition of the approved plan, not execution.
-- **No second Laravel/Inertia/Vue/Pest consumer has validated portability.** The exhaustive `tests/`
-  audit and its forward reconciliation (§8) deepen the evidence from this one consumer — they do not
-  widen it. Every piece of evidence behind this skill's content still comes from exactly one real
-  project, `useOrbit`, plus Laravel Boost's and the Laravel framework's installed source.
-- **Independent Vue-specific guidance remains unproven.** The skill declares Vue 3 as part of its stack
-  boundary but currently owns no mature Vue-specific rule (§2).
-- **`my-phpstorm-conventions` remains separate and deferred**, untouched by this pass.
+Before adopting a blueprint or template in a real project, inspect what the project already has at
+the equivalent path or endpoint. A template exists to be reconciled against an existing implementation,
+not dropped in on the assumption nothing is there yet; a blueprint's conditional stages (tenancy
+handling, filters/sorters, a full CRUD chain) apply only where the endpoint or project genuinely calls
+for them. Tenancy mechanism, naming conventions, UI-framework specifics, and deployment conventions are
+project-owned decisions this skill deliberately does not prescribe — where a blueprint discusses
+tenancy, for example, it identifies the questions a multi-tenant project must answer (read scoping,
+authorization, creation-time assignment, route-model isolation) without naming which mechanism a
+project must use to answer them.
 
-Resolved, and not to be presented as current defects: the prior README absence; the
-`assets`/`templates` naming and blueprint-location questions; the former duplication between
-`blueprints/pest-testing.md` and `rules/test-ownership.md`; the `resources.md` example's inconsistent
-Resource-construction style (`new OrderResource(...)` versus `OrderResource::make(...)`), now
-standardized to `OrderResource::make(...)` everywhere; and the retired filenames
-(`actions-pattern.md`, `filters-pattern.md`, `testing-strategy.md`, `resource-controller-blueprint.md`,
-`pest-testing-blueprint.md`, `assets/app/**`) — none exist in the current tree.
+## 8. Boundaries and confidence
 
-## 11. Current assessment
+The skill's Laravel, Inertia, and Pest guidance has been checked against real implementation and
+verification work, not authored and left untested. That confidence does not extend to broad,
+multi-project portability — validation beyond one real consuming project remains unproven, and this
+document does not claim otherwise.
 
-**Architectural coherence.** Strong for the current scope. The `rules`/`blueprints`/`templates`
-taxonomy tracks a real distinction (independently applicable convention vs. multi-component composed
-shape vs. complete installable implementation), and no file in the current tree claims ownership of a
-decision another file already owns (§6).
+Vue 3 is part of the declared stack boundary, since the stack this skill targets genuinely includes
+it, but mature, independently-owned Vue-specific guidance remains limited here. A Vue implementation
+question routes to `inertia-vue-development` rather than to this skill filling the gap with
+improvised guidance.
 
-**Authoring quality.** The pass corrected real technical defects found during the work itself (the
-PHPDoc typing/nullability model, the `afterCommit()` transaction model, provider finality), removed
-every `useOrbit` fingerprint from public examples, and completed a whole-skill consistency pass that
-caught a real cross-file duplication and a stale example construction style. Nothing in the current
-tree carries an unresolved contradiction between its opening framing and its own later content.
-
-**Laravel/Inertia/Pest maturity.** Evidence-backed and current for the concrete delta this skill
-targets: controller composition, Action conventions, authorization, Resources, request normalization,
-filters/sorting, and Pest test ownership all rest on verified `useOrbit` code and Boost/framework
-source, not invented convention.
-
-**Template readiness.** The five templates are complete, syntactically valid PHP with explicit
-prerequisites and reconciliation instructions — ready to inspect and adapt into a project, but not yet
-re-verified against `useOrbit`'s current live implementations since this pass's corrections (§10).
-
-**Portability confidence.** Moderate, and now backed by one genuine consumer-validation cycle, not
-merely internal coherence. `useOrbit`'s exhaustive `tests/` audit (§8) is the skill's first real
-consumer exercise: it correctly drove the great majority of the audit's classification and ownership
-decisions unmodified, exposed exactly two portable rule gaps (the HTTP wiring-proof exception and the
-`Pest.php` binding/migration-order outcome), and both were corrected upstream and then forward-verified
-by an independently reconciled pass that re-derived F5–F8, F10, and F14 correctly from the corrected
-text alone. All of that evidence still traces to exactly one real project — the skill states this limit
-openly rather than implying broader validation, and this pass does not claim otherwise.
-
-**Remaining consumer-validation risk.** The conformance-audit stage has now run and produced real,
-corrective evidence (§8), but two things remain open. First, execution: the audit's own approved
-restructuring (`useOrbit@0f905cf`) has not been applied to `useOrbit`'s `tests/` tree, so no test-suite
-run yet confirms the corrected guidance holds up under real execution — `useOrbit` issues #305–#308 are
-planning output, not that proof. Second, breadth: the Clients CRUD vertical-slice exercise and §7's
-deferred Resource-test findings remain future evidence for a later pass, not another universal rule to
-add now, and no second Laravel/Inertia/Vue/Pest consumer has yet tested this skill at all. Until
-execution and a second consumer exist, read this skill as evidence-backed, internally consistent, and
-now genuinely consumer-tested for classification and ownership on one project — not as
-execution-validated or portability-proven.
+No other limitation currently applies to the package as it stands; a resolved finding is not carried
+forward here once corrected in the rule, blueprint, or template file it belonged to.
