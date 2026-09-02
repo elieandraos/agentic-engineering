@@ -112,7 +112,8 @@ Guardrails, retained for any future stack or skill addition:
 
 - `my-laravel-stack`'s internal `rules/`/`blueprints/`/`templates/` split is the evidence-backed decomposition this repository actually reached (`skill-audits/my-laravel-stack.md`) — a shape earned from that skill's own evidence, not a template any future stack companion should copy by default;
 - a `project-specific/useOrbit` grouping was never populated and remains out of scope — project-specific knowledge stays in `useOrbit` itself, not in this repository;
-- any future stack beyond Laravel/Vue/Inertia should reach its own package shape from its own evidence.
+- any future stack beyond Laravel/Vue/Inertia should reach its own package shape from its own evidence;
+- `docs/` holds timeless, cross-skill authoring guidance — how skills in this repository are authored, classified into portable/stack/project knowledge, and kept reconciled as they evolve — starting with `docs/skill-authoring-methodology.md`, reclassified there after outgrowing its original home as a `skill-audits/` dossier. `skill-audits/` itself stays reserved for the four current per-skill architecture dossiers, not general methodology.
 
 The root `README.md` explains the current layered model and knowledge-boundary distinctions — see it for the up-to-date picture.
 
