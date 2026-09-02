@@ -31,10 +31,13 @@ The ecosystem is layered, and each layer supplies a different kind of knowledge:
                  deployment conventions / product
 ```
 
-The portable methodologies at the top are stack-neutral by design: they assume nothing about which
-language, framework, or tracker a consuming project uses. A stack companion supplies the
-technology-specific knowledge a portable skill deliberately doesn't carry. Project-specific input —
-one product's domain model, conventions, and deployment choices — stays outside both layers.
+The portable methodologies at the top are language- and framework-neutral by design. `my-feature-planning`
+and `my-git-workflow` deliberately use GitHub as their operational substrate — their portability is
+across GitHub-based projects, not arbitrary issue trackers. `my-architecture-laboratory` doesn't
+inherit that GitHub dependency merely because its downstream skills use it. A stack companion
+supplies the technology-specific knowledge a portable skill deliberately doesn't carry.
+Project-specific input — one product's domain model, conventions, and deployment choices — stays
+outside both layers.
 
 ## Portable methodology skills
 

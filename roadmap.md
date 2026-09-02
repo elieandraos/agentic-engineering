@@ -48,7 +48,7 @@ The system is a layered model:
              |               |               |
              +---------------+---------------+
                              |
-                     CUSTOM STACK LAYER
+                    STACK COMPANION LAYER
                         my-laravel-stack
              (Laravel + InertiaJS + Vue 3 + Pest —
            the verified delta additive to Laravel Boost)
@@ -70,9 +70,9 @@ The engineering method itself:
 - how to reconstruct and lock architecture;
 - how to implement, review, commit, release, and complete milestones.
 
-### Custom stack layer
+### Stack companion layer
 
-Technology-specific implementation knowledge that is genuinely owned/authored by this ecosystem for the Laravel + InertiaJS + Vue 3 + Pest stack `useOrbit` runs on, implemented as **[`my-laravel-stack`](skills/my-laravel-stack/)** — a personal, portable companion carrying the verified delta additive to Laravel Boost (conventions, implementation blueprints, and reusable code templates); see `artifacts/my-laravel-stack.md` for the full record. `my-phpstorm-conventions` remains a separate, deferred companion. This layer is distinct from **external first-party capabilities** such as Laravel Boost's `laravel-best-practices` and `testing-best-practices`: upstream dependencies `my-laravel-stack` may compose with, but never owns, absorbs, renames, or duplicates.
+Technology-specific implementation knowledge that is genuinely owned/authored by this ecosystem for the Laravel + InertiaJS + Vue 3 + Pest stack `useOrbit` runs on, implemented as **[`my-laravel-stack`](skills/my-laravel-stack/)** — a portable stack companion carrying the verified delta additive to Laravel Boost (conventions, implementation blueprints, and reusable code templates); see `artifacts/my-laravel-stack.md` for the full record. This layer is distinct from **external first-party capabilities** such as Laravel Boost's `laravel-best-practices` and `testing-best-practices`: upstream dependencies `my-laravel-stack` may compose with, but never owns, absorbs, renames, or duplicates.
 
 ### Project-specific input
 
@@ -139,7 +139,7 @@ The consume/use/contribute/refresh relationship between `agentic-engineering` an
 
 When a rule can be expressed without knowing the framework, keep it in the portable methodology.
 
-When it requires a framework or technology, consider the custom stack layer.
+When it requires a framework or technology, consider the stack companion layer.
 
 When it is unique to one repository or product, keep it project-specific.
 
@@ -159,7 +159,7 @@ issues + milestone
 implementation
 ```
 
-`my-feature-planning` consumes approved architectural decisions without re-litigating them. The skills already distinguish current-state facts, locked decisions, derived constraints, and open implementation details — that separation should be preserved as the custom stack layer is considered. A stack layer should not quietly turn an implementation convention into a product decision.
+`my-feature-planning` consumes approved architectural decisions without re-litigating them. The skills already distinguish current-state facts, locked decisions, derived constraints, and open implementation details — that separation should be preserved as the stack companion layer evolves. A stack layer should not quietly turn an implementation convention into a product decision.
 
 ## Human decisions remain visible
 
