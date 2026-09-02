@@ -116,6 +116,7 @@ Four kinds of knowledge are in play, and the ecosystem is careful to keep them d
 agentic-engineering/
 ├── README.md                    this file
 ├── roadmap.md                   living architecture and evolution notes
+├── docs/                        timeless, cross-skill methodology
 ├── my-architecture-laboratory/  portable skill — investigation and architecture
 ├── my-feature-planning/         portable skill — scoping and issue drafting
 ├── my-git-workflow/             portable skill — implementation and delivery
@@ -127,7 +128,10 @@ Each skill directory carries its own `README.md` (the walkthrough), `SKILL.md` (
 routing and rules an agent actually loads), and a `rules/` directory of individually applicable
 rule files. `my-laravel-stack` additionally carries `blueprints/` and `templates/`. `skill-audits/`
 holds supporting analysis per skill — it complements each skill's `README.md`/`SKILL.md` rather than
-replacing them as the operational source of truth.
+replacing them as the operational source of truth. `docs/` holds methodology that applies across
+every skill rather than to one in particular — currently
+[`skill-authoring-methodology.md`](docs/skill-authoring-methodology.md), the current guide to
+evidence-backed skill authoring, knowledge classification, ownership, and reconciliation.
 
 ## Consumption
 

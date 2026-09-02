@@ -116,17 +116,22 @@ sentence, what a removed or rewritten passage carried:
 | Removed or rewritten concept | The knowledge carried by the original passage |
 | Classification | Portable, stack, project, initiative, live state, personal, historical, or obsolete |
 | Surviving lesson | Reusable reasoning preserved from it, if any |
-| Destination | Portable skill, stack layer, project guidance, plan document, runtime discovery, dossier, or nowhere |
+| Destination | Portable skill, stack layer, project guidance, plan document, runtime discovery, a dossier update (see note below), or nowhere |
 | Status | Retained, generalized, rewritten, deferred, extracted, or intentionally discarded |
 | Evidence | Why this disposition is justified |
 | Confidence / open question | Whether another project or authoring pass must validate it before treating it as settled |
 
 The ledger exists to prevent two opposite failures at once: losing reusable stack or project
 knowledge during generalization by deleting it outright, and dumping every removed example into a
-new project-specific file without proving it deserves preservation. Keep a pass's own ledger
-entries in a temporary authoring record, not a skill's architecture dossier (Section 7) — a dossier
-holds current architecture and evidence-calibrated conclusions, not case-by-case disposition
-history.
+new project-specific file without proving it deserves preservation.
+
+A ledger entry's own record — its source, removed concept, status, evidence, and confidence — stays
+in a temporary authoring record, never in a skill's architecture dossier (Section 7). "Dossier" as a
+Destination means something narrower and different: only the durable conclusion a ledger entry
+produces — an update to the skill's current architecture, rationale, ownership, boundaries, or
+evidence-calibrated confidence — may in turn update the dossier. The case history behind that
+conclusion, the chronological evidence, any removed prose, and the ledger entry itself do not
+travel with it; they remain in version control or the temporary authoring record.
 
 ## 4. Evidence-to-rule graduation
 
@@ -179,12 +184,18 @@ one. Promote a principle to that second tier only once it is:
 
 A principle resting on evidence from only one project, or only one authoring pass, has not yet met
 the repeated-evidence and reusable-outside-origin criteria on its own — one project or one pass is
-not repeated, independent evidence. Mark such a principle as a working conclusion pending
-independent evidence, not as settled guidance, until a separate consuming project or a separate
-authoring pass tests it. Distinguishing "this is current, authoritative repository policy" from
-"this is validated, portable guidance ready for shared tooling" is itself part of the discipline
-this section asks for — apply it to this document's own claims as much as to any rule inside a
-skill.
+not repeated, independent evidence. A separate authoring pass, even inside the same project or
+repository, can supply the repeated evidence the first criterion asks for. It does not, by itself,
+satisfy the second: another pass inside the same project or repository is still same-project
+evidence, not proof of portability across projects. Cross-project portability specifically requires
+evidence from a distinct consuming project — a further pass inside this repository cannot
+substitute for that. Cold-read validation and forward-use validation remain separate checks
+throughout, whichever tier a principle is being evaluated for; passing one does not imply the
+other has been run. Mark a principle resting on same-project evidence as a working conclusion
+pending independent, cross-project evidence, not as settled guidance. Distinguishing "this is
+current, authoritative repository policy" from "this is validated, portable guidance ready for
+shared tooling" is itself part of the discipline this section asks for — apply it to this
+document's own claims as much as to any rule inside a skill.
 
 ## 5. Authoring workflow
 
