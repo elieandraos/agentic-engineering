@@ -6,7 +6,7 @@
 
 The goal is not to collect prompts for one repository or one framework. The goal is to build reusable engineering workflows that can operate across projects and technology stacks, while keeping stack-specific implementation knowledge and project-specific conventions out of the portable core.
 
-The system is being developed from real use rather than designed in a vacuum. `useOrbit` is the first proving ground, and is now becoming the system's first real consumer: the canonical skills need to be consumed and used for genuine `useOrbit` work before any further generalization.
+The system is being developed from real use rather than designed in a vacuum. `useOrbit` was the first proving ground and is now the first real consumer: the canonical skills are consumed from this repository and refined through genuine `useOrbit` work before any further generalization.
 
 This document is the **near-term Agentic Engineering roadmap** — four phases covering externalizing the portable core, operating the `useOrbit` consumer relationship, classifying the mature custom skill ecosystem, and deciding whether a stack layer was justified. **All four phases are now complete**; the near-term phase sequence itself is closed. Further activity is evidence-driven maintenance, genuine consumer validation, and the non-committed possibilities already listed under "Future directions" — not a new phase. It is not a speculative plan for the entire eventual ecosystem; longer-range ideas that aren't yet committed work are kept in "Future directions" below, not in the phase sequence.
 
@@ -30,7 +30,7 @@ The important design principle that emerged is:
 
 That principle applies both to the product architecture being documented and to the agentic workflows themselves.
 
-The skills are now ready to leave their original repository and become an external, reusable engineering system.
+Those three skills have since left their original repository and now form the portable core of this external, reusable engineering system.
 
 ---
 

@@ -1,8 +1,10 @@
 # agentic-engineering
 
 A portable system of agentic software-engineering methodologies — how to plan features, reconstruct
-architecture, and move work through implementation, review, commits, and release. The goal is
-reusable engineering workflow, not a prompt collection for one repository or framework.
+architecture, and move work through implementation, review, commits, and release — together with
+evidence-backed stack companions, such as [`my-laravel-stack`](my-laravel-stack/), that carry
+technology-specific implementation knowledge separately from that portable core. The goal is reusable
+engineering workflow, not a prompt collection for one repository or framework.
 
 The system is being developed from real use rather than designed in a vacuum. `useOrbit`, a
 Laravel/Vue/Inertia application, is both the origin of the three-skill family below and the system's
