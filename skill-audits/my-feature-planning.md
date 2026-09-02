@@ -1,581 +1,420 @@
-# my-feature-planning — Skill Dossier
+# my-feature-planning — Architecture Dossier
 
 Status: Current
-Scope: `my-feature-planning` as it stands at `agentic-engineering@main`
-Purpose: Supporting analysis of the current skill — architecture, reasoning, boundaries, evidence,
-authoring lessons, and open questions — after the completed rule-by-rule authoring pass and the
-cross-rule cohesion pass that followed it.
+Scope: `my-feature-planning` as it stands in this repository
+Purpose: A compact architecture guide to the skill — what it transforms and produces, its two work
+origins and how they converge, where authority actually lives, its classification/scope/design/
+decomposition/review/mutation model, how its rules divide ownership, why GitHub is a deliberate
+substrate rather than incidental tooling, and its current boundaries and confidence.
+[`SKILL.md`](../my-feature-planning/SKILL.md) remains the operational routing entrypoint;
+[`README.md`](../my-feature-planning/README.md) is the human-facing walkthrough. This document
+explains the architecture behind both rather than restating either.
 
-## 1. Purpose and status
+## 1. Purpose and result boundary
 
-This is supporting analysis, not the operational skill. `SKILL.md`, `README.md`, and `rules/*.md`
-remain the authoritative source of what the skill does; if anything here disagrees with them, this
-document is stale, not the other way around. It describes the skill as it currently stands. History —
-the rule-by-rule authoring pass, the cross-rule cohesion pass, and the portability evidence in
-`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md` — appears only where it explains why a
-current contract is shaped the way it is, never as a chronological account of how the skill got here.
-This is not another operational rule file, not a `SKILL.md` replacement, not a change log, not a copy
-of that historical record, and not an invitation to revise the completed skill again.
+`my-feature-planning` turns three kinds of input — an intentional feature ask raised in
+conversation, an approved `plan.md` initiative section, or a validated Discovered-work finding —
+into an approved, reviewed set of GitHub issues (with whatever milestone/label/assignee metadata
+the work actually needs). It owns planning and GitHub issue creation. It does not own architecture
+decisions — those are settled upstream, before this skill ever runs — and it does not own
+application implementation, which begins only after an issue this skill created has been approved
+and picked up downstream.
 
-## 2. What the skill is
+GitHub is not an interchangeable stand-in for "some tracker." The skill's methodology — classify,
+scope, reconcile design, draft, review, sequence, create — is portable across GitHub-based projects
+with different stacks and conventions; it is not written to be tracker-agnostic. Reference syntax,
+milestone/label semantics, and the mutation/validation model are all shaped around what GitHub
+specifically provides, and are covered on their own terms throughout this dossier rather than
+treated as an implementation detail to abstract away.
 
-`my-feature-planning` converts a feature ask, an approved `plan.md` section, or a validated
-Discovered-work finding into reviewed, approved, developer-ready GitHub issues.
+## 2. Two work origins, one pipeline
 
-GitHub is intentionally part of the methodology, not an abstraction layer standing in for some other
-tracker. Issues, milestones, labels, assignees, `#N` references, and mutation validation are
-GitHub-native concepts this skill is built around. Portability, for this skill, means reuse across
-GitHub-based projects with different stacks and conventions — never across issue trackers. This is
-stated outright, not disguised as tracker neutrality.
+Every planning session starts from one of two origins, and both converge on the identical
+downstream pipeline — classification, scope discovery, drafting, sequencing, review, and creation —
+with no lighter-weight path for either:
 
-Three starting points feed two work origins into one shared pipeline:
+| Origin | What it starts from | Entry point into the shared pipeline |
+|---|---|---|
+| **Planned work** — feature conversation | An intentional proposed change with scope not yet worked out | Classification |
+| **Planned work** — approved `plan.md` | An initiative-specific section [`my-architecture-laboratory`](../my-architecture-laboratory/) has already investigated and the user has already approved, with architecture and decisions canonical | Classification, with architecture and locked decisions already resolved (see [`rules/plan-md-input.md`](../my-feature-planning/rules/plan-md-input.md)) |
+| **Discovered work** | An unexpected finding — surfaced during implementation, review, testing, operations, or another workflow — with scope not yet known | [`rules/discovered-work.md`](../my-feature-planning/rules/discovered-work.md)'s investigation; only a *validated* finding reaches classification |
 
-```
-feature conversation ──┐
-                        ├──► Planned work ────┐
-approved plan.md ───────┘                     │
-                                               ├──► classify → scope → [design reconcile]
-Discovered finding ──► validate ──► Discovered work ──┘     → propose metadata → draft → sequence
-                                                              → review → approve → create → validate
-```
+An approved `plan.md` section changes *what already has answers* by the time classification runs —
+its architecture and locked decisions are canonical input, not a shortcut around any later step or
+gate. A raw Discovered finding changes *what has to happen before classification is safe to run at
+all* — running classification or a scope checklist on an unconfirmed symptom is how a vague or
+wrong issue gets drafted. Neither difference reaches past its own entry point: origin never
+determines a feature's shape, its checklist, its decomposition, its issue count, or its review bar.
+A validated Discovered finding can turn out to be any of the four feature shapes (§4), decomposes by
+the identical dependency method as planned work (§8), and passes through the identical five review
+surfaces before creation (§9).
 
-A feature conversation and an approved `plan.md` are both **Planned work** — both start from an
-intentional proposed change, not an unexpected finding, regardless of whether every scope detail is
-already resolved. A conversation-driven feature ask enters the pipeline at classification and still
-requires scope discovery; an approved plan enters by consuming `rules/plan-md-input.md` first, with
-its architecture and decisions already canonical. **Discovered work** starts from an unexpected
-finding with scope not yet known, and only a validated finding enters the pipeline. Both origins
-converge on the identical canonical-issue pipeline and the identical review bar — Discovered work
-never gets a lighter-weight issue.
+## 3. Authority and evidence
 
-## 3. Pipeline position and ownership
+Three kinds of authority coexist, and the skill's job is to keep them from silently overriding one
+another:
 
-```
-my-architecture-laboratory  →  my-feature-planning          →  my-git-workflow
-(approved architecture,        (classification, scope,          (Git/GitHub delivery:
- optional plan.md)              drafting, dependencies,          branch readiness, review
-                                 review, metadata proposal,       gates, commits, verification,
-                                 approval gates, GitHub           closure, release, milestone
-                                 creation, post-mutation          completion)
-                                 validation)                          +
-                                                                consuming-project implementation
-                                                                skills (application/framework code)
-```
+- **Approved product and architecture decisions** — a locked decision from an approved `plan.md`
+  section, or an explicit decision the user made in the current planning conversation. These are
+  authoritative for what they cover and change only through another explicit user decision; nothing
+  downstream (a stale design mockup, code that has since drifted, a "cleaner" alternative someone
+  notices while drafting) overrides one silently.
+- **Verified current implementation evidence** — the codebase, configuration, schema, tests, and
+  runtime behavior are authoritative for current-state facts and for whether a `plan.md` claim
+  derived from an earlier state still holds. A derived architectural constraint from `plan.md` is
+  binding only as long as the fact it was derived from remains true; if current evidence shows that
+  fact has moved, the discrepancy is flagged to the user before drafting the affected issues, not
+  silently preserved or silently reinterpreted.
+- **Design artifacts** — evidence of intended UI, not an automatic authority merely for existing.
+  A design artifact never overrides an approved locked decision, and shipped code is not by itself
+  proof that a design deviation was a deliberate, confirmed product decision (§6).
 
-- `my-architecture-laboratory` may supply approved architecture and an approved `plan.md`; this skill
-  never re-derives architecture or re-litigates a decision the plan already locked
-  (`rules/plan-md-input.md`).
-- `my-feature-planning` owns everything from classification through validated GitHub issue creation.
-  Its responsibility ends once approved issues are created and validated.
-- `my-git-workflow` owns downstream Git/GitHub delivery. It does **not** own application
-  implementation — it composes with the consuming project's own implementation skills, neither
-  replacing the other.
-- Consuming-project implementation skills own the actual application/framework code, picked up once
-  an issue is approved.
+**The `plan.md` boundary.** `my-architecture-laboratory` owns investigation, target-architecture
+design, and locking decisions with the user — that authority is settled before this skill starts.
+`my-feature-planning` verifies relevant current evidence against what an approved plan claims; it
+does not reopen approved architecture on its own judgment, and it reopens a locked decision only
+when current evidence *contradicts* it materially enough that continuing to plan against it would
+be dishonest — never because a cleaner alternative occurred to the planner. An unresolved material
+product or architecture question — whether raised by a stale `plan.md` premise, a genuine design
+disagreement, or an ambiguous Discovered finding — routes to the user through whichever rule
+surfaced it; issue wording is never used to manufacture an approval, a certainty, or a resolved
+decision that doesn't actually exist. See [`rules/plan-md-input.md`](../my-feature-planning/rules/plan-md-input.md)
+for the full consumption contract, including how it distinguishes a locked decision (preserved
+exactly), a derived constraint (binding only while its premise holds), and an open implementation
+detail (resolvable here only when the choice materially affects scope, dependencies, acceptance
+criteria, or developer readiness — otherwise left for implementation).
 
-**The Discovered-work convergence point.** `rules/discovered-work.md` owns a special path — raw-finding
-investigation through semantic disposition and drafting readiness — that exists nowhere else in the
-skill. Once a finding is validated, it becomes ordinary planning input: classified
-(`rules/feature-classification.md`), scoped, drafted, sequenced, and reviewed exactly like Planned
-work. Origin never determines classification, decomposition, or review rigor past that convergence
-point.
+## 4. Classification and scope architecture
 
-## 4. Rule architecture
+Before any scope question gets asked, the feature is classified into one of four shapes, because
+applying single-resource assumptions to cross-cutting work over-scopes it, and skipping
+shared-infrastructure thinking under-scopes a capability:
 
-| Rule | Owns | Deliberately does not own | Consumed by |
-|---|---|---|---|
-| `plan-md-input.md` | Recognizing an approved `plan.md` section (initiative match, source-of-truth statement, known approval); preserving the locked/derived/open distinction; checking a derived constraint's premise for staleness against current code. | Producing or amending `plan.md`; re-running Plan Synthesis's own review. | Entry point before classification; authority precedent for `design-reconciliation.md` and `discovered-work.md`. |
-| `feature-classification.md` | Choosing among four feature shapes by organizing responsibility. | Answering the shape-specific scope questions. | Routes to `resource-feature-checklist.md` or `capability-checklist.md`. |
-| `resource-feature-checklist.md` | The seven-track (A–G) scope-discovery question set for resource-shaped work. | Concrete stack/implementation answers; issue decomposition. | Feeds `design-reconciliation.md` (Track F) and canonical scope for `sequencing.md`. |
-| `capability-checklist.md` | The thirteen-question scope set for cross-cutting/architectural work. | Concrete implementation reuse decisions. | Feeds canonical scope for `sequencing.md`. |
-| `design-reconciliation.md` | Comparing design artifacts, shipped app, and approved decisions; classifying drift; the separate drafting-readiness gate. | Amending `plan.md` or design files; implementing UI. | Its outcome becomes scope/constraint input to issue drafting. |
-| `discovered-work.md` | Raw-finding intake: reproduction, evidence discipline, depth bands, checkpoints, disposition, readiness, stopping condition. | Fixing code; a second, lighter issue-authoring path. | Hands a validated finding to `feature-classification.md`. |
-| `issue-conventions.md` | Title/body shape; the four GitHub-reference categories; the metadata proposal-and-approval workflow; verification-checkpoint proportionality and closure-boundary-feasible completion criteria inside a drafted issue (§10, §11). | Decomposition; milestone lifecycle/closure; how `my-git-workflow` actually executes verification. | `review.md` validates its output against `SKILL.md`'s approval gates. |
-| `sequencing.md` | Coherent-outcome decomposition; building and validating the real dependency graph; presenting it as dependency-safe waves. | Implementation order; which issue is worked next; branch strategy; commit structure. | `review.md`'s dependency-quality check; `SKILL.md`'s creation step. |
-| `review.md` | Five validation surfaces around `SKILL.md`'s two approval gates: semantic, canonical structural (including member-level closed-set coverage — an approved exhaustive set's whole membership reconciled against the canonical issues it's distributed across), rendered-body (the exact subset of that set assigned to one issue, preserved in its rendered body), rendered-manifest (any set/count claim the manifest states, reconciled against actual canonical membership where applicable), post-mutation live-state. | Issue syntax/metadata policy; decomposition; raw-finding investigation; design/product decisions. | `SKILL.md`'s pipeline steps 7–8 directly. |
+- **A — New resource / first-class domain entity.** A brand-new entity with its own persisted
+  identity and lifecycle, where operations and authorization center on that entity.
+- **B — Cross-cutting application capability.** Behavior or infrastructure whose organizing
+  responsibility spans multiple existing domains rather than one new entity's lifecycle — it may
+  still own its own state or tables and remain B, because the state supports cross-cutting behavior
+  rather than a resource users manage through its own CRUD lifecycle.
+- **C — Extension of an existing capability.** New behavior added to something that already ships.
+  Only the affected slice is routed through the relevant tracks or questions of A's or B's checklist
+  — the whole existing parent is never replanned for one changed slice.
+- **D — Architectural/refactor milestone.** No new user-facing capability; the outcome is
+  structural or corrective. Routed loosely through B's outcome/boundaries/preserved-behavior/
+  exclusions/dependencies questions, since D has no product shape of its own to interrogate further.
 
-These are separate conceptual contracts, not arbitrary file boundaries, because each answers a distinct
-question no other file answers: *which shape* (classification) is a different question from *which
-questions that shape needs answered* (the checklists); *is the scope right* (semantic review) is a
-different question from *does the rendered text match the canonical definition* (structural/rendered
-integrity); *does a UI choice need reconciling* (design-reconciliation) is a different question from
-*is drafting still blocked* (its own separate readiness gate, not folded into the same question).
+Classification routes to exactly one scope-discovery contract, never a fixed artifact inventory or
+an implementation template:
 
-## 5. Authority and evidence model
+- Shape A, or the resource-shaped slice of C, loads
+  [`rules/resource-feature-checklist.md`](../my-feature-planning/rules/resource-feature-checklist.md) —
+  seven tracks (core contract, lifecycle/state, child resources, filtering/sorting, export/output,
+  user-facing surfaces, integration/tooling completeness) that every resource-shaped feature answers
+  in some form, on any stack. Every track must be explicitly resolved for a full shape A — marked
+  not-applicable outright rather than silently skipped; a resource-shaped C walks only the tracks
+  its changed slice actually affects.
+- Shape B, capability-shaped C, or D loads
+  [`rules/capability-checklist.md`](../my-feature-planning/rules/capability-checklist.md) — thirteen
+  questions (the problem, shared-foundation split, affected domains, runtime paths, security/tenancy
+  boundaries, integration points, reusable system- and user-facing patterns, user-visible surfacing,
+  collateral changes, exclusions, a conditionally-asked extension-seam question, and proof
+  obligations) resolved explicitly for full B, and only for the changed slice for capability-shaped C
+  or loosely for D.
 
-Several kinds of authority coexist, and the skill keeps them from collapsing into one undifferentiated
-"most recent wins" rule:
+Both checklists are scope-*discovery* contracts: they ask which of the consuming project's concrete
+artifacts (storage engine, authorization mechanism, interface layer, UI components, tooling) satisfy
+each answer — they never answer that on the project's behalf, and they never prescribe an issue
+count or a fixed decomposition. That belongs entirely to decomposition and sequencing (§8), decided
+independently of which checklist question surfaced the scope. When the resolved scope has any
+frontend/UI surface, resource-feature-checklist Track F requires running design reconciliation (§6)
+— not discretionary once that condition is met.
 
-- **Approved locked `plan.md` decisions** are the ceiling. They govern the intended target for
-  anything they cover and are never re-litigated by planning; only the user can amend one, explicitly.
-- **Derived architectural constraints** bind only while the current-state fact they were derived from
-  still holds — `rules/plan-md-input.md` checks this staleness against current code before drafting,
-  distinct from re-litigating the locked decision underneath.
-- **Open implementation details** may stay open for implementation, under an executability test: would
-  flipping the choice change what the system guarantees? If yes, it is product-shaped and must be
-  resolved (or asked); if every option preserves the same guarantees, the issue can remain executable
-  without picking one.
-- **Current code** is authoritative for current-state facts and for discovering already-shipped
-  conventions elsewhere in the app.
-- **Design artifacts** are evidence of intended UI — not automatically the winning or newest source
-  merely because they exist.
-- **Project-supplied conventions** (milestone naming, label taxonomy, sequencing constraints) shape a
-  proposal; they are inputs to the methodology, never the methodology itself.
-- **Observed GitHub history and live state** must be queried fresh at each use — never frozen into
-  static methodology, since live label palettes, milestone sets, and repository history change.
-- **The user** decides where authority or chronology genuinely can't resolve a disagreement.
+## 5. The Discovered-work model
 
-Distinctions the skill preserves explicitly, and that a maintainer should not accidentally flatten:
+A raw finding — a report, an observed symptom, a log entry, a code-review concern — is not yet
+developer-ready scope: its affected behavior, blast radius, and cause may all still be unconfirmed,
+and a first symptom alone never justifies a vague issue.
+[`rules/discovered-work.md`](../my-feature-planning/rules/discovered-work.md) governs the transition
+from a raw finding to exactly one of: validated planning input, no actionable gap, or a
+blocked/unresolved finding.
 
-- Shipping something does not by itself prove a deliberate, confirmed newer product decision — code
-  can ship without anyone having decided it should stay that way.
-- A design artifact is not automatically the winning or newest source just because it exists.
-- A milestone description, even an approved one, cannot override an approved locked `plan.md`
-  decision — a conflict is surfaced, not silently resolved by the description.
-- Repetition in repository history is evidence that may shape a metadata proposal; it is never
-  automatically project policy.
-- Live GitHub metadata state (labels, milestones) must be queried at proposal time, never stored as a
-  static snapshot inside the methodology.
-- An approved *absence* of a metadata field (no milestone, no label, no assignee) is a real, valid
-  approved result — not a gap to fill by default.
+**Evidence intake** works through, proportionally to how quickly a finding actually clarifies: what
+was reported and under what conditions; separating confirmed fact from inference and assumption;
+reproduction or corroboration where practical; whether the first symptom is the actual problem or
+one manifestation of it; enough blast radius to bound the outcome honestly; whether the behavior is
+defective, intended, drift from an approved target, or still ambiguous; applicable approved
+decisions; and any material decision still requiring the user.
 
-**Why authority overlays must not be modeled as peer reconciliation outcomes.**
-`design-reconciliation.md`'s five outcomes classify the *relationship between peer evidence sources*
-(a design artifact, the shipped app, established precedent). An approved locked decision is not one
-more peer in that comparison — it sits above it as a governing overlay. A mismatch against a locked
-decision is always recorded as drift against the approved target; it never enters the peer-comparison
-outcome set as if it could lose to a design file or shipped behavior. Collapsing the two would let a
-stale mockup or an accidental shipped regression silently outrank a decision the user already made.
+**Safe reproduction** is attempted only when practical, authorized, and non-destructive — existing
+evidence, a safe environment, existing tests, and reversible diagnostics are all preferred over
+anything that mutates state, and production or live data is never mutated merely to confirm a
+report. A reproduction or access limitation is stated honestly; lacking reproduction doesn't
+invalidate a finding by itself, but it constrains what the eventual issue can honestly claim.
 
-**Why source classification and drafting readiness are separate decisions.** Classifying *what the
-sources say relative to each other* (five outcomes) is a different question from *can drafting proceed
-right now*. "No relevant artifact" classifies cleanly and still doesn't block by itself; only an
-actually-unresolved material product decision blocks, and only the issue definitions it affects.
-Folding readiness into the classification step would make every "no artifact" or "genuinely new UI"
-outcome look like a potential blocker when most are not.
+**Investigation-depth bands** scale to what the planning question actually needs, not to a fixed
+depth: *shallow* (an obvious, deterministic symptom and cause — verify completeness and blast radius,
+then stop), *focused* (multiple plausible causes, or a symptom crossing feature boundaries —
+reproduce, isolate variables, falsify wrong hypotheses one at a time), and *deep* (destructive,
+security-, or data-integrity-relevant behavior; cross-layer interaction; contradictory evidence; a
+symptom that may hide a materially different defect underneath — trace across whatever boundaries
+are necessary and prove the claims that matter). Depth only increases when remaining uncertainty
+materially affects scope, safety, guarantees, or developer readiness.
 
-## 6. Classification and scope discovery
+**Evidence checkpoints** are a visibility and decision mechanism, not a time or token budget: surface
+one when a major hypothesis is falsified, investigation must cross into a new system or ownership
+boundary, remaining evidence would require unavailable access or invasive instrumentation, or a
+natural point is reached where coherent scope may already be possible. Each checkpoint reports what's
+confirmed, what's ruled out and how, what remains unknown, the next useful step, and whether the
+finding is already scopeable.
 
-`rules/feature-classification.md` sorts a feature into one of four shapes by **organizing
-responsibility**, not by implementation footprint:
+**Disposition and readiness** are two separate judgments. Disposition classifies the evidence:
+confirmed current defect, intended behavior with no actionable gap, intended behavior with an
+adjacent gap, drift from an approved target, an unresolved material decision, or not-yet-classifiable.
+Readiness then asks whether drafting can proceed at all: a defect, adjacent gap, or drift proceeds
+into the normal pipeline; no actionable gap produces no issue; an unresolved material decision blocks
+drafting and routes to the owning decision gate; a not-yet-classifiable finding needs more
+investigation or stays blocked — it never automatically becomes an instrumentation issue by default.
 
-- **A — new resource**, its own persisted identity and lifecycle → `resource-feature-checklist.md`.
-- **B — cross-cutting capability**, organizing responsibility spans multiple existing domains →
-  `capability-checklist.md`. Owning its own tables does not disqualify it from B — the state supports
-  cross-cutting behavior rather than a resource's own CRUD lifecycle.
-- **C — extension** of something that already ships → the relevant slice of whichever checklist
-  applies, never a full replan of the parent.
-- **D — architectural/refactor** milestone, no new user-facing capability → `capability-checklist.md`'s
-  applicable questions only.
+**The stopping condition** is the discipline that holds the whole model together: *investigate until
+the finding can be scoped honestly, not necessarily until its complete root cause or fix is known.*
+Stopping short of a complete explanation is legitimate when further work is disproportionate to its
+planning value, necessary access is unavailable, or confirming the mechanism would require invasive
+instrumentation or implementation work — but only when the remaining unknown doesn't prevent a
+reliable outcome, boundary, or proof obligation. An unresolved mechanism may become one of the
+eventual issue's own Tasks (§7) only once this condition is genuinely met, never as a shortcut around
+investigating.
 
-Checklist questions **discover** scope; they never dictate issue count — that mapping belongs entirely
-to `rules/sequencing.md`'s coherent-outcome test. Capability-shaped and architectural work resolve only
-the applicable checklist questions; loose work can use a checklist as a set of prompts without forcing
-a full feature replan.
+## 6. Design reconciliation
 
-**The shared-foundation test** (`capability-checklist.md` question 2, consumed by `sequencing.md`):
-foundation work that's independently coherent and provable on its own may become its own issue;
-foundation work that can't actually be proven correct without a real consumer exercising it bundles
-with the smallest real consumer instead. Unused scaffolding is never created merely to satisfy an
-abstract layering preference.
+Design artifacts drift from what actually ships — real product decisions get made mid-implementation
+and never get folded back into the design source. [`rules/design-reconciliation.md`](../my-feature-planning/rules/design-reconciliation.md)'s
+job is to surface that drift before it silently repeats, not to resolve it in either direction on
+its own.
 
-## 7. Design reconciliation
+**Activation.** The pass runs whenever planned work has any frontend/UI scope — during planning,
+before canonical issue definitions exist. Backend- or infrastructure-only work skips it entirely.
+Discovering that no relevant design artifact exists is a valid, ordinary outcome of running the pass,
+not a reason to skip running it.
 
-This rule runs whenever planned work carries any frontend/UI scope — not discretionary once that
-condition is met, during planning, before canonical issue definitions exist. A missing design artifact
-is a valid, ordinary result of running it, not itself a blocker.
+**Authority sources, in order of what's already settled versus what must be surfaced:** an approved
+`plan.md` locked decision governs the intended target for anything it covers, and neither a design
+artifact nor current implementation can silently override it. Current code is authoritative for
+current-state facts and for discovering shipped conventions elsewhere in the app. A design artifact
+is evidence of intended UI — not automatically the newest or winning source merely for existing, and
+shipping something is never by itself proof that anyone deliberately decided it should stay that way.
 
-**Locating artifacts.** No directory, filename, format, tool, or tracked/untracked status is assumed;
-the consuming project's actual sources are discovered from project-supplied documentation,
-configuration, or reliable conversation context. The rule asks the user only when the location is
-materially necessary and unclear — it never invents an artifact or a project convention for one.
+**Classifying a disagreement.** After comparing an approved decision (if any), the available design
+artifacts, and the shipped surface, the result falls into one of five outcomes: no material drift
+(sources align, or their difference doesn't change behavior or scope — proceed); resolved drift
+(sources differ, but an approved decision or established chronology resolves the intended target —
+record the drift against the resolved target); genuine unresolved disagreement (sources express
+different product choices and no approved authority or chronology resolves which governs); genuinely
+new UI (an artifact describes a new surface with no shipped counterpart or conflicting decision —
+follow it); or no relevant artifact (continue from approved decisions and established conventions,
+never inventing layout or interaction requirements to fill the gap).
 
-**Five source-relationship outcomes**, applied after comparing an approved decision, the relevant
-design artifact(s), and the shipped surface: no material drift; resolved drift (chronology or approved
-authority resolves the intended target); genuine unresolved disagreement; genuinely new UI (a new
-artifact, no conflicting decision); no relevant artifact.
+A genuine unresolved disagreement blocks only the affected issue definitions, presented to the user
+as what each source indicates, why neither clearly supersedes the other, the specific decision
+required, and an optional recommendation — never silently resolved by picking a side. A missing
+artifact blocks drafting only when its absence leaves a necessary product decision unresolved, not
+by itself. Design artifacts inform planning; they never automatically override an approved product or
+architecture decision, and an approved decision is the one authority this reconciliation never
+re-litigates.
 
-**Drafting readiness is a separate decision.** Only a genuine unresolved disagreement, or a missing
-artifact that leaves a necessary product decision unresolved, blocks — and it blocks only the affected
-issue definitions, never the whole planning pass. Issue definitions unaffected by the open decision
-continue normally.
+## 7. The canonical issue model
 
-This rule is the clearest illustration of two general lessons stated in §5: authority is an overlay
-applied around the classification, not folded into it, and classifying evidence is not itself the same
-act as deciding whether the workflow can proceed.
+The **canonical issue definition** — not any rendered preview, the compact manifest, or a prior
+draft — is the single authoritative representation of a proposed issue before it ever touches
+GitHub. Every rendered body, every manifest row, and every final `gh issue create` call is generated
+fresh from the current canonical definition; nothing downstream is ever reconstructed from an
+earlier render. This is what keeps a large issue set from drifting (duplicated sections, misplaced
+acceptance criteria) across several rounds of revision.
 
-## 8. Discovered work
+**Titles** take one form regardless of layer, shape, or origin: `<Area/Capability>: <action or
+outcome>` — describing the change or observable outcome, never an implementation-layer batching
+choice, with no bracket prefixes and a surface/location qualifier only where it materially improves
+clarity.
 
-`rules/discovered-work.md`'s job is turning a raw finding into validated planning input before it ever
-reaches classification — without reproducing the operational procedure here, the epistemic model is:
+**A body must stand alone** — understandable even if `plan.md`, the planning conversation, and this
+skill's own prior output all disappeared. It is structured around:
 
-- A raw report — a symptom, a log entry, a review concern — is a finding, not yet a confirmed defect.
-  Its existence never by itself confirms the underlying behavior.
-- Reproduction is conditional, safe, and non-destructive: preferred when practical, never mutating
-  live or production state merely to confirm a report.
-- Investigation depth is proportional — shallow, focused, or deep bands, deepening only when remaining
-  uncertainty materially affects scope, safety, guarantees, or developer readiness.
-- Evidence checkpoints give the user a decision-ready view at natural inflection points; they are
-  neither an automatic stop nor an automatic command to keep going.
-- **Semantic disposition is classified first** (confirmed defect, intended/no gap, intended/adjacent
-  gap, drift from an approved target, unresolved material decision, not-yet-classifiable) — **then
-  drafting readiness is assessed separately.** A defect, gap, or drift proceeds; an unresolved material
-  decision blocks drafting even though it has a clear disposition; a not-yet-classifiable finding
-  requires more investigation and never automatically becomes an instrumentation issue by default.
-- Root cause is useful but not always required — uncertainty is acceptable only when bounded and the
-  issue remains honest, executable, and non-speculative.
-- An unresolved mechanism may become one of the issue's own scoped Tasks, but only under the stopping
-  condition: investigate until the finding can be scoped honestly, not necessarily until its complete
-  root cause is known.
-- Insufficient evidence must never silently become an instrumentation issue by default — that
-  conversion requires the stopping condition to actually be met, not merely an absence of a clear
-  answer.
-- New evidence that materially contradicts a confirmed fact or approved decision *after* approval is
-  never ignored — it routes through the applicable review, discovered-work, or human decision gate.
+- **Context** — why the issue exists: the problem, the intended outcome, the constraints that
+  matter, what's in and out of scope, and relevant dependencies, in prose. Context explains a
+  decision; it never merely cites one.
+- **Tasks** — the actual delivery work, as literal Markdown checkboxes GitHub can render as
+  progress.
+- **Acceptance Criteria** (optional) — guarantees and observable outcomes that must remain true,
+  distinct from a restated Task, added only where an issue's complexity actually earns them.
+- **Tests** (optional) — named behaviors or guarantees needing proof, only when that adds real value
+  beyond what Tasks and Acceptance Criteria already imply, and always at the level of what needs
+  proving rather than an assertion-by-assertion recipe.
 
-**Scope membership vs. dependency-edge creation stay separate** when Discovered work joins existing
-planned scope. Surfacing during another issue's implementation doesn't by itself make a finding
-dependent on the issue that exposed it; membership follows the same coherent-outcome test as any other
-scope decision, and a dependency edge is added only where a real prerequisite actually exists.
+**Reference categories stay strictly separate**, because GitHub linkifies any `#` followed by digits
+whether intended or not: a **real GitHub reference** (`#<N>`, an actual issue or PR), a **canonical
+planning identifier** (this pass's own pre-GitHub sequence number, e.g. "canonical issue 5"), a
+**plan decision identifier** (e.g. "decision 7"), and a **plan section reference** (e.g. "`plan.md`
+§2.5"). Only the first is ever written as `#<N>`; the other three use hash-free natural wording.
+Before an issue is created, every planning-only number in its body must already be resolved to
+either a real `#<N>` dependency or rewritten as plain wording. A dependency is expressed as `Depends
+on #<N>` once the prerequisite has a real number; a `plan.md` citation may supplement an
+already-complete explanation but never substitutes for one, since neither `plan.md` nor the planning
+conversation is load-bearing once the issue exists.
 
-## 9. Canonical issue and metadata model
+**Completion requirements must be feasible at the issue's own closure boundary.** A per-issue
+Acceptance Criterion or Test is invalid if it depends on evidence that structurally cannot exist
+until a later milestone/PR boundary under the consuming project's delivery workflow — for example,
+requiring a PR-triggered CI run as proof for an issue that closes on a shared branch before any PR
+for that milestone exists. Disclosing that gap honestly in the issue body is not a substitute for
+not creating it; the fix is routing that proof to the boundary where it can actually be produced
+(the milestone/PR boundary itself), not softening the wording or caveating an internally
+inconsistent requirement.
 
-**Canonical-definition contract.** There is one canonical definition per proposed issue. Every
-rendered preview, the compact manifest, and every mutation are generated fresh from the current
-canonical definition — never reconstructed from an earlier rendered preview. This is what prevents a
-large issue set from drifting (duplicated sections, misplaced acceptance criteria) across revision
-rounds.
+**Member-level closed-set coverage** applies whenever approved scope defines an exhaustive set —
+through an inventory, named members, an exact count, or "all/every" wording. Two distinct things get
+validated: whole-set coverage, checked once across the *entire* canonical issue set, confirms every
+in-scope member from that approved source appears exactly once somewhere in the set, and that any
+member the approved scope explicitly defers or excludes stays outside it; and the narrower,
+per-issue check, run against one issue's own rendered body or the manifest's row for it, confirms
+that issue's *specific assigned subset* of the members is exactly what it claims — no missing,
+duplicated, or extra member for that one issue. Passing the per-issue check for every issue doesn't
+substitute for the whole-set check, and neither check searches for members beyond what the approved
+scope already defined — that would be scope expansion, not fidelity validation.
 
-**Issue-body shape**, and why the parts stay distinct: `## Context` (prose — the problem, outcome,
-constraints, scope, exclusions, dependencies) explains a decision rather than citing one;
-`## Tasks` are literal, mutable Markdown checkboxes tracking delivery progress; optional
-`## Acceptance Criteria` are static guarantees, deliberately never checkboxes, so they can't be
-mistaken for completable work items; optional `## Tests` names behavior-level proof obligations only
-where it adds value beyond what Tasks/Acceptance Criteria already imply.
+## 8. Decomposition and sequencing
 
-**Four GitHub-reference categories** (`rules/issue-conventions.md` §3): real GitHub issue/PR references,
-canonical planning identifiers, plan decision identifiers, plan section references. Only the first is
-ever written `#N` — GitHub linkifies any `#`+digits regardless of intent, so a bare planning-only
-number left as `#N` would silently link to whatever issue happens to hold that number in the repo.
+[`rules/sequencing.md`](../my-feature-planning/rules/sequencing.md) owns two connected decisions
+after checklist scope exists: splitting it into coherent issues, and ordering those issues by real
+prerequisites. It does not decide implementation order, which ready issue gets worked next, branch
+strategy, or commit structure — all of that is `my-git-workflow`'s.
 
-**Why plan sections and planning conversations can't be load-bearing.** A created issue must stand
-alone even if `plan.md`, the planning conversation, and this skill's own prior output all disappeared —
-a `plan.md` pointer is allowed only *in addition to* an already-complete explanation, never as a
-substitute for one.
-
-**Metadata model** (`rules/issue-conventions.md` §5) keeps five things distinct at every step: explicit
-project convention; observed GitHub state; planning's proposed metadata; final approved metadata *or*
-approved absence; post-approval creation. Milestone (title, optional description, lifecycle owned
-downstream by `my-git-workflow/rules/milestone-completion.md`), labels (name/color/taxonomy), and
-assignee (validity checked before mutation, never a silent default) are kept type-correct and
-conceptually separate — none is conflated with another as "the metadata."
-
-## 10. Decomposition, dependencies, and planning waves
-
-`rules/sequencing.md` decomposes canonical scope by **coherent outcome, real dependency, and
-independent provability** — never by checklist question, file, layer, or a fixed template such as
-backend-before-frontend.
+**Decomposition** is identical across every classification shape: split by coherent outcome, real
+dependency, and independent provability — never by checklist question or track, file, class, route,
+component, layer, system-side-versus-user-facing split, or a fixed count. A checklist's questions
+supply scope; no question number maps mechanically to an issue. Split when parts produce
+independently meaningful outcomes, have materially different prerequisite chains, or can be verified
+apart from each other; bundle when pieces have no provable outcome apart from each other, when a
+foundation can't be trusted without a real consumer exercising it, or when splitting would leave
+unused scaffolding. Issue count is never predetermined by input size, checklist length, or file
+count — it falls out of what's actually independently provable.
 
 **A real dependency** exists only when one issue's outcome must exist before another can be safely
-completed, landed, or verified — never a preferred order, shared subject matter, milestone membership,
-or an implementation-layer habit. Every internal edge is validated into a DAG: roots and disconnected
-components are valid outcomes, not exceptions to explain away, and a cycle means the boundaries or a
-dependency claim are wrong — it is corrected by fixing the claim, never broken with an arbitrary
-ordering decision.
+completed, landed, or verified — never a preferred order, shared subject matter, milestone
+membership, or drafting convenience. **Scope membership and dependency-edge creation are separate
+decisions**: a validated Discovered finding, or any other piece of scope, belongs to a canonical
+issue set based on its actual scope alone, never merely because of when or where it surfaced —
+surfacing during another issue's implementation doesn't by itself create a dependency on that issue.
+An external prerequisite the issue set doesn't own may be recorded as an external constraint, never
+fabricated as an internal issue; an unresolved material product/architecture decision is never
+treated as an external constraint — it routes through its owning decision gate instead.
 
-**Planning waves** present the graph as a dependency-safe order — issues whose prerequisites all sit in
-an earlier wave — exposing possible parallelism and giving a stable order for presentation and
-creation. A wave makes **no claim about live implementation readiness or which issue to work next**;
-no implementation-layer order is built into the portable methodology itself. That choice belongs
-entirely to `my-git-workflow` once issues exist.
+**The dependency graph** treats each canonical issue as a node and each real prerequisite as a
+directed edge. It must be acyclic, with every internal dependency resolving to another canonical
+issue and unambiguous direction. A cycle means a boundary or a dependency claim is wrong — resolved
+by combining inseparable work or correcting the false edge, never by an arbitrary tie-breaking order.
 
-Project-supplied delivery constraints are treated as project input: identified as project-supplied,
-checked for whether they create a real prerequisite or only a preferred order, and encoded as a
-dependency edge only in the former case.
+**Waves** present the graph's partial order for creation and review: roots have no internal
+prerequisites, and a later wave's issues have all their prerequisites in an earlier wave. A wave
+exposes possible parallelism — it says nothing about live implementation readiness or which issue to
+work next, both of which belong to `my-git-workflow` once issues exist.
 
-**Planned and Discovered work converge on the same decomposition method** once a finding is validated —
-origin never determines issue count or order.
+## 9. Review, approval, and mutation
 
-Three layers stay distinct throughout, never conflated: **membership** in canonical scope (does this
-belong to the initiative at all), **dependency edges** inside that scope (which issues actually
-require which others), and **downstream live readiness** after issues exist (which ready issue to
-work next, recomputed by `my-git-workflow` after each closure). A canonical graph may legitimately
-contain parallel roots or disconnected components — belonging to an initiative never requires an edge
-to every other issue in it.
+Five review surfaces each validate a different artifact, and none substitutes for another:
 
-## 11. Review, approval, and mutation validation
+| Surface | Validates | Runs |
+|---|---|---|
+| Semantic issue/dependency review | Whether an issue and its dependencies are *right* — coherent outcome, complete Context, preserved decisions, no hidden material gap, proportional Acceptance Criteria/Tests, closure-boundary-feasible completion requirements, real dependency edges | After drafting, and after every revision |
+| Canonical structural integrity | The canonical definitions themselves — unique identifiers/titles, exactly one body per issue, no misplaced content, acyclic and dependency-safe order, whole-set member coverage when scope is an exhaustive set | After drafting, and after every revision |
+| Issue-body content integrity | One freshly rendered body — reference-category discipline, no planning leakage, self-contained Context, literal Task checkboxes, per-issue member-subset accuracy | Before content review, and again immediately before any create/edit mutation |
+| Rendered-manifest integrity | The compact manifest as a one-way render — row count, identifiers, titles, order, and metadata all matching canonical state | Immediately before the final approval presentation |
+| Post-mutation live-state validation | Live GitHub state after a mutation episode, independently re-fetched and compared against the exact approved target | After every related mutation episode, at creation and on any later change |
 
-`SKILL.md` owns two approval gates: **content review** of the full issue set, and **final approval** of
-the compact manifest plus the proposed metadata. Nothing is created until both are given.
+**Two approval moments gate GitHub**, and nothing — no milestone, label, or issue — is created until
+both pass: a **content review** of the full issue set, where scope, Context, Tasks, and Acceptance
+Criteria get fixed, and a **final approval** of the compact manifest plus the proposed metadata
+(milestone, labels, assignee, including the approved absence of any of them). Metadata itself is
+proposed early — queried against current GitHub state, informed by discovered project conventions,
+drafted explicitly — but created only at that same final gate; nothing is created speculatively while
+issue content is still being drafted.
 
-`rules/review.md` owns five distinct validation surfaces around those gates, each checking a different
-artifact against a different standard:
+**Validating before mutation is a different act from validating after it.** A `gh` command
+succeeding proves only that GitHub accepted the request, not that the intended state now exists.
+Immediately before any issue body touches GitHub, it is re-rendered from the current approved
+canonical definition and re-checked; after the mutation, live state is independently re-fetched and
+compared against the exact approved target — by mutation type (issue creation, a body edit, a
+metadata change, milestone or label creation), and identically for a later mutation as for the
+original one. A failed validation is reported as GitHub currently being inconsistent with the
+approved target — never silently hidden or normalized.
 
-1. **Semantic issue/dependency quality** — is the scope and the graph *right*.
-2. **Canonical structural integrity** — do the canonical definitions themselves satisfy count,
-   uniqueness, and acyclic-graph invariants. This validates the canonical definitions directly, never a
-   rendered preview.
-3. **Rendered issue-body integrity** — does a freshly rendered body match its canonical source, with no
-   planning leakage or unresolved placeholder.
-4. **Rendered-manifest integrity** — does the compact manifest match canonical count, order, and
-   values, one-way, freshly generated.
-5. **Post-mutation live-state validation** — does GitHub's actual live state, independently re-fetched,
-   match the exact approved target.
+## 10. Rule ownership and handoffs
 
-Canonical structure and live GitHub state are **not** "rendered artifacts" — they are validated against
-their own criteria (internal structural correctness, and actual mutation outcome respectively), not
-checked for fidelity to something else the way a rendered preview or manifest is.
+Every rule under `rules/` answers a distinct question in the pipeline; none restates another's
+territory:
 
-**Member-level closed-set coverage.** When approved scope establishes an exhaustive set — through an
-inventory, named members, an exact count, or "all"/"every" wording — three of the five surfaces carry a
-matching check rather than accepting a matching headline total on its own: canonical structural
-integrity (surface 2) confirms every in-scope member from that source appears exactly once across the
-canonical issues, checked against the actual members, with any member the approved scope explicitly
-defers or excludes kept outside the canonical set; rendered issue-body integrity (surface 3) confirms
-each rendered body preserves the exact subset of that set assigned to its own canonical issue — not the
-whole exhaustive set, since scope may legitimately be distributed across multiple issues; rendered-
-manifest integrity (surface 4) confirms any set/count the manifest states reconciles with the canonical
-issues' actual membership. This validates fidelity to scope the approved source already established — it
-does not authorize searching for members beyond that source, or silently expanding approved scope.
+| Rule | Owns |
+|---|---|
+| [`plan-md-input.md`](../my-feature-planning/rules/plan-md-input.md) | Recognizing and consuming an approved `plan.md` section as canonical input; preserving its locked/derived/open distinctions |
+| [`discovered-work.md`](../my-feature-planning/rules/discovered-work.md) | Turning a raw finding into validated planning input, no actionable gap, or a blocked finding |
+| [`feature-classification.md`](../my-feature-planning/rules/feature-classification.md) | Which of the four shapes a feature is, and which checklist it routes to |
+| [`resource-feature-checklist.md`](../my-feature-planning/rules/resource-feature-checklist.md) | Shape-A/resource-shaped-C scope discovery across its seven tracks |
+| [`capability-checklist.md`](../my-feature-planning/rules/capability-checklist.md) | Shape-B/capability-shaped-C/D scope discovery across its thirteen questions |
+| [`design-reconciliation.md`](../my-feature-planning/rules/design-reconciliation.md) | Comparing design-artifact, shipped, and approved-decision authority when UI is in scope |
+| [`issue-conventions.md`](../my-feature-planning/rules/issue-conventions.md) | Title/body format, reference-category discipline, and the metadata proposal-and-approval workflow |
+| [`sequencing.md`](../my-feature-planning/rules/sequencing.md) | Decomposition into coherent issues and building the dependency graph/waves |
+| [`review.md`](../my-feature-planning/rules/review.md) | All five review surfaces and their validation timing |
 
-**Why a successful mutation is not proof.** A `gh` command's exit code proves only that GitHub accepted
-the request, not that the intended state now exists. Every mutation episode is independently re-fetched
-and compared against the exact approved target — including an approved absence of a field — with no
-exemption for the first creation versus a later edit.
+`SKILL.md` owns the two approval gates and the overall pipeline order; no rule file reproduces that
+gate structure itself.
 
-## 12. Empirical evidence
+**Handoff from `my-architecture-laboratory`.** The only thing that ever crosses into this skill from
+architecture work is an approved `plan.md` section — a published or updated architecture guide never
+implies a downstream handoff by itself. `plan-md-input.md` treats that section as canonical only once
+initiative match, the source-of-truth statement, and the user's independently established approval
+are all present; a polished draft or the file's mere existence is never enough on its own.
 
-The methodology isn't theoretical; some of its current shape is directly traceable to earlier defects
-found and fixed during the authoring passes. This section keeps only the evidence that still teaches
-something surviving in a current rule — not a chronological record of what changed.
+**Handoff to `my-git-workflow`.** This skill's responsibility ends once approved GitHub metadata and
+issues are created and validated. From there, `my-git-workflow` owns branch readiness, review gates,
+commits, verification, issue closure, and release/milestone progression — including live dependency
+readiness as issues actually close, and which ready issue to implement next, neither of which this
+skill decides. A wave (§8) is a dependency-safe presentation and creation order, not a live
+readiness signal.
 
-- **Why raw findings need epistemic discipline.** `discovered-work.md`'s disposition/readiness split
-  and its "not-yet-classifiable never automatically becomes an instrumentation issue" rule exist
-  because a shallow finding, taken at face value, is exactly how a vague or wrong issue gets drafted —
-  the rule's own stated purpose.
-- **Why design authority can't be inferred from an artifact's existence or a shipped implementation.**
-  An earlier draft of `design-reconciliation.md` had overlapping outcome/blocking logic that could let
-  "the artifact exists" or "it shipped" stand in for an actual authority decision; the current rule
-  separates source classification from drafting readiness precisely to prevent that (§7, §5).
-- **Why fixed implementation-layer batching was replaced by an actual dependency graph.** An earlier
-  version of this skill's top-level guidance described sequencing as "backend/TDD work batched before
-  frontend/UI work" as the default shape. The current model — coherent-outcome decomposition plus a
-  validated dependency DAG, presented as waves — replaced that fixed template because a template can't
-  represent a feature whose real dependency structure doesn't match it; a project's actual graph now
-  decides split, bundle, and order every time.
-- **Why static project metadata and live palette state don't belong in a portable skill.** An earlier
-  version of the metadata rule restated a project's live label-palette state as if it were a fixed fact
-  of the methodology. The current `rules/issue-conventions.md` §7 states explicitly that it never
-  stores a project's live label state as part of its own methodology — that state is queried fresh
-  every time, from GitHub and from project-supplied convention, never frozen into the rule.
-- **Why milestone lifecycle mechanics must be owned downstream, not duplicated in planning.**
-  `rules/issue-conventions.md` §6 stops at classifying and scoping a milestone and explicitly hands PR
-  readiness and closure to `my-git-workflow/rules/milestone-completion.md`'s current contract, "always
-  consult that rule's current contract directly rather than restating it here" — avoiding a duplicated,
-  driftable copy of downstream lifecycle logic inside planning.
-- **Why canonical definitions and independent post-mutation validation matter.** `rules/review.md`
-  states, in its own text, that its checks re-derive their expected set from whatever the canonical
-  definitions currently are, "for any feature and any issue count," rather than hard-coding an expected
-  shape — the discipline that makes the five validation surfaces in §11 actually portable instead of
-  tied to one feature's specifics.
-- **Resolved historical defect — a stack-specific checklist file.** `resource-feature-checklist.md` was
-  once the single heaviest concentration of interleaved generic and project-specific content in this
-  skill's rule set, braided sentence-by-sentence rather than separable by section. It has since been
-  rewritten so every track states only the portable question, with concrete artifacts explicitly
-  delegated to "the consuming stack." Direct inspection of the current file confirms no project-specific
-  content remains.
-- **Resolved historical defect — private-memory dependencies.** Two rules once depended directly on
-  named personal-memory entries for a design-file location and a GitHub-issue convention. Direct
-  inspection of the current `design-reconciliation.md` and `issue-conventions.md` confirms neither
-  references any memory entry; both now discover the equivalent information from project-supplied
-  context instead.
-- **Resolved historical defect — stack vocabulary in the always-loaded activation file.** `SKILL.md`
-  once named specific framework artifact types directly in its top-level Workflow section — the one
-  file every invocation loads regardless of which downstream rule applies, unlike the labeled
-  illustrations the rule files used elsewhere. The current `SKILL.md` carries no such vocabulary.
+**Handoff to consuming stack/project guidance.** Every checklist, this dossier's canonical-issue
+model, and the review surfaces stop at *what* must be true and *what* must be proven — never *how* to
+implement it. The concrete artifacts that satisfy a checklist question (storage engine, authorization
+mechanism, interface components, tooling commands), the project's metadata conventions (milestone
+naming, label palette, assignment rules), and any framework-specific implementation detail all come
+from the consuming project's own stack-specific skills and established conventions, discovered per
+project, never assumed or carried inside this skill's portable rules.
 
-**A real consumer exercise — the approved-`plan.md` path (`useOrbit`, 2026-08-28).** `roadmap.md`
-Phase B records that `useOrbit` consumed this skill from
-`agentic-engineering@5ff489ca60c26ad971da926118701953fa75e41c` and used it, from the natural
-instruction to feature-plan an already-approved `plan.md` initiative, to run classification, canonical
-issue drafting, metadata approval, GitHub creation, dependency-reference resolution, and post-mutation
-validation end to end, producing `useOrbit#300`, `#301`, and `#302` in the milestone `Phase 23 —
-Composer & JavaScript Dependency Upgrade`. Those three issues were then carried through the full
-downstream `my-git-workflow` delivery lifecycle to a merged PR (`#303`) and a published release
-(`v0.17.1`) — see `skill-audits/my-git-workflow.md` §11 for that downstream evidence, not restated
-here. The relevant findings for *this* skill are what that later execution revealed about the issue
-contracts this skill produced, not about the downstream delivery itself:
+## 11. Boundaries and confidence
 
-- **The three-issue decomposition itself held up.** Nothing in the downstream execution required
-  re-splitting, re-merging, or re-sequencing #300, #301, or #302 — the coherent-outcome boundaries
-  (CI/baseline, Composer upgrades, npm upgrades) that review corrected the original eight-way
-  over-split down to (recorded in `roadmap.md`, Phase B) survived real implementation unchanged.
-- **#302's uniform per-group verification wording caused disproportionate repeated verification
-  downstream.** Its Tasks named the same full-project regression gate after each of four npm-only
-  implementation groups, regardless of which stack a given group actually touched — driving four full
-  backend-regression re-runs that no npm-only change in that issue could plausibly have required. This
-  is precisely the gap `rules/issue-conventions.md`'s new §10 ("Verification checkpoints inside a
-  multi-group issue") now addresses: state what each checkpoint needs to prove and scale it to the
-  affected surface, rather than repeating one full-project command after every group by default.
-- **#300's own completion criterion could not be satisfied at its own closure boundary.** Its Tests
-  section required a real, PR-triggered CI run as a condition of that issue's own completion, but the
-  downstream milestone-branch delivery model closes every issue before any PR for that milestone
-  exists — making the criterion structurally unsatisfiable at #300's own closure, regardless of
-  sequencing choice. This is precisely the gap `rules/issue-conventions.md`'s new §11 ("Completion
-  criteria must be satisfiable at their own closure boundary") now addresses: check a completion
-  requirement against the issue's own expected closure boundary before finalizing it, and route
-  boundary-dependent proof to the milestone/PR boundary it actually belongs to instead.
-- **These are issue-contract quality findings, not evidence that this skill's core mechanics failed.**
-  Classification, GitHub issue/milestone creation, dependency resolution, and metadata proposal/
-  approval/post-mutation validation all worked as designed in this exercise — the two findings above
-  are about what the drafted issue *text* asked for, not about whether planning correctly classified,
-  sequenced, created, or validated the issues it produced.
+GitHub specificity is intentional, not a portability gap to close — this skill's portability claim is
+being reusable across GitHub-based projects with different stacks, not across issue trackers.
+Application-stack implementation knowledge, milestone-naming patterns, and label palettes are inputs
+the consuming project supplies into the methodology; they are not, and should never become, part of
+the portable rules themselves. Project metadata conventions must be discovered or supplied per
+repository — this skill invents none of them and presents no invented value as an established
+convention.
 
-**A second real consumer exercise — the approved-`plan.md` path, architectural/refactor classification
-(`useOrbit`, 2026-09-01).** The immutable approved `plan.md` at `useOrbit@0f905cf313301a372a00f24cce684e442590a75f`
-defines `useOrbit`'s `tests/` restructuring: an exhaustive 74-file set of Unit-to-Feature dispositions
-(§1, §4), an exhaustive 7-file set of HTTP tests to trim of duplication with their paired Action test
-(§4a, §8), and an exhaustive 7-file set of HTTP tests needing an added persisted-state assertion (F12,
-§4a, §8). A natural instruction activated `my-feature-planning` from this approved plan; it classified
-the work as an architectural/refactor initiative (`rules/feature-classification.md` shape D — a test
-suite reorganization with no new user-facing capability) and proposed four coherent issues in two
-dependency waves, rather than one oversized issue spanning all three exhaustive sets:
+This skill cannot guarantee downstream implementation quality: it owns planning and issue creation,
+not the code that later satisfies an issue, and a well-formed, self-contained, review-passed issue
+is not a claim about how well it will be implemented.
 
-- `#305`, `#306`, and `#307` are independent roots — the relocation, the HTTP-trim, and the
-  persisted-state-addition outcomes are each independently coherent and provable without depending on
-  one another.
-- `#308` (dropping `'Unit'` from `tests/Pest.php`'s `->in()` chain) has the single real dependency on
-  `#305`, since a file still sitting in `Unit` mid-migration would otherwise lose `TestCase`/
-  `RefreshDatabase` if the config change landed first.
+Its architecture — the classification/checklist model, the canonical-issue and reference-category
+discipline, the dependency-graph decomposition, the five review surfaces, and the pre/post-mutation
+validation model — has been exercised through real issue planning and real GitHub mutation, not
+merely authored and left untested. That confidence does not extend to broad portability across many
+consuming projects: validation beyond one real consuming project remains unproven, and this document
+does not claim otherwise.
 
-Existing Testing metadata and project conventions were reused rather than invented: all four issues were
-created under the milestone `Phase 24 — Tests Restructuring`, labeled `Testing`, and assigned to
-`elieandraos` — the project's own existing label and assignment conventions, not new methodology-side
-policy. Post-mutation validation confirmed live state matches this target: `useOrbit#305`, `#306`,
-`#307`, and `#308` all carry milestone `Phase 24 — Tests Restructuring`, label `Testing`, and assignee
-`elieandraos`, and are open. Direct inspection of the live bodies confirms complete membership: live
-`#305`'s Tasks cover all 74 Unit-to-Feature dispositions, including the one `Listeners/` file
-(`UpdateLastLoginTimestampTest.php`); live `#306`'s Tasks cover all 7 HTTP-trim files, including
-`Carriers/StoreTest.php`; live `#307`'s Tasks cover all 7 persisted-state-addition files; live `#308`
-both references and declares a real dependency on `#305` (`"Depends on #305"`, a real GitHub issue
-number, not a canonical planning identifier).
+Member-level closed-set coverage (§7, §9) is part of the current review contract, but it has not yet
+received an independent forward exercise on a fresh initiative since its introduction — its logic is
+sound on direct inspection of the current rule set, but that is not the same claim as having watched
+it catch a real coverage gap on a new feature.
 
-This exercise revealed two findings, and preserving the distinction between them is the point of
-recording this evidence:
-
-1. **Portable rule gap.** Exhaustive member-level task coverage was not explicit enough in
-   `rules/review.md` before this exercise: a draft or render pass could omit individual members from a
-   canonical issue's Tasks while still reporting a headline total that matched the approved count,
-   because nothing checked actual membership against the approved source. This justified the narrow
-   `rules/review.md` correction landed in `9dc5b6d` ("Add exhaustive task coverage validation"),
-   clarified in `4a9557c` ("Clarify closed-set validation wording") — see §4, §11, above.
-2. **Execution misses already covered by existing rules.** In the course of this same exercise, a
-   rendered manifest temporarily omitted a canonical issue, and some validation reports claimed checks
-   had passed despite visible mismatches on inspection. Both are failures the existing canonical-
-   structural-integrity and rendered-manifest-integrity rules (§5, §7 of `rules/review.md`, already in
-   force before this exercise) already prohibited outright — an execution miss against a standing rule,
-   not evidence of a gap in the rule itself. They did not justify any duplicate guidance beyond the one
-   correction above.
-
-**This exercise's live issues predate the correction — they are not evidence the corrected rule
-produced them.** `useOrbit#305`–`#308` were created on 2026-09-01 at 08:29–08:30 UTC; `9dc5b6d` and
-`4a9557c` were committed the same day at 08:34 and 08:42 UTC respectively — after issue creation, not
-before it. What this exercise shows is that the final live issue bodies are complete against the
-approved plan's exhaustive sets (confirmed above by direct inspection), that the rule correction the
-exercise motivated was subsequently authored and published upstream, and that `useOrbit` then refreshed
-its installed `my-feature-planning` snapshot and provenance record from
-`24b288caf62f4d83b74d741a1cb96583cb1877fe` to `4a9557c372bc68d4fba89b37eb4e8f4ce7ad902d`, verified as
-exact 11-file parity (sorted file list, per-file SHA-256 manifest, and `diff -rq` all matching the
-canonical directory at `4a9557c3...` exactly; `UPSTREAM_PROVENANCE.md`, "Refresh: `my-feature-planning`
-— 2026-09-01 (second refresh, same day)").
-
-**No independent forward test has occurred yet.** No genuinely new, fresh-initiative exercise of the
-corrected rule has been run since — the only post-correction activity against these four issues was a
-read-only recheck confirming already-correct live bodies, which does not itself constitute a forward
-test of the corrected rule drafting a new issue set from scratch.
-
-## 13. Authoring observations
-
-Reusable lessons from this authoring pass are consolidated in
-`skill-audits/skill-authoring-methodology.md`. This dossier keeps only their skill-specific
-manifestations, in the architecture and empirical-evidence sections above; §12 contains the evidence
-relevant to `my-feature-planning`.
-
-## 14. Boundaries and open questions
-
-Genuine current boundaries — deliberate scope limits, not defects:
-
-- **GitHub is intentionally required.** This is a stated design choice (§2), not an oversight to
-  generalize away.
-- **Application-stack implementation knowledge stays outside this skill.** Checklist questions
-  discover scope; the consuming project's own stack-specific skills answer with concrete artifacts.
-- **Project conventions remain project inputs.** Milestone naming, label taxonomy, and assignment
-  rules are discovered per project, never assumed or hard-coded.
-- **Design artifacts may be absent.** A missing artifact is a normal, non-blocking outcome unless its
-  absence leaves a necessary product decision unresolved.
-- **Human decisions remain necessary where product authority is genuinely unresolved** — a genuine
-  design disagreement, an unresolved material Discovered-work decision, or an open implementation
-  detail that turns out to affect a guarantee all route to the user rather than being silently decided.
-- **Issue drafting cannot make an unresolved material decision executable by wording alone.** A
-  well-written issue body doesn't substitute for the decision it depends on.
-- **This skill cannot guarantee project-specific implementation quality after handoff.** Its
-  responsibility ends at approved, validated issue creation; everything after belongs to
-  `my-git-workflow` and the consuming project's own implementation skills.
-
-**Open questions.** Direct inspection of the current nine rule files, `SKILL.md`, and `README.md` —
-after both the rule-by-rule authoring pass and the cross-rule cohesion pass — found no genuinely
-unresolved internal design question within this skill's own architecture. Every cross-file
-contract checked for this dossier (classification → checklist routing, checklist → sequencing,
-design-reconciliation's authority model, discovered-work's convergence into the ordinary pipeline, the
-metadata proposal-and-approval flow, the five review surfaces, the planning/delivery handoff) is
-internally consistent and consistently cross-referenced on the current read. It is valid, and accurate
-here, to conclude that no important internal design question remains open. The one class of question
-that does remain genuinely open sits outside this skill's own boundary: whether and how
-project-specific stack knowledge should be extracted into a separate layer is `roadmap.md` Phase C/D's
-classification question for the surrounding repository, not a design gap inside `my-feature-planning`
-itself.
-
-## 15. Current assessment
-
-**Demonstrably portable.** The four-shape classification taxonomy, both checklists' governing
-questions (Tracks A–G and the thirteen capability questions), the issue-format rules and the four
-GitHub-reference categories, the canonical-definition contract, the coherent-outcome
-decomposition/dependency method, the five review/validation surfaces, and the discovered-work epistemic
-model are all stated generically across all nine current rule files, `SKILL.md`, and `README.md`. No
-concrete stack-specific content survives in any of them on direct inspection — including
-`resource-feature-checklist.md`, previously the heaviest concentration of interleaved generic and
-project-specific content in this skill's rule set.
-
-**Intentionally GitHub-specific.** Milestones, labels, `#N` auto-linkification, and the mutation/
-re-fetch validation model are GitHub product concepts this methodology is built around, stated
-explicitly rather than hidden behind tracker-neutral language.
-
-**Inputs a consuming project must supply.** Application-stack conventions for answering checklist
-questions; design-artifact location and access method; milestone naming and label taxonomy; assignment
-rules; live GitHub state at proposal and validation time; and, where relevant, an approved `plan.md`
-from `my-architecture-laboratory`.
-
-**Material leakage check.** None found. The specific couplings identified for this skill in
-`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md` — the heavily mixed checklist file, two
-private-memory dependencies, and stack vocabulary inside `SKILL.md`'s always-loaded activation surface
-— were checked directly against the current files for this dossier and are absent from all of them.
-
-**Whether further authoring changes are presently justified.** The rule-by-rule authoring pass and the
-cross-rule cohesion pass resolved every concrete coupling identified for this skill in
-`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md`; no further authoring was indicated by
-that evidence. Two real downstream executions have since
-produced three narrow, evidence-backed corrections beyond that baseline, each scoped to what its own
-execution actually showed, not a reopening of the broader authoring pass:
-
-- `rules/issue-conventions.md` §10 — proportional verification checkpoints — and §11 — completion
-  criteria satisfiable at their own closure boundary — from the first exercise (`useOrbit#300`–`#302`,
-  §12 above): disproportionate per-group verification wording, and a completion criterion unsatisfiable
-  at its own closure boundary.
-- `rules/review.md`'s member-level closed-set coverage validation (§4, §11 above) from the second
-  exercise (`useOrbit#305`–`#308`, §12 above): exhaustive member-level task coverage was not explicit
-  enough to catch a draft or render pass omitting individual members while still reporting a matching
-  headline total.
-
-Both exercises' evidence comes from the same real consumer, `useOrbit` — this is not yet corroborated by
-a second consuming project. No independent fresh-initiative forward test of the third correction has
-occurred yet (§12 above). No further authoring change is indicated beyond those three.
+No unresolved internal contradiction currently exists across `SKILL.md`, `README.md`, or the nine
+rule files above; where two rules touch the same concern (a derived constraint's staleness check
+between `plan-md-input.md` and `design-reconciliation.md`, or issue-quality review between
+`issue-conventions.md` and `review.md`), each explicitly names the other as the owner rather than
+restating its logic.
