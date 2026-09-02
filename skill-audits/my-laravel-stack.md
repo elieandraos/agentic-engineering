@@ -12,7 +12,7 @@ architecture behind them.
 
 ## 1. Purpose and activation boundary
 
-`my-laravel-stack` is a personal, portable companion for a **Laravel + InertiaJS + Vue 3 + Pest**
+`my-laravel-stack` is a portable stack companion for a **Laravel + InertiaJS + Vue 3 + Pest**
 stack. It is additive only: Laravel Boost's `laravel-best-practices` and `testing-best-practices`
 skills already own the general Laravel and Pest baseline, and `inertia-vue-development` owns
 Inertia/Vue client-side patterns. `my-laravel-stack` never substitutes for any of them — it activates
@@ -34,16 +34,13 @@ Three parties hold three distinct, non-overlapping kinds of knowledge:
 | Owner | Owns |
 |---|---|
 | **Laravel Boost** (`laravel-best-practices`, `testing-best-practices`, `inertia-vue-development`) | The general Laravel/Pest/Inertia-Vue baseline — validation, Eloquent mechanics, resource/CRUD organization, thin-controller and FormRequest-boundary philosophy, migrations in general, layer-ownership test de-duplication, record-level test-data minimalism, security, style. An external dependency, never extracted, renamed, or duplicated here. |
-| **`my-laravel-stack`** | The reusable custom stack delta — conventions, implementation blueprints, and reusable support templates verified for this stack, portable across this user's own projects by copy/reinstall. |
+| **`my-laravel-stack`** | The reusable custom stack delta — conventions, implementation blueprints, and reusable support templates verified for this stack, portable across compatible consuming projects by copy/reinstall. |
 | **Consuming project** | Its own domain model, product rules, repository policy, and any project-specific adaptation of a blueprint or template — tenancy mechanism, naming, UI decisions, deployment conventions. None of this is the skill's to prescribe. |
 
 A corollary of this split: `my-laravel-stack` states several of its own delta items as conditional
 rather than universal — tenancy, filters/sorters, non-CRUD controller shapes. That conditionality is a
 deliberate architectural boundary between what this skill can responsibly generalize and what only a
 concrete project can decide, not an omission to tighten later.
-
-`my-phpstorm-conventions` is a separate, unrelated companion (IDE/static-analysis knowledge) — not a
-fourth layer of this model.
 
 ## 3. Package architecture
 
@@ -243,5 +240,6 @@ it, but mature, independently-owned Vue-specific guidance remains limited here. 
 question routes to `inertia-vue-development` rather than to this skill filling the gap with
 improvised guidance.
 
-No other limitation currently applies to the package as it stands; a resolved finding is not carried
-forward here once corrected in the rule, blueprint, or template file it belonged to.
+These limitations bound the current confidence claim and should be revisited as the package gains
+broader consumer evidence; a resolved finding is not carried forward here once corrected in the rule,
+blueprint, or template file it belonged to.

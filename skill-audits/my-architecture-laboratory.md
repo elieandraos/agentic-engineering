@@ -250,8 +250,10 @@ called a rule: it's a scaffold to edit, not a normative statement the way the ot
 | [`rules/maintenance.md`](../my-architecture-laboratory/rules/maintenance.md) | Reconciling an existing guide with verified current reality without breaking its identity or unaffected meaning |
 | [`rules/plan-synthesis.md`](../my-architecture-laboratory/rules/plan-synthesis.md) | The full Plan Synthesis contract: preconditions, the four-category claim model, evidence rules, the internal review, and the approval/handoff gate |
 
-Outside this skill, the only thing that ever crosses a boundary is an approved `plan.md` — a
+Outside this skill, the only downstream cross-skill handoff is an approved `plan.md` — a
 published or updated guide is a complete result on its own and never implies a downstream handoff.
+This doesn't deny the skill's other external boundaries (the Claude Artifact tool, `artifact-design`)
+named in §8 — it means no *other skill* ever receives a handoff from this one.
 Once approved, `my-feature-planning` treats the plan as canonical: it can still validate a
 current-state fact against current evidence when drafting issues, and can flag a derived constraint
 whose stated premise no longer holds, but it does not re-open a locked decision or re-derive
@@ -277,8 +279,9 @@ workflow's only external handoff is an approved `plan.md` to `my-feature-plannin
 this skill tracker- or stack-specific.
 
 **Architectural coherence.** Three workflows produce three genuinely distinct outputs — a taught
-guide, a maintained guide, a decision handoff — under one shared evidence discipline, with five rule
-files each answering a question the others don't, and no file claiming a boundary another one owns.
+guide, a maintained guide, a decision handoff — under one shared evidence discipline, with four rule
+files plus the `template.html` scaffold each answering a question the others don't, and no file
+claiming a boundary another one owns.
 
 **Current, honest limits:**
 

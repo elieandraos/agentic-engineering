@@ -149,9 +149,10 @@ including a pre-existing test unrelated to the current issue — is already pres
 commit. These two orderings have not been observed to conflict; no precedence rule exists for the
 case where they might (§11).
 
-**Deriving the plan requires inspecting the actual staged scope** — the real diff, file by file —
-never planning boundaries speculatively while still writing code, and never copying how a
-superficially similar earlier change happened to split.
+**Deriving the plan requires inspecting the completed, approved implementation diff and the intended
+commit scope it actually contains** — the real diff, file by file, not necessarily an already-staged
+(`git add`-staged) scope — never planning boundaries speculatively while still writing code, and
+never copying how a superficially similar earlier change happened to split.
 
 **An unpushed commit and already-pushed history are corrected differently.** A review correction
 found before anything is committed simply becomes part of whichever semantic commit it belongs to —

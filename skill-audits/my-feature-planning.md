@@ -16,9 +16,11 @@ explains the architecture behind both rather than restating either.
 conversation, an approved `plan.md` initiative section, or a validated Discovered-work finding —
 into an approved, reviewed set of GitHub issues (with whatever milestone/label/assignee metadata
 the work actually needs). It owns planning and GitHub issue creation. It does not own architecture
-decisions — those are settled upstream, before this skill ever runs — and it does not own
-application implementation, which begins only after an issue this skill created has been approved
-and picked up downstream.
+decisions: for an approved `plan.md` section, those are already settled upstream before this skill
+starts (§3); a direct feature conversation carries no such guarantee, and scope discovery can still
+surface a material product or architecture question that must be routed to the user before the
+affected drafting proceeds. It does not own application implementation, which begins only after an
+issue this skill created has been approved and picked up downstream.
 
 GitHub is not an interchangeable stand-in for "some tracker." The skill's methodology — classify,
 scope, reconcile design, draft, review, sequence, create — is portable across GitHub-based projects
@@ -72,9 +74,12 @@ another:
 **The `plan.md` boundary.** `my-architecture-laboratory` owns investigation, target-architecture
 design, and locking decisions with the user — that authority is settled before this skill starts.
 `my-feature-planning` verifies relevant current evidence against what an approved plan claims; it
-does not reopen approved architecture on its own judgment, and it reopens a locked decision only
-when current evidence *contradicts* it materially enough that continuing to plan against it would
-be dishonest — never because a cleaner alternative occurred to the planner. An unresolved material
+does not reopen approved architecture on its own judgment, and it never reopens a locked decision
+itself — a locked decision is preserved exactly regardless of what current evidence shows. What
+current evidence *can* do is invalidate the premise a *derived* constraint was built on; when that
+happens, or when evidence materially contradicts a locked decision outright, the decision is
+preserved as written and the discrepancy is surfaced to the user rather than silently resolved
+either way. An unresolved material
 product or architecture question — whether raised by a stale `plan.md` premise, a genuine design
 disagreement, or an ambiguous Discovered finding — routes to the user through whichever rule
 surfaced it; issue wording is never used to manufacture an approval, a certainty, or a resolved
@@ -408,13 +413,12 @@ merely authored and left untested. That confidence does not extend to broad port
 consuming projects: validation beyond one real consuming project remains unproven, and this document
 does not claim otherwise.
 
-Member-level closed-set coverage (§7, §9) is part of the current review contract, but it has not yet
-received an independent forward exercise on a fresh initiative since its introduction — its logic is
-sound on direct inspection of the current rule set, but that is not the same claim as having watched
-it catch a real coverage gap on a new feature.
+Member-level closed-set coverage (§7, §9) is part of the current review contract as written into the
+rule set, but its fresh forward validation remains outstanding — it has not yet received an
+independent exercise on a new initiative since its introduction, so this document does not claim to
+have watched it catch a real coverage gap on a new feature, only that the contract exists.
 
-No unresolved internal contradiction currently exists across `SKILL.md`, `README.md`, or the nine
-rule files above; where two rules touch the same concern (a derived constraint's staleness check
-between `plan-md-input.md` and `design-reconciliation.md`, or issue-quality review between
+Where two rules touch the same concern (a derived constraint's staleness check between
+`plan-md-input.md` and `design-reconciliation.md`, or issue-quality review between
 `issue-conventions.md` and `review.md`), each explicitly names the other as the owner rather than
 restating its logic.
