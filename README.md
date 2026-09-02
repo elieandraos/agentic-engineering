@@ -35,9 +35,9 @@ each skill's own `README.md` for the full walkthrough and `SKILL.md` for the ope
                              |
                      CUSTOM STACK LAYER
                              |
-              (not yet extracted/refined — roadmap.md
-              Phase C has classified existing seams;
-            Phase D now decides what the evidence justifies)
+                    my-laravel-stack
+             (Laravel + InertiaJS + Vue 3 + Pest —
+           the verified delta additive to Laravel Boost)
                              |
                     PROJECT-SPECIFIC INPUT
                  domain decisions / repo rules /
@@ -47,26 +47,45 @@ each skill's own `README.md` for the full walkthrough and `SKILL.md` for the ope
 Four kinds of knowledge are in play, and this repository is careful to keep them distinct:
 
 - **Portable custom methodology** — the engineering method itself: how to investigate, plan,
-  implement, review, commit, release. This is what lives in this repository today
-  (`my-feature-planning`, `my-architecture-laboratory`, `my-git-workflow`).
+  implement, review, commit, release. This is the portable three-skill family above
+  (`my-feature-planning`, `my-architecture-laboratory`, `my-git-workflow`) — cross-stack by design,
+  and distinct from the custom stack companion below.
 - **Custom stack/ecosystem knowledge** — genuinely owned, technology-specific implementation
-  knowledge for the Laravel/Vue/Inertia stack (e.g. `my-laravel-patterns`,
-  `my-phpstorm-conventions`). Not extracted or refined into this repository yet — `roadmap.md`
-  Phase C has classified the existing seams, and Phase D now decides what, if anything, the evidence
-  justifies: extracting one capability, refining an existing skill, combining/splitting skills, or
-  no change. No stack-layer names or packages exist here yet.
+  knowledge for the Laravel + InertiaJS + Vue 3 + Pest stack, implemented as
+  [`my-laravel-stack`](my-laravel-stack/). `roadmap.md` Phase C classified the existing seams and
+  Phase D acted on that evidence, extracting this companion — see "Current stack status" below. It
+  is a stack-specific companion alongside the portable three-skill family, not a fourth member of it.
+  `my-phpstorm-conventions` remains a separate, fully deferred companion.
 - **Project-specific knowledge** — one product's domain model, repo conventions, and deployment
   choices. This is the intended boundary the skills should stay clear of; which existing content
-  actually falls on which side of it is what `roadmap.md` Phase C's now-completed classification
+  actually falls on which side of it is what `roadmap.md` Phase C's completed classification
   determined (`phase-discovery.md`), not something this README re-sorts.
 - **External first-party capabilities** — upstream dependencies such as Laravel Boost's
-  `laravel-best-practices` and `pest-testing`. These are not owned by this repository and are not
-  extraction targets; they compose with custom skills but are never absorbed, renamed, duplicated,
-  or presented as Agentic Engineering-owned.
+  `laravel-best-practices` and `testing-best-practices`. These are not owned by this repository and
+  are not extraction targets; `my-laravel-stack` composes with them but never absorbs, renames,
+  duplicates, or presents them as Agentic Engineering-owned.
 
 Extract rules from evidence, not from imagination — a rule graduates from project-specific to
 portable only after repeated evidence, starting with the completed `useOrbit` classification pass
-(`roadmap.md`, Phase C).
+(`roadmap.md`, Phase C) and continuing through the completed Phase D stack extraction.
+
+## Current stack status
+
+**Phase D is complete.** `roadmap.md` §5 records the decision; `phase-d-stack-discovery.md`,
+`phase-d-stack-synthesis.md`, and [`skill-audits/my-laravel-stack.md`](skill-audits/my-laravel-stack.md)
+carry the full evidence and current assessment — this README doesn't reproduce it. In short:
+[`my-laravel-stack`](my-laravel-stack/) is a personal, portable companion for Laravel + InertiaJS +
+Vue 3 + Pest, owning only the delta genuinely additive to Laravel Boost, organized as `rules/`,
+`blueprints/`, and `templates/`. Canonical authoring completed through `4609cd5`; `useOrbit`'s
+exhaustive `tests/` audit then supplied its first real consumer exercise, exposing two portable gaps
+corrected upstream (`c424c3f`, `560556f`) and forward-verified by an independent reconciliation pass.
+
+Honest limits, stated openly rather than implied as resolved: every piece of evidence still comes from
+exactly one real project, `useOrbit`; the resulting `useOrbit` test-directory restructuring is
+owner-approved but not yet executed or verified under a real test-suite run; no second
+Laravel/Inertia/Vue/Pest consumer has tested this skill; and the skill declares Vue 3 as part of its
+stack boundary but currently owns no mature, independent Vue-specific rules — Vue implementation
+questions still route to Laravel Boost's `inertia-vue-development`.
 
 ## Current portability status
 
@@ -115,9 +134,10 @@ installable and loadable from that published commit. Concretely:
     files of `my-feature-planning`, `my-architecture-laboratory`, or `my-git-workflow` — this Phase A
     observation no longer describes current active skill content. Neither of the other two skills was
     touched by `my-feature-planning`'s authoring pass, so that pass does not explain the change.
-    Whether to distinguish custom stack knowledge from external first-party capabilities generally —
-    and ensure the latter is never absorbed, renamed, or duplicated — is a boundary `roadmap.md`
-    Phase C has since classified; Phase D now decides what action, if any, that evidence justifies.
+    Distinguishing custom stack knowledge from external first-party capabilities generally — and
+    ensuring the latter is never absorbed, renamed, or duplicated — is a boundary `roadmap.md` Phase C
+    classified and Phase D has since acted on, producing `my-laravel-stack` (see "Current stack status"
+    above).
 - `my-architecture-laboratory`'s two original style precedents (`Reusable Documents Architecture`,
   `Centralized Tagging Architecture`) were live `claude.ai` Artifact URLs tied to the user's account,
   not `useOrbit` repo files. `roadmap.md` Phase C (`phase-discovery.md`) directly re-verified the

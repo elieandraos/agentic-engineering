@@ -8,7 +8,7 @@ The goal is not to collect prompts for one repository or one framework. The goal
 
 The system is being developed from real use rather than designed in a vacuum. `useOrbit` is the first proving ground, and is now becoming the system's first real consumer: the canonical skills need to be consumed and used for genuine `useOrbit` work before any further generalization.
 
-This document is the **near-term Agentic Engineering roadmap** — four active phases covering externalizing the portable core, operating the `useOrbit` consumer relationship, classifying the mature custom skill ecosystem, and deciding whether a stack layer is justified. It is not a speculative plan for the entire eventual ecosystem; longer-range ideas that aren't yet committed work are kept in "Future directions" below, not in the phase sequence.
+This document is the **near-term Agentic Engineering roadmap** — four phases covering externalizing the portable core, operating the `useOrbit` consumer relationship, classifying the mature custom skill ecosystem, and deciding whether a stack layer was justified. **All four phases are now complete**; the near-term phase sequence itself is closed. Further activity is evidence-driven maintenance, genuine consumer validation, and the non-committed possibilities already listed under "Future directions" — not a new phase. It is not a speculative plan for the entire eventual ecosystem; longer-range ideas that aren't yet committed work are kept in "Future directions" below, not in the phase sequence.
 
 ---
 
@@ -70,7 +70,7 @@ The engineering method itself:
 
 ### Custom stack layer
 
-Technology-specific implementation knowledge that is genuinely owned/authored by this ecosystem — currently centered on the Laravel/Vue/Inertia stack `useOrbit` runs on, e.g. `my-laravel-patterns`, `my-phpstorm-conventions`. This is distinct from **external first-party capabilities** such as Laravel Boost's `laravel-best-practices` and `pest-testing`: upstream dependencies the custom stack layer may compose with, but never owns, absorbs, renames, or duplicates.
+Technology-specific implementation knowledge that is genuinely owned/authored by this ecosystem for the Laravel + InertiaJS + Vue 3 + Pest stack `useOrbit` runs on. Phase D extracted this layer as **`my-laravel-stack`** — a personal, portable companion carrying the verified delta additive to Laravel Boost (conventions, implementation blueprints, and reusable code templates); see §5 below and `skill-audits/my-laravel-stack.md` for the full record. `my-phpstorm-conventions` remains a separate, deferred companion. This layer is distinct from **external first-party capabilities** such as Laravel Boost's `laravel-best-practices` and `testing-best-practices`: upstream dependencies `my-laravel-stack` may compose with, but never owns, absorbs, renames, or duplicates.
 
 ### Project-specific input
 
@@ -83,7 +83,7 @@ Things that belong to one product or repository:
 - existing architecture decisions;
 - project-specific release or issue conventions.
 
-The exact stack-layer boundary is intentionally **not designed yet**. Phase C has classified the existing evidence (see `phase-discovery.md`); Phase D now decides what — if anything — to extract, refine, or leave unchanged. Stacks beyond Laravel/Vue/Inertia are a possible future direction, not part of this near-term roadmap.
+The stack-layer boundary is now decided and implemented: Phase C classified the existing evidence (see `phase-discovery.md`), and Phase D acted on it, producing `my-laravel-stack` (see §5 below). Stacks beyond Laravel/Vue/Inertia are a possible future direction, not part of this near-term roadmap.
 
 ---
 
@@ -272,28 +272,25 @@ updated to reflect the subsequent authoring passes.
 
 ---
 
-# 5. Phase D — Extract or refine the custom Laravel/Vue/Inertia stack layer, if justified
+# 5. Phase D — Extract the custom Laravel/Vue/Inertia stack layer
 
 ## Objective
 
-Phase D acts on Phase C's evidence — it does not automatically produce a singular adapter skill. Phase C's classification now exists in full (`phase-discovery.md`); Phase D decides what, if anything, that evidence justifies. No Phase D implementation decision has been made yet — this section still describes the space of legitimate outcomes, not a chosen one. `phase-discovery.md` is the evidence source Phase D should reason from; it is not reconstructed here.
+Phase D acted on Phase C's full classification (`phase-discovery.md`) to decide what, if anything, that evidence justified extracting, refining, combining, splitting, or leaving unchanged in the custom Laravel/Vue/Inertia stack layer.
 
-## Evidence-supported outcomes
+## Outcome
 
-Any of the following are legitimate outcomes, depending on what Phase C actually finds:
+**Phase D is complete.** It produced `my-laravel-stack`, a personal, portable companion for the **Laravel + InertiaJS + Vue 3 + Pest** stack. Full evidence, chronology, and current assessment live in `phase-d-stack-discovery.md`, `phase-d-stack-synthesis.md`, and `skill-audits/my-laravel-stack.md` — this roadmap does not reproduce them. At roadmap altitude:
 
-- extracting one reusable stack capability;
-- retaining several cooperating custom stack skills;
-- combining or splitting skills;
-- refining `my-laravel-patterns`;
-- refining `my-phpstorm-conventions`;
-- returning project-specific material to `useOrbit`;
-- leaving some skills unchanged;
-- deciding that no further extraction is justified yet.
+- `my-laravel-stack` owns only the verified custom stack delta genuinely additive to Laravel Boost (`laravel-best-practices`, `testing-best-practices`); Laravel Boost remains an external dependency throughout — never absorbed, renamed, or duplicated.
+- The chosen package architecture is **`rules/`** (independently applicable conventions), **`blueprints/`** (multi-component implementation shapes), and **`templates/`** (complete, installable PHP starting points) — not a speculative adapter hierarchy and not the nested `skills/portable-core`/`stack-adapters` layout §6 once sketched as a possibility (§6 records this explicitly).
+- `my-phpstorm-conventions` remains a separate, fully deferred companion, untouched by this phase. `content-backlog` remains outside the stack-layer decision, consistent with Phase C's own framing.
+- Canonical authoring completed through `4609cd5`. `useOrbit`'s exhaustive `tests/` audit then supplied the skill's first real consumer exercise and exposed two portable gaps — an HTTP wiring-proof exception, and the Unit/Feature execution-boundary blueprint's `tests/Pest.php` binding/migration-order outcome — corrected upstream in `c424c3f` and `560556f`. `useOrbit` refreshed its installed snapshot the same day, verified at exact 21-file parity with canonical. A subsequent, independent reconciliation pass then forward-tested the corrected guidance from the corrected text alone and confirmed it resolves what it claims to.
+- Implementing the resulting, owner-approved `useOrbit` test-directory restructuring, verifying it under a real test-suite run, and exercising a second Laravel/Inertia/Vue/Pest consumer are pending evidence — not Phase D blockers. Phase D's own completion does not depend on either.
 
-## Constraints
+## Constraints (retained as ongoing principles for future stack-layer work)
 
-Laravel Boost remains external and unchanged — it is a dependency the custom stack layer may compose with, never an extraction target. Do not prescribe a generic adapter folder structure, exact package names, or a one-skill decomposition before Phase C provides evidence.
+Laravel Boost remains external and unchanged — it is a dependency `my-laravel-stack` may compose with, never an extraction target. Future stack-layer work should not prescribe a generic adapter folder structure, arbitrary package names, or a one-skill decomposition beyond what real evidence justifies.
 
 ### Illustrative boundary (methodology vs. stack knowledge)
 
@@ -311,7 +308,7 @@ The methodology should not need to know which stack it is using.
 
 # 6. Repository organization direction
 
-This is a conceptual direction for how the repository could eventually be organized — **not** an implemented or mandatory structure:
+This was a conceptual direction for how the repository could eventually be organized — **not** an implemented or mandatory structure, and now superseded by what Phase D actually adopted:
 
 ```text
 agentic-engineering/
@@ -328,17 +325,31 @@ agentic-engineering/
             └── project-specific durable material, if and when it belongs here
 ```
 
-Guardrails:
+**This nested `skills/portable-core`/`stack-adapters` layout was not adopted.** Phase D's actual implementation keeps every skill — the three portable skills and `my-laravel-stack` — as its own top-level directory, the same shape Phase A already established:
 
-- this is structural direction, not a requirement to create these directories now;
-- `portable-core` is a conceptual grouping, not a reason to redesign skills during Phase C;
-- `laravel-vue-inertia` is a conceptual namespace, not a predetermined decomposition;
-- Phase C classifies rather than restructures;
-- Phase D determines whether structural changes are warranted;
-- `project-specific/useOrbit` must not be populated speculatively;
-- classifying project-specific knowledge does not mean it belongs in this repository.
+```text
+agentic-engineering/
+├── README.md
+├── roadmap.md
+├── my-feature-planning/
+├── my-git-workflow/
+├── my-architecture-laboratory/
+└── my-laravel-stack/
+    ├── README.md
+    ├── SKILL.md
+    ├── rules/
+    ├── blueprints/
+    └── templates/
+```
 
-The root `README.md` may eventually explain the full planning-through-learning workflow, with layer-level READMEs added when the real structure warrants them — that documentation is not written yet.
+Guardrails, retained for any future stack or skill addition:
+
+- `portable-core` and `stack-adapters` remain historical conceptual groupings from before Phase D decided the actual shape — not a reason to restructure the current top-level layout;
+- `my-laravel-stack`'s internal `rules/`/`blueprints/`/`templates/` split is the evidence-backed decomposition Phase D actually reached (§5, `skill-audits/my-laravel-stack.md`), not the `laravel-vue-inertia` namespace originally sketched here;
+- `project-specific/useOrbit` was never populated and remains out of scope — project-specific knowledge stays in `useOrbit` itself, not in this repository;
+- any future stack beyond Laravel/Vue/Inertia should reach its own package shape from its own evidence, not copy `my-laravel-stack`'s shape by default.
+
+The root `README.md` explains the current layered model and knowledge-boundary distinctions — see it for the up-to-date picture.
 
 ---
 
@@ -451,14 +462,18 @@ These are possibilities worth keeping in view — not phases, dependencies, comm
 - [x] Phase B second consumer exercise — `my-feature-planning` (2026-08-28): `useOrbit` consumed `my-feature-planning` from `agentic-engineering` @ `5ff489ca60c26ad971da926118701953fa75e41c`; the skill loaded from the natural instruction to feature-plan the already-approved `plan.md` and completed classification, canonical issue drafting, metadata approval, GitHub creation, dependency-reference resolution, and post-mutation validation, creating `useOrbit#300`, `#301`, and `#302` in milestone `Phase 23 — Composer & JavaScript Dependency Upgrade`. The first decomposition over-split verification checkpoints and package tranches into eight issues; review corrected this to three coherent outcomes — CI/baseline, Composer upgrades, and npm upgrades. The exercise succeeded end to end as a consumer exercise, and exposed a portable decomposition ambiguity — separate verification alone is not sufficient reason to split an issue — since corrected in `my-feature-planning/rules/sequencing.md`. This is evidence from one real consumer exercise, not a general dependency-upgrade decomposition rule; it does not by itself reopen or extend Phase B's already-complete status, and is not a new Phase B completion criterion.
 - [x] Portable-core authoring/refinement program (2026-08-28, reviewed by the repository owner, completed at `main` @ `2de0f88b41fdd5104cb931770c6e2092616b8480`): all three canonical portable skills — `my-git-workflow`, `my-feature-planning`, and `my-architecture-laboratory` — have now received the targeted authoring/refinement pass Phase C's synthesis found each of them needed, and each now has a current dossier under `skill-audits/`. `my-architecture-laboratory` now owns three explicit workflows (document existing architecture, update an existing guide, and plan feature architecture through Plan Synthesis into an approved `plan.md`), with guide writing, guide review, maintenance, and Plan Synthesis each owned by a distinct rule file; its runtime and supporting files were generalized away from source-guide, fixed-section, project, Phase, reusability, and stack assumptions, and its `references/` directory was renamed to `rules/` for repository consistency with the other two skills. The corresponding `my-feature-planning/rules/plan-md-input.md` Plan Synthesis consumer was reconciled to match. This pass supplied `skill-audits/skill-authoring-methodology.md`'s third real proving pass within this authoring program. Full evidence: `skill-audits/my-git-workflow.md`, `skill-audits/my-feature-planning.md`, `skill-audits/my-architecture-laboratory.md`, and `skill-audits/skill-authoring-methodology.md`.
 - [x] `my-git-workflow` scoped-delivery-milestone exercise — `useOrbit` Phase 23 (2026-08-28): `useOrbit` consumed `my-git-workflow` from `agentic-engineering` @ `3abacd3ff887efcc98fd052b4e8cb3d2142b7264` and carried `useOrbit#300`–`#302` (milestone `Phase 23 — Composer & JavaScript Dependency Upgrade`, created by the `my-feature-planning` exercise above) through the full milestone-delivery path for the first time: shared milestone branch, each issue through Gate 1/Gate 2/verification/closure, dependency-ready recomputation, milestone PR-readiness, PR `#303` against `main`, two distinct real-CI failure-and-recovery cycles on the open PR before merge (a strict-install peer conflict, then a fresh-checkout-only lint failure), merge as `6adef1f9adefc880872f8161266a027e1abb92fa`, one bundled post-merge authorization, milestone closure, and a published, post-publication-validated release `v0.17.1`. This is the milestone delivery path's first real end-to-end exercise — closing the observational gap Phase B recorded above. The exercise also surfaced reusable evidence that warranted several narrow rule corrections across both skills: disproportionate per-group verification wording and an unsatisfiable per-issue completion criterion (`my-feature-planning/rules/issue-conventions.md` §10–§11, `rules/review.md`); a verification-starting-state gap, a reproducible-install boundary, and cache/TIA-evidence semantics (`my-git-workflow/rules/verification.md`); explicit handling for a real CI failure on an open milestone PR (`rules/milestone-completion.md`); and surfacing (not resolving) an issue whose completion criterion can't be satisfied at its own closure boundary (`rules/issue-closure.md`). Full evidence: `skill-audits/my-git-workflow.md` §11, `skill-audits/my-feature-planning.md` §12.
+- [x] Phase D — custom Laravel/Vue/Inertia stack layer extracted as `my-laravel-stack` (2026-08-30 canonical authoring through `4609cd5`; consumer-corrected through `560556f`): `phase-d-stack-discovery.md` and `phase-d-stack-synthesis.md` reconciled Phase C's classification into a locked target — a personal, portable companion for Laravel + InertiaJS + Vue 3 + Pest, owning only the verified custom stack delta additive to Laravel Boost, organized as `rules/`, `blueprints/`, and `templates/`, with `my-phpstorm-conventions` staying separate and deferred and `content-backlog` staying outside the stack-layer decision. `useOrbit`'s exhaustive `tests/` audit then supplied the skill's first real consumer exercise, exposing two portable gaps (an HTTP wiring-proof exception and the Unit/Feature `tests/Pest.php` binding/migration-order outcome), corrected upstream in `c424c3f` and `560556f`; `useOrbit` refreshed its installed snapshot the same day at exact 21-file parity, and an independent reconciliation pass forward-tested the corrected guidance from the corrected text alone. **Phase D is now complete.** The resulting owner-approved `useOrbit` test-directory restructuring, its execution and test-suite verification, and a second Laravel/Inertia/Vue/Pest consumer remain pending evidence, not Phase D blockers. Full evidence: `phase-d-stack-discovery.md`, `phase-d-stack-synthesis.md`, `skill-audits/my-laravel-stack.md`.
+- [x] `my-feature-planning` third consumer exercise — closed-set validation gap (`useOrbit#305`–`#308`, 2026-09-01): a second real approved-`plan.md` exercise, classified as an architectural/refactor initiative, decomposed `useOrbit`'s `tests/` restructuring plan into four coherent issues and exposed one portable rule gap — exhaustive member-level task coverage was not explicit enough in `rules/review.md` to catch a canonical issue silently missing individual members while its headline total still matched. Corrected upstream in `9dc5b6d` ("Add exhaustive task coverage validation") and clarified in `4a9557c` ("Clarify closed-set validation wording"); `useOrbit` refreshed its installed snapshot the same day at exact 11-file parity. Full evidence: `skill-audits/my-feature-planning.md` §12.
 
 ## In progress / next
 
 Phase B is complete: consumption, local provenance, first genuine real use (`useOrbit#299`), retirement of the old copies from active discovery, and the refresh/update-and-verification cycle — also exercised through `useOrbit#299`, now implemented and closed — are all done; see "Completed" above.
 
-Phase C (classifying the mature custom skill ecosystem) is complete — see "Completed" above and `phase-discovery.md` for the full evidence base. Phase D — deciding what, if anything, Phase C's evidence justifies extracting, refining, combining, splitting, or leaving unchanged in the custom stack layer — is now the next active Agentic Engineering phase. No Phase D implementation decision has been made yet.
+Phase C (classifying the mature custom skill ecosystem) is complete — see "Completed" above and `phase-discovery.md` for the full evidence base. Phase D — deciding what, if anything, Phase C's evidence justified extracting, refining, combining, splitting, or leaving unchanged in the custom stack layer — is also complete: it produced `my-laravel-stack`, corrected against real `useOrbit` consumer evidence through `560556f`. See "Completed" above and `skill-audits/my-laravel-stack.md` for the full record.
 
-The portable-core authoring/refinement program that Phase C's synthesis called for is also complete — see "Completed" above. This is refinement of the already-existing three-skill portable core, not a new roadmap phase and not part of Phase C or Phase D itself. No fresh `useOrbit` consumer exercise of the newly authored `my-architecture-laboratory` has occurred yet, and none is claimed here or required as a blocking criterion before Phase D proceeds — Phase D's evidence source remains Phase C's classification in `phase-discovery.md`.
+The portable-core authoring/refinement program that Phase C's synthesis called for is also complete — see "Completed" above. This is refinement of the already-existing three-skill portable core, not a new roadmap phase and not part of Phase C or Phase D itself. No fresh `useOrbit` consumer exercise of the newly authored `my-architecture-laboratory` has occurred yet, and none is required — that exercise is not a Phase D dependency.
+
+**All four near-term phases (A, B, C, D) are now complete.** There is no Phase E. Further activity is evidence-driven maintenance of the existing skills, genuine consumer validation (the pending `my-laravel-stack` test-restructuring execution and second consumer, and any future `my-architecture-laboratory` exercise), and the non-committed possibilities already listed under "Future directions" — not a new phase manufactured to extend this sequence.
 
 ## Future
 
@@ -467,9 +482,9 @@ The portable-core authoring/refinement program that Phase C's synthesis called f
 - [x] Observe and record a genuine refresh/update-and-verification cycle from actual `useOrbit` work, completed opportunistically whenever genuine skill-content evolution occurs. (Phase B — completed 2026-08-25; see "Completed" above.)
 - [x] Retire the old, independently-maintained `useOrbit` skill copies from active use. (Phase B — completed 2026-08-23.)
 - [x] Classify the mature custom `my-*` skill ecosystem into portable methodology / custom stack knowledge / `useOrbit`-specific knowledge / external first-party capabilities. (Phase C — completed 2026-08-23; see `phase-discovery.md`.)
-- [ ] Act on Phase C's evidence — extract, refine, combine, split, or leave the custom stack layer unchanged, only if justified. (Phase D — now the next active work; no implementation decision made yet.)
+- [x] Act on Phase C's evidence — extract, refine, combine, split, or leave the custom stack layer unchanged, only if justified. (Phase D — completed 2026-08-30, corrected against real consumer evidence through `560556f`; see `skill-audits/my-laravel-stack.md`.)
 
-See "Future directions" above for later, non-committed possibilities (Project B, cross-stack comparison, publication, etc.) — these are not part of this phase sequence.
+The four-phase near-term sequence (A, B, C, D) is now complete. See "Future directions" above for later, non-committed possibilities (Project B, cross-stack comparison, publication, etc.) — these are not part of this phase sequence.
 
 ---
 
@@ -505,10 +520,13 @@ all three canonical portable methodology skills (`my-architecture-laboratory`, `
 `my-git-workflow`), and the final synthesis with evidence-backed readiness dispositions all live in
 `phase-discovery.md`, which this roadmap does not reconstruct or duplicate.
 
-Phase D — deciding what, if anything, Phase C's evidence justifies extracting, refining, combining,
-splitting, or leaving unchanged in the custom stack layer — is now the next active Agentic Engineering
-phase. No Phase D implementation decision has been made yet. `phase-discovery.md` is the evidence
-source Phase D should reason from. Anything in "Future directions" comes later still.
+Phase D — deciding what, if anything, Phase C's evidence justified extracting, refining, combining,
+splitting, or leaving unchanged in the custom stack layer — is now also **complete**, producing
+`my-laravel-stack`. See §5 and "Current status" → "Completed" above for the full decision, evidence, and
+outcome; `phase-d-stack-discovery.md`, `phase-d-stack-synthesis.md`, and `skill-audits/my-laravel-stack.md`
+carry the underlying detail, none of which this section reconstructs. Implementing the resulting,
+owner-approved `useOrbit` test-directory restructuring and exercising a second Laravel/Inertia/Vue/Pest
+consumer remain pending evidence, not Phase D blockers.
 
 The portable-core authoring/refinement program Phase C's synthesis identified as needed is now
 complete (see "Current status" → "Completed"): all three canonical skills have received their
@@ -516,4 +534,12 @@ targeted authoring/refinement pass, `my-architecture-laboratory` now owns three 
 and all three have current dossiers under `skill-audits/`. This is refinement work on the existing
 portable core, not a new phase; it does not change Phase C's own evidence record in
 `phase-discovery.md`, and no fresh `useOrbit` consumer exercise of the refined
-`my-architecture-laboratory` has occurred or is required before Phase D proceeds.
+`my-architecture-laboratory` has occurred or is required.
+
+**All four near-term phases (A, B, C, D) are now complete — there is no Phase E.** The immediate next
+move is evidence-driven maintenance of the existing skills and genuine consumer validation where real
+work calls for it: executing the approved `useOrbit` test-directory restructuring and verifying it under
+a real test-suite run, exercising `my-laravel-stack` against a second Laravel/Inertia/Vue/Pest consumer,
+and any future `my-architecture-laboratory` consumer exercise — alongside the non-committed possibilities
+already listed under "Future directions." None of this is manufactured to extend the phase sequence;
+it proceeds only as real work and real evidence warrant it.
