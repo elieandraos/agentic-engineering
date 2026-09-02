@@ -17,7 +17,8 @@ second consumer are still pending.
 This is supporting analysis, not the operational skill. `SKILL.md`, `README.md`, and the files under
 `rules/`, `blueprints/`, and `templates/` remain the authoritative source of what the skill says and
 does; where anything here disagrees with them, this document is stale, not the other way around. It
-describes the skill as it currently stands. `phase-d-stack-synthesis.md` and the authoring commits
+describes the skill as it currently stands.
+`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-d-stack-synthesis.md` and the authoring commits
 between it and the current endpoint appear only where they explain why a current contract is shaped
 the way it is — never as a chronological account of how the skill got here. This is not an operational
 rule file, not a `SKILL.md` replacement, not a change log, and not an invitation to reopen the
@@ -223,8 +224,10 @@ prose guidance.
 
 ## 8. Evidence and authoring history
 
-- **Phase D discovery and synthesis** (`phase-d-stack-discovery.md`, `phase-d-stack-synthesis.md`)
-  supplied the initial classification and evidence: full reads of `useOrbit`'s controllers, Form
+- **Phase D discovery and synthesis**
+  (`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-d-stack-discovery.md`,
+  `56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-d-stack-synthesis.md`) supplied the initial
+  classification and evidence: full reads of `useOrbit`'s controllers, Form
   Requests, Actions, Policies, Resources, and Pest test tree; the complete installed
   `laravel-best-practices`/`testing-best-practices` rule files (Boost v2.7.0); and the installed Laravel
   framework source (v13.29.0) for the migration-nullability finding.
@@ -349,8 +352,9 @@ Stated honestly, not carried forward as resolved or silently dropped:
   longer an open gap.
 - **Template *content* parity is refreshed; template *usage* parity is still unverified.** The
   2026-09-01 refresh confirms `useOrbit`'s installed skill snapshot matches the canonical
-  `templates/app/` files byte-for-byte. It does not re-verify `phase-d-stack-synthesis.md`'s earlier
-  finding that `useOrbit` already has working equivalents of all five templates in its own `app/` tree —
+  `templates/app/` files byte-for-byte. It does not re-verify
+  `56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-d-stack-synthesis.md`'s earlier finding that
+  `useOrbit` already has working equivalents of all five templates in its own `app/` tree —
   whether those live implementations still match the corrected template content is unverified, and the
   `tests/` audit (§8) didn't touch `app/` code to check.
 - **The conformance-audit stage of the two-stage consumer exercise has run.** `useOrbit`'s exhaustive

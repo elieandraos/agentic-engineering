@@ -12,10 +12,11 @@ This is supporting analysis, not the operational skill. `SKILL.md`, `README.md`,
 the authoritative source of what the skill does; where anything here disagrees with them, this
 document is stale, not the other way around. It describes the skill as it currently stands. The
 twenty-commit authoring history between the shared externalization baseline (`fe5bd29`) and the
-current endpoint, and the independent portability findings in `phase-discovery.md`, appear only where
-they explain why a current contract is shaped the way it is — never as a chronological account of how
-the skill got here. This is not an operational rule file, not a `SKILL.md` replacement, not a change
-log, and not an invitation to re-open the completed authoring pass.
+current endpoint, and the independent portability findings in
+`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md`, appear only where they explain why a
+current contract is shaped the way it is — never as a chronological account of how the skill got here.
+This is not an operational rule file, not a `SKILL.md` replacement, not a change log, and not an
+invitation to re-open the completed authoring pass.
 
 ## 2. What the skill is
 
@@ -194,10 +195,11 @@ inspection of `template.html`'s source and its own stated operational constraint
 authoring pass, not by an actual Claude Artifact publish-and-render cycle. No guide was published
 through this template as part of this authoring pass, and the skill has not yet been exercised by a
 fresh real consumer (`useOrbit` or otherwise) since this pass completed. A prior discovery pass
-(`phase-discovery.md`) did inspect a live precedent Artifact, but that was a different, now-removed
-citation (§12, §14) — its outcome is historical evidence about that superseded precedent, not a
-verification of the current template. Nothing here should be read as proof that the current scaffold
-behaves as described once actually rendered inside a live Claude Artifact.
+(`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md`) did inspect a live precedent Artifact,
+but that was a different, now-removed citation (§12, §14) — its outcome is historical evidence about
+that superseded precedent, not a verification of the current template. Nothing here should be read as
+proof that the current scaffold behaves as described once actually rendered inside a live Claude
+Artifact.
 
 ## 9. Update an existing architecture guide
 

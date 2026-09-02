@@ -60,8 +60,9 @@ Four kinds of knowledge are in play, and this repository is careful to keep them
   `my-phpstorm-conventions` remains a separate, fully deferred companion.
 - **Project-specific knowledge** — one product's domain model, repo conventions, and deployment
   choices. This is the intended boundary the skills should stay clear of; which existing content
-  actually falls on which side of it is what `roadmap.md` Phase C's completed classification
-  determined (`phase-discovery.md`), not something this README re-sorts.
+  actually falls on which side of it is what this ecosystem's completed classification pass
+  determined (historical evidence: `56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md`),
+  not something this README re-sorts.
 - **External first-party capabilities** — upstream dependencies such as Laravel Boost's
   `laravel-best-practices` and `testing-best-practices`. These are not owned by this repository and
   are not extraction targets; `my-laravel-stack` composes with them but never absorbs, renames,
@@ -73,9 +74,11 @@ portable only after repeated evidence, starting with the completed `useOrbit` cl
 
 ## Current stack status
 
-**Phase D is complete.** `roadmap.md` §5 records the decision; `phase-d-stack-discovery.md`,
-`phase-d-stack-synthesis.md`, and [`skill-audits/my-laravel-stack.md`](skill-audits/my-laravel-stack.md)
-carry the full evidence and current assessment — this README doesn't reproduce it. In short:
+**Phase D is complete.** `roadmap.md` §1 records the decision;
+[`skill-audits/my-laravel-stack.md`](skill-audits/my-laravel-stack.md) carries the current assessment
+(historical evidence: `56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-d-stack-discovery.md`,
+`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-d-stack-synthesis.md`) — this README doesn't
+reproduce it. In short:
 [`my-laravel-stack`](my-laravel-stack/) is a personal, portable companion for Laravel + InertiaJS +
 Vue 3 + Pest, owning only the delta genuinely additive to Laravel Boost, organized as `rules/`,
 `blueprints/`, and `templates/`. Canonical authoring completed through `4609cd5`; `useOrbit`'s
@@ -142,14 +145,16 @@ installable and loadable from that published commit. Concretely:
     above).
 - `my-architecture-laboratory`'s two original style precedents (`Reusable Documents Architecture`,
   `Centralized Tagging Architecture`) were live `claude.ai` Artifact URLs tied to the user's account,
-  not `useOrbit` repo files. `roadmap.md` Phase C (`phase-discovery.md`) directly re-verified the
+  not `useOrbit` repo files. This ecosystem's classification pass (historical evidence:
+  `56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md`) directly re-verified the
   cited "Centralized Tagging Architecture" URL and found it dead ("artifact not found"), independent
   of and prior to that phase's own work — a documentation-currency gap in the original Phase A
   finding, not a defect in Phase A's process at the time it was written. This is now resolved, not
   merely repaired: `my-architecture-laboratory`'s own authoring pass removed both precedent
   citations from the skill entirely, along with the framing that tied the methodology to them,
   rather than swapping in a fresh replacement link. See `skill-audits/my-architecture-laboratory.md`
-  for the authoring evidence and `phase-discovery.md` for the original finding.
+  for the authoring evidence and `56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md` for
+  the original finding.
 
 **Phase B (`roadmap.md`) is complete.** The three canonical skills were consumed into gitignored
 `useOrbit/.claude/skills/` as the active local snapshots, with upstream commit provenance recorded

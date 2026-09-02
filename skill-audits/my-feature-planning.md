@@ -12,10 +12,10 @@ This is supporting analysis, not the operational skill. `SKILL.md`, `README.md`,
 remain the authoritative source of what the skill does; if anything here disagrees with them, this
 document is stale, not the other way around. It describes the skill as it currently stands. History —
 the rule-by-rule authoring pass, the cross-rule cohesion pass, and the portability evidence in
-`phase-discovery.md` — appears only where it explains why a current contract is shaped the way it is,
-never as a chronological account of how the skill got here. This is not another operational rule file,
-not a `SKILL.md` replacement, not a change log, not a copy of `phase-discovery.md`, and not an
-invitation to revise the completed skill again.
+`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md` — appears only where it explains why a
+current contract is shaped the way it is, never as a chronological account of how the skill got here.
+This is not another operational rule file, not a `SKILL.md` replacement, not a change log, not a copy
+of that historical record, and not an invitation to revise the completed skill again.
 
 ## 2. What the skill is
 
@@ -555,14 +555,15 @@ questions; design-artifact location and access method; milestone naming and labe
 rules; live GitHub state at proposal and validation time; and, where relevant, an approved `plan.md`
 from `my-architecture-laboratory`.
 
-**Material leakage check.** None found. The specific couplings `phase-discovery.md` identified for this
-skill — the heavily mixed checklist file, two private-memory dependencies, and stack vocabulary inside
-`SKILL.md`'s always-loaded activation surface — were checked directly against the current files for
-this dossier and are absent from all of them.
+**Material leakage check.** None found. The specific couplings identified for this skill in
+`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md` — the heavily mixed checklist file, two
+private-memory dependencies, and stack vocabulary inside `SKILL.md`'s always-loaded activation surface
+— were checked directly against the current files for this dossier and are absent from all of them.
 
 **Whether further authoring changes are presently justified.** The rule-by-rule authoring pass and the
-cross-rule cohesion pass resolved every concrete coupling `phase-discovery.md` identified for this
-skill; no further authoring was indicated by that evidence. Two real downstream executions have since
+cross-rule cohesion pass resolved every concrete coupling identified for this skill in
+`56cddee47e9d84d6b244b41ec4536d24e8d7cff3:phase-discovery.md`; no further authoring was indicated by
+that evidence. Two real downstream executions have since
 produced three narrow, evidence-backed corrections beyond that baseline, each scoped to what its own
 execution actually showed, not a reopening of the broader authoring pass:
 
