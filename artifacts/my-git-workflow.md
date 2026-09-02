@@ -6,8 +6,8 @@ Purpose: A compact lifecycle architecture guide — what enters and exits the wo
 delivery paths, its state transitions and stopping points, how sequencing, branching, review gates,
 commits, verification, closure, PR readiness, milestone completion, and release cooperate, which
 decisions require human authority, where each rule owns a distinct part of the lifecycle, and its
-current boundaries and confidence. [`SKILL.md`](../my-git-workflow/SKILL.md) remains the operational
-routing entrypoint; [`README.md`](../my-git-workflow/README.md) is the human-facing walkthrough. This
+current boundaries and confidence. [`SKILL.md`](../skills/my-git-workflow/SKILL.md) remains the operational
+routing entrypoint; [`README.md`](../skills/my-git-workflow/README.md) is the human-facing walkthrough. This
 document explains the lifecycle architecture behind both rather than restating either.
 
 ## 1. Purpose and entry boundary
@@ -372,13 +372,13 @@ approved assumptions, or a choice the evidence can't narrow down on its own.
 
 | Rule | Owns |
 |---|---|
-| [`sequencing.md`](../my-git-workflow/rules/sequencing.md) | Branch readiness before an issue starts, and recomputing/reporting the dependency-ready set after a validated closure |
-| [`review-gates.md`](../my-git-workflow/rules/review-gates.md) | The two pre-commit human approval gates, and the general standard for when a genuine unresolved decision forces a stop |
-| [`commit-boundaries.md`](../my-git-workflow/rules/commit-boundaries.md) | Deriving semantic commit boundaries from the reviewed diff, commit-message content, the issue-reference trailer, and folding in review corrections |
-| [`verification.md`](../my-git-workflow/rules/verification.md) | Verification scope at every lifecycle boundary, tool/starting-state discovery, the regression-baseline model, and isolation verification |
-| [`issue-closure.md`](../my-git-workflow/rules/issue-closure.md) | Whether and how to close an issue, the closing-comment contract, and post-mutation validation |
-| [`milestone-completion.md`](../my-git-workflow/rules/milestone-completion.md) | Milestone PR readiness, the CI-failure-on-an-open-PR handling, and the milestone closure gate |
-| [`release.md`](../my-git-workflow/rules/release.md) | Post-merge authorization's release branch: policy discovery, understanding and drafting a release, approval, publication, and post-publication validation |
+| [`sequencing.md`](../skills/my-git-workflow/rules/sequencing.md) | Branch readiness before an issue starts, and recomputing/reporting the dependency-ready set after a validated closure |
+| [`review-gates.md`](../skills/my-git-workflow/rules/review-gates.md) | The two pre-commit human approval gates, and the general standard for when a genuine unresolved decision forces a stop |
+| [`commit-boundaries.md`](../skills/my-git-workflow/rules/commit-boundaries.md) | Deriving semantic commit boundaries from the reviewed diff, commit-message content, the issue-reference trailer, and folding in review corrections |
+| [`verification.md`](../skills/my-git-workflow/rules/verification.md) | Verification scope at every lifecycle boundary, tool/starting-state discovery, the regression-baseline model, and isolation verification |
+| [`issue-closure.md`](../skills/my-git-workflow/rules/issue-closure.md) | Whether and how to close an issue, the closing-comment contract, and post-mutation validation |
+| [`milestone-completion.md`](../skills/my-git-workflow/rules/milestone-completion.md) | Milestone PR readiness, the CI-failure-on-an-open-PR handling, and the milestone closure gate |
+| [`release.md`](../skills/my-git-workflow/rules/release.md) | Post-merge authorization's release branch: policy discovery, understanding and drafting a release, approval, publication, and post-publication validation |
 
 **Upstream handoff, from `my-feature-planning`.** This skill's only input is already-approved work:
 an issue already classified, scoped, drafted, reviewed, and created, with its dependency information

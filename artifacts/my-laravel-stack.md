@@ -5,8 +5,8 @@ Scope: `my-laravel-stack` as it stands in this repository
 Purpose: A compact architecture artifact for the skill — what it provides, where it sits in the
 ecosystem, what it owns versus what it deliberately leaves to others, how its package is organized,
 how its rules/blueprints/templates cooperate, where each decision has a single owner, how an agent
-consumes it, and its current confidence and limits. [`SKILL.md`](../my-laravel-stack/SKILL.md) remains
-the operational activation and routing entrypoint; [`README.md`](../my-laravel-stack/README.md) is the
+consumes it, and its current confidence and limits. [`SKILL.md`](../skills/my-laravel-stack/SKILL.md) remains
+the operational activation and routing entrypoint; [`README.md`](../skills/my-laravel-stack/README.md) is the
 human-facing orientation. This document does neither of those jobs again — it explains the
 architecture behind them.
 
@@ -66,7 +66,7 @@ assumption a project has nothing there already.
 
 ### Resource controller composition
 
-[`blueprints/resource-controller.md`](../my-laravel-stack/blueprints/resource-controller.md) states
+[`blueprints/resource-controller.md`](../skills/my-laravel-stack/blueprints/resource-controller.md) states
 the reference composition — **Controller → Form Request → Policy/`#[Authorize]` → Action → Resource →
 Inertia/HTTP response** — and immediately qualifies it: this is a reference shape a full CRUD endpoint
 follows, not a mandatory sequence every endpoint must implement in full. Each stage is included only
@@ -76,25 +76,25 @@ controller implementing fewer than the seven resourceful methods as first-class 
 exceptions to patch around. Within this composition:
 
 - The **Form Request** owns validation and request normalization
-  ([`rules/request-normalization.md`](../my-laravel-stack/rules/request-normalization.md)) —
+  ([`rules/request-normalization.md`](../skills/my-laravel-stack/rules/request-normalization.md)) —
   `prepareForValidation()` is where coercion and defaulting happen once, so an Action or Filter can
   trust `validated()` as already correct rather than re-defaulting downstream.
 - **Authorization** is declarative and resolved before the method body runs
-  ([`rules/authorization.md`](../my-laravel-stack/rules/authorization.md)) — the `#[Authorize]`
+  ([`rules/authorization.md`](../skills/my-laravel-stack/rules/authorization.md)) — the `#[Authorize]`
   attribute, never `$this->authorize()`, with the array form required specifically for `create`/
   `viewAny` on a child resource, where no bound instance exists yet to infer a policy from.
 - The **Action** owns the mutation itself
-  ([`rules/actions.md`](../my-laravel-stack/rules/actions.md)) — a fixed `handle()` entry point, no
+  ([`rules/actions.md`](../skills/my-laravel-stack/rules/actions.md)) — a fixed `handle()` entry point, no
   HTTP-layer globals inside it, and external side effects deferred with `->afterCommit()` so they
   never execute until the enclosing transaction actually commits.
 - The **Resource** owns the response contract
-  ([`rules/resources.md`](../my-laravel-stack/rules/resources.md)) — a controller never passes a raw
+  ([`rules/resources.md`](../skills/my-laravel-stack/rules/resources.md)) — a controller never passes a raw
   Eloquent result to Inertia, and a relation field is exposed through `whenLoaded()`, never a bare
   accessor or a model-wide `$with`, so the Resource stays safe regardless of which caller reaches it.
 
 ### Filtering and sorting
 
-[`blueprints/filters-and-sorting.md`](../my-laravel-stack/blueprints/filters-and-sorting.md) is itself
+[`blueprints/filters-and-sorting.md`](../skills/my-laravel-stack/blueprints/filters-and-sorting.md) is itself
 conditional — loaded only when an index endpoint genuinely needs filtering or sorting, not a mandatory
 part of every controller. It composes: query-parameter validation in the Form Request (including the
 `direction` default from `rules/request-normalization.md`, since `QuerySorter`'s constructor takes a
@@ -108,7 +108,7 @@ Sorter classes never validate — they trust an already-validated value exactly 
 
 Two distinct decisions compose here, deliberately kept apart:
 
-- [`blueprints/pest-testing.md`](../my-laravel-stack/blueprints/pest-testing.md) owns the
+- [`blueprints/pest-testing.md`](../skills/my-laravel-stack/blueprints/pest-testing.md) owns the
   **execution-boundary configuration** — classifying `tests/Unit` versus `tests/Feature` by what a
   test actually boots (database, container, facades), confirming what the project's own
   `tests/Pest.php` binds a database-refresh trait to before trusting a directory name, and the safe
@@ -116,7 +116,7 @@ Two distinct decisions compose here, deliberately kept apart:
   organization, the warning against building a test's expected value from the same production Resource
   it's supposed to verify, and gating optional Pest capabilities (TIA, architecture testing) behind
   what a project actually has installed.
-- [`rules/test-ownership.md`](../my-laravel-stack/rules/test-ownership.md) owns **per-layer test
+- [`rules/test-ownership.md`](../skills/my-laravel-stack/rules/test-ownership.md) owns **per-layer test
   responsibility** — the concrete Action/Policy/Filter/Sorter/Resource/Model/HTTP location-and-scope
   mapping, when to assert existence versus an exact persisted value, and the no-redundancy rule that a
   higher layer proves only what a lower layer doesn't already prove (with the minimal-wiring exception:
@@ -132,17 +132,17 @@ rather than duplicated.
 
 The remaining rules apply independently wherever their narrow subject appears: `#[Scope]` over the
 legacy `scope`-prefixed method name for Eloquent local scopes
-([`rules/eloquent-attributes.md`](../my-laravel-stack/rules/eloquent-attributes.md)); `when()` over an
+([`rules/eloquent-attributes.md`](../skills/my-laravel-stack/rules/eloquent-attributes.md)); `when()` over an
 `if` block for a mid-chain query conditional
-([`rules/query-conditionals.md`](../my-laravel-stack/rules/query-conditionals.md)); a static `all()`
+([`rules/query-conditionals.md`](../skills/my-laravel-stack/rules/query-conditionals.md)); a static `all()`
 on a backed enum instead of mapping `::cases()` at each call site
-([`rules/enum-options.md`](../my-laravel-stack/rules/enum-options.md)); deriving dependent factory
+([`rules/enum-options.md`](../skills/my-laravel-stack/rules/enum-options.md)); deriving dependent factory
 fields from one source of truth and structuring dev-only seeders
-([`rules/factories-and-seeders.md`](../my-laravel-stack/rules/factories-and-seeders.md)); `final`-by-
+([`rules/factories-and-seeders.md`](../skills/my-laravel-stack/rules/factories-and-seeders.md)); `final`-by-
 default concrete application classes
-([`rules/php-conventions.md`](../my-laravel-stack/rules/php-conventions.md)); and non-nullable-by-
+([`rules/php-conventions.md`](../skills/my-laravel-stack/rules/php-conventions.md)); and non-nullable-by-
 default migration columns, including why `->notNull()` silently does nothing across every schema
-grammar ([`rules/migrations.md`](../my-laravel-stack/rules/migrations.md)).
+grammar ([`rules/migrations.md`](../skills/my-laravel-stack/rules/migrations.md)).
 
 ## 5. Single-owner boundaries
 
@@ -179,22 +179,22 @@ other's authority.
 Five templates, each a complete, syntactically valid PHP implementation rather than a placeholder or
 generator stub:
 
-- [`templates/app/Filters/QueryFilter.php`](../my-laravel-stack/templates/app/Filters/QueryFilter.php)
+- [`templates/app/Filters/QueryFilter.php`](../skills/my-laravel-stack/templates/app/Filters/QueryFilter.php)
   — the abstract base every domain filter extends. Dispatch is convention over configuration:
   `apply()` camel-cases each validated array key and calls the same-named method on the concrete
   filter, silently skipping a key with no matching method or a `null`/`''` value.
-- [`templates/app/Models/Concerns/Filterable.php`](../my-laravel-stack/templates/app/Models/Concerns/Filterable.php)
+- [`templates/app/Models/Concerns/Filterable.php`](../skills/my-laravel-stack/templates/app/Models/Concerns/Filterable.php)
   — the trait wiring a `#[Scope]`-based `filter` scope onto a model, delegating to an injected
   `QueryFilter`.
-- [`templates/app/Sorts/QuerySorter.php`](../my-laravel-stack/templates/app/Sorts/QuerySorter.php) —
+- [`templates/app/Sorts/QuerySorter.php`](../skills/my-laravel-stack/templates/app/Sorts/QuerySorter.php) —
   the abstract base every domain sorter extends. Resolves a requested column the same way
   `QueryFilter` resolves a key, falls back to an abstract `default()` implementation the concrete
   sorter must supply, and always breaks ties on the model's primary key so pagination and tests get a
   stable order regardless of the database's query plan.
-- [`templates/app/Models/Concerns/Sortable.php`](../my-laravel-stack/templates/app/Models/Concerns/Sortable.php)
+- [`templates/app/Models/Concerns/Sortable.php`](../skills/my-laravel-stack/templates/app/Models/Concerns/Sortable.php)
   — the trait wiring a `#[Scope]`-based `sort` scope onto a model, delegating to an injected
   `QuerySorter`.
-- [`templates/app/Providers/TestingServiceProvider.php`](../my-laravel-stack/templates/app/Providers/TestingServiceProvider.php)
+- [`templates/app/Providers/TestingServiceProvider.php`](../skills/my-laravel-stack/templates/app/Providers/TestingServiceProvider.php)
   — registers five Inertia-testing Pest macros (`hasResource`, `hasPaginatedResource`,
   `assertHasResource`, `assertHasPaginatedResource`, `assertHasInertiaFlash`), guarded by a
   `runningUnitTests()` boot check so they exist only while the test suite runs.

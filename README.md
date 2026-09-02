@@ -44,9 +44,9 @@ approved architecture, and neither writes application code.
 
 | Skill | Owns |
 |---|---|
-| [`my-architecture-laboratory`](my-architecture-laboratory/) | Investigating and explaining how a system actually works, then producing a new architecture guide, an updated existing guide, or an approved `plan.md` handoff for a planning initiative. |
-| [`my-feature-planning`](my-feature-planning/) | Turning a feature request or an approved `plan.md` into a reviewed, drafted set of GitHub issues — classification, scope, design reconciliation, sequencing, review. |
-| [`my-git-workflow`](my-git-workflow/) | Moving an already-approved issue through implementation review, commits, verification, closure, release, and milestone completion. |
+| [`my-architecture-laboratory`](skills/my-architecture-laboratory/) | Investigating and explaining how a system actually works, then producing a new architecture guide, an updated existing guide, or an approved `plan.md` handoff for a planning initiative. |
+| [`my-feature-planning`](skills/my-feature-planning/) | Turning a feature request or an approved `plan.md` into a reviewed, drafted set of GitHub issues — classification, scope, design reconciliation, sequencing, review. |
+| [`my-git-workflow`](skills/my-git-workflow/) | Moving an already-approved issue through implementation review, commits, verification, closure, release, and milestone completion. |
 
 None of the three assume a particular language, framework, or project layout — a consuming project
 supplies its own framework, directories, and concrete artifacts; each skill supplies the method. See
@@ -54,7 +54,7 @@ each skill's own `README.md` for the full walkthrough and `SKILL.md` for the ope
 
 ## Stack companions
 
-[`my-laravel-stack`](my-laravel-stack/) is a stack-specific companion for a **Laravel + InertiaJS +
+[`my-laravel-stack`](skills/my-laravel-stack/) is a stack-specific companion for a **Laravel + InertiaJS +
 Vue 3 + Pest** stack. It is not a fourth portable methodology skill — it answers implementation
 questions the portable skills deliberately don't, and a consuming project loads it alongside the
 three portable skills rather than in place of any of them.
@@ -114,22 +114,23 @@ Four kinds of knowledge are in play, and the ecosystem is careful to keep them d
 
 ```
 agentic-engineering/
-├── README.md                    this file
-├── roadmap.md                   living architecture and evolution notes
-├── docs/                        timeless, cross-skill methodology
-├── my-architecture-laboratory/  portable skill — investigation and architecture
-├── my-feature-planning/         portable skill — scoping and issue drafting
-├── my-git-workflow/             portable skill — implementation and delivery
-├── my-laravel-stack/            stack companion — Laravel + InertiaJS + Vue 3 + Pest
-└── skill-audits/                per-skill dossiers: purpose, boundaries, open questions
+├── README.md     this file
+├── roadmap.md    living architecture and evolution notes
+├── docs/         timeless, cross-skill methodology
+├── skills/       installable operational skill packages
+│   ├── my-architecture-laboratory/  portable skill — investigation and architecture
+│   ├── my-feature-planning/         portable skill — scoping and issue drafting
+│   ├── my-git-workflow/             portable skill — implementation and delivery
+│   └── my-laravel-stack/            stack companion — Laravel + InertiaJS + Vue 3 + Pest
+└── artifacts/    maintainer-facing per-skill dossiers: purpose, boundaries, open questions
 ```
 
-Each skill directory carries its own `README.md` (the walkthrough), `SKILL.md` (the operational
-routing and rules an agent actually loads), and a `rules/` directory of individually applicable
-rule files. `my-laravel-stack` additionally carries `blueprints/` and `templates/`. `skill-audits/`
-holds supporting analysis per skill — it complements each skill's `README.md`/`SKILL.md` rather than
-replacing them as the operational source of truth. `docs/` holds methodology that applies across
-every skill rather than to one in particular — currently
+Each skill directory under `skills/` carries its own `README.md` (the walkthrough), `SKILL.md` (the
+operational routing and rules an agent actually loads), and a `rules/` directory of individually
+applicable rule files. `my-laravel-stack` additionally carries `blueprints/` and `templates/`.
+`artifacts/` holds supporting analysis per skill — it complements each skill's `README.md`/`SKILL.md`
+rather than replacing them as the operational source of truth. `docs/` holds methodology that applies
+across every skill rather than to one in particular — currently
 [`skill-authoring-methodology.md`](docs/skill-authoring-methodology.md), the current guide to
 evidence-backed skill authoring, knowledge classification, ownership, and reconciliation.
 
@@ -138,9 +139,9 @@ evidence-backed skill authoring, knowledge classification, ownership, and reconc
 There is no packaged installer. To use a skill in another project:
 
 1. Clone this repository.
-2. Copy each desired top-level skill directory (e.g. `my-architecture-laboratory/`,
-   `my-feature-planning/`, `my-git-workflow/`, `my-laravel-stack/`) into a location Claude Code
-   scans for skills — personal `~/.claude/skills/<name>/` or project `.claude/skills/<name>/`.
+2. Copy each desired individual directory from `skills/<name>/` (e.g. `skills/my-architecture-laboratory/`,
+   `skills/my-feature-planning/`, `skills/my-git-workflow/`, `skills/my-laravel-stack/`) into a
+   Claude Code skill-discovery location such as `.claude/skills/<name>/` or `~/.claude/skills/<name>/`.
 
 Copy only the skills a project actually needs; a stack companion is only useful alongside a project
 that runs on that stack.

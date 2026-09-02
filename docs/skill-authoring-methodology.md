@@ -182,11 +182,11 @@ one. Promote a principle to that second tier only once it is:
   yet having been tested by the other;
 - placed at the narrowest disclosure layer that actually needs it.
 
-A principle resting on evidence from only one project, or only one authoring pass, has not yet met
-the repeated-evidence and reusable-outside-origin criteria on its own — one project or one pass is
-not repeated, independent evidence. A separate authoring pass, even inside the same project or
-repository, can supply the repeated evidence the first criterion asks for. It does not, by itself,
-satisfy the second: another pass inside the same project or repository is still same-project
+Repeated authoring evidence requires more than a single real authoring observation or pass — one
+instance, on its own, is not repetition. A separate authoring pass, even inside the same project or
+repository, can supply the repeated evidence that first criterion asks for; multiple such passes
+inside one repository genuinely strengthen the repeated-evidence claim. Those same-repository
+passes, however many, do not by themselves satisfy the second criterion: they remain same-project
 evidence, not proof of portability across projects. Cross-project portability specifically requires
 evidence from a distinct consuming project — a further pass inside this repository cannot
 substitute for that. Cold-read validation and forward-use validation remain separate checks

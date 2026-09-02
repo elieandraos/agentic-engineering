@@ -6,8 +6,8 @@ Purpose: A compact architecture guide to the skill — what it transforms and pr
 origins and how they converge, where authority actually lives, its classification/scope/design/
 decomposition/review/mutation model, how its rules divide ownership, why GitHub is a deliberate
 substrate rather than incidental tooling, and its current boundaries and confidence.
-[`SKILL.md`](../my-feature-planning/SKILL.md) remains the operational routing entrypoint;
-[`README.md`](../my-feature-planning/README.md) is the human-facing walkthrough. This document
+[`SKILL.md`](../skills/my-feature-planning/SKILL.md) remains the operational routing entrypoint;
+[`README.md`](../skills/my-feature-planning/README.md) is the human-facing walkthrough. This document
 explains the architecture behind both rather than restating either.
 
 ## 1. Purpose and result boundary
@@ -38,8 +38,8 @@ with no lighter-weight path for either:
 | Origin | What it starts from | Entry point into the shared pipeline |
 |---|---|---|
 | **Planned work** — feature conversation | An intentional proposed change with scope not yet worked out | Classification |
-| **Planned work** — approved `plan.md` | An initiative-specific section [`my-architecture-laboratory`](../my-architecture-laboratory/) has already investigated and the user has already approved, with architecture and decisions canonical | Classification, with architecture and locked decisions already resolved (see [`rules/plan-md-input.md`](../my-feature-planning/rules/plan-md-input.md)) |
-| **Discovered work** | An unexpected finding — surfaced during implementation, review, testing, operations, or another workflow — with scope not yet known | [`rules/discovered-work.md`](../my-feature-planning/rules/discovered-work.md)'s investigation; only a *validated* finding reaches classification |
+| **Planned work** — approved `plan.md` | An initiative-specific section [`my-architecture-laboratory`](../skills/my-architecture-laboratory/) has already investigated and the user has already approved, with architecture and decisions canonical | Classification, with architecture and locked decisions already resolved (see [`rules/plan-md-input.md`](../skills/my-feature-planning/rules/plan-md-input.md)) |
+| **Discovered work** | An unexpected finding — surfaced during implementation, review, testing, operations, or another workflow — with scope not yet known | [`rules/discovered-work.md`](../skills/my-feature-planning/rules/discovered-work.md)'s investigation; only a *validated* finding reaches classification |
 
 An approved `plan.md` section changes *what already has answers* by the time classification runs —
 its architecture and locked decisions are canonical input, not a shortcut around any later step or
@@ -83,7 +83,7 @@ either way. An unresolved material
 product or architecture question — whether raised by a stale `plan.md` premise, a genuine design
 disagreement, or an ambiguous Discovered finding — routes to the user through whichever rule
 surfaced it; issue wording is never used to manufacture an approval, a certainty, or a resolved
-decision that doesn't actually exist. See [`rules/plan-md-input.md`](../my-feature-planning/rules/plan-md-input.md)
+decision that doesn't actually exist. See [`rules/plan-md-input.md`](../skills/my-feature-planning/rules/plan-md-input.md)
 for the full consumption contract, including how it distinguishes a locked decision (preserved
 exactly), a derived constraint (binding only while its premise holds), and an open implementation
 detail (resolvable here only when the choice materially affects scope, dependencies, acceptance
@@ -112,14 +112,14 @@ Classification routes to exactly one scope-discovery contract, never a fixed art
 an implementation template:
 
 - Shape A, or the resource-shaped slice of C, loads
-  [`rules/resource-feature-checklist.md`](../my-feature-planning/rules/resource-feature-checklist.md) —
+  [`rules/resource-feature-checklist.md`](../skills/my-feature-planning/rules/resource-feature-checklist.md) —
   seven tracks (core contract, lifecycle/state, child resources, filtering/sorting, export/output,
   user-facing surfaces, integration/tooling completeness) that every resource-shaped feature answers
   in some form, on any stack. Every track must be explicitly resolved for a full shape A — marked
   not-applicable outright rather than silently skipped; a resource-shaped C walks only the tracks
   its changed slice actually affects.
 - Shape B, capability-shaped C, or D loads
-  [`rules/capability-checklist.md`](../my-feature-planning/rules/capability-checklist.md) — thirteen
+  [`rules/capability-checklist.md`](../skills/my-feature-planning/rules/capability-checklist.md) — thirteen
   questions (the problem, shared-foundation split, affected domains, runtime paths, security/tenancy
   boundaries, integration points, reusable system- and user-facing patterns, user-visible surfacing,
   collateral changes, exclusions, a conditionally-asked extension-seam question, and proof
@@ -139,7 +139,7 @@ frontend/UI surface, resource-feature-checklist Track F requires running design 
 A raw finding — a report, an observed symptom, a log entry, a code-review concern — is not yet
 developer-ready scope: its affected behavior, blast radius, and cause may all still be unconfirmed,
 and a first symptom alone never justifies a vague issue.
-[`rules/discovered-work.md`](../my-feature-planning/rules/discovered-work.md) governs the transition
+[`rules/discovered-work.md`](../skills/my-feature-planning/rules/discovered-work.md) governs the transition
 from a raw finding to exactly one of: validated planning input, no actionable gap, or a
 blocked/unresolved finding.
 
@@ -192,7 +192,7 @@ investigating.
 ## 6. Design reconciliation
 
 Design artifacts drift from what actually ships — real product decisions get made mid-implementation
-and never get folded back into the design source. [`rules/design-reconciliation.md`](../my-feature-planning/rules/design-reconciliation.md)'s
+and never get folded back into the design source. [`rules/design-reconciliation.md`](../skills/my-feature-planning/rules/design-reconciliation.md)'s
 job is to surface that drift before it silently repeats, not to resolve it in either direction on
 its own.
 
@@ -287,7 +287,7 @@ scope already defined — that would be scope expansion, not fidelity validation
 
 ## 8. Decomposition and sequencing
 
-[`rules/sequencing.md`](../my-feature-planning/rules/sequencing.md) owns two connected decisions
+[`rules/sequencing.md`](../skills/my-feature-planning/rules/sequencing.md) owns two connected decisions
 after checklist scope exists: splitting it into coherent issues, and ordering those issues by real
 prerequisites. It does not decide implementation order, which ready issue gets worked next, branch
 strategy, or commit structure — all of that is `my-git-workflow`'s.
@@ -358,15 +358,15 @@ territory:
 
 | Rule | Owns |
 |---|---|
-| [`plan-md-input.md`](../my-feature-planning/rules/plan-md-input.md) | Recognizing and consuming an approved `plan.md` section as canonical input; preserving its locked/derived/open distinctions |
-| [`discovered-work.md`](../my-feature-planning/rules/discovered-work.md) | Turning a raw finding into validated planning input, no actionable gap, or a blocked finding |
-| [`feature-classification.md`](../my-feature-planning/rules/feature-classification.md) | Which of the four shapes a feature is, and which checklist it routes to |
-| [`resource-feature-checklist.md`](../my-feature-planning/rules/resource-feature-checklist.md) | Shape-A/resource-shaped-C scope discovery across its seven tracks |
-| [`capability-checklist.md`](../my-feature-planning/rules/capability-checklist.md) | Shape-B/capability-shaped-C/D scope discovery across its thirteen questions |
-| [`design-reconciliation.md`](../my-feature-planning/rules/design-reconciliation.md) | Comparing design-artifact, shipped, and approved-decision authority when UI is in scope |
-| [`issue-conventions.md`](../my-feature-planning/rules/issue-conventions.md) | Title/body format, reference-category discipline, and the metadata proposal-and-approval workflow |
-| [`sequencing.md`](../my-feature-planning/rules/sequencing.md) | Decomposition into coherent issues and building the dependency graph/waves |
-| [`review.md`](../my-feature-planning/rules/review.md) | All five review surfaces and their validation timing |
+| [`plan-md-input.md`](../skills/my-feature-planning/rules/plan-md-input.md) | Recognizing and consuming an approved `plan.md` section as canonical input; preserving its locked/derived/open distinctions |
+| [`discovered-work.md`](../skills/my-feature-planning/rules/discovered-work.md) | Turning a raw finding into validated planning input, no actionable gap, or a blocked finding |
+| [`feature-classification.md`](../skills/my-feature-planning/rules/feature-classification.md) | Which of the four shapes a feature is, and which checklist it routes to |
+| [`resource-feature-checklist.md`](../skills/my-feature-planning/rules/resource-feature-checklist.md) | Shape-A/resource-shaped-C scope discovery across its seven tracks |
+| [`capability-checklist.md`](../skills/my-feature-planning/rules/capability-checklist.md) | Shape-B/capability-shaped-C/D scope discovery across its thirteen questions |
+| [`design-reconciliation.md`](../skills/my-feature-planning/rules/design-reconciliation.md) | Comparing design-artifact, shipped, and approved-decision authority when UI is in scope |
+| [`issue-conventions.md`](../skills/my-feature-planning/rules/issue-conventions.md) | Title/body format, reference-category discipline, and the metadata proposal-and-approval workflow |
+| [`sequencing.md`](../skills/my-feature-planning/rules/sequencing.md) | Decomposition into coherent issues and building the dependency graph/waves |
+| [`review.md`](../skills/my-feature-planning/rules/review.md) | All five review surfaces and their validation timing |
 
 `SKILL.md` owns the two approval gates and the overall pipeline order; no rule file reproduces that
 gate structure itself.
