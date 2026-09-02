@@ -1,12 +1,16 @@
 # my-laravel-stack — Skill Dossier
 
 Status: Current
-Scope: `my-laravel-stack` as it stands at `agentic-engineering@main` (`4609cd50eb4f002036b5e1eb9e8a5c4ab01e7121`)
+Scope: `my-laravel-stack` as it stands at `agentic-engineering@main` (`560556f8a87a9ec5f9b6bb02ec964d88daaee1aa`)
 Purpose: Supporting analysis of the current skill — purpose, ownership boundaries, package
 architecture, evidence, authoring history, and open questions. The operational authority remains
 `my-laravel-stack/SKILL.md`, its `rules/`, `blueprints/`, and `templates/` files — this document is
-supporting analysis, not a runtime instruction file and not a changelog. Canonical authoring is
-complete; the refresh into `useOrbit` and the consumer exercise are still pending.
+supporting analysis, not a runtime instruction file and not a changelog. Canonical authoring closed at
+`4609cd5`; `useOrbit`'s exhaustive `tests/` audit then supplied this skill's first real consumer
+exercise, correcting two portable rule gaps (`c424c3f`, `560556f`) that a subsequent, independent
+reconciliation pass forward-tested against the corrected guidance (§8). The restructuring that exercise
+proposes is owner-approved but not yet executed — implementation, its test-suite verification, and a
+second consumer are still pending.
 
 ## 1. Purpose and status
 
@@ -242,7 +246,59 @@ prose guidance.
   The owner went on to complete a rule-content review, identifying the test-ownership naming concern.
   The final whole-skill consistency review, together with the owner's own naming observations,
   produced the ownership, classification, and naming corrections in `59c9b9b` and `4609cd5`.
-- Current endpoint: `4609cd50eb4f002036b5e1eb9e8a5c4ab01e7121`.
+- **`useOrbit`'s exhaustive `tests/` audit — the skill's first real consumer exercise.** After canonical
+  authoring closed at `4609cd5` and this dossier was first written (`b3cf5e8`, `b361f50`), `useOrbit`
+  underwent a no-edit, repository-wide conformance audit of its complete 156-file `tests/` tree against
+  `my-laravel-stack`'s blueprints and rules (`useOrbit@92290e2`, "Replace plan.md with the tests/
+  audit-reconciliation report"). This is the first time the skill was tested against real project code
+  rather than authored and reviewed in isolation, and it correctly drove the great majority of the
+  audit's classification and ownership decisions (the Unit/Feature disposition of all 156 files, the
+  Action/HTTP duplication pairing in §8 of `useOrbit`'s `plan.md`, the Model-test naming/merge findings)
+  unmodified — see `useOrbit@plan.md` §13 for the audit's own account of which observations were
+  consumer-level applications of general rules, not skill gaps.
+- **Two portable rule gaps the audit exposed:**
+  1. An HTTP test sometimes needs one exact persisted association/identity assertion to prove
+     route-model or controller-to-Action wiring (which parent, child, actor, tenant, or pivot pair was
+     wired in) — a global `assertDatabaseCount()` is not sufficient proof, since it passes just as well
+     when the wrong identity was wired in, as long as the row count matches.
+  2. The Unit/Feature execution-boundary blueprint stopped at the taxonomy check and stopped short of
+     stating the operational `tests/Pest.php` outcome (narrow the `TestCase`/database-refresh binding to
+     `Feature` only; genuinely isolated `Unit` tests get no separate binding) and the safe migration
+     order (move the files out of `Unit` first, narrow the binding only afterward — narrowing first
+     strips `TestCase`/the database trait from files still sitting in `Unit` mid-migration).
+- **Both gaps were corrected upstream, in canonical `my-laravel-stack`, not left as project-local
+  workarounds:** `c424c3f` ("Clarify HTTP wiring-proof exception and Pest.php Unit/Feature binding
+  guidance in my-laravel-stack") added the minimal-wiring-proof exception to `rules/test-ownership.md`'s
+  no-redundancy rule and the binding/migration-order guidance to `blueprints/pest-testing.md`; `560556f`
+  ("Correct Action ownership in test example") followed with a one-sentence correction to
+  `rules/test-ownership.md`'s own pivot-attach illustration — the Action test's owned scope is "the
+  complete attach mutation behavior, including the transaction outcome, any derived pivot fields, and
+  dispatched side effects," not the narrower "validation, authorization side effects, any derived pivot
+  fields" the example previously stated.
+- **`useOrbit` refreshed its installed snapshot the same day**, from provenance `b361f50` to `560556f`
+  (`useOrbit`'s `UPSTREAM_PROVENANCE.md`, "Refresh: `my-laravel-stack` — 2026-09-01"), with exact 21-file
+  parity against the canonical tree in §4 above.
+- **A subsequent, independent reconciliation pass forward-tested the corrections** — distinct evidence
+  from the original audit that exposed the gaps. Re-reading only the refreshed skill text,
+  `useOrbit`'s own `plan.md` reconciliation (`useOrbit@230a54b`, "Reconcile tests/ audit findings against
+  the corrected my-laravel-stack skill") independently re-derived findings F5, F6, F7, F8, F10, and F14
+  and changed every one of them correctly against the corrected guidance: F7 and F8 flipped from flagged
+  duplication to resolved minimal wiring-proof; F5, F6, and F10 narrowed from "collapse to a raw
+  `assertDatabaseCount()`" to "drop only the one plain mapped field, keep the wiring-relevant identity
+  columns"; F14 kept the same proposed fix but gained the citation for an outcome it had previously only
+  inferred. Because this pass worked from the corrected text alone rather than re-deriving the same
+  conclusions from the original audit's quotes, it is a genuine forward test of whether the upstream
+  corrections actually resolve what they claim to, not a restatement of the audit that motivated them.
+- **The final owner-approved artifact is `useOrbit@0f905cf`** ("Convert plan.md into an approved
+  implementation source of truth for the tests/ restructuring"): the reconciled F1–F14 findings, the
+  155-file target manifest, and the required F12 persisted-state additions are approved implementation
+  scope. Every §7 Resource-test finding remains deliberately deferred evidence for a future pass, not
+  promoted into a universal skill rule. **The restructuring itself has not been executed** against
+  `useOrbit`'s `tests/` tree — no file has moved, no content edit has landed, and no test-suite run
+  confirms the corrected guidance holds up under real execution. `useOrbit` issues #305–#308 are
+  `my-feature-planning` output decomposing this approved plan into GitHub issues; they are
+  feature-planning evidence, not proof that the restructuring works or has been implemented.
+- Current endpoint: `560556f8a87a9ec5f9b6bb02ec964d88daaee1aa`.
 
 Keep `useOrbit` evidence here, in this dossier, never in the runtime skill's public-facing examples —
 `SKILL.md` states this explicitly, and every code example across `rules/` and `blueprints/` uses
@@ -288,22 +344,31 @@ dossier retains only the skill-specific evidence for them:
 
 Stated honestly, not carried forward as resolved or silently dropped:
 
-- **The current canonical skill has not yet been refreshed into `useOrbit`.** Nothing in this pass
-  touched `useOrbit`.
-- **Template parity with `useOrbit`'s existing implementations has not yet been rechecked against this
-  final canonical version.** `phase-d-stack-synthesis.md` recorded that `useOrbit` already has working
-  equivalents of all five templates; whether the current, corrected template content still matches
-  those implementations exactly is unverified since this authoring pass's corrections.
-- **The two-stage consumer exercise remains pending**: (1) a no-edit, repository-wide conformance audit
-  of `useOrbit`'s current controllers and Pest tests against the authored blueprints; (2) a reviewed
-  real consumer exercise, beginning with the test-directory organization and later the representative
-  Clients CRUD slice, as approved.
-- **Restructuring `useOrbit`'s test directory is a real application mutation, not a read-only smoke
-  test**, and must be proposed and approved before execution — it is not authorized by this
-  documentation pass.
-- **No second Laravel/Inertia/Vue/Pest consumer has validated portability.** Every piece of evidence
-  behind this skill's content comes from exactly one real project, `useOrbit`, plus Laravel Boost's and
-  the Laravel framework's installed source.
+- **The current canonical skill has been refreshed into `useOrbit`.** As of 2026-09-01, `useOrbit`'s
+  installed snapshot/provenance matches canonical `560556f` with exact 21-file parity (§8) — this is no
+  longer an open gap.
+- **Template *content* parity is refreshed; template *usage* parity is still unverified.** The
+  2026-09-01 refresh confirms `useOrbit`'s installed skill snapshot matches the canonical
+  `templates/app/` files byte-for-byte. It does not re-verify `phase-d-stack-synthesis.md`'s earlier
+  finding that `useOrbit` already has working equivalents of all five templates in its own `app/` tree —
+  whether those live implementations still match the corrected template content is unverified, and the
+  `tests/` audit (§8) didn't touch `app/` code to check.
+- **The conformance-audit stage of the two-stage consumer exercise has run.** `useOrbit`'s exhaustive
+  `tests/` audit (§8) *is* that no-edit, repository-wide conformance audit — completed, not pending. What
+  remains: the audit's own approved restructuring (`useOrbit@0f905cf`) has not been executed against
+  `useOrbit`'s `tests/` tree, so no file move, content edit, or test-suite run yet confirms the corrected
+  guidance holds up under real execution; and the second stage — the representative Clients CRUD
+  vertical-slice exercise, which would build on §7's deferred Resource-test findings — remains deferred
+  and unstarted, not promoted into a universal skill rule.
+- **Restructuring `useOrbit`'s test directory is a real application mutation.** It has now been
+  proposed and owner-approved (`useOrbit@0f905cf`, §8), which authorizes the described moves and
+  content edits — it does not mean they have been carried out. Nothing in this dossier claims the
+  restructuring has been implemented or that `useOrbit`'s test suite has been run against it; `useOrbit`
+  issues #305–#308 document planning decomposition of the approved plan, not execution.
+- **No second Laravel/Inertia/Vue/Pest consumer has validated portability.** The exhaustive `tests/`
+  audit and its forward reconciliation (§8) deepen the evidence from this one consumer — they do not
+  widen it. Every piece of evidence behind this skill's content still comes from exactly one real
+  project, `useOrbit`, plus Laravel Boost's and the Laravel framework's installed source.
 - **Independent Vue-specific guidance remains unproven.** The skill declares Vue 3 as part of its stack
   boundary but currently owns no mature Vue-specific rule (§2).
 - **`my-phpstorm-conventions` remains separate and deferred**, untouched by this pass.
@@ -338,10 +403,22 @@ source, not invented convention.
 prerequisites and reconciliation instructions — ready to inspect and adapt into a project, but not yet
 re-verified against `useOrbit`'s current live implementations since this pass's corrections (§10).
 
-**Portability confidence.** Moderate, not proven. Every piece of evidence traces to one real consumer.
-The skill states this limit openly rather than implying broader validation.
+**Portability confidence.** Moderate, and now backed by one genuine consumer-validation cycle, not
+merely internal coherence. `useOrbit`'s exhaustive `tests/` audit (§8) is the skill's first real
+consumer exercise: it correctly drove the great majority of the audit's classification and ownership
+decisions unmodified, exposed exactly two portable rule gaps (the HTTP wiring-proof exception and the
+`Pest.php` binding/migration-order outcome), and both were corrected upstream and then forward-verified
+by an independently reconciled pass that re-derived F5–F8, F10, and F14 correctly from the corrected
+text alone. All of that evidence still traces to exactly one real project — the skill states this limit
+openly rather than implying broader validation, and this pass does not claim otherwise.
 
-**Remaining consumer-validation risk.** The two-stage consumer exercise (conformance audit, then the
-Clients CRUD slice) is the next real test of whether these blueprints hold up against actual
-implementation work, not merely internal coherence. Until that exercise runs, this skill should be read
-as evidence-backed and internally consistent, not as consumer-validated.
+**Remaining consumer-validation risk.** The conformance-audit stage has now run and produced real,
+corrective evidence (§8), but two things remain open. First, execution: the audit's own approved
+restructuring (`useOrbit@0f905cf`) has not been applied to `useOrbit`'s `tests/` tree, so no test-suite
+run yet confirms the corrected guidance holds up under real execution — `useOrbit` issues #305–#308 are
+planning output, not that proof. Second, breadth: the Clients CRUD vertical-slice exercise and §7's
+deferred Resource-test findings remain future evidence for a later pass, not another universal rule to
+add now, and no second Laravel/Inertia/Vue/Pest consumer has yet tested this skill at all. Until
+execution and a second consumer exist, read this skill as evidence-backed, internally consistent, and
+now genuinely consumer-tested for classification and ownership on one project — not as
+execution-validated or portability-proven.
