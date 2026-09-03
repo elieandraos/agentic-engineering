@@ -35,7 +35,7 @@ consumers through a normal install or update, not through hand-edits under `.age
   installing it themselves. This is the mode the rest of this document is mostly about, because it's
   the one with durable, reviewable state.
 
-## 3. Installing from a public GitHub source
+## 3. Installing from a GitHub source
 
 Install with the `skills` CLI, pointed at the source repository:
 
@@ -49,6 +49,10 @@ locations) directly from the repository's current default-branch content — no 
 package publication needs to exist first. `-s/--skill` narrows installation to named skills instead
 of everything the source publishes; `-a/--agent` targets specific agent(s) (e.g. `claude-code`);
 `-y/--yes` skips interactive prompts for scripted or CI use.
+
+Authenticated private GitHub repositories can also be installed and refreshed this way, using the
+operator's configured GitHub credentials — but while private, they aren't eligible for public
+skills.sh discovery.
 
 Commands throughout this document are illustrative. The specific skills and agents a project
 installs are that project's own decision, not a universal list.
