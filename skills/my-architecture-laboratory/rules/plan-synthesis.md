@@ -110,6 +110,28 @@ dependencies; limitations or migration constraints.
 It must not become a file-by-file edit sequence, an implementation checklist, an issue
 decomposition, or a delivery plan, regardless of heading structure.
 
+## Leading with an owner-readable summary
+
+The user approving the plan may be technically capable but unfamiliar with the specific system,
+tooling, or investigation area it covers. When the plan is long, technically dense, or reaches into
+a domain the approving owner isn't fluent in, open it with a short, plain-language summary before
+the technical content, so approval doesn't require first reading through unfamiliar mechanics and
+evidence to find the decision being asked for.
+
+Cover whatever of the following actually applies to the initiative: the outcome, the motivation, the
+target shape, the normal operating model going forward, material trade-offs, and what stays
+unchanged or is explicitly excluded. Place the detailed evidence, mechanics, and verification
+procedures below it, unchanged in role — the summary orients the reader toward the technical record;
+it never substitutes for it as the source of truth.
+
+The summary must never replace, weaken, or silently reinterpret a canonical claim, a locked
+decision, a stated uncertainty, or an evidence reference — restate them in plainer language, don't
+re-decide or soften them. A short, already-straightforward plan doesn't need a redundant mandatory
+summary merely for symmetry with denser ones. No fixed heading, line count, or template is
+required — the requirement is an understandable approval surface, not one project's formatting
+choice. When the conversation establishes the approving owner's familiarity with the domain,
+calibrate the summary's depth and vocabulary to that owner rather than to a generic reader.
+
 ## Evidence
 
 Ground current-state claims in architecture-neutral evidence: paths or symbols, schema elements,
@@ -162,6 +184,8 @@ presenting the plan for approval, confirm all of the following against your own 
   configuration, schema, tests, runtime evidence, or external-system state — at synthesis time.
 - No "preserved behavior" claim conflicts with a described change.
 - Stated invariants are compatible with the target architecture.
+- When the plan opens with an owner-readable summary, it restates locked decisions, current-state
+  facts, and evidence rather than softening, expanding, or reinterpreting them.
 - The plan is sufficient for `my-feature-planning` to distinguish settled from open without
   re-deriving from conversation.
 - The plan performs no classification, issue decomposition, sequencing, or GitHub work.
