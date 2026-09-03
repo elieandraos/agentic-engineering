@@ -57,6 +57,7 @@ pick a dependency-ready, approved issue
   → GATE 2: commit-plan review (§4)
   → build semantic commits, narrowest-reliable verification per commit (§5, §6)
   → full-suite verification at the completed-issue boundary (§6)
+  → confirm commits reachable on the correct remote branch, push with authorization if not (§7)
   → ask: close the issue? → closure procedure + validation (§7)
   → recompute the milestone's dependency-ready set (§8)         [Backlog: path ends here]
       → ready set non-empty → report/recommend, human picks the next issue (new pass)
@@ -225,6 +226,17 @@ have come from cache or replay.
 Closure is opt-in and only ever asked once committed, verified work exists — never automatically
 inferred from a green build, and never repeated unprompted once the human has said not yet.
 
+**Closure also requires the issue's commits to already be reachable on the correct remote branch** —
+the repository's trunk for Backlog/hotfix work, or the milestone's shared branch otherwise, exactly
+as branch readiness (§3) selected. If they aren't yet, this rule asks for explicit authorization to
+push them — a permission check for a mutating remote action, not a third review gate alongside Gate 1
+and Gate 2 (§4) — then pushes normally, never with `--force`, and re-fetches the remote branch to
+confirm both that nothing local remains unpushed and that every commit implementing the issue is
+specifically an ancestor of it. This reachability check is not itself a milestone or release event:
+it doesn't create, review, or merge a PR, doesn't trigger a release or milestone closure, and isn't a
+reason to rerun the completed-issue full-suite verification that already proved those commits
+correct.
+
 **A completion criterion must be satisfiable at the point this workflow actually closes the
 issue.** Before asking to close, the issue's own stated Acceptance Criteria or Tests are checked
 against this workflow's real closure timing — for example, a criterion requiring a real CI run
@@ -244,10 +256,12 @@ closing comment actually exists — a mutation's exit code is never treated as p
 
 **Closing an issue is a distinct fact from merging a milestone PR.** This closure intentionally
 happens before a milestone's PR merges — for a milestone issue, often well before that PR even
-exists. Closure marks that this issue's implementation and verification are done; it says nothing
-about whether its commits have reached the trunk branch, and nothing about the aggregate state of
-the milestone that contains it. This rule also never reopens a closed issue on its own — a later
-finding concerning already-closed work defaults to a new issue referencing the original.
+exists, though never before its own commits have reached that milestone's branch (see the
+reachability check above). Closure marks that this issue's implementation and verification are done;
+it says nothing about whether its commits have reached the trunk branch, and nothing about the
+aggregate state of the milestone that contains it. This rule also never reopens a closed issue on its
+own — a later finding concerning already-closed work defaults to a new issue referencing the
+original.
 
 ## 8. Sequencing: the ready-set recompute and the no-chaining default
 
@@ -354,6 +368,7 @@ the lifecycle already described above:
 |---|---|
 | Whether the implementation is acceptable | Gate 1 (§4) |
 | Whether the proposed commit boundaries and messages are acceptable | Gate 2 (§4) |
+| Whether to push already-approved commits to the correct remote branch | Push readiness, before issue closure (§7) |
 | Whether to close the issue now | Issue closure (§7) |
 | Which ready issue to start next, and whether to start it now | Sequencing (§8) |
 | Approving any deviation from the normal per-issue cadence or gate structure | Sequencing / review gates (§4, §8) |
@@ -376,7 +391,7 @@ approved assumptions, or a choice the evidence can't narrow down on its own.
 | [`review-gates.md`](../skills/my-git-workflow/rules/review-gates.md) | The two pre-commit human approval gates, and the general standard for when a genuine unresolved decision forces a stop |
 | [`commit-boundaries.md`](../skills/my-git-workflow/rules/commit-boundaries.md) | Deriving semantic commit boundaries from the reviewed diff, commit-message content, the issue-reference trailer, and folding in review corrections |
 | [`verification.md`](../skills/my-git-workflow/rules/verification.md) | Verification scope at every lifecycle boundary, tool/starting-state discovery, the regression-baseline model, and isolation verification |
-| [`issue-closure.md`](../skills/my-git-workflow/rules/issue-closure.md) | Whether and how to close an issue, the closing-comment contract, and post-mutation validation |
+| [`issue-closure.md`](../skills/my-git-workflow/rules/issue-closure.md) | Confirming an issue's commits are reachable on the correct remote branch (pushing, with authorization, if not) before asking, whether and how to close it, the closing-comment contract, and post-mutation validation |
 | [`milestone-completion.md`](../skills/my-git-workflow/rules/milestone-completion.md) | Milestone PR readiness, the CI-failure-on-an-open-PR handling, and the milestone closure gate |
 | [`release.md`](../skills/my-git-workflow/rules/release.md) | Post-merge authorization's release branch: policy discovery, understanding and drafting a release, approval, publication, and post-publication validation |
 
