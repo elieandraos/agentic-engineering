@@ -119,7 +119,7 @@ Guardrails, retained for any future stack or skill addition:
 - `my-laravel-stack`'s internal `rules/`/`blueprints/`/`templates/` split is the evidence-backed decomposition this repository actually reached (`artifacts/my-laravel-stack.md`) — a shape earned from that skill's own evidence, not a template any future stack companion should copy by default;
 - a `project-specific/useOrbit` grouping was never populated and remains out of scope — project-specific knowledge stays in `useOrbit` itself, not in this repository;
 - any future stack beyond Laravel/Vue/Inertia should reach its own package shape from its own evidence, installed alongside the others under `skills/`;
-- `docs/` holds timeless, cross-skill authoring guidance — how skills in this repository are authored, classified into portable/stack/project knowledge, and kept reconciled as they evolve — starting with `docs/skill-authoring-methodology.md`, reclassified there after outgrowing its original home as a per-skill dossier. `artifacts/` itself stays reserved for the four current per-skill architecture dossiers, not general methodology.
+- `docs/` holds timeless, cross-skill guidance that applies across every skill rather than to one in particular: `docs/skill-authoring-methodology.md` — how skills in this repository are authored, classified into portable/stack/project knowledge, and kept reconciled as they evolve, reclassified there after outgrowing its original home as a per-skill dossier — and `docs/skill-consumption.md`, the proven lifecycle a consuming project uses to install, refresh, and validate skills from this repository. `artifacts/` itself stays reserved for the four current per-skill architecture dossiers, not general methodology.
 
 The root `README.md` explains the current layered model and knowledge-boundary distinctions — see it for the up-to-date picture.
 
@@ -186,8 +186,7 @@ These are possibilities worth keeping in view — not phases, dependencies, comm
 - Project B as a possible later cross-stack proving ground;
 - multi-project comparison to refine the portable / stack / project boundary;
 - additional stack or platform capabilities when repeated needs appear;
-- improvements to consumption, refresh, contribution, packaging, or installation when real use demonstrates a need;
-- skills.sh compatibility;
+- further consumption or refresh tooling beyond the lifecycle documented in `docs/skill-consumption.md`, if real use exposes a gap it doesn't cover;
 - public distribution, reusable publication, versioning, and contribution guidance;
 - continued refinement of architecture, planning, Git, issue, release, and delivery methodologies;
 - `content-backlog` as a possible Agentic Engineering capability, potentially independent of stack work and possibly worth exploring before Project B if real priorities justify it.

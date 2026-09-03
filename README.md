@@ -133,21 +133,23 @@ operational routing and rules an agent actually loads), and a `rules/` directory
 applicable rule files. `my-laravel-stack` additionally carries `blueprints/` and `templates/`.
 `artifacts/` holds supporting analysis per skill — it complements each skill's `README.md`/`SKILL.md`
 rather than replacing them as the operational source of truth. `docs/` holds methodology that applies
-across every skill rather than to one in particular — currently
-[`skill-authoring-methodology.md`](docs/skill-authoring-methodology.md), the current guide to
-evidence-backed skill authoring, knowledge classification, ownership, and reconciliation.
+across every skill rather than to one in particular:
+[`skill-authoring-methodology.md`](docs/skill-authoring-methodology.md), the guide to evidence-backed
+skill authoring, knowledge classification, ownership, and reconciliation; and
+[`skill-consumption.md`](docs/skill-consumption.md), the guide to installing, refreshing, and
+validating skills from a consuming project.
 
 ## Consumption
 
-There is no packaged installer. To use a skill in another project:
-
-1. Clone this repository.
-2. Copy each desired individual directory from `skills/<name>/` (e.g. `skills/my-architecture-laboratory/`,
-   `skills/my-feature-planning/`, `skills/my-git-workflow/`, `skills/my-laravel-stack/`) into a
-   Claude Code skill-discovery location such as `.claude/skills/<name>/` or `~/.claude/skills/<name>/`.
-
-Copy only the skills a project actually needs; a stack companion is only useful alongside a project
-that runs on that stack.
+A consuming project installs skills from this repository with the
+[`skills`](https://github.com/vercel-labs/skills) CLI rather than a manual clone-and-copy — pointing it at this repository's GitHub source installs
+whichever skills a project needs directly into that project's own tree, with no release or package
+publication required on this end. See [`docs/skill-consumption.md`](docs/skill-consumption.md) for
+the full lifecycle: personal/global use, disposable trial installs, and the repository-managed model
+— a pinned CLI, a committed lock file and managed copies, committed agent-discovery symlinks, and a
+simple refresh script with proportional validation — that most consuming projects use to keep an
+installed skill set reproducible and team-shared. Install only the skills a project actually needs;
+a stack companion is only useful alongside a project that runs on that stack.
 
 ## Evolution principle
 
