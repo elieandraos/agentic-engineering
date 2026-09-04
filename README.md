@@ -2,7 +2,7 @@
 
 Understand in the Lab. Plan the work. Build with the Stack. Ship the change.
 
-> A portable, evidence-driven methodology for architecting, planning, and delivering software — plus stack-specific companions that carry technology knowledge without leaking it into the portable core. Not a prompt collection for one repository or framework.
+> A portable, evidence-driven methodology for understanding, planning, building, and shipping software—with stack-specific companions where needed. Not a prompt collection for one repository or framework.
 
 ## The pipeline
 
