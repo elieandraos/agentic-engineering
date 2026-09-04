@@ -17,4 +17,5 @@ These are possibilities, not commitments or a prescribed order:
 - use Project B as a possible later cross-stack proving ground;
 - compare behavior across multiple consuming projects to refine the portable / stack / project knowledge boundary;
 - add stack or platform companions only when repeated real needs justify them;
-- explore optional skill stewardship: a Claude Code layer that notices possible skill gaps after an Agentic Engineering skill runs, retains only approved findings, and proposes deliberate canonical updates—keeping core skills portable, with a hook-enabled plugin as one possible Claude-specific delivery mechanism.
+- explore optional skill stewardship: a Claude Code layer that notices possible skill gaps after an Agentic Engineering skill runs, retains only approved findings, and proposes deliberate canonical updates—keeping core skills portable, with a hook-enabled plugin as one possible Claude-specific delivery mechanism;
+- `review-it`—explore extracting implementation assurance from `ship-it` into a reusable skill that can review any working tree, branch, or PR. It would verify the change against its approved scope, architecture, stack conventions, tests, and regressions; `ship-it` could compose it before implementation approval while retaining delivery ownership.
