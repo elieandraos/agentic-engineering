@@ -30,7 +30,7 @@ That principle applies both to the product architecture being documented and to 
 
 Those three skills have since left `useOrbit`'s working tree and now form the portable core of this external, reusable engineering system — externalized, published, and consumed back into `useOrbit` as canonical upstream source. `useOrbit` remains both the origin of that three-skill family and the system's first real consumer, exercising each skill on genuine work rather than synthetic tests.
 
-Alongside that portable family, [`my-laravel-stack`](skills/my-laravel-stack/) is a separate companion: technology-specific implementation knowledge for the Laravel + InertiaJS + Vue 3 + Pest stack that `useOrbit` runs on, extracted once repeated real-consumer evidence justified it. It is evidence-backed the same way the three portable skills are, but it is a stack companion alongside the portable three-skill family, not a fourth member of it — the portable methodology should never need to know which stack it is operating on.
+Alongside that portable family, [`my-laravel-stack`](skills/laravel-inertia-stack/) is a separate companion: technology-specific implementation knowledge for the Laravel + InertiaJS + Vue 3 + Pest stack that `useOrbit` runs on, extracted once repeated real-consumer evidence justified it. It is evidence-backed the same way the three portable skills are, but it is a stack companion alongside the portable three-skill family, not a fourth member of it — the portable methodology should never need to know which stack it is operating on.
 
 ---
 
@@ -49,7 +49,7 @@ The system is a layered model:
              +---------------+---------------+
                              |
                     STACK COMPANION LAYER
-                        my-laravel-stack
+                        laravel-inertia-stack
              (Laravel + InertiaJS + Vue 3 + Pest —
            the verified delta additive to Laravel Boost)
                              |
@@ -72,7 +72,7 @@ The engineering method itself:
 
 ### Stack companion layer
 
-Technology-specific implementation knowledge that is genuinely owned/authored by this ecosystem for the Laravel + InertiaJS + Vue 3 + Pest stack `useOrbit` runs on, implemented as **[`my-laravel-stack`](skills/my-laravel-stack/)** — a portable stack companion carrying the verified delta additive to Laravel Boost (conventions, implementation blueprints, and reusable code templates); see `artifacts/my-laravel-stack.md` for the full record. This layer is distinct from **external first-party capabilities** such as Laravel Boost's `laravel-best-practices` and `testing-best-practices`: upstream dependencies `my-laravel-stack` may compose with, but never owns, absorbs, renames, or duplicates.
+Technology-specific implementation knowledge that is genuinely owned/authored by this ecosystem for the Laravel + InertiaJS + Vue 3 + Pest stack `useOrbit` runs on, implemented as **[`laravel-inertia-stack`](skills/laravel-inertia-stack/)** — a portable stack companion carrying the verified delta additive to Laravel Boost (conventions, implementation blueprints, and reusable code templates); see `artifacts/laravel-inertia-stack.md` for the full record. This layer is distinct from **external first-party capabilities** such as Laravel Boost's `laravel-best-practices` and `testing-best-practices`: upstream dependencies `laravel-inertia-stack` may compose with, but never owns, absorbs, renames, or duplicates.
 
 ### Project-specific input
 
@@ -85,7 +85,7 @@ Things that belong to one product or repository:
 - existing architecture decisions;
 - project-specific release or issue conventions.
 
-The stack-layer boundary is decided and implemented as `my-laravel-stack` (see `artifacts/my-laravel-stack.md` for the full evidence and current assessment). Stacks beyond Laravel/Vue/Inertia are a possible future direction, not committed work.
+The stack-layer boundary is decided and implemented as `laravel-inertia-stack` (see `artifacts/laravel-inertia-stack.md` for the full evidence and current assessment). Stacks beyond Laravel/Vue/Inertia are a possible future direction, not committed work.
 
 ---
 
@@ -93,7 +93,7 @@ The stack-layer boundary is decided and implemented as `my-laravel-stack` (see `
 
 The adopted repository structure groups content into three explicit families: portable methodology
 in `docs/`, installable operational skill packages in `skills/`, and maintainer-facing architectural
-deep dives in `artifacts/`. Every skill — the three portable skills and `my-laravel-stack` — lives as
+deep dives in `artifacts/`. Every skill — the three portable skills and `laravel-inertia-stack` — lives as
 its own directory under `skills/`:
 
 ```text
@@ -102,10 +102,10 @@ agentic-engineering/
 ├── roadmap.md
 ├── docs/
 ├── skills/
-│   ├── my-feature-planning/
-│   ├── my-git-workflow/
-│   ├── my-architecture-laboratory/
-│   └── my-laravel-stack/
+│   ├── plan-it/
+│   ├── ship-it/
+│   ├── lab-it/
+│   └── laravel-inertia-stack/
 │       ├── README.md
 │       ├── SKILL.md
 │       ├── rules/
@@ -116,7 +116,7 @@ agentic-engineering/
 
 Guardrails, retained for any future stack or skill addition:
 
-- `my-laravel-stack`'s internal `rules/`/`blueprints/`/`templates/` split is the evidence-backed decomposition this repository actually reached (`artifacts/my-laravel-stack.md`) — a shape earned from that skill's own evidence, not a template any future stack companion should copy by default;
+- `laravel-inertia-stack`'s internal `rules/`/`blueprints/`/`templates/` split is the evidence-backed decomposition this repository actually reached (`artifacts/laravel-inertia-stack.md`) — a shape earned from that skill's own evidence, not a template any future stack companion should copy by default;
 - a `project-specific/useOrbit` grouping was never populated and remains out of scope — project-specific knowledge stays in `useOrbit` itself, not in this repository;
 - any future stack beyond Laravel/Vue/Inertia should reach its own package shape from its own evidence, installed alongside the others under `skills/`;
 - `docs/` holds timeless, cross-skill guidance that applies across every skill rather than to one in particular: `docs/skill-authoring-methodology.md` — how skills in this repository are authored, classified into portable/stack/project knowledge, and kept reconciled as they evolve, reclassified there after outgrowing its original home as a per-skill dossier — and `docs/skill-consumption.md`, the proven lifecycle a consuming project uses to install, refresh, and validate skills from this repository. `artifacts/` itself stays reserved for the four current per-skill architecture dossiers, not general methodology.
@@ -159,7 +159,7 @@ issues + milestone
 implementation
 ```
 
-`my-feature-planning` consumes approved architectural decisions without re-litigating them. The skills already distinguish current-state facts, locked decisions, derived constraints, and open implementation details — that separation should be preserved as the stack companion layer evolves. A stack layer should not quietly turn an implementation convention into a product decision.
+`plan-it` consumes approved architectural decisions without re-litigating them. The skills already distinguish current-state facts, locked decisions, derived constraints, and open implementation details — that separation should be preserved as the stack companion layer evolves. A stack layer should not quietly turn an implementation convention into a product decision.
 
 ## Human decisions remain visible
 
