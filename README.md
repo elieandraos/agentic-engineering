@@ -58,3 +58,7 @@ The ecosystem keeps four kinds of knowledge separate:
 ## Evolution principle
 
 Rules in this ecosystem evolve from demonstrated need and real use, not speculative generalization. See [`roadmap.md`](roadmap.md).
+
+## License
+
+[MIT](LICENSE)
