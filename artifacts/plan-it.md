@@ -342,6 +342,13 @@ proposed early — queried against current GitHub state, informed by discovered 
 drafted explicitly — but created only at that same final gate; nothing is created speculatively while
 issue content is still being drafted.
 
+Reaching the content-review gate is proof-gated, not narration-gated: every review surface applicable
+to the current canonical set must actually have run against the exact literal bodies being presented,
+captured in a compact review-execution record (kept internal by default, surfaced on request) that
+names each surface as applied or genuinely not applicable — a general claim that review was applied
+does not satisfy this. A correction invalidates the affected issue's prior record entry; its complete
+body is re-rendered fresh and every applicable surface reruns before it is re-presented.
+
 **Validating before mutation is a different act from validating after it.** A `gh` command
 succeeding proves only that GitHub accepted the request, not that the intended state now exists.
 Immediately before any issue body touches GitHub, it is re-rendered from the current approved
