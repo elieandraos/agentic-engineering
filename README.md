@@ -38,7 +38,21 @@ ship-it + stack companion  # build, verify, and deliver
 
 These skills do not assume a language, framework, or project layout. The consuming project supplies those; each skill supplies the method.
 
-Use only the stage you need. `plan-it` can start from a direct feature request or an approved `plan.md`; `ship-it` can start from any approved GitHub issue, whether or not `plan-it` created it.
+Use only the stage you need. [`plan-it`](skills/plan-it/) can start from a direct feature request or an approved `plan.md`; [`ship-it`](skills/ship-it/) can start from any approved GitHub issue, whether or not [`plan-it`](skills/plan-it/) created it.
+
+## Boring prompts
+
+**Boring prompts. Serious engineering.**
+
+State the goal, not the choreography. Investigation methods, planning checks, review gates, and delivery rules already live in versioned, reviewable skills.
+
+```shell
+"Investigate how authentication works and prepare the change plan."  # lab-it
+"Turn the approved plan into GitHub issues."                         # plan-it
+"Implement issue #42."                                               # ship-it + stack companion when relevant
+```
+
+The stages compose into a human workflow, but each prompt also works on its own.
 
 ## Build with the right stack
 
@@ -63,8 +77,6 @@ The ecosystem keeps four kinds of knowledge separate:
 * **Stack knowledge** — implementation conventions for one compatible stack.
 * **Project knowledge** — domain rules and repository conventions owned by the consuming project.
 * **First-party capabilities** — external skills such as Laravel Boost, composed with rather than copied or renamed.
-
-See [`docs/skill-authoring-methodology.md`](docs/skill-authoring-methodology.md) for the full model.
 
 ## Evolution principle
 
