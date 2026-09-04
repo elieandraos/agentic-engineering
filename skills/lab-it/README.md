@@ -1,47 +1,53 @@
 # lab-it
 
-Investigates how a system actually works, from real implementation, tests, and current evidence —
-never conventions or guesses — then produces one of three results:
-
-| Intention | Result |
-|---|---|
-| Understand and document existing architecture | New architecture guide |
-| Reconcile a guide with verified changed reality | Updated existing guide |
-| Design feature architecture through conversation | Approved `plan.md` handed to `plan-it` |
-
-Investigation and a recap can be the whole result on their own — a guide or a `plan.md` is something
-someone has to ask for, not an automatic next step.
+Investigate how a system actually works, answer architecture questions, and—when
+useful—turn the evidence into an architecture guide or an approved change plan.
 
 ## When to use it
 
-- You want to understand or document how something in the codebase actually works.
-- A published architecture guide is stale relative to verified current behavior.
-- You're about to build a feature and need the architecture decisions settled before planning or
+- You need an answer about how something in the codebase actually works, backed by real
+  implementation, tests, and current evidence — not conventions or guesses.
+- A published architecture guide needs checking against current behavior.
+- A feature idea needs its architecture decisions settled before planning or
   implementation starts.
 
-Not for explaining one function, debugging, reviewing a diff, or writing API reference docs.
+Not for explaining one function, debugging, reviewing a diff, or writing API reference
+docs.
 
-## How it works
+## Boring prompts
 
-Every workflow starts the same way: inspect the real system, reconcile evidence (implementation,
-config, schema, tests, history), and explain the architecture including what's still uncertain — the
-system establishes what exists, the user decides what it should become. What happens next differs by
-workflow: a new guide needs recap confirmation before publishing; planning feature architecture needs
-explicit, user-approved decisions before `plan.md` is written; updating a guide only asks the user
-when authority or a material decision is unclear.
+```shell
+"How does authentication work across the application?"
+"Document the billing architecture."
+"Update the architecture guide to match the current implementation."
+"Plan how invoice exports should fit into the system."
+```
 
-A `plan.md` produced here keeps every claim in one of four categories — current-state fact, locked
-decision, derived constraint, or open implementation detail — so `plan-it` can treat it as canonical
-without re-deriving decisions from conversation.
+## What normally happens
+
+Every request starts with the same investigation: inspect the real system, reconcile
+implementation, config, schema, tests, and history, and explain what's there — including
+what's still uncertain. From there, one of four outcomes follows:
+
+1. Investigation and a direct answer.
+2. A new architecture guide, extracted from implemented behavior across every layer that
+   matters.
+3. An update to an existing architecture guide, reconciled with verified current reality.
+4. An approved `plan.md`, handed off as canonical input for planning.
+
+Investigation and an answer can be the complete result on their own — a guide or a
+`plan.md` is something a request specifically asks for, never an automatic next step.
 
 ## Ownership
 
-Owns architecture investigation and explanation, new and updated architecture guides, and synthesis
-of approved feature architecture into `plan.md`. Does not own application implementation, downstream
-issue planning, or Git/GitHub delivery — see `plan-it` and `ship-it`.
+Owns architecture investigation, architectural explanation, and turning approved
+decisions into guides or a `plan.md`. Planning the resulting work into GitHub issues
+belongs to [`plan-it`](../plan-it/); implementing it belongs to [`ship-it`](../ship-it/).
 
-## Rules
+## Install
 
-`SKILL.md` routes to `rules/doc-style.md` (guide writing), `rules/template.html` (guide scaffold),
-`rules/review.md` (guide review), `rules/maintenance.md` (guide updates), and
-`rules/plan-synthesis.md` (`plan.md` methodology).
+```shell
+npx skills add elieandraos/agentic-engineering --skill lab-it
+```
+
+See [`SKILL.md`](SKILL.md) for the complete operational contract.
