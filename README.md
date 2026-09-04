@@ -1,73 +1,71 @@
 # Agentic Engineering
 
-**Lab. Plan. Ship. Build with the right stack.**
+**Lab. Plan. Ship. Build with the right stack.**  
 Understand in the Lab. Plan the work. Build with the Stack. Ship the change.
 
-A portable, evidence-driven methodology for architecting, planning, and delivering software — plus
-stack-specific companions that carry technology knowledge without leaking it into that portable
-core. Not a prompt collection for one repo or framework.
+> A portable, evidence-driven methodology for architecting, planning, and delivering software — plus stack-specific companions that carry technology knowledge without leaking it into the portable core. Not a prompt collection for one repository or framework.
 
 ## The pipeline
 
-| Skill | Owns |
-|---|---|
-| [`lab-it`](skills/lab-it/) | Investigate how a system actually works → a new or updated architecture guide, or an approved `plan.md` handoff. |
-| [`plan-it`](skills/plan-it/) | Turn a feature request or an approved `plan.md` into a reviewed, drafted set of GitHub issues. |
-| [`ship-it`](skills/ship-it/) | Move any approved GitHub issue meeting its entry contract through implementation review, commits, verification, and release. |
+<table>
+<thead>
+<tr>
+<th width="140">Skill</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="skills/lab-it/"><code>lab-it</code></a></td>
+<td>Investigate a system, answer architecture questions, and trace behavior across layers → an architecture guide, a focused guide update, or an approved <code>plan.md</code>.</td>
+</tr>
+<tr>
+<td><a href="skills/plan-it/"><code>plan-it</code></a></td>
+<td>Turn a feature request or approved <code>plan.md</code> into reviewed, implementation-ready GitHub issues.</td>
+</tr>
+<tr>
+<td><a href="skills/ship-it/"><code>ship-it</code></a></td>
+<td>Implement an approved GitHub issue, verify the result, shape the commits, and carry it through delivery.</td>
+</tr>
+</tbody>
+</table>
 
-    lab-it  → approved architecture / plan.md
-      → plan-it → GitHub issues
-      → ship-it + applicable stack companion → verified change
+```shell
+lab-it                     # understand the system
+plan-it                    # plan the work in GitHub
+ship-it + stack companion  # build, verify, and deliver
+```
 
-None of the three assume a particular language, framework, or project layout — a consuming project
-supplies its own; each skill supplies the method. They compose into the pipeline above, but none
-requires every earlier stage to have actually run: `plan-it` starts equally well from a direct
-feature request or from `lab-it`'s approved `plan.md`, and `ship-it` picks up any approved GitHub
-issue meeting its entry contract, whether `plan-it` drafted it or not. See each skill's own
-`README.md` for the walkthrough and `SKILL.md` for the operational contract.
+These skills do not assume a language, framework, or project layout. The consuming project supplies those; each skill supplies the method.
+
+Use only the stage you need. `plan-it` can start from a direct feature request or an approved `plan.md`; `ship-it` can start from any approved GitHub issue, whether or not `plan-it` created it.
 
 ## Build with the right stack
 
-[`laravel-inertia-stack`](skills/laravel-inertia-stack/) is a companion for **Laravel + InertiaJS +
-Vue 3 + Pest** — consulted during `plan-it` and `ship-it`, never a fourth pipeline stage. It owns
-implementation knowledge and conventions for that stack; `ship-it` performs the approved
-implementation itself, consulting the companion rather than the companion writing the code. It's
-additive to Laravel Boost's own skills, never a replacement. A different stack gets its own
-companion, built the same way.
+Stack companions carry technology-specific implementation knowledge without becoming another pipeline stage.
+
+* [`laravel-inertia-stack`](skills/laravel-inertia-stack/) — Laravel, InertiaJS, Vue 3, and Pest. It works alongside relevant Laravel Boost skills and guides `plan-it` and `ship-it`; `ship-it` still performs the implementation.
+* A different stack can get its own companion when real use justifies it.
 
 ## Install
 
-    npx skills add elieandraos/agentic-engineering
+```shell
+npx skills add elieandraos/agentic-engineering
+```
 
-Choose the skills and agents you need.
-
-Install only what a project needs — the stack companion is only useful alongside a project that runs
-on that stack. See [`docs/skill-consumption.md`](docs/skill-consumption.md) for personal, disposable,
-and repository-managed install modes.
+Choose the skills and agents you need. Install a stack companion only where it applies.
 
 ## Knowledge boundaries
 
-Four kinds of knowledge stay distinct: **portable methodology** (cross-stack, the three skills
-above), **stack companion knowledge** (one stack's implementation delta, e.g.
-`laravel-inertia-stack`), **project-specific knowledge** (a consuming project's own domain and repo
-conventions — never absorbed here), and **external first-party capabilities** (e.g. Laravel Boost —
-composed with, never duplicated or renamed as this ecosystem's own). See
-[`docs/skill-authoring-methodology.md`](docs/skill-authoring-methodology.md) for the full model.
+The ecosystem keeps four kinds of knowledge separate:
 
-## Repository structure
+* **Portable methodology** — `lab-it`, `plan-it`, and `ship-it`; independent of language and framework.
+* **Stack knowledge** — implementation conventions for one compatible stack.
+* **Project knowledge** — domain rules and repository conventions owned by the consuming project.
+* **First-party capabilities** — external skills such as Laravel Boost, composed with rather than copied or renamed.
 
-    agentic-engineering/
-    ├── README.md     this file
-    ├── roadmap.md    living architecture and evolution notes
-    ├── docs/         cross-skill methodology (authoring, consumption)
-    ├── skills/
-    │   ├── lab-it/                 portable — investigation and architecture
-    │   ├── plan-it/                portable — scoping and issue drafting
-    │   ├── ship-it/                portable — implementation and delivery
-    │   └── laravel-inertia-stack/  stack companion — Laravel + InertiaJS + Vue 3 + Pest
-    └── artifacts/    maintainer-facing per-skill architecture dossiers
+See [`docs/skill-authoring-methodology.md`](docs/skill-authoring-methodology.md) for the full model.
 
 ## Evolution principle
 
-Rules in this ecosystem evolve from demonstrated need and real use, not speculative generalization.
-See [`roadmap.md`](roadmap.md).
+Rules in this ecosystem evolve from demonstrated need and real use, not speculative generalization. See [`roadmap.md`](roadmap.md).
