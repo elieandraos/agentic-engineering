@@ -1,5 +1,10 @@
 # Ecosystem migration plan — Lab · Document · Plan · Implement · Review · Ship
 
+**Status: pending review.** This revision corrects the previously reviewed version (HEAD
+`468715d`) per explicit feedback. The architecture and decisions recorded here are settled, but
+writing them down does not authorize implementing Step 2 or any later step — each step still
+requires its own go-ahead, per §5.
+
 **Source of truth for this initiative.** This is the change plan for splitting the current
 `lab-it` / `plan-it` / `ship-it` ecosystem into `lab-it` (narrowed), `document-it` (new), `plan-it`
 (unchanged), `implement-it` (new), `review-it` (new), and `ship-it` (narrowed). It does not
@@ -33,9 +38,9 @@ available companion capability, not a pipeline stage every initiative must pass 
 | `lab-it` (narrowed) | Architecture investigation; verified explanations; architecture decisions reached with the user; approved `plan.md` synthesis. An investigation can end in a verified answer alone — no guide is required. | New/updated architecture guides, guide review (→ `document-it`); unrestricted general research — the narrowing removes guide output, not the investigation method itself. |
 | `document-it` (new) | Creating and maintaining explanatory guides; owning documentation review; Markdown and Artifact output. | Investigation from scratch when understanding already exists and is fresh — draws on `lab-it` when understanding is missing or stale, reusing sufficient verified evidence rather than repeating a full investigation. File extension does not decide ownership: an approved initiative `plan.md` stays `lab-it`'s even though it is a `.md` file. |
 | `plan-it` (unchanged) | Implementation-ready GitHub issues; milestone/label planning; issue-set review; dependency planning. | Implementation, delivery, or review of implemented code. |
-| `implement-it` (new) | Approved issue/milestone intake; working-branch readiness; implementation; verification; issue-level Git workflow; Gate 1 and Gate 2; commit construction; authorized push; issue closure and its completion comment; next-issue recommendations. | Choosing what work exists; milestone PR readiness/creation, milestone closure, release (→ `ship-it`). A specific-issue request ends after that issue's authorized lifecycle — it does not imply milestone-delivery authorization. |
-| `review-it` (new) | Independently callable implementation assurance for a worktree, branch, or PR — callable standalone or by `implement-it` before Gate 1. Reports verified findings, unresolved limitations, or a clean result. | Implementing corrections (returns to `implement-it`); investigation-quality, guide, plan-synthesis, issue-planning, or commit-plan review — those stay with their owning skills. |
-| `ship-it` (narrowed) | Milestone PR readiness; authorized PR creation; post-merge delivery; milestone closure; release preparation/publication; resulting-state verification. | PR approval and merge — the human retains both. |
+| `implement-it` (new) | Approved issue/milestone intake; working-branch readiness; implementation; verification; issue-level Git workflow; Gate 1 and Gate 2; commit construction; authorized push; issue closure and its completion comment; next-issue recommendations; the authorized fix itself for an in-flight delivery correction `ship-it` hands it (§2.2/§3.1), using this same lifecycle. | Choosing what work exists; milestone PR readiness/creation, milestone closure, release (→ `ship-it`); investigating or explaining a delivery/CI failure before a correction is authorized (→ `ship-it`). A specific-issue request ends after that issue's authorized lifecycle — it does not imply milestone-delivery authorization. |
+| `review-it` (new) | Independently callable implementation assurance for a worktree, branch, or PR — callable standalone, by `implement-it` before Gate 1, or by `implement-it` during an authorized delivery correction (§3.2 CI-failure flow). Reports verified findings, unresolved limitations, or a clean result. | Implementing corrections (returns to `implement-it`); investigation-quality, guide, plan-synthesis, issue-planning, or commit-plan review — those stay with their owning skills. |
+| `ship-it` (narrowed) | Milestone PR readiness; authorized PR creation; investigating a delivery/CI failure on an open milestone PR and explaining the correction needed (handing authorized fixes to `implement-it`, §2.2); post-merge delivery; milestone closure; release preparation/publication; resulting-state verification. | PR approval and merge — the human retains both; implementing a delivery correction itself (→ `implement-it`). |
 | Stack companions (unchanged) | Technology-specific implementation conventions (e.g. `laravel-inertia-stack`). | Becoming a pipeline stage; used when available, not required for every implementation. |
 
 **Handoffs**
@@ -44,9 +49,25 @@ available companion capability, not a pipeline stage every initiative must pass 
 lab-it ──approved plan.md──▶ plan-it ──approved issue/milestone──▶ implement-it
   ▲                                                                     │
   └── draws on, when stale/missing ── document-it                      ├──before Gate 1──▶ review-it ──findings──▶ implement-it
+                                                                        │                     (also callable standalone, or
+                                                                        │                      by implement-it during an
+                                                                        │                      authorized delivery correction)
                                                                         │
-                                                                        └──milestone ready for delivery──▶ ship-it ──▶ human (PR approval, merge, release)
+                                                                        └──milestone ready for delivery──▶ ship-it (authorized PR creation)
+                                                                                                              │
+                                                                                                              ▼
+                                                                                              human: PR approval and merge
+                                                                                                              │
+                                                                                                              ▼
+                                                                                        post-merge authorization ──▶ ship-it
+                                                                                        (closure; release: draft → human
+                                                                                         approval → authorized publish → validate)
 ```
+
+The human owns PR approval and merge — that step is never delegated. Release *execution* (drafting,
+publishing, validating) is `ship-it`'s authorized job once the human gives post-merge
+authorization, with the human's approval sitting inside that flow (`release.md`'s own draft →
+approve → publish → validate sequence) rather than release being a human-executed step by itself.
 
 No permanent subagent definitions, hooks, autonomous orchestration, deployment/promotion/rollback
 features, or new stack companions appear anywhere in this plan.
@@ -65,29 +86,49 @@ features, or new stack companions appear anywhere in this plan.
 | `SKILL.md` §"Plan feature architecture" (112-154) | Stays `lab-it/SKILL.md` | Preserved verbatim |
 | `SKILL.md` §"Ownership and handoff" / "Rule and supporting-file routing" / "Output-specific non-negotiables" | Split across both `SKILL.md`s | Guide-specific rows move; plan-specific rows stay |
 | `README.md` | Split | Guide-lifecycle narrative moves to `document-it/README.md`; investigation/plan-synthesis narrative stays |
-| `rules/doc-style.md` | `document-it/rules/doc-style.md` | Moved verbatim |
-| `rules/template.html` | `document-it/rules/template.html` | Moved verbatim |
-| `rules/review.md` (guide review) | `document-it/rules/review.md` | Moved verbatim |
-| `rules/maintenance.md` | `document-it/rules/maintenance.md` | Moved verbatim |
+| `rules/doc-style.md` | `document-it/rules/doc-style.md` | Moved; investigation/writing principles preserved, adapted for Markdown output alongside Artifact (§3.3) |
+| `rules/template.html` | `document-it/rules/template.html` | Moved verbatim — this file stays Artifact-specific; Markdown output has no template.html equivalent (§3.3) |
+| `rules/review.md` (guide review) | `document-it/rules/review.md` | Moved; one shared checklist, with medium-conditional items for Artifact vs. Markdown (§3.3) — not a verbatim copy, since the source file's checks currently assume Artifact only |
+| `rules/maintenance.md` | `document-it/rules/maintenance.md` | Moved; maintenance and continuity principles (the claim graph, reconcile-before-editing, preserve-unaffected-claims) preserved, but output-specific identity language is adapted, not copied verbatim — the current file says "Preserve the Artifact's identity" throughout; the moved file states an equivalent for Markdown (file path, then unaffected front matter/title) alongside it, without treating Markdown metadata as universally immutable the way the current text treats Artifact identity (§3.3) |
 | `rules/plan-synthesis.md` | Stays `lab-it/rules/plan-synthesis.md` | Unchanged |
 
 No file outside `lab-it` references `doc-style.md`, `template.html`, `lab-it/rules/review.md`, or
 `maintenance.md` (confirmed by repo-wide search) — this move has no external cross-reference
-fallout.
+fallout. "Moved" above means relocated with its investigation/writing/maintenance discipline
+intact; it does not mean every sentence carries over unchanged, since these files are currently
+written in Artifact-only terms and must now also cover Markdown (§3.3) — Step 2's own review
+checks this adaptation, it is not assumed here.
 
 ### 2.2 `ship-it` → `implement-it` (new) + `ship-it` (narrowed)
 
 | Current file | New owner / path | Change |
 |---|---|---|
-| `rules/review-gates.md` | `implement-it/rules/review-gates.md` | Moved; Gate 1's stop condition gains a `review-it` bullet (Step 4, §3.1) |
-| `rules/commit-boundaries.md` | `implement-it/rules/commit-boundaries.md` | Moved verbatim |
-| `rules/verification.md` | `implement-it/rules/verification.md` | Moved; boundary set revised per approved verification policy (Step 5, §3.4) |
-| `rules/issue-closure.md` | `implement-it/rules/issue-closure.md` | Moved; gains partial-mutation re-query (Step 5, §3.2) |
-| `rules/sequencing.md` | `implement-it/rules/sequencing.md` | Moved verbatim, including its hand-off pointer to `ship-it/rules/milestone-completion.md` (that file stays in `ship-it`, so the pointer's target is unaffected — only its own path changes) |
-| `rules/milestone-completion.md` | Stays `ship-it/rules/milestone-completion.md` | Gains authorized-PR-creation (new, §3.5); "three conditions" language becomes four wherever the approved verification policy adds a PR-readiness CI condition (Step 5) |
-| `rules/release.md` | Stays `ship-it/rules/release.md` | Unchanged in substance; its "PR creation and merge strategy are not owned by this rule" line stays true and now points at `milestone-completion.md` as the file that does own PR creation, not at itself |
+| `rules/review-gates.md` | `implement-it/rules/review-gates.md` | Moved; Gate 1's stop condition gains a `review-it` bullet (Step 4, §3.1); its own cross-reference to `rules/release.md` (line 15) becomes `ship-it/rules/release.md` since that file stays behind |
+| `rules/commit-boundaries.md` | `implement-it/rules/commit-boundaries.md` | Moved verbatim — confirmed no self- or cross-reference inside this file needs updating |
+| `rules/verification.md` | `implement-it/rules/verification.md` | Moved; boundary set revised per approved verification policy (Step 5, §3.4); its self-description ("verification required at each lifecycle boundary in `ship-it`", line 10) is corrected to `implement-it` as part of this move, independent of the Step 5 content change; its cross-reference to `rules/release.md` (line 50) becomes `ship-it/rules/release.md` |
+| `rules/issue-closure.md` | `implement-it/rules/issue-closure.md` | Moved; gains partial-mutation re-query (Step 5, §3.2); its cross-references to `rules/release.md` and `rules/milestone-completion.md` (lines 74-75, 199, 206) become `ship-it/rules/release.md` and `ship-it/rules/milestone-completion.md` since those files stay behind |
+| `rules/sequencing.md` | `implement-it/rules/sequencing.md` | Moved, not verbatim: its hand-off pointer to `ship-it/rules/milestone-completion.md` is unaffected (that file stays in `ship-it`, so only this file's own path changes) — but its self-reference ("a new pass through `ship-it`", line 111) is corrected to `implement-it`, and its "When the ready set is empty" section gains the empty-set/blocked-issues distinction from §3.2 before handing off to `milestone-completion.md` |
+| `rules/milestone-completion.md` | Stays `ship-it/rules/milestone-completion.md` | Gains authorized-PR-creation (new, §3.5); its "three conditions" for PR readiness stay three — the verification-policy correction (§3.4) does not add a fourth (real CI on an already-open PR is a separate, later, already-existing moment this file's own diagram already names, not a PR-readiness precondition); its five cross-references to `rules/verification.md`, `rules/review-gates.md`, `rules/commit-boundaries.md`, `rules/sequencing.md`, and `rules/issue-closure.md` (lines 128-129, 153, 210, 215, 227, 372-385) become `implement-it/rules/...` since those files move; its "CI failure on an open milestone PR" section is rewritten per the delivery-correction ownership split (§3.2/§2.2 below) |
+| `rules/release.md` | Stays `ship-it/rules/release.md` | Unchanged in substance; its "PR creation and merge strategy are not owned by this rule" line stays true and now points at `milestone-completion.md` as the file that does own PR creation, not at itself; its own cross-references to `rules/commit-boundaries.md`, `rules/sequencing.md`, `rules/review-gates.md`, and `rules/issue-closure.md` (lines 11, 36, 62, 94, 165, 202, 220) become `implement-it/rules/...` since those files move |
 | `SKILL.md` | Split | `implement-it/SKILL.md` (new) takes activation triggers `implement issue`, `commit issue`, `close issue`, `what's next in milestone`; `ship-it/SKILL.md` (narrowed) keeps `is milestone ready for a PR`, `create milestone PR`, `is milestone ready to close`, `release {version}` |
 | `README.md` | Split | Same split as `SKILL.md` |
+
+**Delivery-correction ownership**, rewritten into `milestone-completion.md`'s "CI failure on an
+open milestone PR" section as part of this same pass (not deferred to Step 5): `ship-it` keeps
+steps 1-3 of that section — the PR stays unmerged, it investigates the failure, and it determines
+whether the fix stays in already-approved scope or is genuinely new work — and explains what
+correction is needed. Any authorized code correction is `implement-it`'s job: it owns the fix
+itself, invoking `review-it` and Gate 1/Gate 2 as applicable, constructing the commit(s) per
+`commit-boundaries.md`, verifying per `verification.md`, and pushing once authorized — the same
+lifecycle it already owns for ordinary issue work, applied here to a correction instead of a fresh
+issue. `ship-it` resumes the delivery workflow (re-running real CI, reporting) once the correction
+lands and CI is green. The existing authorized-direct-fix route for an already-closed issue's scope
+(current step 4: human authorization required, no new issue needed) is preserved exactly — only
+who performs the fix changes, from an unstated actor to `implement-it` by name. This does not
+require reopening the closed issue, and does not require a new issue for a narrowly authorized,
+already-in-scope correction; genuinely new scope still goes through `plan-it` via the existing
+discovered-work intake (current step 5, unchanged). `ship-it` does not implement code under this
+corrected flow, and this route stays available without requiring an open issue to exist.
 
 **Cross-references outside `ship-it` that this split breaks and must be updated** (found by repo-
 wide search, not assumed):
@@ -96,11 +137,12 @@ wide search, not assumed):
 |---|---|---|---|
 | `plan-it/SKILL.md` | 93 | "`ship-it` owns the downstream Git/GitHub delivery workflow — branch readiness..." | → `implement-it` |
 | `plan-it/rules/discovered-work.md` | 174 | "`ship-it` owns the downstream Git/GitHub delivery workflow" | → `implement-it` |
-| `plan-it/rules/review.md` | 293 | "implementation review, issue closure, or delivery progression (`ship-it`)" | → `implement-it` (delivery progression stays a `ship-it` mention only for milestone/release) |
+| `plan-it/rules/review.md` | 293 | "implementation review, issue closure, or delivery progression (`ship-it`)" | Splits three ways, not one: "implementation review" → `review-it` (this plan introduces that owner; the line currently has no such distinction); "issue closure" → `implement-it`; "delivery progression" stays `ship-it`, for milestone/release only |
 | `plan-it/rules/issue-conventions.md` | 235, 252, 265 | `ship-it/rules/verification.md` | → `implement-it/rules/verification.md` |
 | `plan-it/rules/issue-conventions.md` | 155, 277, 299 | `ship-it`'s `rules/milestone-completion.md` | Unchanged — that file stays in `ship-it` |
 | `plan-it/rules/sequencing.md` | 8, 82, 123 | "`ship-it`, particularly its own `rules/sequencing.md`" / "`ship-it`'s job after creation" | → `implement-it` for branch readiness and next-issue recommendation; a milestone-level mention (readiness/closure) stays `ship-it` |
 | `plan-it/README.md` | 42 | "[`ship-it`](../ship-it/) — this skill plans the work, it doesn't build it." | → points at `implement-it` as the immediate next stage, with `ship-it` named separately for milestone delivery |
+| `lab-it/README.md` | 45 | "implementing it belongs to [`ship-it`](../ship-it/)." | → `implement-it` — missed in the prior pass; found by this correction's repo-wide re-check. `lab-it` is narrowed by Step 2, not Step 3, but this line is about who implements, so it's corrected in the same Step 3 pass as the rest of this table, not Step 2's |
 
 `plan-it`'s own rule content is not restructured by this migration — only these handoff pointers
 change, because the skill immediately downstream of `plan-it` becomes `implement-it` rather than
@@ -162,6 +204,12 @@ scope has been implemented; the verification appropriate to it has run; and `rev
 either clean or its findings have been resolved and re-verified. The approval mechanics at Gate 1
 (stop, 4-item report, explicit human approval) are unchanged — only the third bullet is new.
 
+**A second invocation point: delivery corrections.** `review-it` is not only a pre-Gate-1 check.
+When `implement-it` performs an authorized correction during `ship-it`'s delivery-correction flow
+(§2.2 above — a CI failure on an open milestone PR), `implement-it` invokes `review-it` the same
+standalone way, before that correction's own Gate 1/Gate 2 pass. This is the same capability used
+at a different trigger point, not a second review procedure.
+
 ### 3.2 Recovery
 
 Smallest sufficient additions to the file that already owns the adjacent behavior — no new file,
@@ -170,7 +218,8 @@ topic 3):
 
 | Gap (audit finding) | Owning file after migration | Proposed addition |
 |---|---|---|
-| Worktree provenance (finding, Section 3 scenario 3) | `implement-it/rules/verification.md` §"Discover the verification starting state" | Before treating a pre-existing dirty worktree as safe to build on, check whether it looks like this session's own in-progress work (recent, uncommitted, matching the approved scope) versus unrelated content, and ask when ambiguous. **Open**: the exact signal used to judge "matches the approved scope" is not decided here. |
+| Worktree provenance (finding, Section 3 scenario 3) | `implement-it/rules/verification.md` §"Discover the verification starting state" | Preserve pre-existing worktree changes by default. Recency, being uncommitted, or matching the approved issue's scope does not by itself prove a change belongs to this session — appearance is not provenance. Use whatever reliable provenance is actually available (e.g., git reflog, the session's own recorded start point, an explicit statement from the human) to judge origin; ask the human when the ambiguity would materially affect whether it's safe to continue, rather than on any ambiguity at all. Never invent ownership from appearance, and never modify content whose origin can't be established this way. **Open**: which provenance sources are reliably available is discovered per project at Step 5, not fixed here. |
+| Empty dependency-ready set treated as sufficient for delivery handoff | `implement-it/rules/sequencing.md` §"When the ready set is empty" | An empty ready set is not, by itself, sufficient to hand off to `ship-it`'s Milestone PR readiness. `rules/sequencing.md`'s own definition allows an empty ready set with open issues still outstanding — nothing dependency-ready right now, but one or more issues blocked on something rather than closed. Before handing off, distinguish "zero open issues remain" (the genuine completion case, hand off as today) from "open issues remain, all currently blocked" (report the blocked state; do not hand off, since the milestone isn't done). The existing recommend-and-stop behavior — the human, not this rule, chooses the next issue — is unchanged either way. |
 | Partial GitHub mutation before resuming a batch (finding #10) | `plan-it/rules/sequencing.md` (issue batches); `ship-it/rules/milestone-completion.md` and `rules/release.md` (milestone/release mutations) | Before creating/mutating more of a batch, re-query GitHub for members this same interrupted batch may already have created — extends the existing post-mutation re-fetch pattern already present in four files, not a new mechanism. |
 | Canonical issue-definition durable storage (finding #21) | `plan-it/rules/issue-conventions.md` | **Open, deliberately not resolved here** — a stated default location, mirroring `plan.md`'s own stated-default pattern, needs its location, creation/update timing, approval relationship, mapping to created issues, and retirement all decided together at Step 5's review. No file is introduced by this plan. |
 | Approval staleness after a material change (finding #13/#4) | `implement-it/rules/review-gates.md` | Before Gate 2 and before push, compare the current diff/issue body against what was approved; a material difference invalidates that approval and requires re-review — extends the existing "never silently convert an unresolved decision into a fact" principle already stated four times across the ecosystem. |
@@ -180,62 +229,89 @@ topic 3):
 
 Covers creation and maintenance for both Markdown and Artifact — the audit explicitly flags that a
 fallback for creation without an equal one for maintenance/update would be incomplete (decision-
-brief topic 4); this plan does not repeat that gap:
+brief topic 4); this plan does not repeat that gap.
 
-- **Target discovery.** Artifact: ask the user for the URL when it can't otherwise be determined
-  (the smallest sufficient fix for finding #4 — no independent lookup mechanism is invented).
-  Markdown: discover an existing guide by the project's own documentation convention before
-  assuming Artifact is the only medium.
-- **Identity preservation.** Artifact: same `url`, same favicon (existing `maintenance.md` rule,
-  unchanged). Markdown: same file path, same front matter/title, stated with equal weight to the
-  Artifact rule — not an afterthought.
-- **Format-appropriate review.** One review procedure (`document-it/rules/review.md`), not two —
-  the architectural-communication checklist generalizes across both media; a handful of items stay
-  medium-conditional (favicon/URL checks apply to Artifact only; a link-integrity/structure check
-  applies to Markdown only).
-- **Unavailable capability.** When the Artifact tool is unavailable, Markdown is the default output
-  rather than no output — covering both the "new guide" and "update an existing guide" workflows.
+**A new guide.**
 
-**Open**: the exact default location/naming convention for a Markdown guide (mirroring `plan.md`'s
-stated repo-root default) is not fixed here — proposed at Step 2, decided at that step's review.
+- **Format selection.** Ask the user whether they want an Artifact, Markdown, or both — unless
+  they've already specified. Don't infer the format from context.
+- **Markdown location.** Lives under the consuming repository's own `docs/` directory; create that
+  folder if it doesn't already exist. This is now a settled default, not an open item.
+- **Respect the requested format.** If the capability the requested format needs is unavailable
+  (e.g., no Artifact tool), explain that plainly and ask the user how to proceed — do not silently
+  substitute the other format and report success as if the request were fulfilled.
 
-### 3.4 Verification policy — explicit comparison
+**An existing guide.**
 
-**Existing** (current, committed `ship-it/rules/verification.md`): narrowest-reliable scope per
-commit during construction; one full-suite run before Gate 1 (proves the complete working tree
-before any commit split exists); one full-suite run at the completed-issue boundary (proves the
-reconstructed commit history); isolation verification as a deliberate escalation for load-bearing
-ordering; both full-suite runs always required, never reused because the other already passed; no
-automated full-suite requirement at milestone PR-readiness — that gate currently relies on closed-
-issue count plus a human's direct confirmation of manual testing.
+- **Locate and inspect the target first**, rather than assuming its current content.
+- **Distinguish three different failure modes**, since each needs a different response: the target
+  is genuinely missing (no guide exists yet at the expected identity); the target exists but is
+  inaccessible (e.g., an Artifact URL that can't be reached); or the publishing capability itself is
+  unavailable (e.g., no Artifact tool in this session) even though the target is fine.
+- **Preserve the existing identity by default** — same file path for Markdown, same `url` and
+  favicon for Artifact (existing `maintenance.md` rule, stated with equal weight for both formats,
+  not an afterthought for Markdown).
+- **When the requested update can't be performed**, explain the limitation concretely and ask the
+  user whether to: prepare/create/update a Markdown version instead; create a replacement Artifact
+  where that's possible; or change which format is the maintained one going forward. Never claim
+  that writing a Markdown update updated the original Artifact — those are different documents once
+  an Artifact can't be reached or written.
+- **No formal taxonomy required.** The user doesn't need to understand a "draft vs. migration"
+  distinction to make this choice — state the concrete consequence of each option (which document
+  ends up updated, which stays stale) rather than naming a category.
 
-**Proposed** (this plan, per the instruction producing it): targeted tests during implementation and
-corrections (unchanged); additional checks scoped to whatever a `review-it` finding needs verified
-(new); the full project-defined suite before Gate 1 for **both** single-issue and milestone entry
-(new — a milestone-entry baseline, not only a per-issue one); after commit construction,
-proportionate verification, repeating the full suite when relevant code/configuration/execution
-state changed (a conditional replacing today's unconditional "always run it" at that boundary);
-full-suite verification of the final combined milestone state at PR readiness, normally through CI
-(new — today's PR-readiness gate has no automated full-suite condition); reuse prior results only
-when their coverage and relevant state are demonstrably applicable (a new, general reuse rule —
-today's rule is unconditional, "don't drop either run because the other passed").
+**When both formats are maintained for the same guide.**
 
-**What changes, stated plainly.** This is not a documentation clarification like Section 1's
-discoverable-configuration-vs-fixed-structure finding (#20) — it changes an existing, unconditional
-requirement (two full-suite runs, always both) into a conditional one, and adds two new boundaries.
-**This plan does not treat that change as approved.** What each existing boundary proves must be
-preserved regardless of the final wording: the pre-Gate-1 run proves the working tree as a whole
-before any split; the completed-issue run proves the actual assembled commit history reconstructs
-the same result; isolation verification's escalation stays reserved for load-bearing order, not the
-default. The two new boundaries would prove, respectively, that the combined milestone branch state
-is coherent before PR, and that the actual delivery-boundary environment (which no local run fully
-replicates) is genuinely green.
+- **Keep architectural claims synchronized** across both on an update, unless the user explicitly
+  says otherwise for that update.
+- **Format-appropriate presentation, not identical rendering.** One review procedure
+  (`document-it/rules/review.md`), not two — the architectural-communication checklist generalizes
+  across both media; a handful of items stay medium-conditional (favicon/URL checks apply to
+  Artifact only; a link-integrity/structure check applies to Markdown only).
+- **Report precisely which outputs were updated**, and name any remaining divergence or failure
+  rather than reporting a single "done."
+- **Keep the association between the two outputs discoverable** — e.g., a cross-reference each
+  carries to the other's location. A minimal mechanism is proposed and reviewed as part of Step 2's
+  own authoring; this plan does not invent an elaborate registry now, and does not require one.
 
-**Open, for Step 5's review**: the exact reuse-eligibility rule (what counts as "demonstrably
-applicable" prior coverage), and whether the new milestone-entry and PR-readiness-CI boundaries are
-mandatory in every case or discovered per project (following the existing discoverable-tooling
-model in `verification.md` — this rule already refuses to prescribe a specific test runner or
-command; nothing here should hardcode one either).
+### 3.4 Verification policy
+
+**The settled policy, stated plainly** (correcting an earlier, mistaken version of this section
+that invented an extra "milestone-entry baseline" and framed the result as "two new boundaries" —
+neither survives this correction):
+
+- **Targeted tests during implementation and corrections.** Unchanged from today's
+  narrowest-reliable-scope-per-commit model.
+- **The full project-defined suite before each issue's Gate 1.** This is the existing, unconditional
+  per-issue requirement (proves the complete working tree before any commit split exists) — it is
+  not new, and it does not gain a separate, additional "milestone-entry" trigger. A milestone is
+  worked one issue at a time; each of those issues already passes through its own Gate 1. Whether
+  the user's original request named a single issue or a milestone does not change this standard —
+  there is no extra full-suite run that fires merely because the session is in "milestone mode."
+- **Additional checks scoped to a `review-it` finding**, when one surfaces something needing
+  verification beyond what already ran. New, but narrow — it extends coverage to what the finding
+  actually implicates, not a second full-suite run.
+- **The completed-issue-boundary full-suite run and isolation verification's escalation for
+  load-bearing ordering stay in force exactly as they exist today**, until Step 5 explicitly
+  approves a replacement. This correction does not silently authorize removing or weakening either
+  — both are preserved requirements, not open questions this pass resolves by omission.
+- **PR CI must pass before merge — a separate, later fact, not a new verification-policy boundary.**
+  Once `ship-it` creates the milestone PR (§3.5), real CI runs against it automatically —
+  `milestone-completion.md`'s own diagram and "CI failure on an open milestone PR" section already
+  name this moment; it is existing behavior, not something this policy adds. The distinction that
+  matters: checks above (targeted tests, per-issue full suite, completed-issue-boundary suite,
+  isolation verification) are things `implement-it` can and does run *before* a PR exists; PR-
+  triggered CI only starts running *after* the PR is created, and merge is blocked until it's green.
+  Nothing in this plan turns that PR-triggered CI into an extra local, pre-creation gate.
+- **Discover the project's actual test/CI commands and configuration** — this plan does not
+  prescribe Laravel-specific commands or any other stack's specific tooling, following the existing
+  discoverable-tooling model already in `verification.md`.
+
+**Open, for Step 5's review only**: the reuse-eligibility rule for the completed-issue-boundary
+full-suite run — what counts as "demonstrably applicable" prior coverage such that it can be reused
+rather than re-run. Today's rule is unconditional ("don't drop either run because the other
+passed"); whether and how that becomes conditional is Step 5's decision, not this pass's. No other
+part of this policy is open.
 
 ### 3.5 `ship-it`'s new PR-creation responsibility
 
@@ -266,12 +342,15 @@ proposed for Step 3's review, not pre-approved by virtue of being written down h
 
 ## 4. Behavior deltas
 
-**Preserved, moved verbatim.** `lab-it`'s investigation discipline and plan-synthesis method;
-`document-it`'s entire guide-writing grammar, template, review checklist, and maintenance procedure
-(content unchanged, only file location and owning skill change); `implement-it`'s Gate 1/Gate 2
-state machine, commit-boundary derivation, existing verification lifecycle, issue-closure procedure,
-and branch-readiness/next-issue-recommendation logic; `ship-it`'s milestone PR-readiness conditions
-(pending the Step 5 fourth-condition decision), closure gate, and release-policy
+**Preserved, moved.** `lab-it`'s investigation discipline and plan-synthesis method;
+`document-it`'s guide-writing grammar, template, review checklist, and maintenance procedure's
+principles — relocated with the discipline intact, but not a byte-for-byte copy, since the source
+files are currently Artifact-only and now also cover Markdown (§2.1, §3.3); `implement-it`'s Gate
+1/Gate 2 state machine, commit-boundary derivation, existing verification lifecycle (completed-issue
+full-suite run and isolation-verification escalation both preserved as-is per §3.4's correction),
+issue-closure procedure, and branch-readiness/next-issue-recommendation logic; `ship-it`'s milestone
+PR-readiness conditions — still exactly three, not four (§3.4's correction removes the earlier,
+mistaken fourth-condition framing) — closure gate, and release-policy
 discovery/drafting/publish/validation; the two-gate-never-collapsed invariant; closure always opt-in;
 the existing discoverable-configuration-vs-fixed-structure distinction (finding #20, untouched by
 this migration); Git/GitHub as intentional core substrate.
@@ -282,21 +361,31 @@ ambiguously "`ship-it`'s"; file extension does not decide `document-it`-vs-`lab-
 conditions themselves, distinguished from the new PR-*creation* mutation that follows a positive
 report; a specific-issue request ending after that issue's lifecycle (already true — `sequencing.md`
 already forbids chaining into the next issue) is now stated as the explicit boundary between
-`implement-it` and `ship-it`/human authorization for milestone delivery.
+`implement-it` and `ship-it`/human authorization for milestone delivery; PR approval and merge stay
+human-owned exactly as today, while release *execution* (draft/publish/validate) is `ship-it`'s
+authorized job once post-merge authorization is given — the earlier diagram's "human (PR approval,
+merge, release)" wrongly lumped release execution in with the two steps that are actually
+human-owned, and is corrected (§1); the underlying narrow-fix-vs-discovered-work policy for a CI
+failure on an open milestone PR is unchanged — only who executes an authorized correction moves,
+from an unstated actor to `implement-it` by name, as a mechanical consequence of `verification.md`/
+`commit-boundaries.md`/`review-gates.md` relocating there (§2.2).
 
 **New behavior** (agreed target for this migration, not an extraction of already-existing,
 undocumented practice — stated plainly per the audit's own caution, decision-brief topic 1):
-`review-it` as an independently callable skill; Gate 1's substantive checklist (§3.1); `ship-it`'s
-authorized PR creation (§3.5); the recovery-contract additions (§3.2); Markdown as a first-class,
-equally-maintained `document-it` output alongside Artifact (§3.3).
+`review-it` as an independently callable skill, including its second invocation point during an
+authorized delivery correction (§3.1); Gate 1's substantive checklist (§3.1); `ship-it`'s authorized
+PR creation (§3.5); the recovery-contract additions, including the empty-ready-set/blocked-issues
+distinction (§3.2); Markdown as a first-class, equally-maintained `document-it` output alongside
+Artifact, with its location now settled under the consuming repo's `docs/` (§3.3).
 
 **Proposed, still requiring a decision** (not silently approved by this plan): canonical
-issue-definition durable storage location and lifecycle (§3.2); the verification-policy reuse rule
-and whether the two new full-suite boundaries are mandatory-always or discovered-per-project (§3.4);
-`document-it`'s Markdown-fallback default location/naming (§3.3); `review-it`'s per-item checklist
-wording, beyond the agreed category list (§3.1); the worktree-provenance signal and the
-approval-staleness re-confirmation trigger's exact wording (§3.2); `ship-it`'s new PR-creation
-procedure, proposed but not yet reviewed on its own (§3.5).
+issue-definition durable storage location and lifecycle (§3.2); the completed-issue-boundary
+full-suite reuse-eligibility rule (§3.4 — this is now the only open item in the verification
+policy); `ship-it`'s new PR-creation procedure, proposed but not yet reviewed on its own (§3.5).
+Checklist wording, exact filenames, and other procedural detail (`review-it`'s per-item checklist,
+the exact worktree-provenance signal, the approval-staleness re-confirmation wording, the
+Markdown/Artifact association mechanism) are authoring work for their owning steps' own review, not
+separate architecture questions held open here (§7).
 
 ---
 
@@ -312,7 +401,9 @@ step is published in a mixed or half-migrated state.
 - **Preserved vs. changed.** N/A — planning only.
 - **Dependencies.** None; every later step depends on this being approved.
 - **Acceptance criteria.** `git status` shows `plan.md` as the only change; the user has reviewed
-  and approved this plan, including the open decisions in §4.
+  and approved this plan's architecture, ownership, and step sequence. Approving this step approves
+  that sequence — it does not require resolving every item in §7's material-decisions list up
+  front; each of those is resolved at its own owning step, per that step's own dependencies below.
 - **Result to present.** This document, plus the material-decisions list (§7).
 
 ### Step 2 — Extract `document-it`, narrow `lab-it`
@@ -323,11 +414,14 @@ step is published in a mixed or half-migrated state.
 - **Affected files.** New: `document-it/SKILL.md`, `README.md`, `rules/doc-style.md`,
   `rules/template.html`, `rules/review.md`, `rules/maintenance.md`. Modified: `lab-it/SKILL.md`,
   `lab-it/README.md`. Unaffected: `lab-it/rules/plan-synthesis.md`.
-- **Preserved vs. changed.** Guide grammar, template, review checklist, and maintenance procedure
-  move verbatim. Deliberate additions: the Markdown-fallback and format-appropriate-review decisions
-  from §3.3, once resolved.
-- **Dependencies.** §3.3's open items resolved first (or resolved as part of this step's own
-  review, before merge — not deferred past this step).
+- **Preserved vs. changed.** Guide grammar, template, review checklist, and maintenance procedure's
+  principles move intact; their Artifact-only wording is adapted to also cover Markdown (§2.1). All
+  of §3.3's format-selection, location, no-silent-substitution, and both-formats-maintained behavior
+  is already settled by this plan — nothing here is deferred to this step as an open architecture
+  choice.
+- **Dependencies.** None beyond Step 1's approval. This step's own authoring produces the minimal
+  Markdown/Artifact association mechanism and the review checklist's exact medium-conditional
+  wording, reviewed as part of this step's own result — not decided in advance.
 - **Acceptance criteria.** `document-it` activates on "document/update/review a guide" without
   invoking `lab-it` except for its stated investigation-reuse step; no reference to
   `doc-style.md`/`template.html`/guide `review.md`/`maintenance.md` remains under `lab-it/`; a
@@ -343,36 +437,59 @@ step is published in a mixed or half-migrated state.
 - **Outcome/boundaries.** `implement-it` exists and handles single-issue and milestone-mode
   implementation identically to current `ship-it`, using only moved files; `ship-it` is narrowed to
   milestone delivery and gains the proposed PR-creation procedure (§3.5); every cross-reference in
-  §2.2's table is updated in this same pass.
+  §2.2's table is updated in this same pass, in both directions — retained `ship-it` files' pointers
+  into the files that just moved, and moved files' self-references and pointers back to the files
+  that stayed behind.
 - **Affected files.** New: `implement-it/SKILL.md`, `README.md`, `rules/review-gates.md`,
   `commit-boundaries.md`, `verification.md`, `issue-closure.md`, `sequencing.md`. Modified:
-  `ship-it/SKILL.md`, `README.md`, `rules/milestone-completion.md` (PR creation), `rules/release.md`
-  (cross-reference reconciliation only); `plan-it/SKILL.md`, `rules/discovered-work.md`,
-  `rules/review.md`, `rules/issue-conventions.md`, `rules/sequencing.md`, `README.md` (handoff
-  pointers only — no owned-content change).
+  `ship-it/SKILL.md`, `README.md`, `rules/milestone-completion.md` (PR creation; its five
+  cross-references to the relocated files; its "CI failure on an open milestone PR" section rewritten
+  per the delivery-correction ownership split), `rules/release.md` (its own cross-references to the
+  relocated files); `implement-it/rules/verification.md` and `rules/sequencing.md` (self-references
+  renamed from "`ship-it`" to "`implement-it`" as part of the move itself, separate from Step 5's
+  later policy content); `implement-it/rules/sequencing.md` (empty-ready-set/blocked-issues
+  distinction, §3.2); `plan-it/SKILL.md`, `rules/discovered-work.md`, `rules/review.md` (its
+  three-way split — `review-it`/`implement-it`/`ship-it` — not a single blanket rename),
+  `rules/issue-conventions.md`, `rules/sequencing.md`, `README.md` (handoff pointers only — no
+  owned-content change); `lab-it/README.md` (its "implementing it belongs to `ship-it`" line, found
+  by this correction's repo-wide re-check — corrected here since it's about implementation
+  ownership, not documentation, even though `lab-it` itself was narrowed in Step 2).
 - **Preserved vs. changed.** Gate mechanics, commit derivation, existing verification lifecycle,
-  issue closure, branch readiness, and next-issue recommendation move verbatim. Deliberate: `ship-it`
-  gains PR creation (§3.5, not yet reviewed on its own — implemented here as a proposal for this
-  step's review, not pre-approved). `review-it` is **not** wired into Gate 1 yet — that's Step 4;
-  Gate 1's text in this step notes the pending integration explicitly, so the transition state is
-  never ambiguous.
+  issue closure, branch readiness, and next-issue recommendation move intact (self-referential
+  wording is corrected as part of the move; content is otherwise unchanged here — Step 5 owns the
+  verification-policy content change). Deliberate: `ship-it` gains PR creation (§3.5, not yet
+  reviewed on its own — implemented here as a proposal for this step's review, not pre-approved);
+  `milestone-completion.md`'s CI-failure section is rewritten so `ship-it` investigates/explains and
+  `implement-it` performs any authorized correction (§2.2) — the underlying policy (narrow authorized
+  direct fix vs. discovered-work intake) is unchanged, only the named executor is. `review-it` is
+  **not** wired into Gate 1 yet — that's Step 4; Gate 1's text in this step notes the pending
+  integration explicitly, so the transition state is never ambiguous.
 - **Dependencies.** Step 2 complete (kept sequential so only one mixed-ownership state exists at a
   time, even though the two domains are independent).
 - **Acceptance criteria.** `implement-it` reproduces current `ship-it` behavior for "implement issue
   #N" end to end; `ship-it` additionally handles an authorized PR-creation request once PR readiness
   passes; no file anywhere still says "`ship-it`" for branch readiness, Gate 1/2, commits,
   verification, or issue closure; `release.md`'s "not owned by this rule" statement no longer
-  conflicts with `milestone-completion.md`.
+  conflicts with `milestone-completion.md`; `milestone-completion.md`'s and `release.md`'s own
+  cross-references to the five relocated files all read `implement-it/rules/...`; the CI-failure
+  section names `implement-it` as the one performing an authorized correction, without requiring an
+  open issue or ship-it implementing code; `sequencing.md`'s empty-ready-set handoff distinguishes
+  zero-open-issues from open-but-blocked before reporting to `milestone-completion.md`.
 - **Validation (static).** Single-issue implementation walkthrough; milestone-mode walkthrough
-  (branch readiness → issues → empty ready set → hand off to `ship-it`); the new PR-creation flow
-  through to a human-merge stop.
+  (branch readiness → issues → empty ready set, including the all-blocked case → hand off to
+  `ship-it` only when genuinely zero open issues remain); the new PR-creation flow through to a
+  human-merge stop; a CI failure on an open milestone PR walked through end to end — `ship-it`
+  investigates and explains, `implement-it` fixes and pushes, `ship-it` resumes once green.
 - **Result to present.** Diff of new `implement-it` files, narrowed `ship-it` files, the proposed
-  PR-creation procedure text, and every cross-reference update from §2.2's table, for review.
+  PR-creation procedure text, the rewritten CI-failure/delivery-correction section, and every
+  cross-reference update from §2.2's table (both directions), for review.
 
 ### Step 4 — Establish `review-it`, integrate before Gate 1
 
 - **Outcome/boundaries.** `review-it` exists as a standalone skill, callable independently of
-  `implement-it`; `implement-it/rules/review-gates.md`'s Gate 1 consumes its result.
+  `implement-it`; `implement-it/rules/review-gates.md`'s Gate 1 consumes its result; the same
+  standalone call is also what `implement-it` uses during an authorized delivery correction
+  (§2.2/§3.1) — one capability, two trigger points, not a second procedure.
 - **Affected files.** New: `review-it/SKILL.md`, `README.md`, `rules/*.md` (the §3.1 checklist,
   authored to item-level detail here). Modified: `implement-it/rules/review-gates.md` (Gate 1's
   third bullet), `implement-it/SKILL.md` (routing table gains `review-it`).
@@ -394,23 +511,29 @@ step is published in a mixed or half-migrated state.
 - **Outcome/boundaries.** The §3.2 recovery additions and the §3.4 verification-policy decisions —
   as actually resolved at this step's review, not as defaults this step invents — are applied to
   their owning files.
-- **Affected files.** `implement-it/rules/verification.md`, `rules/review-gates.md`,
+- **Affected files.** `implement-it/rules/verification.md` (the completed-issue-boundary reuse-
+  eligibility rule — the only open item left in §3.4), `rules/review-gates.md`,
   `rules/issue-closure.md`; `plan-it/rules/sequencing.md`, `rules/issue-conventions.md` (whichever
   owns the approved canonical-definition-location decision); `ship-it/rules/milestone-completion.md`
-  and `rules/release.md` (partial-mutation re-query; PR-readiness's condition count, if a CI-based
-  fourth condition is approved — every "three conditions" reference in that file updated together).
+  and `rules/release.md` (partial-mutation re-query only — PR-readiness stays three conditions;
+  §3.4's correction removed the earlier, mistaken fourth-condition framing, so there is no condition
+  count to update here).
 - **Preserved vs. changed.** This step is entirely deliberate change — every edit traces to §3.2 or
   §3.4 above; nothing here is a pure move.
 - **Dependencies.** Steps 2-4 complete (files must exist at their new locations); the specific open
-  decisions in §3.2 and §3.4 resolved before their corresponding edits — this step cannot silently
-  fill them in.
-- **Acceptance criteria.** A worktree-provenance check exists and is exercised by a scenario with
-  pre-existing uncommitted changes; partial-mutation re-query exists for both `plan-it`'s issue
-  batches and `ship-it`'s milestone/release mutations; the canonical-issue-definition location is
-  stated, consistent with `plan.md`'s own default-location pattern; any new PR-readiness condition
-  doesn't contradict "report, not mutation."
-- **Validation (static).** Interrupted-worktree resume; interrupted issue-batch-creation resume;
-  approval-then-material-change resume; PR readiness against an open PR with red CI.
+  decisions in §3.2 (canonical issue-definition storage; which provenance signals are reliably
+  available in a given project) and §3.4 (the reuse-eligibility rule) resolved before their
+  corresponding edits — this step cannot silently fill them in.
+- **Acceptance criteria.** A worktree-provenance check exists, uses reliable provenance rather than
+  appearance, and is exercised by a scenario with pre-existing uncommitted changes that must be
+  preserved; partial-mutation re-query exists for both `plan-it`'s issue batches and `ship-it`'s
+  milestone/release mutations; the canonical-issue-definition location is stated, consistent with
+  `plan.md`'s own default-location pattern; PR-readiness's three conditions are undisturbed by the
+  reuse-eligibility rule's resolution.
+- **Validation (static).** Interrupted-worktree resume, including a case with pre-existing unrelated
+  changes that must survive untouched; interrupted issue-batch-creation resume; approval-then-
+  material-change resume; PR readiness against an open PR with red CI; a milestone with open issues
+  that are all blocked (not closed) confirming no premature handoff to PR readiness.
 - **Result to present.** Diff plus an explicit list of which audit findings (§Section 3 scenarios,
   #10, #13, #21) are now resolved and how.
 
@@ -444,38 +567,55 @@ step is published in a mixed or half-migrated state.
 
 Six static walkthroughs (reasoning through the relevant rule files against a scenario — no skill is
 actually invoked by this plan) cover the pipeline's shape end to end, one per step above:
-investigation without documentation and an approved `plan.md` handoff; guide creation/update in both
-supported formats; single-issue and branching milestone dependency flows; standalone review and
-finding/correction/re-review; interrupted planning and implementation; milestone PR creation through
-human merge and authorized release. Step 6's `useOrbit` exercise and portability check are
-**execution**, not static walkthroughs — planned only, per that step's own scope, not performed by
-this plan.
+investigation without documentation and an approved `plan.md` handoff, including the boundary
+between `lab-it`'s standalone investigation ending in a verified answer alone (no guide, no
+`plan.md`) and `plan-it`'s own discovered-work intake (`rules/discovered-work.md`) for a raw finding
+surfaced during planning or implementation — the two are different entry points into investigation
+and are not interchangeable; guide creation/update in both supported formats, including the
+new-guide format-selection question and the existing-guide missing/inaccessible/unavailable-
+capability distinction (§3.3); single-issue and branching milestone dependency flows, including the
+empty-ready-set/blocked-issues distinction (§3.2); standalone review and finding/correction/re-
+review, exercised both before Gate 1 and during an authorized delivery correction (§3.1); interrupted
+planning and implementation, including worktree-provenance using reliable signals rather than
+appearance (§3.2); milestone PR creation through human merge, a CI failure on the open PR routed
+through the corrected delivery-correction flow, and authorized release. Step 6's `useOrbit` exercise
+and portability check are **execution**, not static walkthroughs — planned only, per that step's own
+scope, not performed by this plan.
 
 ## 7. Material decisions still needed
 
+Only genuinely unresolved architecture choices are listed here — checklist wording, exact filenames,
+and other procedural detail are authoring work for their owning step's own review, not separate
+questions for the user (§5).
+
 1. Canonical issue-definition durable storage: location, creation/update timing, approval
-   relationship, mapping to created issues, retirement (§3.2, finding #21).
-2. Verification-policy reuse rule and whether the milestone-entry/PR-readiness-CI boundaries are
-   mandatory-always or discovered-per-project (§3.4) — this changes an existing unconditional
-   requirement and is not treated as approved by writing it here.
-3. `document-it`'s Markdown-fallback default location/naming convention, and whether
-   format-appropriate review needs any further split beyond the shared file with conditional items
-   (§3.3).
-4. `review-it`'s per-item checklist wording, beyond the agreed category list (§3.1) — authored and
-   reviewed at Step 4, not fixed by this plan.
-5. The exact worktree-provenance signal and the approval-staleness re-confirmation trigger's wording
-   (§3.2).
-6. `ship-it`'s proposed PR-creation procedure (§3.5) — precedented by `release.md`'s pattern, but
-   not itself reviewed yet.
-7. `laravel-inertia-stack`'s unresolved precedence rule for conflicting Boost-skill guidance
+   relationship, mapping to created issues, retirement (§3.2, finding #21) — Step 5.
+2. The completed-issue-boundary full-suite reuse-eligibility rule: what counts as "demonstrably
+   applicable" prior coverage (§3.4) — this changes an existing unconditional requirement and is not
+   treated as approved by writing it here — Step 5.
+3. `ship-it`'s proposed PR-creation procedure (§3.5) — precedented by `release.md`'s pattern, but
+   not itself reviewed yet — Step 3.
+4. `laravel-inertia-stack`'s unresolved precedence rule for conflicting Boost-skill guidance
    (finding #7) — out of scope for this migration; flagged only so it isn't lost, not addressed by
    any step above.
+
+Resolved by this correction pass, no longer open: `document-it`'s Markdown location (settled as the
+consuming repo's `docs/`, §3.3); the format-selection and no-silent-substitution behavior for a new
+or existing guide (§3.3); the delivery-correction ownership split (§2.2); the verification policy's
+per-issue vs. milestone-entry question (there is no separate milestone-entry boundary, §3.4); the
+worktree-provenance principle (use reliable provenance, not appearance — the exact available signals
+are Step 5's own discovery, not a standing decision, §3.2).
 
 ---
 
 ## Verification of this planning pass
 
-- `git status --porcelain` before writing: only `control-room-responsibilities.md`,
-  `skills-audit.md`, `subagents.md` untracked; `plan.md` did not exist.
-- Only `plan.md` was created by this task. No skill file, `README.md`, `roadmap.md`, or `docs/`
-  file was edited. Nothing was staged, committed, pushed, or changed on GitHub.
+- Original planning pass: `git status --porcelain` before writing showed only
+  `control-room-responsibilities.md`, `skills-audit.md`, `subagents.md` untracked; `plan.md` did not
+  exist. HEAD was `f951bbe`; the commit that added `plan.md` is `468715d`.
+- This correction pass: branch `main`, HEAD `468715d` (unchanged before and after); `git status
+  --porcelain` before editing showed the same three pre-existing untracked files plus `plan.md`
+  itself (tracked, no local modifications yet) — nothing else. Only `plan.md` was edited by this
+  task. No skill file, `README.md`, `roadmap.md`, `docs/` file, or the three pre-existing untracked
+  files was touched. Nothing was staged, committed, pushed, or changed on GitHub; `plan.md` is left
+  unstaged.
