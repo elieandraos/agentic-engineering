@@ -236,7 +236,7 @@ mechanism of its own to detect that a caller relied on a stale result without as
 - The comparison-base discovery order (§2) — excluding a branch's configured upstream/tracking
   branch, diffing from the merge-base rather than the base's current tip — was verified by a
   disposable Git repository exercising the underlying comparison and state-identity mechanics this
-  procedure depends on (recorded in `plan.md`'s Step 4 correction record): a pushed feature branch
+  procedure depends on (recorded in the [v2.0.0 migration plan](https://github.com/elieandraos/agentic-engineering/blob/v2.0.0/plan.md)'s Step 4 correction record): a pushed feature branch
   tracking its own remote counterpart producing an empty diff against that counterpart, an explicit
   comparison against a parent branch correctly isolating the child's own change, the identical head
   diffed against two different bases producing two different diffs, and a material worktree edit
