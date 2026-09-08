@@ -1,6 +1,6 @@
 # Ecosystem migration plan — Lab · Document · Plan · Implement · Review · Ship
 
-**Status: Steps 1–3 approved.** Step 3 passed Control Room review at commit
+**Status: Steps 1–4 approved.** Step 3 passed Control Room review at commit
 `ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`, and the user's confirmation to record that approval was
 itself recorded at commit `b2fad42f1e4e73e482e7a49921bed6e47b1795a7`. Step 4 — establishing
 `review-it` and integrating it before Gate 1 (§5) — was implemented on top of that HEAD at commit
@@ -8,9 +8,10 @@ itself recorded at commit `b2fad42f1e4e73e482e7a49921bed6e47b1795a7`. Step 4 —
 Control Room, at commit `7750870bb1b1251f256649352fa380db3037b058` (Gate 1's review-input/outcome
 contract, the authorized-scope-change exemption's breadth, and stack-companion-independent framework
 checking), and a second, bounded correction pass narrowing comparison-base selection and comparison
-identity in `review-it`. See Step 4's own implementation and correction records below. **Step 4 is
-implemented and corrected, pending Control Room review — it is not yet approved.** Step 5 has not
-started.
+identity in `review-it` at commit `dfad7309aaac5747234a462094af050a371b3e84`. See Step 4's own
+implementation, correction, and approval records below. **Step 4 passed Control Room review at that
+commit, and the user confirmed proceeding.** Step 5 is next; implementation has not started, and its
+two open decisions in §7 remain unresolved.
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
@@ -924,8 +925,8 @@ pre-existing untracked files (`control-room-responsibilities.md`, `skills-audit.
   overall shape, the testing policy, diagnostic-execution boundaries, specialized review ownership,
   and the publication-approval mechanics are otherwise unchanged by this pass.
 - **No unresolved material issue from this correction.** §7's remaining open items are unchanged and
-  stay Step 5's own scope; Step 4 remains implemented and corrected, pending Control Room review, not
-  approved.
+  stay Step 5's own scope. At the end of that correction pass, Step 4 was pending Control Room
+  review; the subsequent correction and final approval are recorded below.
 
 **Corrected (comparison-base and comparison-identity precision).** A second, bounded correction pass
 on top of commit `7750870bb1b1251f256649352fa380db3037b058`, addressing the one remaining
@@ -969,8 +970,15 @@ above passed Control Room review and are preserved unchanged. Two findings corre
   mechanics verification of the corrected procedure's claims, not proof from invoking `review-it`
   itself — the skill was not invoked, and no consuming project was touched.
 - **No unresolved material issue from this correction.** §7's remaining open items are unchanged and
-  stay Step 5's own scope. Step 4 remains implemented and corrected, pending Control Room review, not
-  approved; Step 5 remains unstarted.
+  stay Step 5's own scope. At the end of that correction pass, Step 4 was pending Control Room
+  review; final approval is recorded below.
+
+**Approved.** Step 4 passed Control Room review at commit
+`dfad7309aaac5747234a462094af050a371b3e84`, and the user confirmed proceeding and recording that
+approval. No blocking findings remain in the reviewed changes. Validation comprises source review
+and Git-mechanics checks; no consuming-project invocation of `review-it` has been performed.
+Step 5 is next. Its implementation has not started, and its two open decisions in §7 remain
+unresolved; this approval does not settle either decision or authorize Step 5 implementation.
 
 ### Step 5 — Strengthen recovery, adopt the approved verification policy
 
