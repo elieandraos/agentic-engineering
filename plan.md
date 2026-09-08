@@ -1,13 +1,16 @@
 # Ecosystem migration plan — Lab · Document · Plan · Implement · Review · Ship
 
-**Status: Step 1 approved; Step 2 implemented and corrected once, pending Control Room review.**
+**Status: Step 1 approved; Step 2 approved by Control Room at HEAD `894a6af508c9f574bd739e4974deff780c88b406`; Step 3 implemented on top of that commit, pending Control Room review.**
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
 `0b6b5587c56d40eda18e8fb1294913af83e52e8d`, then received one correction pass on top of reviewed
-HEAD `84877dfca972e91c413370f2609a8c81aeba54f4`; see the implementation and correction records
-appended to Step 2's own entry below. Implementing and correcting Step 2 does not authorize Step 3
-or any later step — each remaining step still requires its own go-ahead, per §5.
+HEAD `84877dfca972e91c413370f2609a8c81aeba54f4`, and that corrected result was approved by the
+Control Room at HEAD `894a6af508c9f574bd739e4974deff780c88b406`; see the implementation and
+correction records appended to Step 2's own entry below. Step 3 — extracting `implement-it` and
+narrowing `ship-it` (§5) — was implemented on top of that approved HEAD; see the implementation
+record appended to Step 3's own entry below. Implementing Step 3 does not authorize Step 4 or any
+later step — each remaining step still requires its own go-ahead, per §5.
 
 **Source of truth for this initiative.** This is the change plan for splitting the current
 `lab-it` / `plan-it` / `ship-it` ecosystem into `lab-it` (narrowed), `document-it` (new), `plan-it`
@@ -569,6 +572,81 @@ found.
 - **Result to present.** Diff of new `implement-it` files, narrowed `ship-it` files, the proposed
   PR-creation procedure text, the rewritten CI-failure/delivery-correction section, and every
   cross-reference update from §2.2's table (both directions), for review.
+
+**Implemented.** Starting point: branch `main`, HEAD `894a6af508c9f574bd739e4974deff780c88b406`
+(the Control-Room-approved Step 2 result), working tree clean except the three pre-existing
+untracked files (`control-room-responsibilities.md`, `skills-audit.md`, `subagents.md`), left
+untouched.
+
+- `implement-it/rules/{review-gates,commit-boundaries,verification,issue-closure,sequencing}.md`
+  moved via `git mv` (recorded as renames); `implement-it/SKILL.md` and `README.md` created new.
+  `commit-boundaries.md` moved byte-identical. The other four rule files' self- and cross-references
+  to `rules/release.md` and `rules/milestone-completion.md` were corrected to
+  `ship-it/rules/release.md` and `ship-it/rules/milestone-completion.md` since those files stay
+  behind; `verification.md`'s and `sequencing.md`'s self-descriptions were corrected from
+  "`ship-it`" to "`implement-it`"; `sequencing.md`'s "When the ready set is empty" section gained
+  the empty-set/blocked-issues distinction from §3.2; `review-gates.md`'s Gate 1 gained an explicit
+  note that `review-it` is a planned, not-yet-built skill, so its stop condition stays exactly two
+  bullets until Step 4 exists — no dangling reference to an unbuilt skill.
+- `ship-it/SKILL.md` and `README.md` narrowed to milestone PR readiness/creation, CI-failure
+  investigation, post-merge closure, and release; `rules/milestone-completion.md` gained a
+  "Milestone PR creation" section implementing §3.5's discover → check-for-duplicate → draft →
+  approve → create → validate procedure, and its "CI failure on an open milestone PR" section was
+  rewritten so this file investigates, explains the needed correction, and gates authorization,
+  while `implement-it` performs the correction through its own lifecycle once authorized — reopening
+  a closed issue is not required. Both files' cross-references to the five relocated rule files were
+  corrected
+  to `implement-it/rules/...`; `rules/release.md` received the same cross-reference correction, with
+  no substantive change otherwise.
+- `plan-it/SKILL.md`, `README.md`, `rules/discovered-work.md`, `rules/sequencing.md`,
+  `rules/issue-conventions.md` (verification-execution pointers only — its milestone-completion.md
+  pointers were already correct and stay unchanged), and `rules/review.md` (split three ways:
+  issue closure → `implement-it`; milestone/release delivery progression → `ship-it`; independent
+  implementation review → named as `review-it`, explicitly flagged as not yet built) had their
+  downstream-delivery handoff pointers corrected from `ship-it` to `implement-it` (or split between
+  the two) — no owned planning content changed. `lab-it/README.md`'s "implementing it belongs to
+  ship-it" line was corrected to `implement-it`.
+- **Unexpected findings, corrected.** (1) `plan-it/rules/issue-conventions.md`'s §11 closing
+  sentence — "It doesn't decide branch strategy, when a milestone issue actually closes, or when a
+  milestone's PR opens — those stay `ship-it`'s" — was not, contrary to §2.2's table, actually about
+  `rules/milestone-completion.md` specifically; it named three delivery facts now split across two
+  skills. Corrected to attribute branch strategy and issue-closure timing to `implement-it` and PR
+  opening to `ship-it`, rather than leaving all three attributed to `ship-it` alone. (2)
+  `implement-it/rules/issue-closure.md` carried two further bare `rules/milestone-completion.md`
+  references (its "Principle" section and its "What this rule does not do" reopening note) that
+  §2.2's table did not enumerate; both corrected to `ship-it/rules/milestone-completion.md` by the
+  same repository-wide search this step's instructions required. (3) `artifacts/ship-it.md` (a
+  tracked architecture dossier, not listed as affected by §2.2) carries five Markdown links into
+  `../skills/ship-it/rules/{sequencing,review-gates,commit-boundaries,verification,issue-closure}.md`
+  — the same kind of live pointer Step 2 found and fixed in `artifacts/lab-it.md`. Corrected the five
+  links to `../skills/implement-it/rules/...`; the dossier's own prose, which still describes these
+  workflows as `ship-it`'s, is untouched — that reconciliation is Step 6's public-documentation
+  rewrite, not this step's. (4) `artifacts/plan-it.md` (also untracked by §2.2) carries prose in its
+  "Decomposition and sequencing" section attributing implementation order, next-issue choice, branch
+  strategy, and commit structure to "`ship-it`'s" job, with no broken link involved. Left as-is, per
+  the same precedent as (3) and as Step 2's own `artifacts/lab-it.md` prose — flagged here, not
+  corrected, since it is content reconciliation rather than a broken pointer.
+- **Validation performed:** full re-read of every new and modified file; a diff of each moved rule
+  file against its pre-move committed content, confirming `commit-boundaries.md` is byte-identical
+  and the other four carry only the documented self-/cross-reference and empty-ready-set changes;
+  a repository-wide search for `ship-it/rules/{review-gates,commit-boundaries,verification,
+  issue-closure,sequencing}.md` confirming zero remaining references outside `plan.md`'s own
+  historical mapping table and the untracked `skills-audit.md`; a repository-wide search for bare
+  `` `rules/milestone-completion.md` ``/`` `rules/release.md` `` references inside `implement-it/`
+  confirming none remain unprefixed; a targeted search for "`ship-it`" combined with branch
+  readiness/Gate 1/Gate 2/commit/verification/issue-closure language across `skills/` confirming no
+  remaining stale ownership claim; `git diff --check` clean; relative Markdown links in every
+  touched `README.md`/dossier confirmed to resolve; YAML frontmatter of both `SKILL.md` files parsed
+  successfully. Seven bounded static walkthroughs run against the actual file content (single-issue
+  implementation through both gates, verification, push, and closure; a milestone where B and C
+  become ready after A, recommend-and-wait; open-but-blocked issues vs. zero-open-issues before any
+  `ship-it` handoff; implementation with and without a stack companion; PR preparation and approved
+  creation through to the human-merge stop; a delivery correction within a closed issue's approved
+  scope, and a genuinely new-scope correction routed to `plan-it`; continued release behavior with
+  every relocated reference resolving) — all traced correctly through the new files with no
+  coherence gap found. This is source validation from static walkthroughs, not runtime or consumer
+  proof — no skill was actually invoked, no PR or milestone was created, and no consuming project was
+  touched, per this step's authorization scope.
 
 ### Step 4 — Establish `review-it`, integrate before Gate 1
 

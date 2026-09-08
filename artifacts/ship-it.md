@@ -387,11 +387,11 @@ approved assumptions, or a choice the evidence can't narrow down on its own.
 
 | Rule | Owns |
 |---|---|
-| [`sequencing.md`](../skills/ship-it/rules/sequencing.md) | Branch readiness before an issue starts, and recomputing/reporting the dependency-ready set after a validated closure |
-| [`review-gates.md`](../skills/ship-it/rules/review-gates.md) | The two pre-commit human approval gates, and the general standard for when a genuine unresolved decision forces a stop |
-| [`commit-boundaries.md`](../skills/ship-it/rules/commit-boundaries.md) | Deriving semantic commit boundaries from the reviewed diff, commit-message content, the issue-reference trailer, and folding in review corrections |
-| [`verification.md`](../skills/ship-it/rules/verification.md) | Verification scope at every lifecycle boundary, tool/starting-state discovery, the regression-baseline model, and isolation verification |
-| [`issue-closure.md`](../skills/ship-it/rules/issue-closure.md) | Confirming an issue's commits are reachable on the correct remote branch (pushing, with authorization, if not) before asking, whether and how to close it, the closing-comment contract, and post-mutation validation |
+| [`sequencing.md`](../skills/implement-it/rules/sequencing.md) | Branch readiness before an issue starts, and recomputing/reporting the dependency-ready set after a validated closure |
+| [`review-gates.md`](../skills/implement-it/rules/review-gates.md) | The two pre-commit human approval gates, and the general standard for when a genuine unresolved decision forces a stop |
+| [`commit-boundaries.md`](../skills/implement-it/rules/commit-boundaries.md) | Deriving semantic commit boundaries from the reviewed diff, commit-message content, the issue-reference trailer, and folding in review corrections |
+| [`verification.md`](../skills/implement-it/rules/verification.md) | Verification scope at every lifecycle boundary, tool/starting-state discovery, the regression-baseline model, and isolation verification |
+| [`issue-closure.md`](../skills/implement-it/rules/issue-closure.md) | Confirming an issue's commits are reachable on the correct remote branch (pushing, with authorization, if not) before asking, whether and how to close it, the closing-comment contract, and post-mutation validation |
 | [`milestone-completion.md`](../skills/ship-it/rules/milestone-completion.md) | Milestone PR readiness, the CI-failure-on-an-open-PR handling, and the milestone closure gate |
 | [`release.md`](../skills/ship-it/rules/release.md) | Post-merge authorization's release branch: policy discovery, understanding and drafting a release, approval, publication, and post-publication validation |
 

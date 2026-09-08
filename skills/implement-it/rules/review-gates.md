@@ -12,9 +12,9 @@ implement + verify → Gate 1: implementation review → derive commit plan → 
 Gate 1 and Gate 2 are never collapsed into a single approval, and approval at Gate 1 does not imply
 approval at Gate 2. No commit is created before Gate 2 is approved.
 
-The post-merge release workflow has its own separate approval boundary (`rules/release.md`), over
-the proposed version, tag target, title, and body. That boundary is not part of either gate below —
-a merged PR does not satisfy it.
+The post-merge release workflow has its own separate approval boundary
+(`ship-it/rules/release.md`), over the proposed version, tag target, title, and body. That boundary
+is not part of either gate below — a merged PR does not satisfy it.
 
 `rules/issue-closure.md`'s push-authorization request — asking whether to push already-approved
 commits to the correct remote branch, before asking to close the issue — is a similar separate
@@ -27,6 +27,11 @@ Stop here once:
 
 - the approved issue scope has been implemented;
 - the verification appropriate to it has been run (`rules/verification.md`).
+
+`review-it` is a planned, independently callable implementation-assurance skill that does not exist
+in this repository yet. Once it does, its clean-or-resolved result becomes a third stop condition
+here. Until then, this gate's stop condition stays exactly the two bullets above — do not invoke a
+skill that isn't built, and do not treat this note as an informal substitute for the missing check.
 
 Report concisely:
 

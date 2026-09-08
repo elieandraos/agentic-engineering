@@ -15,8 +15,8 @@ milestone issue, even before that PR exists.** Closure marks that this issue's i
 verification are done, not that its commits have reached the trunk branch. For a Backlog/hotfix issue
 worked directly on the trunk branch, that gap is usually momentary or nonexistent; for a milestone
 issue on a shared branch, several issues can close this way before the branch is ever proposed as a
-PR — `rules/milestone-completion.md`'s "Milestone PR readiness" gate is what checks the aggregate
-state of all that already-closed work before it moves toward a PR.
+PR — `ship-it/rules/milestone-completion.md`'s "Milestone PR readiness" gate is what checks the
+aggregate state of all that already-closed work before it moves toward a PR.
 
 Closing before a PR exists never means closing before the commits themselves exist remotely, though:
 this closure still requires the issue's commits to already be on the branch this work was actually
@@ -71,8 +71,9 @@ Only once step 2 or step 5 confirms remote reachability does "Ask first," below,
 - It does not create, review, or merge a PR. A milestone issue can close while its shared branch is
   still well before PR creation, exactly as described above — the branch itself carrying the pushed
   commits is what this step adds, not a PR.
-- It does not trigger or imply a release (`rules/release.md`) or milestone closure
-  (`rules/milestone-completion.md`) — those stay gated on their own, later, post-merge authorization.
+- It does not trigger or imply a release (`ship-it/rules/release.md`) or milestone closure
+  (`ship-it/rules/milestone-completion.md`) — those stay gated on their own, later, post-merge
+  authorization.
 - It is not a reason to rerun the completed-issue full-suite verification. That verification already
   proved the commits correct on the working tree that produced them; pushing that same,
   already-verified state to the remote doesn't change what it proved.
@@ -196,14 +197,14 @@ a link. Don't re-print the full issue body or the closing comment — the reader
 - **It does not create, review, or merge a PR, and does not trigger a release or milestone
   closure.** Pushing the issue's commits to the correct remote branch (see "Push readiness" above)
   only makes them reachable — those later events stay gated on their own separate authorizations
-  (`rules/release.md`, `rules/milestone-completion.md`).
+  (`ship-it/rules/release.md`, `ship-it/rules/milestone-completion.md`).
 - **It only operates on the single issue** associated with the work that was just committed and
   verified. It does not touch any other issue.
 - **It does not create issues.** That's `plan-it`'s territory, not this rule's.
 - **It does not reopen issues.** This rule owns closing a committed, verified issue — not reopening
   one. The observed default, when a later finding (e.g. milestone manual testing) concerns work this
   rule already closed, is a *new* issue referencing the original — not reopening it — per
-  `rules/milestone-completion.md`'s "When manual testing finds something." That default doesn't make
+  `ship-it/rules/milestone-completion.md`'s "When manual testing finds something." That default doesn't make
   reopening this rule's job; it just means reopening isn't the path a normal finding takes.
 
 ## Do / Don't

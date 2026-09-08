@@ -290,4 +290,5 @@ It does not own: defining issue syntax or metadata policy (`rules/issue-conventi
 decomposing or sequencing work (`rules/sequencing.md`); investigating raw findings
 (`rules/discovered-work.md`); resolving product/design decisions
 (`rules/design-reconciliation.md`, `rules/plan-md-input.md`); approval-gate ownership
-(`SKILL.md`); implementation review, issue closure, or delivery progression (`ship-it`).
+(`SKILL.md`); issue closure (`implement-it`); milestone/release delivery progression (`ship-it`);
+independent implementation review — planned as `review-it`, not yet built in this repository.

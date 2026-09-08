@@ -1,94 +1,79 @@
 ---
 name: ship-it
-description: "Delivery-stage skill in the Agentic Engineering pipeline. Takes any approved GitHub issue satisfying its entry contract — whether `plan-it` drafted it or it already existed some other way — and carries it through working-branch readiness, implementation review, semantic commits, verification, issue closure, milestone PR readiness, release, and post-release milestone completion. Use when implementing, committing, verifying, closing, or releasing an approved issue, or checking whether a milestone is ready for a PR or ready to close. Performs the approved implementation itself, consulting the applicable stack companion for implementation knowledge and conventions — it does not own framework-specific conventions, decide what work should exist, or review/merge the PR."
+description: "Delivery-stage skill in the Agentic Engineering pipeline. Once `implement-it` has closed every issue in a milestone, this skill checks milestone PR readiness, prepares and creates the milestone PR through authorized human approval, investigates and explains delivery/CI failures on an open milestone PR (handing any authorized correction to `implement-it`), and — once the human confirms the PR merged and authorizes the post-merge progression — closes the milestone and prepares, publishes, and validates the release. Use when checking whether a milestone is ready for a PR, creating that PR, investigating a delivery/CI failure, checking whether a milestone is ready to close, or releasing a version. Does not implement code, decide what work should exist, or approve/merge the PR — the human retains both."
 ---
 
 # ship-it
 
 ## What this skill is
 
-`ship-it` is the delivery stage of the Agentic Engineering pipeline. It starts from an
-approved GitHub issue produced by `plan-it` and carries that work through verified
-Git/GitHub delivery and the related release/milestone lifecycle.
+`ship-it` is the delivery stage of the Agentic Engineering pipeline. It starts once
+`implement-it` has closed every issue in a milestone, and carries that milestone through PR
+readiness, authorized PR creation, delivery/CI-failure handling, post-merge closure, and release.
 
 ## Pipeline position
 
-`lab-it → plan-it → ship-it`
+`lab-it → plan-it → implement-it → ship-it`
 
-This skill intentionally begins only once planning has produced approved work — it never decides
-what work should exist, and never starts earlier than an already-approved issue.
+This skill intentionally begins only once `implement-it`'s dependency-ready recompute reports a
+milestone with zero open issues remaining — it never decides what work should exist, never
+implements code, and never starts earlier than a genuinely empty milestone.
 
 ## What it owns
 
-- Working-branch readiness: the Backlog/hotfix-vs-milestone-branch decision, before implementation
-  starts.
-- Implementation and commit-plan review gates.
-- Semantic commit planning and construction.
-- Verification, including the regression-baseline treatment of pre-existing lint/format/static debt.
-- Issue closure — intentionally before the milestone's PR merges.
-- Dependency-ready recalculation.
 - Milestone PR readiness, once a milestone's issues are all closed.
-- The post-merge authorization gate, release, and post-release milestone completion.
+- Authorized milestone PR creation, once readiness passes.
+- Investigating a delivery/CI failure on an open milestone PR, explaining the correction needed,
+  and determining whether it stays within already-approved scope — handing any authorized
+  correction to `implement-it`, and resuming delivery once it's verified and CI is green.
+- The post-merge authorization gate, milestone closure, and release preparation, publication, and
+  validation.
 
 ## What it does not own
 
 - Deciding what work should exist.
 - Defining or scoping milestones.
-- Application or framework implementation.
+- Application or framework implementation, or any implementation itself — including a delivery
+  correction, which `implement-it` performs once authorized.
 - Stack-specific conventions.
-- PR creation and merge strategy, where not yet covered.
+- Working-branch readiness, implementation review, verification, commit construction, and issue
+  closure — all `implement-it`'s.
+- PR approval and merge — the human retains both.
 - Deployment automation.
 
 ## Composition
 
 - Git and GitHub are intentional core substrate for this methodology, not an abstraction to be
   swapped out.
-- This skill composes with whatever implementation, testing, and tooling skills the consuming
-  project's stack requires, loaded alongside it.
+- This skill composes with `implement-it` for any code correction its delivery-failure
+  investigation authorizes.
 - Stack-specific knowledge does not belong in this skill.
 
 ## Activation
 
 Trigger on requests shaped like:
 
-- `implement issue {xxx}`
-- `commit issue {xxx}`
-- `close issue {xxx}`
-- `what's next in milestone {name}`
 - `is milestone {name} ready for a PR`
-- `release {version}`
+- `create the milestone PR`
+- `why is CI failing on this PR`
 - `is milestone {name} ready to close`
+- `release {version}`
 
 ## Rules
 
-- `review-gates.md` — the two pre-merge human approval gates (implementation review, then
-  commit-plan review) and the conditions that always warrant a stop; consult once implementation is
-  ready to report, and again once a commit plan is ready to propose.
-- `commit-boundaries.md` — how to turn an approved diff into semantic commits: boundary reasoning,
-  message content, the `Refs #N` trailer, and safely folding in review corrections; consult while
-  inspecting the diff and building the commit plan, after Gate 1.
-- `verification.md` — verification scope: the narrowest reliable scope per commit across tests,
-  formatting, linting, and static analysis, the two distinct full-suite moments, the stronger
-  isolation technique for proving a split, and ordering commits around feature-activation risk;
-  consult while implementing and while building/ordering commits.
-- `issue-closure.md` — whether and how to close an issue: asking first, the closing recipe, and
-  post-mutation validation; consult after the completed-issue full-suite pass, once commits exist.
-  Closure is intentional before a milestone's PR merges.
-- `sequencing.md` — branch readiness before starting an issue (Backlog/hotfix on the trunk branch vs.
-  a shared milestone branch, inspected/recommended/created only with human approval), and, after a
-  validated closure, recomputing the milestone's dependency-ready set and reporting/recommending the
-  next issue — or handing off to `milestone-completion.md` when the set is empty.
+- `milestone-completion.md` — three milestone-level surfaces: PR readiness (all issues closed +
+  confirmed manual testing + no follow-up found), consulted once `implement-it/rules/sequencing.md`
+  reports a genuinely empty milestone; authorized PR creation once readiness passes; and the
+  three-part closure gate plus the Backlog exemption and validated closure mutation, consulted once
+  the human gives the post-merge authorization — that authorization is the approval for closure, so
+  no second approval is asked, and closure is not gated on release publication itself. Also owns
+  investigating and explaining a CI failure on an open milestone PR, and handing an authorized
+  correction to `implement-it`.
 - `release.md` — the release phase: a post-merge authorization gate right after the human confirms a
   PR merged (the same gate that also opens `milestone-completion.md`'s closure gate — neither branch
   waits on the other), then discovering the project's real release policy, understanding the release,
   drafting notes at release altitude, the content-approval gate, publishing, and post-publication
   validation; consult once a PR carrying committed work has merged. Does not apply to Backlog/hotfix
   work, which has no PR to merge.
-- `milestone-completion.md` — two milestone-level gates: PR readiness (all issues closed + confirmed
-  manual testing + no follow-up found), consulted once `sequencing.md` reports an empty ready set;
-  and the three-part closure gate plus the Backlog exemption and validated closure mutation,
-  consulted once the human gives the post-merge authorization — that authorization is the approval
-  for closure, so no second approval is asked, and closure is not gated on release publication
-  itself.
 
 > Detailed operational behavior lives in `rules/*.md`.

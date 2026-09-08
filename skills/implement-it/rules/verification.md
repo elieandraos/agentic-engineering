@@ -7,7 +7,7 @@
 > needs proof, and the final assembled history are different things to prove — proving one does not
 > substitute for proving another.
 
-This rule owns what verification is required at each lifecycle boundary in `ship-it`, and
+This rule owns what verification is required at each lifecycle boundary in `implement-it`, and
 the isolation-verification escalation for when an intermediate committed state itself needs proof.
 It does not own commit boundaries (`rules/commit-boundaries.md`) or the review gates verification
 results get reported into (`rules/review-gates.md`).
@@ -47,10 +47,10 @@ the consuming project actually uses — its:
 
 Discover these from the repository's own instructions, applicable project/stack skills,
 configuration, scripts, CI definitions, or established usage — the same discovery discipline
-`rules/release.md` applies to release mechanism, not an assumption this rule makes in advance. What
-targeting each tool can reliably support is a property of the project's own tooling, not something
-this rule assumes in advance. Git and GitHub remain core substrate for this workflow; test, format,
-and static-analysis tooling is stack- and project-specific composition on top of it.
+`ship-it/rules/release.md` applies to release mechanism, not an assumption this rule makes in
+advance. What targeting each tool can reliably support is a property of the project's own tooling,
+not something this rule assumes in advance. Git and GitHub remain core substrate for this workflow;
+test, format, and static-analysis tooling is stack- and project-specific composition on top of it.
 
 ## Discover the verification starting state, not just the tools
 

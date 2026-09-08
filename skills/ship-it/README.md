@@ -1,42 +1,42 @@
 # ship-it
 
-Take an approved GitHub issue from implementation through verified delivery.
+Take a completed milestone from PR readiness through delivery and release.
 
 ## When to use it
 
-- Implementing, committing, verifying, or closing an approved issue.
-- Checking whether a milestone is ready for a PR, or ready to close.
+- Checking whether a milestone is ready for a PR, or creating that PR once it is.
+- Investigating and explaining a delivery/CI failure on an open milestone PR.
+- Checking whether a milestone is ready to close.
 - Publishing a release once a milestone's PR has merged.
 
-The issue can come from [`plan-it`](../plan-it/) or already exist through another valid
-route — what matters is that it's approved, not who drafted it.
+This skill starts once [`implement-it`](../implement-it/) has closed every issue in a
+milestone — it doesn't implement code itself.
 
 ## Boring prompts
 
 ```shell
-"Implement issue #42."
-"Commit the approved work for issue #42."
 "Check whether this milestone is ready for its pull request."
+"Create the milestone PR."
+"Why is CI failing on this PR?"
+"Is this milestone ready to close?"
 "Publish the approved release."
 ```
 
 ## What normally happens
 
-1. Establish the correct branch for the work.
-2. Implement and verify the issue's scope.
-3. Stop for human review — once on the implementation, once on the proposed commit plan.
-4. Build coherent commits and push them.
-5. Close the issue only once its commits are reachable on the remote.
-6. Continue into milestone PR-readiness, release, and post-release work when the
-   situation calls for it.
+1. Confirm the milestone's three PR-readiness conditions.
+2. Discover the project's PR conventions, propose the PR, and create it once approved.
+3. If CI fails on the open PR, investigate and explain the correction —
+   [`implement-it`](../implement-it/) performs any authorized fix, and this skill resumes once
+   it's verified and CI is green.
+4. Once the human confirms the PR merged and authorizes the post-merge progression, close the
+   milestone and draft, approve, publish, and validate the release.
 
 ## Ownership
 
-Performs the approved implementation itself. Project context supplies repository and
-domain conventions; an applicable stack companion (such as
-[`laravel-inertia-stack`](../laravel-inertia-stack/)) supplies technology-specific
-implementation knowledge. Deciding what work should exist belongs to
-[`plan-it`](../plan-it/); reviewing and merging the PR belongs to the human.
+Does not implement code. Deciding what work should exist belongs to
+[`plan-it`](../plan-it/); implementation, verification, commits, and issue closure belong to
+[`implement-it`](../implement-it/); reviewing and merging the PR belongs to the human.
 
 ## Install
 

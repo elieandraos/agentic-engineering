@@ -231,8 +231,8 @@ here.
 
 An issue whose Tasks span multiple implementation groups or checkpoints (a multi-tranche dependency
 upgrade, a multi-stage migration) may legitimately name a verification step after each group. What
-that step should ask for is a portable authoring question, distinct from how deeply `ship-it`
-actually executes verification once implementation starts (`ship-it/rules/verification.md`
+that step should ask for is a portable authoring question, distinct from how deeply `implement-it`
+actually executes verification once implementation starts (`implement-it/rules/verification.md`
 owns that).
 
 - **State what each intermediate checkpoint needs to prove, not a fixed command to run.** A checkpoint
@@ -249,7 +249,7 @@ owns that).
   change results in files nobody touched) may legitimately warrant a broader check — justify the
   broader ask by what that specific group could actually affect, not by habit.
 - **Reserve a full regression run for the issue's own completion, not every intermediate group.**
-  `ship-it/rules/verification.md` already owns exactly this run, at the completed-issue
+  `implement-it/rules/verification.md` already owns exactly this run, at the completed-issue
   boundary, once all of the issue's commits exist — an issue's own Tasks/Tests should not duplicate
   that requirement at every checkpoint along the way. Ask for a full regression run at an intermediate
   checkpoint only when that specific intermediate state genuinely needs broader proof (for example, a
@@ -262,9 +262,9 @@ owns that).
   surface.
 
 This section governs what an issue's own Tasks/Tests ask for. It does not change what
-`ship-it` actually runs once implementation starts — that remains
-`rules/verification.md`'s default narrowest-reliable-scope-per-commit model, with a full regression
-run reserved for the completed-issue boundary.
+`implement-it` actually runs once implementation starts — that remains
+`implement-it/rules/verification.md`'s default narrowest-reliable-scope-per-commit model, with a
+full regression run reserved for the completed-issue boundary.
 
 ## 11. Completion criteria must be satisfiable at their own closure boundary
 
@@ -294,7 +294,7 @@ yet at that issue's own closure boundary.
   limitation honestly is better than hiding it, but an issue whose own Tests section states a
   condition that cannot be met by its own closure is still an internally inconsistent contract — fix
   the requirement's placement, don't just caveat it.
-- **This is a narrow check, not a license to redesign delivery.** It doesn't decide branch strategy,
-  when a milestone issue actually closes, or when a milestone's PR opens — those stay
-  `ship-it`'s. It only stops planning from handing that workflow an issue whose own completion
-  bar was never satisfiable in the first place.
+- **This is a narrow check, not a license to redesign delivery.** It doesn't decide branch strategy
+  or when a milestone issue actually closes — those are `implement-it`'s — or when a milestone's PR
+  opens — that's `ship-it`'s. It only stops planning from handing that workflow an issue whose own
+  completion bar was never satisfiable in the first place.

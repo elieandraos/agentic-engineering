@@ -40,7 +40,8 @@ Owns architecture investigation, architectural explanation, and turning approved
 decisions into a `plan.md`. Creating, updating, or reviewing an architecture guide belongs to
 [`document-it`](../document-it/) — file extension alone doesn't decide ownership; an approved
 `plan.md` stays this skill's even though it's a `.md` file. Planning the resulting work into
-GitHub issues belongs to [`plan-it`](../plan-it/); implementing it belongs to [`ship-it`](../ship-it/).
+GitHub issues belongs to [`plan-it`](../plan-it/); implementing it belongs to
+[`implement-it`](../implement-it/).
 
 ## Install
 

@@ -39,6 +39,7 @@ GitHub-based projects with different stacks, not across issue trackers.
 
 Owns feature classification, scope discovery, issue drafting, sequencing, review, and
 GitHub issue creation after approval. Implementation belongs to
+[`implement-it`](../implement-it/), with milestone delivery and release handled downstream by
 [`ship-it`](../ship-it/) — this skill plans the work, it doesn't build it.
 
 ## Install

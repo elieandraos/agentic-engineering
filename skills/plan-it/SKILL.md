@@ -90,7 +90,8 @@ structure/messages, fixing a defect it discovers, and deciding when a milestone 
 ## Handoff
 
 Planning's responsibility ends once approved GitHub metadata and issues are created and validated.
-From there, `ship-it` owns the downstream Git/GitHub delivery workflow — branch readiness,
-review gates, commits, verification, issue closure, and release/milestone progression — and the
-consuming project's own implementation skills own the actual application/framework code. The two
-compose during delivery, neither replacing the other, and this skill writes no code itself.
+From there, `implement-it` owns the downstream Git/GitHub implementation workflow — branch
+readiness, review gates, commits, verification, and issue closure — and the consuming project's own
+implementation skills own the actual application/framework code; `ship-it` owns milestone PR
+readiness, PR creation, and release once `implement-it` has closed every issue in a milestone. All
+three compose during delivery, none replacing another, and this skill writes no code itself.

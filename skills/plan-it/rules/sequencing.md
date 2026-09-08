@@ -5,7 +5,7 @@
 This rule owns two connected decisions: decomposing canonical scope into coherent issues, and
 connecting and ordering them by real prerequisites. It does not decide implementation order, which
 ready issue gets worked next, branch strategy, or commit structure — those belong to
-`ship-it`, particularly its own `rules/sequencing.md`.
+`implement-it`, particularly its own `rules/sequencing.md`.
 
 ## Decompose canonical scope into coherent issues
 
@@ -79,7 +79,7 @@ implement. Present and create issues in that stable topological order, so every 
 points backward, as an operational convenience — not a claim that same-wave issues must be implemented
 serially. Ask the user to choose between equivalent topological orders only when it would materially
 change scope, boundaries, or risk. Live readiness, from actual issue closure, and the choice of which
-issue to implement next, are both `ship-it`'s job after creation — not this rule's.
+issue to implement next, are both `implement-it`'s job after creation — not this rule's.
 
 ## Project-supplied delivery constraints
 
@@ -120,5 +120,5 @@ and never derive the issue set back from created issues or a rendered preview.
 
 `rules/review.md` owns issue quality, dependency-quality validation, structural/rendered integrity, and
 mutation validation. `SKILL.md` owns the two approval surfaces and creation pipeline. Once approved
-issues are created, `ship-it` owns branch readiness, the next ready issue, and recomputing the
+issues are created, `implement-it` owns branch readiness, the next ready issue, and recomputing the
 live dependency-ready set as issues close.
