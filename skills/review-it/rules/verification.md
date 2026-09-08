@@ -1,0 +1,83 @@
+# Verification, Evidence, and Reporting
+
+## When to consult this file
+
+While confirming a candidate finding from `rules/checklist.md` earns its place in the report, and
+when preparing the final report itself.
+
+## Verify before reporting
+
+Every finding is verified before being reported — traced to a concrete file and line, or confirmed
+by a diagnostic command's actual output — never a suspicion stated as fact. A successful command or
+a passing exit code is not, by itself, proof that it validated the specific property in question;
+read what the command actually checked, not merely whether it exited zero.
+
+Distinguish, explicitly in the report, findings `review-it` actually verified itself — by source
+inspection, reproduction, or diagnostic execution — from evidence merely supplied by someone else
+(a CI result quoted in the request, a claim already made in a PR description) and not independently
+checked. Never imply a finding was reproduced by execution when it was established through source
+inspection alone; state which one it was.
+
+## Diagnostic execution
+
+`review-it` may run the project's own existing verification commands — tests, linters, static
+analysis — to confirm a specific concern, discovered the same way
+`implement-it/rules/verification.md` discovers them: from the repository's own instructions,
+configuration, scripts, CI definitions, or established usage, never assumed in advance.
+
+- Inspect a command and its environment before running it — what it does, what it writes, and what
+  it could affect — rather than running an unfamiliar script on trust.
+- This is diagnostic execution, not read-only inspection. Running a test suite, a linter, or a
+  static analyzer can write to caches, temporary directories, or other local state. Do not describe
+  this review's execution as free of side effects.
+- If safe diagnostic execution isn't available — no relevant command discoverable, a command that
+  would require credentials or write access this session doesn't have, or an environment that can't
+  run it — report that limitation plainly rather than skipping the concern silently or guessing at
+  the result.
+- Never mutate GitHub or any other live or production state to gather evidence. Reading published
+  state (an existing PR's diff, its CI results, its description) is evidence-gathering; creating,
+  editing, or merging anything is not this skill's job under any circumstance.
+
+## Staleness
+
+A finding, or a clean result, is tied to the specific commit or diff state it was checked against —
+the same discipline `plan-it/rules/review.md` already applies to issue review. State that commit
+SHA or diff identity in the report. A material change to the reviewed surface after this pass
+invalidates it for that surface; the caller — a human, or `implement-it` before Gate 1 — requests a
+fresh pass, full or scoped to the correction, before relying on this result again. `review-it` does
+not track or store a review's history itself; each invocation is stateless with respect to any
+prior pass, and relies entirely on the caller supplying the current state to check.
+
+## Report shape
+
+Every `review-it` result states:
+
+- **Reviewed target and state** — the worktree, branch, or PR reviewed, and the exact commit SHA or
+  diff identity it was checked against.
+- **Confirmed findings** — ordered by consequence, each with its file or location, the evidence or
+  reasoning that verified it, and its concrete consequence if left unaddressed.
+- **Verification performed** — which checks `review-it` actually ran or traced itself, distinguished
+  from evidence supplied by others and not independently verified (see "Verify before reporting,"
+  above).
+- **Material limitations and unresolved questions** — missing scope evidence, unreachable
+  diagnostics, or an ambiguity that was proceeded past rather than resolved (`rules/scope.md`).
+- **A scoped clean result**, when warranted — state plainly which categories applied and passed, and
+  which were skipped as inapplicable, rather than a bare "looks good."
+
+Do not report a finding as resolved, or a review as clean, merely because no evidence of a problem
+was found where evidence was never actually available to check. An unchecked category is a
+limitation to state, not a pass to imply.
+
+## A review does not grant authorization
+
+A clean `review-it` result, or a set of findings marked resolved and re-verified, is input to Gate
+1's stop condition — it is not itself an approval, and it never substitutes for the human's
+decision at Gate 1, Gate 2, or any other approval boundary a calling skill owns. `review-it` never
+implies that a clean result authorizes anything to proceed on its own.
+
+## What review-it never does
+
+Reports only. It does not edit application code, apply formatting fixes, commit, push, approve a
+gate, merge, or mutate GitHub or any other live or production state — regardless of how minor or
+obviously correct a fix would be. A finding this skill could trivially fix by hand is still
+reported, not applied. Every correction returns to `implement-it`.

@@ -26,19 +26,22 @@ structure; Gate 1 and Gate 2 below remain the only approvals of either.
 Stop here once:
 
 - the approved issue scope has been implemented;
-- the verification appropriate to it has been run (`rules/verification.md`).
+- the verification appropriate to it has been run (`rules/verification.md`);
+- `review-it`'s pass against the completed implementation is either clean, or its findings have
+  been resolved and re-verified.
 
-`review-it` is a planned, independently callable implementation-assurance skill that does not exist
-in this repository yet. Once it does, its clean-or-resolved result becomes a third stop condition
-here. Until then, this gate's stop condition stays exactly the two bullets above — do not invoke a
-skill that isn't built, and do not treat this note as an informal substitute for the missing check.
+Invoke `review-it` standalone against the completed working tree once the first two bullets hold,
+before reporting at this gate — see "Consuming review-it's result," below. A `review-it` pass does
+not grant authorization by itself; it is evidence this gate's report cites, and Gate 1's approval
+mechanics — the report below, then explicit human approval — stay exactly as they were.
 
 Report concisely:
 
 - what changed;
 - the implementation approach;
 - files or surface area touched, where useful;
-- verification results.
+- verification results;
+- `review-it`'s result: clean, or each finding and how it was resolved and re-verified.
 
 Then wait for explicit human approval. Approval at this gate authorizes moving on to commit
 planning — nothing more. Do not begin deriving commit structure before it.
@@ -46,6 +49,25 @@ planning — nothing more. Do not begin deriving commit structure before it.
 If implementation surfaces a genuine unresolved decision before reaching this point, stop and ask
 then, per "When to stop and ask" below, rather than silently choosing an answer and presenting the
 choice as part of this report.
+
+## Consuming review-it's result
+
+Once implementation and verification are complete, invoke `review-it` the same way a standalone
+caller would (`review-it/rules/scope.md`) against the completed working tree, supplying the
+approved issue as the intended scope. Treat its result as follows before reporting at this gate:
+
+- **Clean.** Report it as such and proceed to the Gate 1 report above.
+- **Findings, within this skill's authorized scope to resolve.** Fix them, then request a re-review
+  scoped to the affected surface — a material change invalidates `review-it`'s prior pass for that
+  surface (`review-it/rules/verification.md`'s staleness rule). Report the original findings and
+  their resolution, plus the re-review's clean result, at Gate 1.
+- **A finding that reveals a genuine unresolved decision** — architecture, scope, or a choice with
+  no clearly better answer — is not this gate's to resolve silently. Stop and ask, per "When to
+  stop and ask," below, citing `review-it`'s finding as the evidence.
+
+Never report a finding as resolved, or treat an unresolved finding as if it were clean, without an
+actual fix and an actual re-review behind that claim — the same discipline `review-it` itself
+applies to its own report (`review-it/rules/verification.md`).
 
 ## Gate 2 — commit-plan review
 
@@ -104,7 +126,10 @@ neither is clearly better. Both call for a stop built the way above, not a silen
 ## Do / Don't
 
 **Do**
-- Stop at Gate 1 once implementation and verification are complete.
+- Stop at Gate 1 once implementation, verification, and a clean-or-resolved `review-it` pass are
+  complete.
+- Invoke `review-it` before reporting at Gate 1, and again, scoped to the affected surface, after
+  fixing any finding it raises.
 - Derive the commit plan only after Gate 1 is approved.
 - Show the complete commit plan before creating any commit, and get explicit approval of it.
 - Investigate a genuine unknown and offer a recommendation before asking the human to decide.
@@ -112,6 +137,10 @@ neither is clearly better. Both call for a stop built the way above, not a silen
 **Don't**
 - Collapse Gate 1 and Gate 2 into one approval.
 - Treat implementation approval as commit-plan approval.
+- Report a `review-it` finding as resolved without an actual fix and an actual re-review behind
+  that claim.
+- Treat a clean `review-it` result as authorization by itself — it is evidence Gate 1's report
+  cites, not a substitute for the human's approval.
 - Create a commit before Gate 2 is approved.
 - Silently resolve a missing product or architecture decision.
 - Ask the human to choose among unexplored options when evidence could narrow the decision first.

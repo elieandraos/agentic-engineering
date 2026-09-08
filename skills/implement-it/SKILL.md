@@ -31,7 +31,8 @@ set is empty"), or once it has performed a correction `ship-it` hands back.
 - Performing the approved implementation itself.
 - Applying project conventions and applicable implementation/testing/tooling skills, and loading an
   applicable custom stack companion when one is available.
-- Implementation and commit-plan review gates (Gate 1 and Gate 2).
+- Implementation and commit-plan review gates (Gate 1 and Gate 2), invoking `review-it` before
+  Gate 1 and consuming its result as Gate 1's third stop condition.
 - Verification, including the regression-baseline treatment of pre-existing lint/format/static debt.
 - Semantic commit planning and construction.
 - Authorized push and issue closure — intentionally before the milestone's PR merges.
@@ -46,6 +47,8 @@ set is empty"), or once it has performed a correction `ship-it` hands back.
 - Application or framework implementation conventions — a stack companion, when one applies, owns
   those; this skill performs the work using them.
 - Milestone PR readiness, PR creation, and merge strategy.
+- Independent implementation review — `review-it` owns the checklist and the finding; this skill
+  invokes it and fixes what it finds.
 - Investigating or explaining a delivery/CI failure, and securing the human's authorization for a
   correction (`ship-it`'s job) — this skill performs the correction only once that human
   authorization has actually been given and `ship-it` hands the fix off.
@@ -89,8 +92,9 @@ authorized fix to this skill. Accept this entry only once that human authorizati
 accompanies the handoff — `ship-it`'s own determination that a fix stays in scope is necessary but
 never sufficient by itself; without the human's explicit authorization there is nothing yet for this
 skill to perform. Once accepted, perform the correction through this same lifecycle — Gate 1 and
-Gate 2 as applicable, verification, commit construction, and authorized push — whether or not the
-original issue is still open. This route stays available without requiring an open issue to exist;
+Gate 2 as applicable (invoking `review-it` before Gate 1, the same standalone way — see "Rules"
+below), verification, commit construction, and authorized push — whether or not the original issue
+is still open. This route stays available without requiring an open issue to exist;
 it does not require reopening a closed issue, and it is separate from genuinely new scope, which
 still goes through `plan-it`'s discovered-work intake. Once the correction is verified and pushed,
 `ship-it` resumes the delivery workflow.
@@ -102,6 +106,10 @@ still goes through `plan-it`'s discovered-work intake. Once the correction is ve
 - This skill composes with whatever implementation, testing, and tooling skills the consuming
   project's stack requires, loaded alongside it.
 - Stack-specific knowledge does not belong in this skill.
+- This skill invokes `review-it` standalone before Gate 1, and again before Gate 1 of an authorized
+  delivery correction — the same independently callable capability at two trigger points, not a
+  procedure this skill owns or duplicates. This skill fixes what `review-it` finds; `review-it`
+  never fixes anything itself.
 
 ## Activation
 
@@ -116,8 +124,12 @@ Trigger on requests shaped like:
 ## Rules
 
 - `review-gates.md` — the two pre-merge human approval gates (implementation review, then
-  commit-plan review) and the conditions that always warrant a stop; consult once implementation is
-  ready to report, and again once a commit plan is ready to propose.
+  commit-plan review), how Gate 1 consumes `review-it`'s result, and the conditions that always
+  warrant a stop; consult once implementation is ready to report, and again once a commit plan is
+  ready to propose.
+- [`review-it`](../review-it/) — independently callable implementation review; invoke standalone
+  against the completed working tree once implementation and verification are complete, before
+  reporting at Gate 1 (`review-gates.md`'s "Consuming review-it's result").
 - `commit-boundaries.md` — how to turn an approved diff into semantic commits: boundary reasoning,
   message content, the `Refs #N` trailer, and safely folding in review corrections; consult while
   inspecting the diff and building the commit plan, after Gate 1.

@@ -1,0 +1,137 @@
+# The Review Checklist
+
+## When to consult this file
+
+After `rules/scope.md` has established the target, baseline, intended scope, and available
+evidence — while inspecting the reviewed change itself.
+
+## Philosophy
+
+- Every category is skip-if-inapplicable, not skip-by-default. Skip a category only when the
+  reviewed change genuinely doesn't touch what it checks, and say so in the report rather than
+  leaving it silently absent.
+- Every finding traces to concrete code, configuration, or a diagnostic command's actual output —
+  never a suspicion stated as fact. See `rules/verification.md` for how a candidate finding earns
+  that status.
+- A finding must materially affect correctness, security, data integrity, regressions,
+  architectural fit, maintainability, convention compliance, test adequacy, or scope — a personal
+  style preference the project's own conventions don't already support is not a finding (see "What
+  this review does not flag," below).
+- Inspect the changed code and the relevant surrounding behavior it touches, not only the lines the
+  diff highlights — a caller, a shared helper, or an adjacent code path can be exactly where a
+  change's real consequence shows up.
+
+## Checklist
+
+### Requirements compliance
+
+Compare the reviewed change against the intended scope established in `rules/scope.md`. For each
+capability the scope actually defines, confirm it's implemented — not silently narrowed, deferred,
+or reinterpreted along the way. For each part of the diff, confirm it traces to something the scope
+actually asked for; a part that doesn't belongs under "Accidental scope expansion," below, not a
+silent pass here.
+
+Skip only when no scope evidence exists at all (`rules/scope.md`) — state that absence as a
+limitation in the report rather than skipping this category silently.
+
+### Correctness and edge cases
+
+Trace the actual code paths the change introduces or modifies against their real inputs, not only
+the path the tests already exercise. For each new or changed branch, ask what input, state, or
+ordering would take the other path, and confirm the change handles it. Check edge cases the
+established scope implies even when untested: empty, null, or zero-valued inputs; boundary values;
+repeated or concurrent invocation; partial failure mid-operation; an unexpected but reachable
+ordering of surrounding calls.
+
+A suspected defect becomes a finding only once traced to the actual code path that produces it —
+state the reasoning or the reproduction, not just the suspicion.
+
+### Security
+
+Inspect every surface the change touches for:
+
+- authorization and authentication checks that gate access to the new or changed capability, at
+  every entry point that reaches it, not only the one exercised by tests;
+- input validation and sanitization at trust boundaries — user input, external API responses, file
+  paths, deserialized data;
+- injection risk wherever the change builds a query, shell command, template, or file path from
+  variable input;
+- secret, token, credential, or sensitive-data exposure — in logs, error messages, client-visible
+  responses, or a location with looser access control than the data warrants.
+
+Skip only where the reviewed change genuinely touches none of these surfaces.
+
+### Data integrity
+
+For a schema migration or data-shape change: confirm it's reversible, or that its irreversibility
+is deliberate and stated; check default values and backfill behavior against existing rows, not
+only newly created ones. For a concurrent-write or shared-state path: check for race conditions,
+a missing lock or transaction boundary, or a read-modify-write sequence that isn't atomic where
+correctness requires it to be. Confirm the change cannot silently drop, truncate, or overwrite
+data that existed before it.
+
+Skip when the reviewed change touches no persisted or shared state.
+
+### Likely regressions
+
+Identify existing behavior the change plausibly affects that the test suite doesn't already cover —
+a shared code path, a caller outside the diff's own files, a configuration or feature-flag
+interaction the change alters the meaning of. This is distinct from correctness above: a regression
+is existing behavior put at risk, not a new capability's own bug. State which existing callers or
+behaviors were actually checked, and which weren't reachable to verify from available evidence.
+
+### Architectural fit
+
+Compare the change's shape against the approved architecture — a linked guide, `plan.md`, or an
+established repository pattern, whichever is actually available (`rules/scope.md`) — and this
+project's own conventions. Flag a change that duplicates an existing abstraction, bypasses an
+established boundary, or introduces a second way to do something the codebase already does one
+way, grounded in a concrete existing pattern the change actually conflicts with.
+
+Skip when no architectural reference exists and the change is too small to imply one; state that as
+a limitation rather than inventing an architecture to check the change against.
+
+### Maintainability
+
+Identify unnecessary complexity, duplication, or a shape likely to fight the next foreseeable
+change: a premature abstraction, a helper introduced for a single call site, dead code left behind
+by the change, or a structure that makes an adjacent change harder than it needs to be. Ground each
+finding in the actual diff and a concrete foreseeable consequence — not a general preference for a
+different style the project itself doesn't already establish.
+
+### Project and stack convention compliance
+
+Check the change against applicable project instructions and, where one is installed and actually
+applicable, the loaded stack companion's rules — naming conventions, established idioms, required
+patterns for this stack. Skip stack-specific sub-checks entirely when no stack companion is
+available for this project; never invent a stack convention from general knowledge and present it
+as this project's own rule.
+
+### Test adequacy
+
+For each test added or changed by the reviewed change, confirm it actually proves the decision it
+claims to — a test that only proves the code ran, with no assertion on the actual behavior or
+output, or one whose mocked dependency hides the real behavior under test, is a finding. Confirm the
+established scope's material edge cases have some test coverage, or state plainly which don't. A
+passing test suite is not by itself evidence of adequate coverage — inspect what the tests actually
+assert, not only whether they pass.
+
+### Accidental scope expansion
+
+Compare every changed file and hunk against the established intended scope (`rules/scope.md`).
+Flag a change outside that scope that wasn't already flagged as a stop, per
+`implement-it/rules/review-gates.md`'s "when to stop and ask" — an unrelated refactor, an
+unrequested dependency bump, a drive-by rename, a file touched with no connection to the stated
+scope. Not every out-of-scope change is a defect; some are legitimate and already authorized
+elsewhere. An unflagged one is still a finding to surface, not something to silently accept because
+it looks harmless.
+
+## What this review does not flag
+
+- A stylistic preference the project's own conventions don't already support.
+- A speculative concern with no traced code path or reproducible evidence behind it.
+- A category the reviewed change genuinely doesn't touch — state it as skipped, not as a pass.
+- A change already flagged and authorized as an intentional stop under
+  `implement-it/rules/review-gates.md`.
+- A finding invented to avoid returning a clean result. A scoped clean pass, stated plainly with
+  which categories applied, is a legitimate and complete outcome.

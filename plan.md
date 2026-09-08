@@ -1,7 +1,11 @@
 # Ecosystem migration plan — Lab · Document · Plan · Implement · Review · Ship
 
 **Status: Steps 1–3 approved.** Step 3 passed Control Room review at commit
-`ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`. Step 4 is next and has not started.
+`ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`, and the user's confirmation to record that approval was
+itself recorded at commit `b2fad42f1e4e73e482e7a49921bed6e47b1795a7`. Step 4 — establishing
+`review-it` and integrating it before Gate 1 (§5) — has been implemented on top of that HEAD; see
+Step 4's own entry below for the implementation record. **Step 4 is implemented and pending Control
+Room review — it is not yet approved.** Step 5 has not started.
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
@@ -745,6 +749,93 @@ boundary.
 - **Validation (static).** Standalone `review-it` invocation directly on a branch/PR; `implement-it`
   invoking `review-it` before Gate 1, finding issues, fixing them, re-reviewing, then a clean stop.
 - **Result to present.** New `review-it` skill and the updated Gate 1 text, for review.
+
+**Implemented.** Starting point: branch `main`, HEAD `b2fad42f1e4e73e482e7a49921bed6e47b1795a7`
+(the commit recording Step 3's Control Room approval), working tree clean except the three
+pre-existing untracked files (`control-room-responsibilities.md`, `skills-audit.md`,
+`subagents.md`), left untouched.
+
+- `review-it/SKILL.md`, `README.md`, and `rules/{scope.md,checklist.md,verification.md}` created
+  new. `review-it` is a standalone skill: it establishes its review target, comparison baseline
+  where one applies, intended scope, and available evidence from the request and repository before
+  running any check (`rules/scope.md`), asking the human only when unresolved ambiguity would
+  materially change the review; it requires no prior `implement-it` session and no
+  `plan-it`-authored issue. `rules/checklist.md` authors §3.1's ten categories to item-level
+  inspection instructions, each skip-if-inapplicable rather than skip-by-default, with an explicit
+  "what this review does not flag" list guarding against invented or speculative findings.
+  `rules/verification.md` states the verify-before-reporting standard (a finding is traced to
+  concrete evidence, never a suspicion stated as fact — the same non-negotiable
+  `skills-audit.md`'s cross-skill review comparison already documents), the diagnostic-execution
+  boundary (existing project tests/linters/static analysis may run to confirm a concern; this is
+  execution with local side effects, not read-only inspection; an unavailable or unsafe diagnostic
+  is reported as a limitation, never skipped silently or guessed at), the staleness rule (a finding
+  or clean result is tied to the commit/diff state checked, and a material change afterward
+  invalidates it for that surface), and the required report shape (reviewed target and state,
+  confirmed findings with location/evidence/consequence, verification performed versus evidence
+  supplied by others, material limitations, and a scoped clean result when warranted). `SKILL.md`
+  states the reviewer boundary directly: `review-it` reports, and never edits application code,
+  applies formatting fixes, commits, pushes, approves a gate, merges, or mutates GitHub or other
+  live state — every correction returns to `implement-it`. Its "Ownership and handoff" section
+  explicitly excludes guide review, issue/plan-synthesis review, investigation discipline, and
+  commit-plan review, naming `document-it`, `plan-it`, `lab-it`, and `implement-it` as their owners,
+  per §2.3/§3.1's "does not absorb other skills' specialized reviews."
+- `implement-it/rules/review-gates.md`: Gate 1 gains its agreed third stop condition —
+  `review-it`'s pass against the completed implementation is either clean, or its findings have
+  been resolved and re-verified — and a new "Consuming review-it's result" section states how to
+  invoke it (standalone, against the completed working tree, once verification is otherwise
+  complete) and how to handle each outcome: a clean pass proceeds to the Gate 1 report; a finding
+  within this skill's authorized scope is fixed and re-reviewed, scoped to the affected surface,
+  before Gate 1 can rely on it again; a finding that reveals a genuine unresolved decision routes to
+  the existing "when to stop and ask" rather than being resolved silently. Gate 1's approval
+  mechanics — the report, then explicit human approval — are otherwise unchanged; a `review-it`
+  result is stated as evidence the report cites, never as authorization by itself. The Do/Don't list
+  gained matching entries.
+- `implement-it/SKILL.md`: "What it owns" now states that Gate 1 invokes `review-it` and consumes
+  its result as the third stop condition; "What it does not own" gained an explicit line that
+  `review-it` owns the checklist and the finding, this skill invokes it and fixes what it finds;
+  "Delivery corrections" and "Composition" both state that an authorized delivery correction invokes
+  `review-it` the same standalone way before that correction's own Gate 1 — the second invocation
+  point from §3.1; the "Rules" index gained a `review-it` entry routing to the skill.
+  `implement-it/README.md`'s lifecycle list and "Ownership" section received the matching minimal
+  correction.
+- `ship-it/rules/milestone-completion.md`'s "CI failure on an open milestone PR" step 6 — where
+  `implement-it` performs the authorized correction through its own lifecycle — now names the
+  `review-it` invocation before that correction's Gate 1, reconciling this live cross-reference with
+  `implement-it`'s own updated text rather than leaving it to drift.
+- `plan-it/rules/review.md`'s "Responsibility boundaries" transitional statement — "independent
+  implementation review — planned as `review-it`, not yet built in this repository" — is corrected
+  to name `review-it` as the actual owner, per this step's explicit instruction to remove every
+  transitional not-yet-built statement.
+- **Validation performed:** full re-read of every new and modified file; YAML frontmatter of
+  `review-it/SKILL.md` parsed successfully; a repository-wide search for "not yet built," "planned
+  as," and "does not exist" confirming no remaining transitional `review-it` statement anywhere
+  under `skills/`; a link-resolution check confirming every relative Markdown link in the new and
+  modified files resolves from the file that contains it; `git diff --check` clean. Eight bounded
+  static walkthroughs run against the actual file content: a standalone branch/PR review with no
+  prior `implement-it` session and no `plan-it`-authored issue; a request with no scope evidence
+  available, producing an explicit reported limitation rather than an inferred, silently-approved
+  scope; a suspected defect traced to its actual code path and dropped, not reported, once the
+  evidence didn't support it; a confirmed finding fixed by `implement-it` and re-reviewed, scoped to
+  the affected surface, before Gate 1's stop; a material change made after a clean `review-it` pass
+  invalidating that pass for the changed surface, per the staleness rule; an authorized delivery
+  correction with no open issue, `review-it` running the identical standalone way; a review with no
+  stack companion installed, running the full checklist and skipping only the stack-specific
+  sub-checks; and an unavailable diagnostic (no discoverable test command, or one needing
+  credentials this session lacks) reported as an explicit limitation rather than skipped silently or
+  guessed at. All eight traced correctly through the actual file content with no coherence gap
+  found. This is source validation from static walkthroughs, not runtime or consumer proof — no
+  skill was actually invoked, no branch or PR was reviewed, no GitHub state was touched, and no
+  consuming project was refreshed, per this step's authorization scope.
+- **Departure from the step's own outline, noted for transparency.** The outline above's "Affected
+  files" line named only `implement-it/rules/review-gates.md` and `implement-it/SKILL.md` as
+  modified; the task's own governing instructions (§5's "Reconcile affected references") separately
+  called for minimal related README and live cross-reference corrections and for removing every
+  transitional not-yet-built statement, which is why `implement-it/README.md`,
+  `ship-it/rules/milestone-completion.md`, and `plan-it/rules/review.md` were also touched — each a
+  minimal, single-purpose correction traceable to that same instruction, not scope drift.
+- **No unresolved material issue from this step.** §7's remaining open items (canonical
+  issue-definition storage; the completed-issue-boundary reuse-eligibility rule) are unchanged and
+  stay Step 5's own scope.
 
 ### Step 5 — Strengthen recovery, adopt the approved verification policy
 

@@ -24,10 +24,13 @@ route — what matters is that it's approved, not who drafted it.
 
 1. Establish the correct branch for the work.
 2. Implement and verify the issue's scope.
-3. Stop for human review — once on the implementation, once on the proposed commit plan.
-4. Build coherent commits and push them, once authorized.
-5. Close the issue only once its commits are reachable on the remote.
-6. Recompute the milestone's dependency-ready set and recommend the next issue — or, once zero
+3. Invoke [`review-it`](../review-it/) standalone against the completed work, fixing and
+   re-reviewing any finding within scope.
+4. Stop for human review — once on the implementation (citing `review-it`'s result), once on the
+   proposed commit plan.
+5. Build coherent commits and push them, once authorized.
+6. Close the issue only once its commits are reachable on the remote.
+7. Recompute the milestone's dependency-ready set and recommend the next issue — or, once zero
    open issues remain (not merely an empty ready set), hand off to [`ship-it`](../ship-it/).
 
 ## Ownership
@@ -36,8 +39,9 @@ Performs the approved implementation itself. Project context supplies repository
 domain conventions; an applicable stack companion (such as
 [`laravel-inertia-stack`](../laravel-inertia-stack/)) supplies technology-specific
 implementation knowledge. Deciding what work should exist belongs to
-[`plan-it`](../plan-it/); milestone PR readiness, PR creation, and release belong to
-[`ship-it`](../ship-it/).
+[`plan-it`](../plan-it/); implementation review belongs to [`review-it`](../review-it/), invoked
+standalone before Gate 1 — this skill fixes what it finds, `review-it` never fixes anything itself;
+milestone PR readiness, PR creation, and release belong to [`ship-it`](../ship-it/).
 
 A specific-issue request ends after that issue's own lifecycle — completing one issue is
 never by itself authorization to continue into the next, or into milestone delivery.

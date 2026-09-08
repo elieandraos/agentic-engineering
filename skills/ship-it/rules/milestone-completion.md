@@ -280,7 +280,9 @@ itself, and never substitutes for it.
    explicit human authorization (step 4) can be the legitimate direct-fix path instead, without a new
    issue.
 6. **`implement-it` performs the authorized correction through its own lifecycle** — Gate 1/Gate 2 as
-   applicable, commit construction (`implement-it/rules/commit-boundaries.md`), and verification
+   applicable (invoking `review-it` standalone before Gate 1, per
+   `implement-it/rules/review-gates.md`'s "Consuming review-it's result"), commit construction
+   (`implement-it/rules/commit-boundaries.md`), and verification
    (`implement-it/rules/verification.md`) — then pushes once authorized. This rule resumes once the
    correction is verified and pushed: confirm real CI runs again against the PR.
 7. **No merge, milestone closure, or release progression until the PR is genuinely green and the human
