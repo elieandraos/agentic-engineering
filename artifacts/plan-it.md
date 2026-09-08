@@ -290,7 +290,7 @@ scope already defined — that would be scope expansion, not fidelity validation
 [`rules/sequencing.md`](../skills/plan-it/rules/sequencing.md) owns two connected decisions
 after checklist scope exists: splitting it into coherent issues, and ordering those issues by real
 prerequisites. It does not decide implementation order, which ready issue gets worked next, branch
-strategy, or commit structure — all of that is `ship-it`'s.
+strategy, or commit structure — all of that is `implement-it`'s.
 
 **Decomposition** is identical across every classification shape: split by coherent outcome, real
 dependency, and independent provability — never by checklist question or track, file, class, route,
@@ -320,7 +320,7 @@ by combining inseparable work or correcting the false edge, never by an arbitrar
 **Waves** present the graph's partial order for creation and review: roots have no internal
 prerequisites, and a later wave's issues have all their prerequisites in an earlier wave. A wave
 exposes possible parallelism — it says nothing about live implementation readiness or which issue to
-work next, both of which belong to `ship-it` once issues exist.
+work next, both of which belong to `implement-it` once issues exist.
 
 ## 9. Review, approval, and mutation
 
@@ -384,12 +384,13 @@ implies a downstream handoff by itself. `plan-md-input.md` treats that section a
 initiative match, the source-of-truth statement, and the user's independently established approval
 are all present; a polished draft or the file's mere existence is never enough on its own.
 
-**Handoff to `ship-it`.** This skill's responsibility ends once approved GitHub metadata and
-issues are created and validated. From there, `ship-it` owns branch readiness, review gates,
-commits, verification, issue closure, and release/milestone progression — including live dependency
-readiness as issues actually close, and which ready issue to implement next, neither of which this
-skill decides. A wave (§8) is a dependency-safe presentation and creation order, not a live
-readiness signal.
+**Handoff to `implement-it` and `ship-it`.** This skill's responsibility ends once approved GitHub
+metadata and issues are created and validated. From there, `implement-it` owns branch readiness,
+review gates (including the standalone `review-it` invocation before Gate 1), commits, verification,
+and issue closure — including live dependency readiness as issues actually close, and which ready
+issue to implement next, neither of which this skill decides. Once a milestone has zero open issues
+remaining, `ship-it` owns PR readiness/creation, post-merge milestone closure, and release. A wave
+(§8) is a dependency-safe presentation and creation order, not a live readiness signal.
 
 **Handoff to consuming stack/project guidance.** Every checklist, this dossier's canonical-issue
 model, and the review surfaces stop at *what* must be true and *what* must be proven — never *how* to

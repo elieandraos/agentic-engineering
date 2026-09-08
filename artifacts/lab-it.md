@@ -2,10 +2,10 @@
 
 Status: Current
 Scope: `lab-it` as it stands in this repository
-Purpose: A compact architecture artifact for the skill — its evidence discipline, its three
+Purpose: A compact architecture artifact for the skill — its evidence discipline, its two
 workflows and where each asks for human confirmation, the distinct stages a piece of work passes
-through, the claim model behind a synthesized plan, how a published guide is built and reviewed,
-rule ownership, cross-skill handoffs, and current boundaries and confidence.
+through, the claim model behind a synthesized plan, rule ownership, cross-skill handoffs, and
+current boundaries and confidence.
 [`SKILL.md`](../skills/lab-it/SKILL.md) remains the operational routing entrypoint;
 [`README.md`](../skills/lab-it/README.md) is the human-facing orientation. This
 document explains the architecture behind both rather than restating either.
@@ -13,27 +13,27 @@ document explains the architecture behind both rather than restating either.
 ## 1. Purpose and result model
 
 `lab-it` investigates a real system and turns that investigation into exactly
-one of three results — or, just as legitimately, into no artifact at all when understanding is the
+one of two results — or, just as legitimately, into no artifact at all when understanding is the
 whole point. It is not for explaining a single function, debugging, reviewing a diff, or writing
 API reference documentation; those questions don't need an architecture investigation, and this
-skill doesn't try to answer them.
+skill doesn't try to answer them. It is also not for creating, updating, or reviewing an
+architecture guide — that capability, and its own architecture, belong entirely to
+[`document-it`](../skills/document-it/), a separate, independently callable skill (§7).
 
-The three results are genuinely different artifacts, not three names for the same deliverable, and
+The two results are genuinely different artifacts, not two names for the same deliverable, and
 each sits behind its own human checkpoint:
 
 | Workflow | Terminal output | What gates that output |
 |---|---|---|
-| Document existing architecture | A new Claude Artifact architecture guide | The user confirms the investigation recap |
-| Update an existing architecture guide | The same Artifact, redeployed | Only when authority, intent, or a material decision is unclear |
+| Standalone investigation | A verified answer, given as chat output | Nothing further required — the recap itself is the result |
 | Plan feature architecture | An approved `plan.md`, handed to `plan-it` | Explicit decisions approved, then the document itself approved |
 
-Investigation and a recap of it can be the complete, standalone result of a session. A guide and a
-`plan.md` are outputs someone has to actually ask for — neither gets produced automatically just
-because an investigation happened.
+Investigation and a recap of it can be the complete, standalone result of a session. A `plan.md` is
+something a request specifically asks for, never an automatic next step after investigation.
 
 ## 2. The evidence discipline every workflow shares
 
-Before any workflow diverges, all three run the same discipline: inspect the real, current system
+Before any workflow diverges, both run the same discipline: inspect the real, current system
 and its relevant evidence — never conventions or assumptions — then reconcile implementation,
 configuration, schema, tests, runtime evidence, and reliable history into an explanation that names
 its own uncertainty rather than smoothing it over.
@@ -49,60 +49,22 @@ history says was planned but the evidence doesn't show is never documented as if
 
 The skill states its own posture as one sentence: **the system establishes what exists; the user
 decides what it should become.** Everything that follows is that sentence applied differently
-depending on which of the three workflows is running.
+depending on which of the two workflows is running — and this same discipline is what
+`document-it` reuses, without duplicating it, when its own available evidence is missing or stale
+(§7).
 
-## 3. Three workflows, three different confirmation gates
+## 3. Two workflows, two different confirmation gates
 
-### Document existing architecture
+### Standalone investigation
 
-Investigate every architectural surface the system actually has — persistence and data
+Investigate the architectural surface a request actually calls for — persistence and data
 relationships, business rules and lifecycle, request or interaction boundaries, authorization and
 security, background or asynchronous work, external integrations, user-facing surfaces and reusable
 UI logic, schema and operational constraints — treated as investigation categories, not a fixed
-checklist a system must satisfy in full. Investigation also produces a working hypothesis for the
-system's **architectural center of gravity**: the one idea everything else hangs off (a shared
-contract, a pipeline, a runtime boundary, a data-ownership split).
-
-The recap is written as chat output, never as a file or an artifact, threading concrete
-implementation references through whichever concerns actually apply — the problem being solved,
-the core architecture, reusable pieces versus integration-specific code, runtime behavior, the data
-model, security, testing, decisions, and remaining gaps. This is where the workflow stops and waits:
-the investigation does not become a published guide until the user confirms the recap. A correction
-here is real signal about what the guide needs to get right, caught before any structure or prose
-gets written around it.
-
-Only after that confirmation does the workflow write and publish: decide the guide's structure from
-the confirmed center of gravity, load `artifact-design` (required before writing any Artifact
-page), build the HTML from the template, publish it, and run the guide review before calling it
-done (§6).
-
-### Update an existing architecture guide
-
-This is demand-triggered, not an automatic fourth stage that follows guide creation: a stale
-architectural claim, a stale evidence reference, changed configuration or runtime behavior, or a
-prior documentation defect all trigger it, independent of whether the implementation itself
-changed. [`rules/maintenance.md`](../skills/document-it/rules/maintenance.md) governs every
-judgment call inside it.
-
-The human gate here is narrower than the other two workflows, deliberately: the user is asked only
-when authority, intent, or a material decision is unclear. Reconciling a guide with an
-already-settled reality is not a new product decision, so it doesn't need one. Concretely,
-`maintenance.md` classifies what a reconciliation pass finds into one of four outcomes — no
-documentation event (leave it alone), a narrow update (correct one fact or reference in place), a
-connected architectural change (follow the complete dependent claim graph, not only the section
-where the change was first noticed), or unresolved authority/intent/a material decision (stop, and
-route it back through this same shared discipline rather than deciding it during maintenance). This
-four-way classification is specific to *how a maintenance pass triages what it finds*; it is a
-different mechanism from the four-category claim model a synthesized plan uses (§5) — the two
-should not be conflated.
-
-Continuity means preserving every unaffected claim, explanation, and presentation choice — not
-rewriting nearby prose merely because the file is open, and not restructuring for taste or
-conformity with some other guide's shape. Continuity is not the same as freezing the guide's center
-of gravity, ownership, or reasoning in place: when verified architecture has actually moved one of
-those, the guide moves with it, in proportion to what changed. The guide's identity survives every
-maintenance pass unchanged (§6), and the whole updated guide — not only the touched sections — goes
-back through the guide review, with emphasis on the changed claims and whatever depends on them.
+checklist a system must satisfy in full. The result is a recap threading concrete implementation
+references through whichever concerns actually apply, given as chat output. No further human
+confirmation is required beyond ordinary conversational follow-up: a standalone investigation's
+recap *is* the result, not a draft awaiting a separate approval gate the way a guide or a plan is.
 
 ### Plan feature architecture
 
@@ -117,41 +79,35 @@ preserves the approved guarantees.
 **Plan Synthesis** is this workflow's final writing step, not the whole workflow, and runs only
 when the user actually asks for it — never as an automatic next step after investigation, and never
 implied by a plain "document/explain X" request. It has two mandatory preconditions: a real
-current-state investigation of the same quality "Document existing architecture" requires, and
+current-state investigation of the same quality a standalone investigation requires, and
 explicit, user-approved decisions about the target state. If either is missing, synthesis stops and
 returns to that investigation or decision conversation rather than papering over the gap — Plan
-Synthesis never manufactures a decision on the user's behalf. See §5 for the claim model it writes
+Synthesis never manufactures a decision on the user's behalf. See §4 for the claim model it writes
 into, and
 [`rules/plan-synthesis.md`](../skills/lab-it/rules/plan-synthesis.md) for the full
 contract.
 
-## 4. Five stages that don't automatically cascade into each other
+## 4. Four stages that don't automatically cascade into each other
 
-The prompt asks for one output, but the work behind it always passes through some subset of five
+The prompt asks for one output, but the work behind it always passes through some subset of four
 conceptually distinct stages, and no stage silently produces the next:
 
 1. **Investigation** establishes current reality. It commits to nothing beyond itself — an
    investigation and its recap can be, and often are, the entire session.
 2. **Architectural decision-surfacing** is the "the user decides" half of the skill's own maxim,
-   applied at a different moment in each workflow: confirming a recap (document), approving a
-   target-state choice before synthesis (plan), or resolving unclear authority (update). It is
+   applied when planning a feature: approving a target-state choice before synthesis. It is
    distinct from investigation — a decision is a choice about what should become true, not an
    observation about what already is.
-3. **Guide publication** (new or updated) is the terminal output of the "teach a system" branch. A
-   new guide never publishes before its recap is confirmed; neither a new nor an updated guide is
-   considered finished before it passes the guide review (§6). Publishing or updating a guide never
-   automatically hands anything to the planning workflow — it is a complete, standalone result of
-   its own.
-4. **Plan Synthesis** is the terminal writing step of the "prepare a change" branch. It consolidates
+3. **Plan Synthesis** is the terminal writing step of the "prepare a change" branch. It consolidates
    an already-investigated current state and already-approved decisions; it does not investigate or
    decide anything itself, and its own preconditions (§3) enforce that.
-5. **Downstream feature planning** — `plan-it`'s classification, scope, design
+4. **Downstream feature planning** — `plan-it`'s classification, scope, design
    reconciliation, issue decomposition, sequencing, review, and GitHub issue creation — begins only
    once the user has given a second, separate approval: of the synthesized *document itself*, not
    merely of the decisions that went into it before synthesis. This skill's involvement ends at that
-   approved `plan.md`; everything from there is `plan-it`'s job (§7).
+   approved `plan.md`; everything from there is `plan-it`'s job (§6).
 
-Two of these five look similar and are not: a decision the user approved *before* Plan Synthesis
+Two of these four look similar and are not: a decision the user approved *before* Plan Synthesis
 establishes what the plan is allowed to say; the user approving the *synthesized document itself*
 afterward is what actually makes it canonical for `plan-it`. The handoff statement Plan
 Synthesis writes into the plan marks its intended role — it is not evidence that either approval has
@@ -183,78 +139,23 @@ doing so would hide a real decision inside what looks like implementation freedo
 runs its own internal review before ever presenting the plan for approval: every locked decision
 worded exactly as approved, no material decision disguised as open, the four categories still
 distinguishable, each derived constraint's premises actually holding, and no evidence reference that
-fails to resolve against its authoritative source right now. This review is specific to Plan
-Synthesis — a different check from the guide review in §6, which never applies to a plan.
+fails to resolve against its authoritative source right now.
 
-## 6. The architecture guide as a published artifact
+## 6. Rule ownership and cross-skill handoffs
 
-A guide's section list is decided by the confirmed center of gravity, not poured into a fixed
-inventory — two guides for two different capabilities legitimately have different section counts,
-names, and content. What *is* fixed is the rhythm each section opens with (a numbered head, an
-italicized question a reader would actually ask, then one direct-answer paragraph) before choosing
-whichever content blocks actually fit — a spec strip of concrete operational facts, an
-ownership/flow diagram, a responsibility table, an ordered timeline, a callout, a formula recap, a
-variant badge, or a closing sentence. See
-[`rules/doc-style.md`](../skills/document-it/rules/doc-style.md) for the full grammar; this
-dossier does not restate its content-block vocabulary.
-
-**Identity.** A guide's title follows `"{Capability} Architecture"`. Its favicon is one or two
-domain-appropriate emoji, supplied at first publish and re-supplied unchanged on every redeploy —
-a changed favicon reads as a different document, so a maintenance pass discovers or confirms the
-guide's current favicon before touching anything rather than silently picking a new one. Maintaining
-a guide redeploys through the same `url`; a new guide is never minted to stand in for updating an
-existing one.
-
-**Rendering.** [`rules/template.html`](../skills/document-it/rules/template.html) is a
-self-contained scaffold by explicit operational constraint: no `DOCTYPE`/`html`/`head`/`body`
-wrapper (the Artifact tool supplies those at publish time), and no external requests or CDN
-dependency — every rule and every script is inline. Theming runs on CSS custom properties across
-three coexisting paths: a light default on bare `:root`, a `prefers-color-scheme: dark` media
-override, and an explicit `data-theme="dark"`/`"light"` attribute override that wins in both
-directions over the media query. The layout is a responsive two-column shell — a sticky section nav
-beside the main content column — that collapses to one column under an 880px breakpoint. The syntax
-highlighter enhances exactly five disclosed `data-lang` values (PHP, TS, Vue, JSON, HTTP) with token
-coloring and a tinted label; every other case — an unsupported-but-present `data-lang`, or none at
-all — still reaches an HTML-escaped, unhighlighted plain-code fallback rather than being skipped or
-left unescaped.
-
-**Accessibility.** The template carries specific, verifiable signals: `:focus-visible` outlines on
-interactive elements, one `aria-label="Sections"` on the nav landmark, a
-`prefers-reduced-motion: reduce` override that disables smooth scrolling, and a semantic heading
-hierarchy (`h1` hero, `h2` per section, `h3`/`h4` for subdivisions). These are signals, not a
-certified contract — no formal accessibility audit (measured contrast ratios, for example) is built
-into this skill, and none is claimed here.
-
-**Review.** [`rules/review.md`](../skills/document-it/rules/review.md) is a check on
-whether a *finished* guide actually communicates the architecture, run only against a published
-Artifact or the exact draft being proposed — never mid-draft, since drafting is `doc-style.md`'s
-job, not this one. Its checklist categories (architectural center; responsibility and ownership;
-reuse/integration/variation; runtime, lifecycle, and state; architecture versus implementation;
-structure and content; consistency; decisions and limitations) are each conditional on the
-architecture actually having that concern — an inapplicable category is skipped, not failed. A
-known, honestly-stated gap is not itself a finding; an unstated one is. The output is a short list
-of findings ordered by consequence, never a rewrite — the review reports, and the guide's author
-decides what to act on.
-
-## 7. Rule ownership and cross-skill handoffs
-
-Every file under `rules/` answers a question none of the others do, and is loaded only when its
-workflow actually needs it — none is a universal prerequisite. `template.html` is deliberately not
-called a rule: it's a scaffold to edit, not a normative statement the way the other four are.
+The one rule file this skill owns answers a question no other file does, and is loaded only when
+its workflow actually needs it:
 
 | File | Owns |
 |---|---|
-| [`rules/doc-style.md`](../skills/document-it/rules/doc-style.md) | The writing grammar for guides: section rhythm, the content-block vocabulary, tone and evidence discipline, favicon stability |
-| [`rules/template.html`](../skills/document-it/rules/template.html) (scaffold, not a rule) | The Artifact HTML/CSS/JS: the theme tokens, the responsive shell, the content-block CSS classes, the highlighter and its fallback contract |
-| [`rules/review.md`](../skills/document-it/rules/review.md) | Judging whether a finished guide communicates its architecture |
-| [`rules/maintenance.md`](../skills/document-it/rules/maintenance.md) | Reconciling an existing guide with verified current reality without breaking its identity or unaffected meaning |
 | [`rules/plan-synthesis.md`](../skills/lab-it/rules/plan-synthesis.md) | The full Plan Synthesis contract: preconditions, the four-category claim model, evidence rules, the internal review, and the approval/handoff gate |
 
+Guide-writing, guide-scaffold, guide-review, and guide-maintenance rules — formerly this skill's
+own — now live entirely under `document-it` and are not duplicated here; §7 states the boundary.
+
 Outside this skill, the only downstream cross-skill handoff is an approved `plan.md` — a
-published or updated guide is a complete result on its own and never implies a downstream handoff.
-This doesn't deny the skill's other external boundaries (the Claude Artifact tool, `artifact-design`)
-named in §8 — it means no *other skill* ever receives a handoff from this one.
-Once approved, `plan-it` treats the plan as canonical: it can still validate a
+standalone investigation's recap is a complete result on its own and never implies a downstream
+handoff. Once approved, `plan-it` treats the plan as canonical: it can still validate a
 current-state fact against current evidence when drafting issues, and can flag a derived constraint
 whose stated premise no longer holds, but it does not re-open a locked decision or re-derive
 architecture from scratch. That consumption is governed by
@@ -264,41 +165,45 @@ established — never inferred from a polished draft or the file's mere existenc
 `plan-it`'s substrate for that downstream work, not this skill's — this skill never
 mutates GitHub and never performs Git workflow.
 
+## 7. Boundary with `document-it`
+
+`document-it` is a separate, independently callable skill, not a narrowed remnant of this one — it
+owns guide creation, guide maintenance, and guide review in both Markdown and Artifact form, along
+with the rendering, identity, and review architecture those require. This skill does not own, and
+this dossier does not describe, any of that. The relationship runs in one direction only:
+`document-it` draws on this skill's evidence discipline (§2) when its own currently available
+understanding is missing or stale, reusing sufficient verified evidence rather than repeating a
+full investigation from scratch — this skill never hands work to `document-it`, and a published or
+updated guide never implies a handoff back here. File extension does not decide ownership either
+way: an approved `plan.md` stays this skill's even though it's a `.md` file, and a Markdown
+architecture guide is `document-it`'s even though it isn't an Artifact.
+
 ## 8. Boundaries, non-goals, and current confidence
 
 This skill owns architecture investigation, architectural explanation, surfacing and resolving
-material decisions with the user, new architecture guides, maintenance of existing guides, and
-synthesis of approved architecture into `plan.md`. It does not own application implementation,
-debugging or diff review, API reference documentation, feature classification, issue decomposition,
-GitHub issue mutation, delivery sequencing, or Git workflow — those stay with `plan-it`
-and the consuming project regardless of which of the three workflows ran.
+material decisions with the user, and synthesis of approved architecture into `plan.md`. It does
+not own application implementation, debugging or diff review, API reference documentation, guide
+creation/maintenance/review (§7), feature classification, issue decomposition, GitHub issue
+mutation, delivery sequencing, or Git workflow — those stay with `document-it`, `plan-it`, and the
+consuming project.
 
-Two dependencies are deliberate, named openly rather than disguised as neutrality: the guide
-workflow publishes through the Claude Artifact tool and the `artifact-design` skill; the planning
-workflow's only external handoff is an approved `plan.md` to `plan-it`. Neither makes
-this skill tracker- or stack-specific.
+The planning workflow's only external handoff is an approved `plan.md` to `plan-it`; that
+dependency does not make this skill tracker- or stack-specific.
 
-**Architectural coherence.** Three workflows produce three genuinely distinct outputs — a taught
-guide, a maintained guide, a decision handoff — under one shared evidence discipline, with four rule
-files plus the `template.html` scaffold each answering a question the others don't, and no file
-claiming a boundary another one owns.
+**Architectural coherence.** Two workflows produce two genuinely distinct outputs — a verified
+answer and a decision handoff — under one shared evidence discipline, with a single owned rule file
+and a clearly stated, one-directional boundary with `document-it`.
 
 **Current, honest limits:**
 
-- The Artifact identity, rendering, and accessibility contract described in §6 is stated as an
-  explicit operational constraint inside the template and its own inline documentation. Nothing in
-  this skill's files independently confirms how a specific renderer actually displays a published
-  guide — the guide review checks whether a guide communicates architecture, not whether a rendered
-  page meets a measured contrast ratio or a formal accessibility standard.
-- The syntax highlighter enhances five named languages with a disclosed, safe fallback for anything
-  else — a bounded, honestly-scoped renderer capability, not a hidden assumption, but still a literal
-  list: a guide documenting a system in an unlisted language renders that code unhighlighted, not
-  mis-rendered.
-- The investigation vocabulary, the claim model, and the structure-follows-architecture principle
-  are written without framework- or stack-specific vocabulary in any current rule file — that is a
-  property of how the files are currently written, not an empirically exercised claim about how well
-  they generalize to every consuming project's stack.
+- The investigation vocabulary, the claim model, and the plan-synthesis method are written without
+  framework- or stack-specific vocabulary in the current rule file — that is a property of how the
+  file is currently written, not an empirically exercised claim about how well it generalizes to
+  every consuming project's stack.
 - The Plan Synthesis → `plan-it` handoff depends on both skills agreeing on the same
   materiality test and the same recognition procedure. That agreement holds because both sides read
-  from the same owning files named in §7 — it is not independently enforced at runtime by either
+  from the same owning files named in §6 — it is not independently enforced at runtime by either
   skill.
+- This dossier's own narrowing — separating this skill's architecture from `document-it`'s — has
+  been checked against both skills' current `SKILL.md`/`README.md` files and the repository's
+  cross-references, not against a live consumer exercise of either skill.

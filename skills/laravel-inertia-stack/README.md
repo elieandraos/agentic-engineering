@@ -1,6 +1,6 @@
 # laravel-inertia-stack
 
-Bring evidence-backed Laravel, InertiaJS, Vue 3, and Pest conventions into the Build
+Bring evidence-backed Laravel, InertiaJS, Vue 3, and Pest conventions into the Implement
 stage.
 
 ## When to use it
