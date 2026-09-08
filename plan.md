@@ -1,9 +1,12 @@
 # Ecosystem migration plan — Lab · Document · Plan · Implement · Review · Ship
 
-**Status: pending review.** This revision corrects the previously reviewed version (HEAD
-`468715d`) per explicit feedback. The architecture and decisions recorded here are settled, but
-writing them down does not authorize implementing Step 2 or any later step — each step still
-requires its own go-ahead, per §5.
+**Status: Step 1 approved; Step 2 implemented, pending Control Room review.** This revision
+corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The architecture
+and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 — extracting
+`document-it` and narrowing `lab-it` (§5) — has been implemented on top of reviewed HEAD
+`0b6b5587c56d40eda18e8fb1294913af83e52e8d`; see the implementation record appended to Step 2's own
+entry below. Implementing Step 2 does not authorize Step 3 or any later step — each remaining step
+still requires its own go-ahead, per §5.
 
 **Source of truth for this initiative.** This is the change plan for splitting the current
 `lab-it` / `plan-it` / `ship-it` ecosystem into `lab-it` (narrowed), `document-it` (new), `plan-it`
@@ -431,6 +434,55 @@ step is published in a mixed or half-migrated state.
 - **Result to present.** Diff of new `document-it` files and narrowed `lab-it` files, plus
   confirmation that no `plan-it`/`ship-it` file needed updating (verified — none references the
   moved files).
+
+**Implemented.** Starting point: branch `main`, HEAD `0b6b5587c56d40eda18e8fb1294913af83e52e8d`
+(the last reviewed commit), working tree clean except the three pre-existing untracked files
+(`control-room-responsibilities.md`, `skills-audit.md`, `subagents.md`), left untouched.
+
+- `document-it/SKILL.md`, `README.md`, `rules/doc-style.md`, `rules/review.md`,
+  `rules/maintenance.md` created; `rules/template.html` moved verbatim (byte-identical, path only).
+  `doc-style.md`, `review.md`, and `maintenance.md` carry the same writing grammar, evidence
+  standards, review substance, and maintenance discipline as their `lab-it` originals, adapted so
+  every previously Artifact-only rule (favicon, `url` identity, redeploy sequence, format-specific
+  review checks) now states an equivalent for Markdown (file path identity, front matter/title
+  handled as non-immutable metadata, `docs/`-relative saving) alongside the unchanged Artifact
+  behavior, per §3.3.
+- `lab-it/SKILL.md` and `README.md` narrowed: the "Document existing architecture" and "Update an
+  existing architecture guide" workflow sections removed; "Shared investigation and decision
+  discipline" and "Plan feature architecture" preserved, the former's closing paragraph adapted
+  (guide-specific conditionals replaced with the `document-it` routing case; a stray reference to
+  the removed "Document existing architecture" heading in "Plan feature architecture"'s
+  preconditions corrected to point at the retained "Shared investigation and decision discipline"
+  section instead). `rules/plan-synthesis.md` untouched.
+- Git recorded all four moved `rules/*` files as renames, not delete+add.
+- **Unexpected finding, corrected.** `artifacts/lab-it.md` (a tracked architecture dossier for
+  `lab-it`, not listed as affected by §2.1's cross-reference search) carries seven Markdown links
+  into `../skills/lab-it/rules/{doc-style.md,template.html,review.md,maintenance.md}` — a live
+  pointer this extraction breaks that §2.1's "no file outside `lab-it` references" claim missed.
+  Corrected with the smallest necessary change: the seven links now point at
+  `../skills/document-it/rules/...`; the dossier's own prose (which still describes these
+  workflows as `lab-it`'s) is untouched — that content reconciliation is Step 6's "broader
+  public-documentation rewrite," not this step's. `artifacts/lab-it.md`'s one link to
+  `../skills/lab-it/rules/plan-synthesis.md` was already correct and needed no change.
+- `rules/template.html`'s own header comment still says "the lab-it guide-writing workflow" — left
+  as-is per this step's explicit "moved verbatim" instruction; it is now a stale self-reference
+  inside an unmodified file, not a broken cross-file link, and is flagged here rather than silently
+  fixed or silently left unflagged.
+- **Validation performed:** full re-read of both resulting skills and every affected supporting
+  file; frontmatter and Markdown structure checked in both `SKILL.md` files; a diff of each moved
+  rule file against its pre-move committed content, confirming every delta is an intentional
+  Markdown/Artifact adaptation or terminology fix, not a dropped requirement; `template.html`
+  confirmed byte-identical to its pre-move content; a repo-wide search confirming `lab-it/` no
+  longer references or routes to `doc-style.md`/`template.html`/guide `review.md`/`maintenance.md`;
+  a repo-wide search for the four moved filenames outside `document-it/`, `plan.md`, and the
+  untracked `skills-audit.md`, which surfaced only the `artifacts/lab-it.md` finding above; `git
+  diff --check` clean; seven bounded static walkthroughs run against the actual file content
+  (investigation ending in an answer plus the retained `plan.md` handoff; new guide with
+  unspecified and explicit format; Markdown-only work with no Artifact tool; existing-guide update
+  and standalone review; missing/inaccessible target and unavailable publishing tool; both formats
+  with a partial update failure; reusing sufficient evidence versus routing a missing investigation
+  through `lab-it`) — all traced correctly through the new files with no coherence gap found. No
+  Artifact was published and no consuming project was touched, per this step's authorization scope.
 
 ### Step 3 — Extract `implement-it`, narrow `ship-it`
 

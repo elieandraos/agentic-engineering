@@ -81,7 +81,7 @@ done (§6).
 This is demand-triggered, not an automatic fourth stage that follows guide creation: a stale
 architectural claim, a stale evidence reference, changed configuration or runtime behavior, or a
 prior documentation defect all trigger it, independent of whether the implementation itself
-changed. [`rules/maintenance.md`](../skills/lab-it/rules/maintenance.md) governs every
+changed. [`rules/maintenance.md`](../skills/document-it/rules/maintenance.md) governs every
 judgment call inside it.
 
 The human gate here is narrower than the other two workflows, deliberately: the user is asked only
@@ -195,7 +195,7 @@ italicized question a reader would actually ask, then one direct-answer paragrap
 whichever content blocks actually fit — a spec strip of concrete operational facts, an
 ownership/flow diagram, a responsibility table, an ordered timeline, a callout, a formula recap, a
 variant badge, or a closing sentence. See
-[`rules/doc-style.md`](../skills/lab-it/rules/doc-style.md) for the full grammar; this
+[`rules/doc-style.md`](../skills/document-it/rules/doc-style.md) for the full grammar; this
 dossier does not restate its content-block vocabulary.
 
 **Identity.** A guide's title follows `"{Capability} Architecture"`. Its favicon is one or two
@@ -205,7 +205,7 @@ guide's current favicon before touching anything rather than silently picking a 
 a guide redeploys through the same `url`; a new guide is never minted to stand in for updating an
 existing one.
 
-**Rendering.** [`rules/template.html`](../skills/lab-it/rules/template.html) is a
+**Rendering.** [`rules/template.html`](../skills/document-it/rules/template.html) is a
 self-contained scaffold by explicit operational constraint: no `DOCTYPE`/`html`/`head`/`body`
 wrapper (the Artifact tool supplies those at publish time), and no external requests or CDN
 dependency — every rule and every script is inline. Theming runs on CSS custom properties across
@@ -225,7 +225,7 @@ hierarchy (`h1` hero, `h2` per section, `h3`/`h4` for subdivisions). These are s
 certified contract — no formal accessibility audit (measured contrast ratios, for example) is built
 into this skill, and none is claimed here.
 
-**Review.** [`rules/review.md`](../skills/lab-it/rules/review.md) is a check on
+**Review.** [`rules/review.md`](../skills/document-it/rules/review.md) is a check on
 whether a *finished* guide actually communicates the architecture, run only against a published
 Artifact or the exact draft being proposed — never mid-draft, since drafting is `doc-style.md`'s
 job, not this one. Its checklist categories (architectural center; responsibility and ownership;
@@ -244,10 +244,10 @@ called a rule: it's a scaffold to edit, not a normative statement the way the ot
 
 | File | Owns |
 |---|---|
-| [`rules/doc-style.md`](../skills/lab-it/rules/doc-style.md) | The writing grammar for guides: section rhythm, the content-block vocabulary, tone and evidence discipline, favicon stability |
-| [`rules/template.html`](../skills/lab-it/rules/template.html) (scaffold, not a rule) | The Artifact HTML/CSS/JS: the theme tokens, the responsive shell, the content-block CSS classes, the highlighter and its fallback contract |
-| [`rules/review.md`](../skills/lab-it/rules/review.md) | Judging whether a finished guide communicates its architecture |
-| [`rules/maintenance.md`](../skills/lab-it/rules/maintenance.md) | Reconciling an existing guide with verified current reality without breaking its identity or unaffected meaning |
+| [`rules/doc-style.md`](../skills/document-it/rules/doc-style.md) | The writing grammar for guides: section rhythm, the content-block vocabulary, tone and evidence discipline, favicon stability |
+| [`rules/template.html`](../skills/document-it/rules/template.html) (scaffold, not a rule) | The Artifact HTML/CSS/JS: the theme tokens, the responsive shell, the content-block CSS classes, the highlighter and its fallback contract |
+| [`rules/review.md`](../skills/document-it/rules/review.md) | Judging whether a finished guide communicates its architecture |
+| [`rules/maintenance.md`](../skills/document-it/rules/maintenance.md) | Reconciling an existing guide with verified current reality without breaking its identity or unaffected meaning |
 | [`rules/plan-synthesis.md`](../skills/lab-it/rules/plan-synthesis.md) | The full Plan Synthesis contract: preconditions, the four-category claim model, evidence rules, the internal review, and the approval/handoff gate |
 
 Outside this skill, the only downstream cross-skill handoff is an approved `plan.md` — a
