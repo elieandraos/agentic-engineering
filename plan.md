@@ -1586,8 +1586,9 @@ it replaces the outline above in place rather than standing alongside it as a co
 remains a proposal: not approved, and no tag, draft release, published release, PR, or deployment has
 been created for it.
 
-**Proposed tag and title.** Tag `v2.0.0`; release title **"Agentic Engineering v2.0.0 — Lab ·
-Document · Plan · Implement · Review · Ship."**
+**Proposed tag and title.** Tag `v2.0.0`; release title **"Agentic Engineering v2.0.0."** The agreed
+headline — **Lab. Plan. Implement. Review. Ship — with the right stack.** — is kept inside the notes
+body, not folded into the title.
 
 **Why this is a major release.** Responsibilities moved between skills, not merely within one:
 implementation, verification, Gate 1/Gate 2, commit construction, and issue closure moved out of
@@ -1612,10 +1613,11 @@ ecosystem's consumers.
 >
 > ### What changed
 >
-> - **`document-it` (new).** Creates, updates, and reviews explanatory architecture guides, in
->   Markdown, a Claude Artifact, or both. Narrowed out of `lab-it`, which no longer owns guide
->   creation, review, or maintenance — `lab-it` now routes guide-shaped requests to `document-it` and
->   draws on it only for its own investigation-evidence discipline.
+> - **`document-it` (new).** An independently available companion capability, not an inserted
+>   pipeline stage — creates, updates, and reviews explanatory architecture guides, in Markdown, a
+>   Claude Artifact, or both. Narrowed out of `lab-it`, which no longer owns guide creation, review,
+>   or maintenance: `lab-it` routes guide requests to `document-it`; `document-it` reuses current
+>   evidence and calls on `lab-it` for investigation when evidence is missing or stale.
 > - **`implement-it` (new).** Owns approved issue/milestone intake, working-branch readiness,
 >   implementation, verification, issue-level Git workflow, Gate 1 and Gate 2, commit construction,
 >   authorized push, issue closure, and next-issue recommendations. Narrowed out of `ship-it`, which
@@ -1627,18 +1629,19 @@ ecosystem's consumers.
 >   `plan.md` synthesis only. Guide output moved to `document-it`.
 > - **`ship-it` (narrowed).** Milestone PR readiness and authorized creation, post-merge delivery,
 >   milestone closure, and release. No longer implements, verifies, or closes individual issues —
->   that is `implement-it`'s job. Its CI-failure handling on an open milestone PR now explicitly
->   splits investigation and authorization (`ship-it`) from performing the correction
->   (`implement-it`).
+>   that is `implement-it`'s job. On a CI failure on an open milestone PR, `ship-it` investigates,
+>   explains, and secures the human's authorization; `implement-it` performs the authorized
+>   correction.
 > - **Implementation-review, recovery, and verification improvements.** Gate 1's stop condition now
->   includes a clean or resolved `review-it` pass; worktree provenance is judged from reliable
->   signals (git reflog, a session's own recorded start point, an explicit human statement) rather
->   than appearance; an empty dependency-ready set is no longer treated as sufficient for milestone
->   handoff when issues remain open but blocked; interrupted batch creation re-queries GitHub before
->   retrying; approval validity is re-checked against the current diff/issue body before Gate 2 and
->   before push; verification evidence is tied to the commit/diff it was produced against; the
->   completed-issue full-suite checkpoint may reuse an established earlier full-suite result under
->   four stated conditions, never a cache hit or a selected subset alone.
+>   requires `review-it`'s pass to be clean, or its findings resolved and re-verified; worktree
+>   provenance is judged from reliable signals (git reflog, a session's own recorded start point, an
+>   explicit human statement) rather than appearance; an empty dependency-ready set is no longer
+>   treated as sufficient for milestone handoff when issues remain open but blocked; interrupted
+>   batch creation re-queries GitHub before retrying; approval validity is re-checked against the
+>   current diff/issue body before Gate 2 and before push; verification evidence is tied to the
+>   commit/diff it was produced against; the completed-issue full-suite checkpoint may reuse an
+>   established earlier full-suite result under four stated conditions, never a cache hit or a
+>   selected subset alone.
 >
 > ### Install / migrate
 >
@@ -1646,23 +1649,28 @@ ecosystem's consumers.
 > npx skills add elieandraos/agentic-engineering
 > ```
 >
-> Reinstall or select all six portable skills — `lab-it`, `document-it`, `plan-it`, `implement-it`,
-> `review-it`, `ship-it` — so your existing skills are refreshed to this release and the three new
-> names are added. **Refreshing only the skills you already have updates `lab-it`, `plan-it`, and
-> `ship-it` in place but does not add `document-it`, `implement-it`, or `review-it`** — a refresh
-> never adds a skill a project didn't already install. Keep any applicable stack companion (e.g.
-> `laravel-inertia-stack`) installed as before; this release does not change stack-companion
-> behavior.
+> This installs or refreshes directly from the repository's current default branch, at whatever
+> commit `main` is at when the command runs — an unpinned GitHub-source install does not guarantee
+> the exact `v2.0.0` contents once `main` has advanced further. Select all six portable skills —
+> `lab-it`, `document-it`, `plan-it`, `implement-it`, `review-it`, `ship-it` — as the intended
+> installation scope, so your existing skills are refreshed from the repository's current default
+> branch and the three new names are added. **Refreshing only the skills you already have updates
+> `lab-it`, `plan-it`, and `ship-it` in place but does not add `document-it`, `implement-it`, or
+> `review-it`** — a refresh never adds a skill a project didn't already install. Keep any applicable
+> stack companion (e.g. `laravel-inertia-stack`) installed as before; this release does not change
+> stack-companion behavior.
 >
 > ### Validation
 >
 > This release was validated by source review: a full re-read of every changed and new file,
 > repository-wide searches for stale ownership references, `git diff --check`, relative-Markdown-link
 > resolution across every changed file, and bounded static walkthroughs of each migration step's key
-> scenarios against the actual owning `SKILL.md`/rule files. One bounded Git-mechanics experiment
-> exercised `review-it`'s comparison-base and state-identity behavior directly. **No skill was
-> invoked end to end, and no consuming project's installation, refresh, or pipeline run was performed
-> as part of this release** — this is source-level validation, not consumer proof.
+> scenarios against the actual owning `SKILL.md`/rule files. Two bounded, disposable-repository
+> experiments checked the underlying Git mechanics `review-it`'s rules depend on — comparison-base
+> and state/comparison-identity behavior, and final-content equivalence for the completed-issue reuse
+> rule; neither experiment executed `review-it` itself. **No skill was invoked end to end, and no
+> consuming project's installation, refresh, or pipeline run was performed as part of this
+> release** — this is source-level validation, not consumer proof.
 >
 > ### Known deferred items
 >
@@ -1676,7 +1684,10 @@ ecosystem's consumers.
 
 **Migration instruction (short form, for consumers).** Reinstall or select all six portable skills
 from this repository — `lab-it`, `document-it`, `plan-it`, `implement-it`, `review-it`, `ship-it` —
-so existing skills are refreshed and the three new names are added. Preserve any applicable stack
+as the intended installation scope, so existing skills are refreshed from the repository's current
+default branch and the three new names are added. A GitHub-source install tracks the source
+repository's default branch at install/update time, not a pinned ref — it does not by itself
+guarantee the exact `v2.0.0` contents once `main` has advanced further. Preserve any applicable stack
 companion already installed (e.g. `laravel-inertia-stack`); this release does not change
 stack-companion behavior. Updating only the skill names a project already has does **not** add the
 three missing skills — a refresh never adds a skill a project didn't already install.
@@ -1685,12 +1696,14 @@ three missing skills — a refresh never adds a skill a project didn't already i
 every changed and new file across Steps 2-6; repository-wide searches for stale ownership and
 cross-reference claims; `git diff --check` on every touched pass; a Python-based relative-Markdown-
 link resolution check; bounded static walkthroughs (reasoning through the relevant rule files against
-a scenario, no skill invoked) covering each step's key scenarios, listed in full in §6 above; and one
-bounded Git-mechanics experiment (Step 4's correction record) exercising `review-it`'s comparison-base
-and state-identity behavior against real Git state. **No end-to-end consumer execution was
-performed**: no skill was invoked as a live session, and no `useOrbit` or other consuming project's
-installation, refresh, or pipeline run occurred. The two consumer-validation exercises above remain
-available, deferred, optional follow-up — not a precondition of this proposal.
+a scenario, no skill invoked) covering each step's key scenarios, listed in full in §6 above; and two
+bounded, disposable-repository experiments checking the underlying Git mechanics `review-it`'s rules
+depend on — comparison-base and state/comparison-identity behavior (Step 4's correction record) and
+final-content equivalence for the completed-issue reuse rule (Step 5's correction record). **Neither
+experiment executed `review-it` itself.** No end-to-end consumer execution was performed: no skill
+was invoked as a live session, and no `useOrbit` or other consuming project's installation, refresh,
+or pipeline run occurred. The two consumer-validation exercises above remain available, deferred,
+optional follow-up — not a precondition of this proposal.
 
 **Known deferred items (brief, not expanding this release's scope).** Canonical issue-definition
 durable storage (§3.2, §7); the `laravel-inertia-stack`/Boost precedence question (§7 item 1); the
