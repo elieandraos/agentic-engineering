@@ -398,10 +398,17 @@ never redesigns or invents one, and it never decides what belongs in an issue or
 milestone PR readiness onward, and this skill's own dossier does not describe that architecture; see
 [`ship-it`'s dossier](ship-it.md).
 
-**Stack/project implementation guidance is a separate concern, composed alongside.** Application
-code, framework conventions, and the concrete test/format/lint/static-analysis tooling a project uses
-all come from whatever implementation and tooling skills the consuming project's stack requires,
-loaded alongside this skill — never carried inside its own rules.
+**Stack/project implementation guidance is a separate concern, composed alongside — not sourced
+from one place.** Project instructions, established repository conventions, and applicable
+implementation/testing/tooling skills all supply guidance this skill performs the work with; an
+applicable custom stack companion (such as `laravel-inertia-stack`) is loaded when one is available
+and adds technology-specific implementation knowledge on top of that, but it is optional, not a
+prerequisite — this skill must function correctly with no custom companion installed, drawing on
+project instructions, configuration, and established usage instead (`verification.md`'s "Discover
+the project's verification tools" applies the same discovery discipline to test/format/lint/
+static-analysis tooling specifically). No technology-specific default is carried inside this
+skill's own portable rules; see `SKILL.md`'s "Composition" for the owning statement of this model,
+which this dossier does not duplicate.
 
 **A discovered material contradiction routes back through whichever boundary actually owns it, never
 resolved silently in place.** An issue's own completion criterion that can't be met at this

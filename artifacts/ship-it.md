@@ -46,9 +46,17 @@ not an abstraction layer meant to be swapped for another tracker.
 A Backlog/hotfix issue — work with no delivery/phase milestone behind it — never reaches this skill
 at all: it runs directly on the repository's trunk branch, closes on its own, and the path ends
 entirely inside `implement-it`. Only milestone work, where every issue in a delivery/phase milestone
-shares one working branch, ever continues into this skill, and only once that milestone's own
-dependency-ready-set recompute (owned by `implement-it/rules/sequencing.md`) reports zero open
-issues remaining.
+shares one working branch, ever continues into this skill.
+
+**The ordinary implementation-to-PR-readiness handoff** happens once a delivery/phase milestone's
+open-issue count reaches zero — the same state `implement-it/rules/sequencing.md`'s own
+dependency-ready-set recompute would report, when it runs, as "zero open issues remaining." This
+skill does not wait for, or require evidence of, that specific recomputation event, though: it
+checks the milestone's actual current open-issue count directly against GitHub itself (§3), the same
+way its other two entry points check their own state directly rather than requiring proof of a prior
+`implement-it` session (§1). Existing-PR investigation/continuation (§4) and post-merge closure/
+release (§5) don't wait on this handoff at all — each starts from its own separate condition, per
+§1.
 
 Milestone work ordinarily arrives here as `implement-it`'s completed, verified, closed work — issue
 implementation, both review gates (including the standalone `review-it` invocation before Gate 1),
@@ -63,18 +71,23 @@ does not itself re-derive or duplicate that lifecycle.
 
 ## 3. Milestone PR readiness
 
-This gate starts only once a delivery/phase milestone's dependency-ready-set recompute (owned by
-`implement-it`) reports zero open issues left — never earlier, and never inferred from a quiet
-stretch with no activity. It answers whether the shared branch is worth proposing as a PR, not
-whether the milestone is finished (§5 owns that broader question).
+This gate starts only once a delivery/phase milestone genuinely has zero open issues left — never
+earlier, and never inferred from a quiet stretch with no activity. This skill establishes that state
+itself, by freshly querying current GitHub state directly; it does not require `implement-it`'s own
+dependency-ready-set recompute to have run or reported it, and no prior `implement-it` session is a
+precondition for this gate (§1, §2). It answers whether the shared branch is worth proposing as a
+PR, not whether the milestone is finished (§5 owns that broader question).
 
 Three conditions are re-confirmed fresh, together, every time this gate runs:
 
-- **Every issue in the milestone is closed right now** — the same state the ready-set recompute
-  already tracks; automated, per-issue verification is already part of what got each of those
-  issues to a closed state inside `implement-it`, so this condition is really "is that
-  already-established, per-issue verified state complete across the whole set," not a fresh check
-  of its own.
+- **Every issue in the milestone is closed right now** — freshly re-queried directly against
+  current GitHub state, the same state `implement-it/rules/sequencing.md`'s own recompute would
+  report as zero open issues remaining if and when it runs, though this condition does not depend on
+  that recompute having actually run. Issue closure alone does not independently prove that
+  verification or approval happened for each of those issues — that proof is `implement-it`'s own
+  Gate 1/Gate 2/verification contract (see `implement-it`'s dossier), not something this re-query
+  re-establishes. This condition confirms only that the count is currently zero; it is not a second
+  verification gate layered over each issue's own history.
 - **Final manual testing has actually happened.** This isn't something GitHub state can answer —
   it's asked of the human directly, never inferred from all issues being closed or from time having
   passed. The owning rule states this condition as a direct yes/no confirmation, with no

@@ -28,10 +28,14 @@ narrow-reuse phrase in "Default commit-building loop" to match the two reuse sou
 "Completed-issue verification: run or reuse" already defines). Step 6 — reconciling public
 documentation, validating the combined ecosystem from source, and preparing consumer-validation and
 publication proposals (§5) — was implemented at commit `d9f1f710ca4c1cd0c2ecf78907ccbe43f09013a6`,
-then received one bounded correction/completion pass adding the three remaining architecture
-dossiers and correcting several inaccurate claims found in the first pass's documentation and
-consumer/release proposals, at the commit that adds this sentence. See Step 6's own implementation
-and correction records below. **Step 6 is implemented and corrected, pending Control Room review —
+then received a bounded correction/completion pass adding the three remaining architecture dossiers
+and correcting several inaccurate claims found in the first pass's documentation and consumer/
+release proposals, at commit `bbed1f367e2b870168d6d3ab94198b8c430c8972`, then a second, narrower
+correction pass fixing five remaining findings against `ship-it.md`'s entry-condition scoping,
+`review-it.md`'s comparison-override wording, `implement-it.md`'s stack-composition explanation, the
+consumer-exercise prerequisites, and the evidence statements' precision, at the commit that adds
+this sentence. See Step 6's own implementation and correction records below. **Step 6 is implemented
+and corrected, pending Control Room review —
 not approved, not released.**
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
@@ -1422,9 +1426,12 @@ milestone PR" section (steps 1-5 investigate/explain/authorize are `ship-it`'s, 
 starts" diagram, confirming the zero-open-issues boundary between the two skills matches exactly.
 All traced correctly with no coherence gap found.
 
-**This is source validation, not runtime or consumer proof.** No skill was invoked, no `useOrbit` or
-other consuming project was touched, and no GitHub state was mutated, per this step's own
-authorization scope (§5's boundaries above).
+**This is source validation, not runtime or consumer proof.** No skill was invoked, and no
+`useOrbit` or other consuming project was touched. This step's own authorized commit and push to
+this source repository's `origin/main` is a real GitHub mutation and did occur, per its own
+explicit authorization (§6 below) — it is not covered by "no GitHub state was mutated." What did not
+occur: any consumer-repository mutation, and any PR, tag, release, or deployment anywhere, per this
+step's own authorization scope (§5's boundaries above).
 
 **Remaining findings.** None beyond what was already known and explicitly out of scope: the
 `laravel-inertia-stack`/Boost precedence question (§7 item 1) is unaffected by this pass and remains
@@ -1440,19 +1447,38 @@ step**:
      is not assumed obtainable from its GitHub remote alone; the human must provide or grant access
      to that local state before the exercise can be scoped precisely. This source repository at the
      Control-Room-reviewed Step 6 commit (or later, once further reviewed) is the install source.
-   - **Distinguish refreshing from adding, explicitly, before touching anything.** Inspect
-     `useOrbit`'s actual current `skills-lock.json` and managed set first. If it already has
-     `lab-it`, `plan-it`, and `ship-it` installed under their pre-migration contract, an ordinary
-     `skills:refresh` of exactly those three picks up this source's current content for them — which
-     now includes `ship-it`'s narrowed scope — but **does not by itself add `document-it`,
-     `implement-it`, or `review-it`**, since a refresh only touches skills the project already named
-     (`docs/skill-consumption.md` §9's proportional-validation model, and §8's "naming the managed
-     skills explicitly keeps a refresh scoped to what the project actually installed"). Installing
-     the three newly named skills is a separate, explicit decision for the human to make and for
-     `useOrbit` to record in its own `skills-lock.json`, discovery symlinks, and refresh-script
-     skill list — not an automatic consequence of refreshing what's already there. State this
-     distinction to the human before running anything, and let them choose refresh-only,
-     add-the-three, or both.
+   - **The exercise's actual prerequisite: the participating skills installed at compatible,
+     reviewed versions — not merely present.** "Scenarios" below exercises a full pipeline pass
+     through `implement-it` (including its own Gate-1 invocation of `review-it`) plus a separate,
+     standalone `document-it` invocation. That means `document-it`, `implement-it`, and `review-it`
+     must actually be installed and current for the exercise to run at all, and every skill it
+     touches — including `lab-it`, `plan-it`, and `ship-it` if they're already present — must come
+     from the same reviewed source state, not a mismatched mix of a stale pre-migration `ship-it`
+     (which still claims implementation/gate/commit ownership its own contract no longer owns)
+     alongside a newly added `implement-it` making the identical claim. A partial or mismatched
+     installed set is a real prerequisite failure for this exercise, not a detail to paper over.
+   - **Determine what `useOrbit` actually needs from its real state when the exercise is later
+     authorized — not a fixed prescription written now.** This proposal does not assume `useOrbit`'s
+     installed state (per this step's own "do not assume `useOrbit`'s ignored local environment can
+     be established from GitHub alone"). Inspect its actual current `skills-lock.json` and managed
+     set first, then determine the minimum combination of refresh and addition that gets the
+     resulting set to what the prerequisite above actually requires. **"Refresh-only," "add-the-
+     three," and "both" are not interchangeable choices with the same downstream capability**: a
+     refresh alone only updates skills `useOrbit` already has installed and never adds a skill it
+     doesn't (`docs/skill-consumption.md` §8's "naming the managed skills explicitly keeps a refresh
+     scoped to what the project actually installed") — if `useOrbit` currently has only the
+     pre-migration `lab-it`/`plan-it`/`ship-it` set, refresh-only leaves `document-it`, `implement-it`,
+     and `review-it` entirely absent and **does not satisfy this exercise's prerequisite**; only
+     adding those three (alongside refreshing whatever else is already present, so every skill
+     shares one reviewed source state) actually makes the full pipeline scenario runnable. State
+     this to the human explicitly before running anything, so the choice is made with the actual
+     consequence in view, not as a preference among equivalent options.
+   - **A partial installation may be its own separately scoped check — it is never a substitute for
+     the complete exercise.** If the human authorizes less than what the prerequisite above
+     requires, whatever gets exercised against that partial set (e.g., confirming a refreshed
+     `ship-it` still behaves correctly for milestone delivery on already-existing scope) may be a
+     legitimate, narrower validation in its own right — but it must never be reported, or counted,
+     as having successfully executed the complete pipeline exercise "Scenarios" below describes.
    - **Preserve what's unrelated.** `useOrbit`'s existing stack companions (e.g.
      `laravel-inertia-stack`, if installed) and any other skill this repository doesn't publish are
      left untouched by either a refresh or an addition — this exercise never implies the six
@@ -1556,8 +1582,8 @@ step**:
 - **Consumer migration implications — the single fact release notes must state plainly.** A
   repository-managed consumer refreshing only its existing managed skills (not adding the newly
   named ones) keeps its refreshed `ship-it`, `lab-it`, and `plan-it` working, but does not by itself
-  gain `document-it`, `implement-it`, or `review-it` (see proposal 1 above, "Distinguish refreshing
-  from adding") — the implementation/gate/commit/verification/closure behavior that moved out of
+  gain `document-it`, `implement-it`, or `review-it` (see proposal 1 above, "The exercise's actual
+  prerequisite") — the implementation/gate/commit/verification/closure behavior that moved out of
   `ship-it` and into `implement-it` is therefore only reachable once the consumer explicitly adds
   `implement-it` (and, for Gate 1's review step, `review-it`). This must be stated as the release's
   headline compatibility note, not left for a consumer to discover by trial.
@@ -1582,11 +1608,17 @@ step**:
   presumes the milestone-PR delivery model `release.md` is written for. **This repository does not
   run its own pipeline against changes to itself**: every commit in this migration, including this
   one, was authored, reviewed, and pushed directly to `main` by explicit human authorization, with no
-  PR or merge step anywhere in this repository's own history (confirmed by inspection: zero merge
-  commits in `git log --merges`). This repository's own prior release, `v1.0.0`, was published the
-  same way — tagged and published directly from commit `585a5d426e55fc3d586a9d3b95a43f85baf974ad`
-  ("Add MIT license for the 1.0 release") on `main`, with no PR behind it (confirmed via `gh release
-  view v1.0.0`). The applicable path for `v2.0.0` is therefore this repository's own established
+  PR or merge step anywhere in this repository's own history. Confirmed by direct evidence, not
+  merge-commit absence alone (a squash or rebase merge can integrate a PR while leaving no merge
+  commit, so `git log --merges` reporting zero on its own would not have ruled that out): `gh pr
+  list --state all` against this repository returns zero pull requests in any state — open, closed,
+  or merged — confirming no PR has ever existed here, not only that none left a merge commit. This
+  repository's own prior release, `v1.0.0`, was published the same way — tagged and published
+  directly from commit `585a5d426e55fc3d586a9d3b95a43f85baf974ad` ("Add MIT license for the 1.0
+  release") on `main` (confirmed by `git log -1 v1.0.0`), with no PR behind it, consistent with the
+  same `gh pr list --state all` result and independently confirmed via `gh release view v1.0.0`
+  showing that tag's commit and publish record directly. The applicable path for `v2.0.0` is
+  therefore this repository's own established
   precedent, not `release.md`'s consuming-project entry trigger: apply `release.md`'s substantive
   draft → explicit approval → publish → re-fetch-and-validate sequence directly against `main`'s
   reviewed tip, once Steps 1-6 have all passed Control Room review, exactly as `v1.0.0` did. This
@@ -1724,7 +1756,10 @@ stack convention compliance," confirming a framework finding grounded in project
 configuration, or established usage is expected and correctly attributed, not suppressed, with no
 stack companion installed. All traced correctly through the actual current file content with no
 coherence gap found. **This remains source validation, not runtime or consumer proof** — no skill
-was invoked, no `useOrbit` or other consuming project was touched, and no GitHub state was mutated.
+was invoked, and no `useOrbit` or other consuming project was touched. As with the first pass, this
+correction pass's own authorized commit and push to this source repository's `origin/main` is a real
+GitHub mutation and did occur, per its own explicit authorization; no consumer-repository mutation,
+and no PR, tag, release, or deployment anywhere, occurred.
 
 **Remaining decisions**, presented with evidence and a recommendation, for the human's own later
 approval — none silently resolved by this pass: which of the two proposed consumer exercises (or
@@ -1733,6 +1768,99 @@ exercise as release-relevant and the portability exercise as valuable but not re
 the release proposal above); whether to run either exercise now or defer publication further; and
 the `laravel-inertia-stack`/Boost precedence question (§7 item 1), unaffected by this pass and still
 out of scope for this migration.
+
+**Third correction pass.** A bounded pass on top of commit
+`bbed1f367e2b870168d6d3ab94198b8c430c8972`, limited to `artifacts/ship-it.md`,
+`artifacts/review-it.md`, `artifacts/implement-it.md`, and this file, addressing five remaining
+findings against the second pass's own corrections:
+
+- **`ship-it.md` §2-§3: the entry condition still read as a blanket dependency on `implement-it`'s
+  own recomputation event.** §2's opening scoped the whole "only milestone work continues into this
+  skill" statement together with the zero-open-issues condition, and §3 said this gate "starts only
+  once a delivery/phase milestone's dependency-ready-set recompute (owned by `implement-it`) reports
+  zero open issues left" — both still read as if `ship-it`'s entry required `implement-it`'s own
+  recompute to have specifically run and reported, contradicting §1's own three-entry-point
+  description. Corrected: §2 now states the ordinary implementation-to-PR-readiness handoff as its
+  own labeled paragraph, scoped away from the other two entry points, and both sections now say this
+  skill establishes the zero-open-issues state itself by freshly querying GitHub directly, never by
+  waiting for or requiring `implement-it`'s own recompute event. §3's first condition is also
+  corrected: "issue closure alone does not independently prove verification or approval happened for
+  each issue" replaces the prior framing that per-issue verification was "already part of" what
+  closure represents — this condition confirms only that the count is currently zero, and is not a
+  second verification gate over each issue's history.
+- **`review-it.md` §2: the comparison-baseline claim was stated as an unconditional "never."**
+  "the diff is taken from the merge-base... never a direct comparison against the base's current
+  tip" contradicted `rules/scope.md`'s own explicit-comparison override (tier 1 of "Discover the
+  intended base"). Corrected: merge-base diffing is now stated as the *ordinary* method, with an
+  explicit request controlling outright even when it differs, and the report's obligation to label
+  a requested comparison honestly as such — matching the owning rule's actual discovery order and
+  identity requirements, both preserved unchanged.
+- **`implement-it.md` §11: the stack-composition explanation named only "skills loaded alongside"
+  as the source of implementation guidance.** Corrected to state the actual model
+  `SKILL.md`'s "Composition" and `verification.md`'s "Discover the project's verification tools" own:
+  project instructions, established repository conventions, and applicable implementation/testing/
+  tooling skills all supply guidance; an applicable custom stack companion is loaded when available
+  and adds technology-specific knowledge on top, but stays optional — this skill must function
+  correctly with none installed. The corrected paragraph links to `SKILL.md`'s owning statement
+  rather than restating its procedure.
+- **This proposal's `useOrbit` exercise prerequisite was underspecified.** It presented
+  "refresh-only," "add-the-three," and "both" as interchangeable human choices with no statement of
+  which one(s) actually make the proposed full pipeline scenario (which specifically exercises
+  `implement-it`, `review-it`, and a standalone `document-it` invocation) runnable at all. Corrected
+  to state the actual prerequisite precisely: the participating skills installed at compatible,
+  reviewed versions (not a stale pre-migration `ship-it` alongside a newly added `implement-it`
+  making an identical implementation-ownership claim); that refresh-only does not by itself satisfy
+  this prerequisite when `document-it`/`implement-it`/`review-it` aren't already present; that the
+  actual combination needed is determined from `useOrbit`'s real installed state when the exercise
+  is later authorized, not prescribed now; and that a partial installation may be its own separately
+  scoped check but must never be reported or counted as having executed the complete proposed
+  pipeline exercise.
+- **The evidence statements were corrected on two points.** First, "no GitHub state was mutated" was
+  inaccurate in both the first pass's and the second pass's own validation summaries — each pass's
+  own authorized commit and push to this source repository's `origin/main` is itself a real GitHub
+  mutation, and each did occur; both summaries are corrected to state that explicitly, distinguishing
+  it from the consumer-repository mutations, PRs, tags, releases, and deployments that genuinely did
+  not occur. Second, the publication-history claim previously cited only `git log --merges` (zero
+  merge commits) as evidence that this repository has never merged a PR against itself — a squash or
+  rebase merge can integrate a PR while leaving no merge commit, so that evidence alone would not
+  have ruled out a PR having existed. Corrected to cite direct evidence instead: `gh pr list --state
+  all` against this repository returns zero pull requests in any state (open, closed, or merged),
+  confirming no PR has ever existed here, not only that none left a merge commit; `v1.0.0`'s tag
+  target and publish record were independently re-confirmed via `git log -1 v1.0.0` and `gh release
+  view v1.0.0` directly, consistent with that result. The direct-main publication path remains a
+  proposal only — this correction does not authorize publication or settle which consumer exercise
+  is required first.
+
+**Validation performed for this pass.** Full re-read of every corrected file. `git diff --check`
+clean. The same Python-based relative-Markdown-link resolution check, re-run across all four changed
+files, found no broken link introduced by this pass. Repository-wide searches confirmed none of the
+corrected phrasings survive elsewhere in the four files: "never a direct comparison," the
+recompute-dependent entry-condition framing in `ship-it.md`, the alongside-only stack-composition
+framing in `implement-it.md`, and the unqualified "no GitHub state was mutated" claim. `git status
+--porcelain` confirmed the three pre-existing untracked files remain untouched and unstaged, and
+confirmed no runtime file (`skills/*/SKILL.md` or `skills/*/rules/*.md`), `README.md`, `roadmap.md`,
+or either `docs/*.md` file was touched by this pass. Direct evidence for the publication-history
+claim was gathered as described above (`gh pr list --state all`, `git log -1 v1.0.0`, `gh release
+view v1.0.0`), not asserted from inference.
+
+Five bounded static walkthroughs were traced against the actual owning rule files and the corrected
+summaries: an existing open milestone PR with a follow-up issue reopening the milestone's issue
+count, traced against `ship-it.md` §1/§4 and `milestone-completion.md`'s own text, confirming
+continuation on the open PR doesn't re-require zero open issues; a milestone PR-readiness assessment
+with no prior `implement-it` session in the conversation, traced against the corrected §3 and
+`milestone-completion.md`'s "checked directly against current GitHub state rather than requiring
+evidence that a specific `implement-it` session produced it"; an explicitly requested base-tip
+comparison, traced against the corrected `review-it.md` §2 and `rules/scope.md`'s tier-1 override
+and honest-labeling requirement; `implement-it` implementing against project conventions with no
+custom stack companion installed, traced against the corrected §11 and `verification.md`'s tooling-
+discovery discipline; and a migration from `useOrbit`'s old `lab-it`/`plan-it`/`ship-it`-only
+installed set to the set the proposed pipeline exercise actually requires, traced against the
+corrected proposal text, confirming refresh-only is correctly identified as insufficient and a
+partial install is correctly barred from counting as the complete exercise. All five traced
+correctly through the actual current file content with no coherence gap found. This remains source
+validation, not runtime or consumer proof — no skill was invoked, no `useOrbit` or other consuming
+project was touched, and this pass's own commit and push to `origin/main` (a real GitHub mutation)
+is the only GitHub-state change it made; no PR, tag, release, or deployment occurred.
 
 **Step 6 implemented and corrected, pending Control Room review — not approved, not released.**
 This step's own authorized commit and push to `origin/main` did occur, per the explicit

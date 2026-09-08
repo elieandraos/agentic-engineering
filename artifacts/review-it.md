@@ -59,12 +59,20 @@ actual intended integration target (a documented branching convention, an explic
 in the conversation). **A branch's configured upstream or tracking branch is deliberately excluded
 from this order entirely** — it names where the branch's own commits push, not what it's meant to
 merge into, and a feature branch commonly tracks its own remote counterpart rather than its
-intended target. Trunk is the last-resort fallback, never the default first choice. Once the base is
-resolved, the diff is taken from the merge-base of that base and the reviewed head — never a direct
-comparison against the base's current tip, which would also pull in whatever the base has itself
-gained since the branch diverged. A worktree review's in-scope content includes staged, unstaged, and
-untracked files alike; an untracked file needs direct inspection, since a `HEAD`-relative diff never
-surfaces one, and no file is ever staged or otherwise mutated merely to bring it into view.
+intended target. Trunk is the last-resort fallback, never the default first choice. **The ordinary
+comparison**, once the base is resolved, diffs from the merge-base of that base and the reviewed
+head — not a direct comparison against the base's current tip, which would also pull in whatever the
+base has itself gained since the branch diverged. **This is the default, not an unconditional rule:**
+an explicitly requested comparison controls outright, per the discovery order's own first tier, even
+when it differs from the merge-base method or from a PR's own declared base — a review comparing
+against the base's current tip, or against some other explicitly named point, is a legitimate,
+requested comparison, not an error. What is never legitimate is silence about which one is in play:
+a requested comparison that differs from the PR's own declared base, or from the ordinary
+merge-base method, is identified plainly in the report as the requested comparison — distinct from,
+and never presented as if it were, the PR's own declared base or the ordinary method. A worktree
+review's in-scope content includes staged, unstaged, and untracked files alike; an untracked file
+needs direct inspection, since a `HEAD`-relative diff never surfaces one, and no file is ever staged
+or otherwise mutated merely to bring it into view.
 
 **The intended scope** is discovered from a linked issue or milestone, a PR description, an approved
 `plan.md`, explicit scope stated in the request, or `Refs #N` trailers and commit messages already
