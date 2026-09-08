@@ -3,9 +3,13 @@
 **Status: Steps 1–3 approved.** Step 3 passed Control Room review at commit
 `ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`, and the user's confirmation to record that approval was
 itself recorded at commit `b2fad42f1e4e73e482e7a49921bed6e47b1795a7`. Step 4 — establishing
-`review-it` and integrating it before Gate 1 (§5) — has been implemented on top of that HEAD; see
-Step 4's own entry below for the implementation record. **Step 4 is implemented and pending Control
-Room review — it is not yet approved.** Step 5 has not started.
+`review-it` and integrating it before Gate 1 (§5) — was implemented on top of that HEAD at commit
+`8dc3eaec11b52b829b54e7e224b1b0daae809ec4`, then received one correction pass on top of that same
+implementation correcting Gate 1's review-input/outcome contract, the authorized-scope-change
+exemption's breadth, stack-companion-independent framework checking, and review-target/coverage/
+identity precision. See Step 4's own implementation and correction records below. **Step 4 is
+implemented and corrected, pending Control Room review — it is not yet approved.** Step 5 has not
+started.
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
@@ -836,6 +840,85 @@ pre-existing untracked files (`control-room-responsibilities.md`, `skills-audit.
 - **No unresolved material issue from this step.** §7's remaining open items (canonical
   issue-definition storage; the completed-issue-boundary reuse-eligibility rule) are unchanged and
   stay Step 5's own scope.
+
+**Corrected.** One correction pass on top of the implementation commit
+`8dc3eaec11b52b829b54e7e224b1b0daae809ec4`, addressing four findings against `review-it` and
+`implement-it`:
+
+1. **Gate 1's review-input and outcome contract.** `implement-it/rules/review-gates.md`'s
+   "Consuming review-it's result" previously said this gate always supplies "the approved issue" as
+   `review-it`'s intended scope, unconditionally requiring an issue and contradicting the authorized
+   delivery-correction route. Corrected to supply the approved issue for ordinary implementation
+   work, or the explicitly authorized correction scope and its supporting evidence for a delivery
+   correction; Gate 1's own first stop-condition bullet received the matching correction, without
+   weakening it — an approved scope, from one of those two sources, is still required either way. A
+   new fourth outcome bullet handles a material review limitation explicitly: obtain the missing
+   evidence and request a fresh pass when it's actually obtainable from this skill's own context;
+   otherwise report the specific blocker as a stop, per "When to stop and ask," never as a silent
+   gap or an implied clean result. An optional absent artifact `review-it` itself treated as
+   inapplicable does not by itself trigger this. A closing sentence states plainly that stopping to
+   ask about a limitation or finding is not, by itself, Gate 1's approval — the gate's own explicit
+   human approval of the complete report is still required afterward. The Do/Don't list gained
+   matching entries.
+2. **The authorized-change exemption, narrowed.** `review-it/rules/checklist.md`'s "Accidental
+   scope expansion" section and its "What this review does not flag" summary previously exempted an
+   authorized change from review broadly. Corrected so an explicitly authorized scope change is
+   exempt only from Accidental scope expansion's own finding — never from Correctness, Security,
+   Data integrity, Likely regressions, Architectural fit, Maintainability, Project/stack convention
+   compliance, or Test adequacy. A defect discovered in an authorized change is now stated as
+   reported exactly as it would be anywhere else in the diff; the authorization approved the work
+   happening, not its correctness or safety.
+3. **Stack-aware review without a custom companion, preserved.** `review-it/rules/scope.md`'s
+   "Discover applicable conventions" and `rules/checklist.md`'s "Project and stack convention
+   compliance" previously said a missing stack companion skips its informed sub-checks without
+   distinguishing which ones those actually are, reading as license to skip applicable framework
+   checks generally. Corrected: only the specific sub-check that depends on a custom companion's own
+   rules, with no other available authoritative source, is skipped; framework and technology
+   conventions are otherwise discovered the same way project conventions are — from project
+   instructions, configuration, and established repository usage — and a finding states whether it
+   rests on an established project requirement or on general technical reasoning with no such
+   backing, rather than presenting the latter as a discovered project rule.
+4. **Review target, coverage, and identity, made precise.** `rules/scope.md`'s comparison-baseline
+   procedure previously defaulted every branch review to the trunk merge-base regardless of the
+   branch's actual intended target. Corrected to discover the real base, in order of reliability,
+   from an associated PR's declared base, the branch's configured upstream, or an explicit request
+   target, falling back to trunk only once none of these exists — preventing a stacked branch's
+   diff from silently absorbing another branch's own unrelated changes. The same section now states
+   that a worktree review's in-scope content includes staged, unstaged, and untracked files, that an
+   untracked file needs its own direct inspection since a `HEAD`-relative diff never surfaces one,
+   and that no file is ever staged or otherwise mutated merely to bring it into view.
+   `rules/verification.md`'s "Staleness" section is renamed "Staleness and review identity" and now
+   distinguishes a committed target's identity (its commit SHA alone) from a dirty worktree's (`HEAD`
+   plus the actual diff/untracked-content identity actually reviewed, since `HEAD` alone cannot
+   distinguish two different dirty states); it states plainly this is not a registry or durable
+   review-storage mechanism, only this invocation's own report stating what it checked. A material
+   change invalidates the prior pass for that surface even when `HEAD` doesn't move. A new paragraph
+   states that a scoped re-review names the surface it actually rechecked and must not imply it
+   independently rechecked the whole implementation; the "Reviewed target and state" report-shape
+   bullet was corrected to match.
+- **Validation performed:** full re-read of every corrected file; a repository-wide search
+  confirming no other file restated the old broad authorized-change exemption or the old
+  unconditional trunk-baseline default; `git diff --check` clean; YAML frontmatter of
+  `review-it/SKILL.md` parsed successfully; every relative Markdown link in the corrected files
+  confirmed to resolve. Static walkthroughs re-run against the corrected files: an authorized
+  delivery correction with no open issue, traced through `review-it`'s intended-scope supply and
+  Gate 1's stop condition without invoking any issue-only wording; a request with a genuine missing-
+  evidence gap, ending in an explicit reported limitation and, where unobtainable, a stop-and-ask —
+  never a false clean result; an authorized scope expansion that also contains a separate security
+  defect, with the defect still reported despite the scope authorization; a project with framework
+  conventions but no custom stack companion, still catching a framework-convention violation through
+  project instructions and established usage; a branch whose real target is another feature branch,
+  correctly diffed against that branch rather than trunk; and a worktree with staged, unstaged, and
+  new untracked implementation files, followed by a material edit to an already-reviewed file with no
+  new commit, correctly triggering staleness despite `HEAD` being unchanged. All traced correctly
+  through the corrected file content with no coherence gap found. This is source validation from
+  static walkthroughs, not runtime or consumer proof — no skill was actually invoked, no branch,
+  worktree, or PR was reviewed, and no GitHub or live state was touched. The review procedure's
+  overall shape, the testing policy, diagnostic-execution boundaries, specialized review ownership,
+  and the publication-approval mechanics are otherwise unchanged by this pass.
+- **No unresolved material issue from this correction.** §7's remaining open items are unchanged and
+  stay Step 5's own scope; Step 4 remains implemented and corrected, pending Control Room review, not
+  approved.
 
 ### Step 5 — Strengthen recovery, adopt the approved verification policy
 

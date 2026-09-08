@@ -25,7 +25,9 @@ structure; Gate 1 and Gate 2 below remain the only approvals of either.
 
 Stop here once:
 
-- the approved issue scope has been implemented;
+- the approved scope has been implemented — the approved issue, for ordinary implementation work,
+  or the explicitly authorized correction, for a delivery correction (see "Consuming review-it's
+  result," below, for how each supplies `review-it`'s intended scope);
 - the verification appropriate to it has been run (`rules/verification.md`);
 - `review-it`'s pass against the completed implementation is either clean, or its findings have
   been resolved and re-verified.
@@ -53,8 +55,19 @@ choice as part of this report.
 ## Consuming review-it's result
 
 Once implementation and verification are complete, invoke `review-it` the same way a standalone
-caller would (`review-it/rules/scope.md`) against the completed working tree, supplying the
-approved issue as the intended scope. Treat its result as follows before reporting at this gate:
+caller would (`review-it/rules/scope.md`) against the completed working tree, supplying the intended
+scope this invocation is actually working from:
+
+- **Ordinary implementation work.** Supply the approved issue as the intended scope, exactly as
+  today — this bullet does not weaken or make optional the ordinary issue-entry requirement above.
+- **An authorized delivery correction.** No approved issue is required to reach this gate at all
+  (`SKILL.md`'s "Delivery corrections"); supply the explicitly authorized correction scope and its
+  supporting evidence instead — the investigated failure, the scope determination, and the human's
+  authorization (`ship-it/rules/milestone-completion.md`'s "CI failure on an open milestone PR").
+
+Either way, this gate always supplies whatever intended-scope evidence it actually has to
+`review-it` — it never invokes `review-it` with no scope evidence at all, unlike a standalone caller
+who may genuinely have none. Treat `review-it`'s result as follows before reporting at this gate:
 
 - **Clean.** Report it as such and proceed to the Gate 1 report above.
 - **Findings, within this skill's authorized scope to resolve.** Fix them, then request a re-review
@@ -64,10 +77,23 @@ approved issue as the intended scope. Treat its result as follows before reporti
 - **A finding that reveals a genuine unresolved decision** — architecture, scope, or a choice with
   no clearly better answer — is not this gate's to resolve silently. Stop and ask, per "When to
   stop and ask," below, citing `review-it`'s finding as the evidence.
+- **A material limitation `review-it` reports** — missing evidence, an unreachable diagnostic, or an
+  ambiguity it proceeded past rather than resolved (`review-it/rules/verification.md`'s report
+  shape). When the missing evidence is actually obtainable from this skill's own context (the
+  approved issue, the authorized correction's scope, a project instruction `review-it` couldn't
+  reach), supply it and request a fresh pass. When it isn't obtainable, report the specific blocker
+  and the human decision it requires — this is a stop under "When to stop and ask," below, not a
+  silent gap. An optional absent artifact that `review-it` itself treated as inapplicable — no stack
+  companion, no PR description beyond what was already supplied — does not by itself trigger this
+  bullet; only a limitation that leaves a required check genuinely unresolved does.
 
-Never report a finding as resolved, or treat an unresolved finding as if it were clean, without an
-actual fix and an actual re-review behind that claim — the same discipline `review-it` itself
-applies to its own report (`review-it/rules/verification.md`).
+Never report a finding as resolved, or treat an unresolved finding or a material limitation as if it
+were clean, without an actual fix — or actually obtained evidence — and an actual re-review behind
+that claim, the same discipline `review-it` itself applies to its own report
+(`review-it/rules/verification.md`). Stopping to ask about a limitation or an unresolved finding is
+not, by itself, Gate 1's approval — it is the same kind of pause "When to stop and ask" already
+describes, and Gate 1 still requires its own explicit human approval of the complete report
+afterward, per the two-gate mechanics in "Principle," above.
 
 ## Gate 2 — commit-plan review
 
@@ -139,6 +165,9 @@ neither is clearly better. Both call for a stop built the way above, not a silen
 - Treat implementation approval as commit-plan approval.
 - Report a `review-it` finding as resolved without an actual fix and an actual re-review behind
   that claim.
+- Report `review-it`'s material limitation as a clean result, or leave it unaddressed when the
+  missing evidence was actually obtainable.
+- Treat asking the human about a `review-it` finding or limitation as Gate 1's own approval.
 - Treat a clean `review-it` result as authorization by itself — it is evidence Gate 1's report
   cites, not a substitute for the human's approval.
 - Create a commit before Gate 2 is approved.

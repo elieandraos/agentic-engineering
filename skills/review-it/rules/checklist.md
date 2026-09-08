@@ -102,10 +102,18 @@ different style the project itself doesn't already establish.
 ### Project and stack convention compliance
 
 Check the change against applicable project instructions and, where one is installed and actually
-applicable, the loaded stack companion's rules — naming conventions, established idioms, required
-patterns for this stack. Skip stack-specific sub-checks entirely when no stack companion is
-available for this project; never invent a stack convention from general knowledge and present it
-as this project's own rule.
+applicable, the loaded stack companion's rules — naming conventions, established idioms, and
+required patterns the companion documents for its stack. Skip only the specific sub-check that
+depends on a custom stack companion's own rules when none is installed for this project; never
+invent one of those from general knowledge and present it as this project's own rule.
+
+A missing stack companion does not disable applicable framework checks elsewhere in this list — a
+correctness, security, or architectural-fit concern grounded in project instructions, configuration,
+established repository usage, or ordinary engineering reasoning about the stack still applies with
+no companion installed (`rules/scope.md`'s "Discover applicable conventions"). Distinguish, in the
+finding itself, an established project requirement — evidenced by one of those sources — from
+general technical reasoning with no such backing; state which one grounds the finding rather than
+presenting general reasoning as though it were a discovered project rule.
 
 ### Test adequacy
 
@@ -126,12 +134,22 @@ scope. Not every out-of-scope change is a defect; some are legitimate and alread
 elsewhere. An unflagged one is still a finding to surface, not something to silently accept because
 it looks harmless.
 
+An explicitly authorized scope change is exempt from this category alone — it is not accidental,
+so it is not a finding here. It is not exempt from anything else: run every other applicable
+category (Correctness and edge cases, Security, Data integrity, Likely regressions, Architectural
+fit, Maintainability, Project and stack convention compliance, Test adequacy) against it exactly as
+thoroughly as against any other part of the diff. The authorization approved doing the work; it did
+not verify the work, and it never suppresses a defect discovered in it or stands in as acceptance of
+that defect's consequences.
+
 ## What this review does not flag
 
 - A stylistic preference the project's own conventions don't already support.
 - A speculative concern with no traced code path or reproducible evidence behind it.
 - A category the reviewed change genuinely doesn't touch — state it as skipped, not as a pass.
-- A change already flagged and authorized as an intentional stop under
-  `implement-it/rules/review-gates.md`.
+- An explicitly authorized scope change, as Accidental scope expansion's own finding — never as an
+  exemption from any other category. A defect discovered in that same change is reported exactly as
+  it would be anywhere else in the diff; the authorization approved the work happening, not its
+  correctness, security, or safety.
 - A finding invented to avoid returning a clean result. A scoped clean pass, stated plainly with
   which categories applied, is a legitimate and complete outcome.

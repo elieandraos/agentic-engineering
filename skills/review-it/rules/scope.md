@@ -27,12 +27,25 @@ state.
 
 A worktree or branch review needs a baseline to diff against:
 
-- Uncommitted changes compare against `HEAD`.
-- A branch's full diff compares against its merge-base with the project's trunk branch, unless the
-  request names a narrower comparison. Default to the merge-base when nothing narrower is stated,
-  since that's what would actually land.
-- A PR's baseline is the PR's own declared base branch, discovered from GitHub — never assumed from
-  local branch naming.
+- **Uncommitted changes** compare against `HEAD`, and the comparison must cover the actual in-scope
+  content: staged changes, unstaged changes to already-tracked files, and new files that are part of
+  the reviewed work but not yet tracked by git at all. A diff against `HEAD` alone never surfaces an
+  untracked file — enumerate untracked files separately (e.g. the untracked entries a status check
+  reports) and inspect their actual content directly, in addition to the tracked diff, whenever
+  they're part of what's being reviewed. Never stage a file, or otherwise mutate the worktree's
+  index or content, merely to bring it into a diff for inspection — read it as it stands.
+- **A branch's full diff** compares against its actual intended base, discovered — in order of
+  reliability — from: an associated PR's declared base branch when one exists; the branch's
+  configured upstream or tracking branch; or an explicit target stated in the request. Only fall
+  back to the merge-base with the project's trunk branch once none of these is available; that
+  fallback is for a branch with no other declared target, not the correct comparison for a branch
+  that actually targets another feature or release branch. Diffing a stacked branch against trunk
+  instead of its real target silently pulls in that other branch's own unrelated, already-in-review
+  changes as if this review's target had introduced them — treat that as a correctness risk to
+  avoid, not a harmless default. Ask the human only when the available evidence leaves genuinely
+  ambiguous, materially different candidate bases; otherwise use the most reliable evidence found.
+- **A PR's baseline** is the PR's own declared base branch, discovered from GitHub — never assumed
+  from local branch naming.
 
 Not every review needs a baseline — inspecting one already-isolated commit or a single file in
 isolation does not. Treat this as conditional, not universal.
@@ -76,9 +89,19 @@ assumed in advance.
 
 An optional stack companion sharpens the "Architectural fit," "Project/stack convention
 compliance," and "Correctness and edge cases" checks when it applies to the reviewed stack. It is
-never a prerequisite for running this review. Run the full checklist with no stack companion
-installed; skip only the specific sub-checks a missing companion would have informed, and say so in
-the report rather than silently treating the review as complete on that point.
+never a prerequisite for running this review, and its absence does not disable applicable framework
+checks. Discover framework and technology conventions the same way project conventions are
+discovered — from project instructions, configuration, established usage already in the repository,
+and other available authoritative guidance (documentation the project itself references, or a
+convention the codebase's own established patterns already demonstrate) — not only from an installed
+companion. Run the full checklist with no stack companion installed. Skip only the specific
+sub-check that depends on a custom stack companion's own rules and has no other available
+authoritative source for the same requirement; never skip a framework or correctness check that
+established project evidence, or ordinary engineering reasoning, can otherwise support. State
+plainly, in the report, which sub-checks were skipped this way and why — and, for a finding grounded
+in framework or convention reasoning, whether it rests on an established project requirement or on
+general technical reasoning with no such backing (see `rules/checklist.md`'s "Project and stack
+convention compliance").
 
 ## Entry points reuse this procedure identically
 

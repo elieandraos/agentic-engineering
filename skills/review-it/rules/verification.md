@@ -38,22 +38,47 @@ configuration, scripts, CI definitions, or established usage, never assumed in a
   state (an existing PR's diff, its CI results, its description) is evidence-gathering; creating,
   editing, or merging anything is not this skill's job under any circumstance.
 
-## Staleness
+## Staleness and review identity
 
-A finding, or a clean result, is tied to the specific commit or diff state it was checked against —
-the same discipline `plan-it/rules/review.md` already applies to issue review. State that commit
-SHA or diff identity in the report. A material change to the reviewed surface after this pass
-invalidates it for that surface; the caller — a human, or `implement-it` before Gate 1 — requests a
-fresh pass, full or scoped to the correction, before relying on this result again. `review-it` does
-not track or store a review's history itself; each invocation is stateless with respect to any
-prior pass, and relies entirely on the caller supplying the current state to check.
+A finding, or a clean result, is tied to the specific state it was checked against — the same
+discipline `plan-it/rules/review.md` already applies to issue review. State that identity precisely
+enough to actually distinguish the reviewed state from a different one, not merely a label that
+happens to be available:
+
+- **A committed target** — a branch, a PR, or an isolated commit — is identified by its exact
+  commit SHA. State it plainly; it names precisely what was reviewed, with nothing further needed.
+- **A worktree carrying uncommitted content** is not fully identified by `HEAD` alone. `HEAD` names
+  only the last commit; it says nothing about the staged, unstaged, or untracked content sitting on
+  top of it, and two different dirty states can share the identical `HEAD`. State the `HEAD` commit
+  plus an identity for the actual uncommitted content reviewed: the tracked diff's own content (a
+  content hash, or the diff itself when short enough to state in full) and an explicit accounting of
+  every untracked file reviewed, by path and content as reviewed (`rules/scope.md`'s "Establish the
+  comparison baseline"). This is not a durable registry or storage mechanism `review-it` maintains
+  between invocations — each invocation states its own identity fresh, in its own report; it exists
+  so the identity alone lets the caller recognize exactly what state was checked.
+
+A material change to the reviewed surface after this pass invalidates it for that surface, whether
+or not `HEAD` itself moved — an edit made to an already-reviewed file with no new commit is still a
+material change the prior identity above no longer describes. The caller — a human, or
+`implement-it` before Gate 1 — requests a fresh pass, full or scoped to the correction, before
+relying on this result again. `review-it` does not track or store a review's history itself; each
+invocation is stateless with respect to any prior pass, and relies entirely on the caller supplying
+the current state to check.
+
+**A scoped re-review** — invoked against only the affected surface after a fix — states plainly
+which files or surface it actually checked this time. It must not imply, by omission or general
+language, that it independently rechecked the entire implementation; its "Reviewed target and
+state" (below) names the scoped surface explicitly, not the whole worktree/branch/PR identity as if
+a full pass had run again.
 
 ## Report shape
 
 Every `review-it` result states:
 
-- **Reviewed target and state** — the worktree, branch, or PR reviewed, and the exact commit SHA or
-  diff identity it was checked against.
+- **Reviewed target and state** — the worktree, branch, or PR reviewed, and its precise identity per
+  "Staleness and review identity" above (a commit SHA for a committed target; `HEAD` plus the actual
+  diff/untracked-content identity for a dirty worktree). A scoped re-review states the scoped
+  surface it actually checked, not the whole target's identity.
 - **Confirmed findings** — ordered by consequence, each with its file or location, the evidence or
   reasoning that verified it, and its concrete consequence if left unaddressed.
 - **Verification performed** — which checks `review-it` actually ran or traced itself, distinguished

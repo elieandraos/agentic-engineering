@@ -26,7 +26,8 @@ or PR opened outside this ecosystem is a valid, ordinary target.
 1. Establish the review target, comparison baseline, intended scope, and available evidence —
    asking the human only when an unresolved ambiguity would materially change the review.
 2. Discover applicable project instructions and, where installed and relevant, a stack companion —
-   never required.
+   never required; its absence skips only its own custom rules, not applicable framework checks
+   otherwise supported by project instructions, configuration, or established usage.
 3. Run the ten-category checklist (requirements compliance, correctness and edge cases, security,
    data integrity, likely regressions, architectural fit, maintainability, project/stack convention
    compliance, test adequacy, accidental scope expansion), skipping only what genuinely doesn't
