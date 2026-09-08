@@ -121,6 +121,39 @@ If the human requests a change — to grouping, ordering, splitting, merging, me
 else in the plan — revise it and present the complete, resulting plan again before committing.
 Partial feedback on part of a plan is not approval of the rest of it.
 
+## Approval validity before Gate 2 and before push
+
+> An approval is scoped to what it actually reviewed. Work, scope, or the proposed action moving on
+> after that approval doesn't automatically carry the approval forward with it.
+
+Before Gate 2, and again before requesting push authorization (`rules/issue-closure.md`'s "Push
+readiness"), check that the current work, its scope, and the action about to be proposed still
+match what the relevant approval actually covered:
+
+- **A material change requires the affected review and approval to be renewed.** A scope change
+  since Gate 1, a diff that no longer matches what Gate 2 approved, or an issue body edited since
+  its own approval each invalidate the approval that covered the prior state — re-review and
+  re-approve the affected surface before relying on it again. This is the same principle
+  `review-it/rules/verification.md`'s staleness rule already applies to a `review-it` pass; where the
+  change specifically affects a surface `review-it` already reviewed, follow that rule's own
+  staleness contract for requesting the scoped re-review rather than duplicating it here.
+- **Preserve an approval that demonstrably remains applicable.** This check exists to catch a real
+  divergence, not to manufacture one. Ordinary staging and assembling of unchanged, already-approved
+  content into its already-approved commits must not automatically invalidate Gate 1 merely because
+  `HEAD` moved or the remaining working-tree diff changed shape while commits were being built —
+  that's the expected, unavoidable effect of committing, not evidence the approved content changed.
+  Confirm the actual content is unchanged before treating an approval as still valid, and confirm it
+  again before treating it as stale.
+- **Remote commit reachability proves presence, not verification or authorization.** Finding a
+  commit already on the remote branch (`rules/issue-closure.md`'s "Push readiness," step 2) shows
+  only that it's there — it is not evidence that Gate 1, Gate 2, or push authorization actually
+  happened for it. Resuming interrupted work from remote state still requires confirming those
+  approvals independently, the same way any other resumed state does.
+
+When this check surfaces a genuine material change with no already-renewed approval covering it,
+that's a stop under "When to stop and ask," below — report the divergence and what it means, rather
+than silently treating the stale approval as still valid or silently re-deriving a new one.
+
 ## When to stop and ask
 
 An agent may investigate and recommend. It must never convert a genuine unresolved human decision
@@ -158,11 +191,18 @@ neither is clearly better. Both call for a stop built the way above, not a silen
   fixing any finding it raises.
 - Derive the commit plan only after Gate 1 is approved.
 - Show the complete commit plan before creating any commit, and get explicit approval of it.
+- Check, before Gate 2 and before requesting push authorization, that the current work, scope, and
+  proposed action still match what was actually approved — renewing the affected approval on a
+  material change, and preserving one that demonstrably still applies.
 - Investigate a genuine unknown and offer a recommendation before asking the human to decide.
 
 **Don't**
 - Collapse Gate 1 and Gate 2 into one approval.
 - Treat implementation approval as commit-plan approval.
+- Invalidate Gate 1 merely because `HEAD` or the remaining diff changed while assembling unchanged,
+  already-approved content into its already-approved commits.
+- Treat a commit's mere presence on the remote branch as evidence it was ever reviewed or
+  authorized.
 - Report a `review-it` finding as resolved without an actual fix and an actual re-review behind
   that claim.
 - Report `review-it`'s material limitation as a clean result, or leave it unaddressed when the

@@ -10,8 +10,13 @@ contract, the authorized-scope-change exemption's breadth, and stack-companion-i
 checking), and a second, bounded correction pass narrowing comparison-base selection and comparison
 identity in `review-it` at commit `dfad7309aaac5747234a462094af050a371b3e84`. See Step 4's own
 implementation, correction, and approval records below. **Step 4 passed Control Room review at that
-commit, and the user confirmed proceeding.** Step 5 is next; implementation has not started, and its
-two open decisions in §7 remain unresolved.
+commit, and the user confirmed proceeding.** Step 5 — strengthening recovery and adopting the
+approved verification policy (§5) — has been implemented on top of that HEAD, with its two
+previously open decisions (§7) settled directly by the user ahead of implementation: canonical
+issue-definition durable storage deferred, not resolved; the completed-issue-boundary full-suite
+reuse-eligibility rule adopted as stated in `implement-it/rules/verification.md`'s "Completed-issue
+verification: run or reuse." See Step 5's own implementation record below. **Step 5 is implemented,
+pending Control Room review — it is not yet approved.** Step 6 has not started.
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
@@ -241,12 +246,12 @@ topic 3):
 
 | Gap (audit finding) | Owning file after migration | Proposed addition |
 |---|---|---|
-| Worktree provenance (finding, Section 3 scenario 3) | `implement-it/rules/verification.md` §"Discover the verification starting state" | Preserve pre-existing worktree changes by default. Recency, being uncommitted, or matching the approved issue's scope does not by itself prove a change belongs to this session — appearance is not provenance. Use whatever reliable provenance is actually available (e.g., git reflog, the session's own recorded start point, an explicit statement from the human) to judge origin; ask the human when the ambiguity would materially affect whether it's safe to continue, rather than on any ambiguity at all. Never invent ownership from appearance, and never modify content whose origin can't be established this way. **Open**: which provenance sources are reliably available is discovered per project at Step 5, not fixed here. |
-| Empty dependency-ready set treated as sufficient for delivery handoff | `implement-it/rules/sequencing.md` §"When the ready set is empty" | An empty ready set is not, by itself, sufficient to hand off to `ship-it`'s Milestone PR readiness. `rules/sequencing.md`'s own definition allows an empty ready set with open issues still outstanding — nothing dependency-ready right now, but one or more issues blocked on something rather than closed. Before handing off, distinguish "zero open issues remain" (the genuine completion case, hand off as today) from "open issues remain, all currently blocked" (report the blocked state; do not hand off, since the milestone isn't done). The existing recommend-and-stop behavior — the human, not this rule, chooses the next issue — is unchanged either way. |
-| Partial GitHub mutation before resuming a batch (finding #10) | `plan-it/rules/sequencing.md` (issue batches); `ship-it/rules/milestone-completion.md` and `rules/release.md` (milestone/release mutations) | Before creating/mutating more of a batch, re-query GitHub for members this same interrupted batch may already have created — extends the existing post-mutation re-fetch pattern already present in four files, not a new mechanism. |
-| Canonical issue-definition durable storage (finding #21) | `plan-it/rules/issue-conventions.md` | **Open, deliberately not resolved here** — a stated default location, mirroring `plan.md`'s own stated-default pattern, needs its location, creation/update timing, approval relationship, mapping to created issues, and retirement all decided together at Step 5's review. No file is introduced by this plan. |
-| Approval staleness after a material change (finding #13/#4) | `implement-it/rules/review-gates.md` | Before Gate 2 and before push, compare the current diff/issue body against what was approved; a material difference invalidates that approval and requires re-review — extends the existing "never silently convert an unresolved decision into a fact" principle already stated four times across the ecosystem. |
-| Verification evidence tied to the state checked | Existing report shapes (Gate 1 report, `review-it` findings, closing comment) | Cite the commit SHA/diff the evidence was produced against, so a later reader can tell whether it still covers current state. |
+| Worktree provenance (finding, Section 3 scenario 3) | `implement-it/rules/verification.md` §"Discover the verification starting state" | Preserve pre-existing worktree changes by default. Recency, being uncommitted, or matching the approved issue's scope does not by itself prove a change belongs to this session — appearance is not provenance. Use whatever reliable provenance is actually available (e.g., git reflog, the session's own recorded start point, an explicit statement from the human) to judge origin; ask the human when the ambiguity would materially affect whether it's safe to continue, rather than on any ambiguity at all. Never invent ownership from appearance, and never modify content whose origin can't be established this way. **Resolved by Step 5**, implemented in that section's "Preserve pre-existing worktree changes": the three signals named above are the reliable, portable provenance sources this rule states directly — not a project-specific inventory left open. |
+| Empty dependency-ready set treated as sufficient for delivery handoff | `implement-it/rules/sequencing.md` §"When the ready set is empty" | An empty ready set is not, by itself, sufficient to hand off to `ship-it`'s Milestone PR readiness. `rules/sequencing.md`'s own definition allows an empty ready set with open issues still outstanding — nothing dependency-ready right now, but one or more issues blocked on something rather than closed. Before handing off, distinguish "zero open issues remain" (the genuine completion case, hand off as today) from "open issues remain, all currently blocked" (report the blocked state; do not hand off, since the milestone isn't done). The existing recommend-and-stop behavior — the human, not this rule, chooses the next issue — is unchanged either way. **Implemented at Step 3**, ahead of this table (`implement-it/rules/sequencing.md`'s "When the ready set is empty"), not deferred to Step 5. |
+| Partial GitHub mutation before resuming a batch (finding #10) | `plan-it/rules/sequencing.md` (issue batches); `ship-it/rules/milestone-completion.md` and `rules/release.md` (milestone/release mutations) | Before creating/mutating more of a batch, re-query GitHub for members this same interrupted batch may already have created — extends the existing post-mutation re-fetch pattern already present in four files, not a new mechanism. **Resolved by Step 5**: `plan-it/rules/sequencing.md`'s "Resuming an interrupted batch creation," `ship-it/rules/milestone-completion.md`'s PR-creation and closure re-query additions, and `ship-it/rules/release.md`'s step 5 partial-publish re-query. |
+| Canonical issue-definition durable storage (finding #21) | `plan-it/rules/issue-conventions.md` | **Resolved by Step 5's review: explicitly deferred, not implemented by this migration.** No `issue-plan.md`-equivalent file, approval registry, or other persistence mechanism is introduced. Retained instead: a simple recovery procedure stated in `plan-it/rules/sequencing.md`'s "Resuming an interrupted batch creation" — after interrupted issue creation, query GitHub before retrying; continue only from reliably available canonical definitions, scope, and authorization; explain what's missing and ask the human, rather than reconstructing the approved batch from guesses, when they can't be recovered. |
+| Approval staleness after a material change (finding #13/#4) | `implement-it/rules/review-gates.md` | Before Gate 2 and before push, compare the current diff/issue body against what was approved; a material difference invalidates that approval and requires re-review — extends the existing "never silently convert an unresolved decision into a fact" principle already stated four times across the ecosystem. **Resolved by Step 5**: `review-gates.md`'s "Approval validity before Gate 2 and before push," which also states that ordinary staging/assembling of unchanged, already-approved content must not automatically invalidate Gate 1, and that remote commit reachability proves presence, not verification or authorization. |
+| Verification evidence tied to the state checked | Existing report shapes (Gate 1 report, `review-it` findings, closing comment) | Cite the commit SHA/diff the evidence was produced against, so a later reader can tell whether it still covers current state. Already carried by `review-it`'s own report shape (Step 4) and `implement-it/rules/issue-closure.md`'s closing comment; unaffected by Step 5. |
 
 ### 3.3 Documentation output (`document-it`)
 
@@ -330,11 +335,21 @@ neither survives this correction):
   prescribe Laravel-specific commands or any other stack's specific tooling, following the existing
   discoverable-tooling model already in `verification.md`.
 
-**Open, for Step 5's review only**: the reuse-eligibility rule for the completed-issue-boundary
-full-suite run — what counts as "demonstrably applicable" prior coverage such that it can be reused
-rather than re-run. Today's rule is unconditional ("don't drop either run because the other
-passed"); whether and how that becomes conditional is Step 5's decision, not this pass's. No other
-part of this policy is open.
+**Resolved by Step 5's review**, no longer open: the reuse-eligibility rule for the completed-issue
+checkpoint. Both checkpoints (pre-Gate-1, completed-issue) remain required — reuse is a way to
+satisfy the second, never a reason to drop it. The completed-issue checkpoint may be satisfied by
+reusing the pre-Gate-1 result only once four conditions are all established: identifiable evidence
+of an actual successful, complete run; the final committed content matching the tested content
+(never inferred from a clean worktree, an unchanged `HEAD`, or a successful commit command alone);
+equivalent relevant test inputs and environment (dependencies, configuration, generated inputs, and
+consumed commit metadata); and no unresolved limitation undermining that equivalence. A cache hit or
+an impact-analysis-selected subset can never by itself satisfy the first condition. When any
+condition fails, the full suite runs again — a corrected state must itself satisfy this checkpoint,
+and a narrower per-commit check never substitutes where the full suite is required. Reuse is
+reported honestly, identifying the earlier result and why it still applies, never presented as a
+newly executed run. See the settled rule, implemented at Step 5, in
+[`skills/implement-it/rules/verification.md`](skills/implement-it/rules/verification.md)'s
+"Completed-issue verification: run or reuse." No other part of this policy is open.
 
 ### 3.5 `ship-it`'s new PR-creation responsibility
 
@@ -986,9 +1001,10 @@ unresolved; this approval does not settle either decision or authorize Step 5 im
   as actually resolved at this step's review, not as defaults this step invents — are applied to
   their owning files.
 - **Affected files.** `implement-it/rules/verification.md` (the completed-issue-boundary reuse-
-  eligibility rule — the only open item left in §3.4), `rules/review-gates.md`,
-  `rules/issue-closure.md`; `plan-it/rules/sequencing.md`, `rules/issue-conventions.md` (whichever
-  owns the approved canonical-definition-location decision); `ship-it/rules/milestone-completion.md`
+  eligibility rule — the only open item left in §3.4 — and worktree provenance),
+  `rules/review-gates.md` (approval validity), `rules/issue-closure.md`; `plan-it/rules/sequencing.md`
+  (interrupted-batch-creation recovery), `rules/issue-conventions.md` (recording the durable-storage
+  deferral, per the user's settled decision, not a location); `ship-it/rules/milestone-completion.md`
   and `rules/release.md` (partial-mutation re-query only — PR-readiness stays three conditions;
   §3.4's correction removed the earlier, mistaken fourth-condition framing, so there is no condition
   count to update here).
@@ -1001,15 +1017,127 @@ unresolved; this approval does not settle either decision or authorize Step 5 im
 - **Acceptance criteria.** A worktree-provenance check exists, uses reliable provenance rather than
   appearance, and is exercised by a scenario with pre-existing uncommitted changes that must be
   preserved; partial-mutation re-query exists for both `plan-it`'s issue batches and `ship-it`'s
-  milestone/release mutations; the canonical-issue-definition location is stated, consistent with
-  `plan.md`'s own default-location pattern; PR-readiness's three conditions are undisturbed by the
-  reuse-eligibility rule's resolution.
+  milestone/release mutations; canonical issue-definition durable storage is explicitly recorded as
+  deferred, not resolved — no durable location is implemented by this step, per the user's settled
+  decision (below); PR-readiness's three conditions are undisturbed by the reuse-eligibility rule's
+  resolution.
 - **Validation (static).** Interrupted-worktree resume, including a case with pre-existing unrelated
   changes that must survive untouched; interrupted issue-batch-creation resume; approval-then-
   material-change resume; PR readiness against an open PR with red CI; a milestone with open issues
   that are all blocked (not closed) confirming no premature handoff to PR readiness.
 - **Result to present.** Diff plus an explicit list of which audit findings (§Section 3 scenarios,
   #10, #13, #21) are now resolved and how.
+
+**Implemented.** Starting point: branch `main`, HEAD `ace3453596624c1baf6295549de4fc7bd96e9480`
+(the commit recording Step 4's Control Room approval and this step's two settled decisions), working
+tree clean except the three pre-existing untracked files (`control-room-responsibilities.md`,
+`skills-audit.md`, `subagents.md`), left untouched.
+
+**Decisions applied**, both recorded here as the user's explicit settlement, superseding the prior
+open-item wording in §3.2/§3.4/§7:
+
+- **A. Canonical issue-definition durable storage deferred, not resolved.** No `issue-plan.md`-
+  equivalent file, approval registry, or other persistence mechanism is introduced by this
+  migration. Retained instead: the simple recovery procedure below.
+- **B. Full-suite result reuse permitted at the completed-issue boundary.** The full suite before
+  each issue's Gate 1 remains required, whether implementing one issue or working through a
+  milestone; after commits are assembled, the pre-Gate-1 result may satisfy completed-issue
+  verification only once its continued applicability is established — otherwise, run the full suite
+  again.
+
+**Owning files and behavioral changes:**
+
+- `implement-it/rules/verification.md` (primary owner of the reuse rule) — the lifecycle diagram and
+  the "two full-suite runs" framing now state both checkpoints as required while allowing the
+  completed-issue one to be satisfied by reuse; a new "Completed-issue verification: run or reuse"
+  section states the four reuse conditions (identifiable evidence of an actual complete run;
+  final-content equivalence, never inferred from a clean worktree/unchanged `HEAD`/successful commit
+  command alone; equivalent relevant test inputs and environment, including consumed commit
+  metadata; no unresolved limitation), the practical, proportionate evidence standard with no
+  mandatory snapshot system or exhaustive inventory, the requirement to run the full suite again on
+  any relevant change or established-limitation failure (including a post-Gate-1 correction, which
+  a narrower per-commit check can never substitute for), and the honest-reporting requirement (a
+  reused result is never presented as freshly executed). The "Default commit-building loop" section
+  and its heading were reconciled to route to this rule rather than restate "run once"
+  unconditionally; isolation verification's final checkpoint (step 6) was reconciled to allow reusing
+  its own last per-commit isolated run only under the same conditions; the cache/impact-analysis
+  section gained an explicit statement that a cache hit or impact-analysis-selected subset can never
+  by itself satisfy the reuse rule's first condition; the Do/Don't lists were updated to match. A new
+  "Preserve pre-existing worktree changes" subsection (under "Discover the verification starting
+  state") implements decision-adjacent recovery item A of §3.2: reliable provenance (`git reflog`,
+  the session's own recorded start point, an explicit human statement) over appearance, asking only
+  when unresolved provenance would materially affect safe continuation.
+- `implement-it/rules/review-gates.md` — a new "Approval validity before Gate 2 and before push"
+  section: a material change requires the affected review/approval to be renewed (routing to
+  `review-it`'s own staleness contract where the change affects a surface it already reviewed);
+  ordinary staging/assembling of unchanged, already-approved content must not automatically
+  invalidate Gate 1 merely because `HEAD` or the remaining diff changed; remote commit reachability
+  proves presence, not verification or authorization. Gate 1's first stop-condition bullet and the
+  Do/Don't lists were reconciled to match.
+- `implement-it/rules/issue-closure.md` — "Push readiness" step 3 now confirms approval validity
+  (routing to `review-gates.md`) before asking to push; the closing comment's verification-results
+  bullet now requires stating plainly when the completed-issue checkpoint was satisfied by reuse,
+  naming the earlier run.
+- `plan-it/rules/sequencing.md` — a new "Resuming an interrupted batch creation" subsection under
+  "Dependency-safe GitHub creation": re-query GitHub for members an interrupted attempt may already
+  have created (never by title alone; a failed/timed-out query is not proof nothing happened),
+  validate matches against their approved canonical definitions, create only the remaining approved
+  members, and — when canonical definitions, scope, or approval can no longer be reliably
+  established — explain what's missing and ask the human rather than reconstructing the batch from
+  guesses or inferring missing members from what already exists.
+- `plan-it/rules/issue-conventions.md` — "Canonical definitions" gained the explicit deferral
+  statement (decision A) and a pointer to the recovery procedure above.
+- `ship-it/rules/milestone-completion.md` — "Milestone PR creation" step 2 strengthened: identity by
+  head branch, not title alone; a failed/timed-out query re-tried before concluding creation is still
+  needed; a match validated against the approved proposal, never duplicated. "Closing the milestone"
+  gained a re-query-before-retry step: a prior successful closure is validated and reported, not
+  re-mutated. Do/Don't updated to match.
+- `ship-it/rules/release.md` — step 5 gained a re-query-before-publishing step covering a partial
+  prior outcome (a tag pushed with no release yet, or an ambiguous lost response), validating what
+  already exists against the step-4-approved content and performing only the remaining steps, never
+  recreating/retargeting/overwriting/deleting an existing correct resource. Step 6 now treats a
+  partial outcome (tag without release, or vice versa) as remaining work to finish, not a failure to
+  restart. Do/Don't updated to match.
+- `implement-it/SKILL.md` — the `verification.md` and `review-gates.md` rule-index entries updated
+  minimally to name the reuse rule, worktree provenance, and approval-validity check.
+
+**Validation performed:** full re-read of every modified file; `git diff --check` clean; YAML
+frontmatter of `implement-it/SKILL.md` parsed successfully; every relative Markdown link in the
+modified files confirmed to resolve; a repository-wide search confirming no file still asserts an
+unconditional "run the full suite once" requirement, introduces a durable issue-definition storage
+mechanism, or claims a commit SHA alone identifies a branch/PR review (unaffected by this step, and
+unchanged). A disposable Git repository (created and destroyed outside the working tree) verified
+the concrete git-mechanics claim behind reuse condition 2: diffing an uncommitted "pre-Gate-1
+tested" change against its base, then reassembling that identical content into two separate commits,
+produced a byte-identical combined diff (confirmed by content hash) — establishing that comparing
+the pre-Gate-1 diff against the assembled commits' combined diff is a real, reliable technique for
+confirming final-content equivalence; a follow-up edit made after that point correctly produced a
+diverging hash, confirming the same technique correctly disqualifies reuse when content actually
+changed. Eight bounded static walkthroughs run against the actual file content: a successful
+full-suite run followed only by assembling identical content into commits (reuse justified); changed
+code, dependencies, or generated inputs, or missing prior evidence (fresh run required); a cached or
+impact-analysis-selected result unable to establish complete prior execution (reuse condition 1
+fails); interrupted work with unrelated pre-existing changes surviving untouched; a GitHub mutation
+that succeeded before its response was lost, validated on resume rather than duplicated (traced
+through `plan-it`'s batch recovery, `ship-it`'s PR-creation and closure re-query, and `release.md`'s
+partial-publish re-query); missing canonical definitions or approval evidence producing an explicit
+ask rather than an invented remainder; a material scope change invalidating the relevant approval,
+distinguished from ordinary approved commit construction which does not; and the pre-existing
+delivery constraints (blocked-issue milestones are not complete; red PR CI blocks merge) confirmed
+still intact and untouched by this pass. All eight traced correctly through the actual file content
+with no coherence gap found. This is source validation from static walkthroughs plus a bounded
+git-mechanics check, not runtime or consumer proof — no skill was actually invoked, and no real
+issue, PR, milestone, tag, or release was created for testing, per this step's authorization scope.
+
+**Findings addressed:** none surfaced beyond the two settled decisions and the reconciliation work
+they required — this pass implements the outline's own proposals (§3.2's remaining rows, §3.4) as
+designed, with no unexpected defect discovered in the files it touched.
+
+**Durable issue-definition storage remains explicitly deferred** (decision A above) — this is a
+recorded scope boundary, not an oversight; no location, creation/update timing, approval
+relationship, mapping, or retirement mechanism is introduced by this or any step of this migration.
+
+**Step 5 is implemented, pending Control Room review — it is not approved.** Step 6 has not started.
 
 ### Step 6 — Reconcile public documentation, validate the combined ecosystem, prepare publication
 
@@ -1062,24 +1190,34 @@ Only genuinely unresolved architecture choices are listed here — checklist wor
 and other procedural detail are authoring work for their owning step's own review, not separate
 questions for the user (§5).
 
-1. Canonical issue-definition durable storage: location, creation/update timing, approval
-   relationship, mapping to created issues, retirement (§3.2, finding #21) — Step 5.
-2. The completed-issue-boundary full-suite reuse-eligibility rule: what counts as "demonstrably
-   applicable" prior coverage (§3.4) — this changes an existing unconditional requirement and is not
-   treated as approved by writing it here — Step 5.
-3. `laravel-inertia-stack`'s unresolved precedence rule for conflicting Boost-skill guidance
+1. `laravel-inertia-stack`'s unresolved precedence rule for conflicting Boost-skill guidance
    (finding #7) — out of scope for this migration; flagged only so it isn't lost, not addressed by
    any step above.
 
+This is now the only remaining item in this list — both decisions previously listed here were
+settled by the user directly ahead of Step 5's implementation, not silently resolved by writing
+default text into this plan.
+
 Resolved by Step 3's Control Room review: `ship-it`'s PR-creation procedure (§3.5), approved as
 implemented at commit `ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`.
+
+Resolved by explicit user decision ahead of Step 5, implemented and pending Control Room review:
+**canonical issue-definition durable storage is deferred, not resolved** — no `issue-plan.md`-
+equivalent file, approval registry, or other persistence mechanism is introduced; a simple
+GitHub-query recovery procedure is retained instead (§3.2, finding #21; see Step 5's own record);
+**the completed-issue-boundary full-suite reuse-eligibility rule** is settled — both checkpoints
+stay required, and the completed-issue one may be satisfied by an established reuse of the
+pre-Gate-1 result under the four conditions stated in
+`skills/implement-it/rules/verification.md`'s "Completed-issue verification: run or reuse" (§3.4;
+see Step 5's own record).
 
 Resolved by the earlier planning correction pass, no longer open: `document-it`'s Markdown location (settled as the
 consuming repo's `docs/`, §3.3); the format-selection and no-silent-substitution behavior for a new
 or existing guide (§3.3); the delivery-correction ownership split (§2.2); the verification policy's
 per-issue vs. milestone-entry question (there is no separate milestone-entry boundary, §3.4); the
-worktree-provenance principle (use reliable provenance, not appearance — the exact available signals
-are Step 5's own discovery, not a standing decision, §3.2).
+worktree-provenance principle (use reliable provenance, not appearance — implemented at Step 5 with
+`git reflog`, the session's own recorded start point, and an explicit human statement as the
+reliable signals, §3.2).
 
 ---
 

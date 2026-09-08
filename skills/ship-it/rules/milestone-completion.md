@@ -210,8 +210,13 @@ already-reviewed shape applied to a new mutation, not a new kind of gate.
    ambiguous or conflicting. Do not assume a base branch, head-branch naming, or PR-template
    requirement without evidence.
 2. **Check for an existing matching PR before proposing creation.** Query the repository for an open
-   PR already carrying this milestone's head branch. Finding one means creation is not this rule's
-   next step — report the existing PR instead of proposing a duplicate.
+   PR already carrying this milestone's head branch — a matching title alone is not sufficient
+   identity, since a differently-scoped PR can share a title; confirm the actual head branch. A
+   failed or timed-out query is not proof no PR exists — retry it before concluding creation is
+   still needed. Finding a match means creation is not this rule's next step: validate it against
+   the approved proposal (base branch, and the milestone reference "The milestone-PR reference
+   convention" requires) and report the existing PR instead of proposing a duplicate — never create
+   a second PR for an attempt that already succeeded.
 3. **Draft the PR at PR scope.** Title, base and head branches, and a body referencing the milestone
    per "The milestone-PR reference convention" above — describing the integrated change as a whole,
    the same altitude distinction `rules/release.md` draws between a commit, a PR, and a release.
@@ -392,21 +397,27 @@ approve the same closure a second time.
    If any condition doesn't hold — including authorization not actually having been given, or given
    but not scoped to closure — stop here and report what's missing instead of closing. Don't ask
    again unprompted; the human revisits it when ready.
-2. **Run the closure**, using whatever mechanism the installed/project-supported GitHub tooling
+2. **Before running the closure mutation, check whether a prior attempt already succeeded.** A lost
+   response or a retried request is not evidence the milestone is still open — fetch its current
+   state (the same query step 4 below runs) before mutating. If it's already closed, don't run the
+   closure mutation again; validate the existing closed state against the gate just confirmed and
+   report it as the completed result, rather than re-issuing a mutation that risks erroring or
+   masking what actually happened.
+3. **Run the closure**, using whatever mechanism the installed/project-supported GitHub tooling
    actually offers — discover it rather than assuming a specific command exists. For example:
 
    ```
    gh api repos/{owner}/{repo}/milestones/{number} -X PATCH -f state=closed
    ```
 
-3. **Re-fetch the milestone afterward** and confirm its state is actually closed:
+4. **Re-fetch the milestone afterward** and confirm its state is actually closed:
 
    ```
    gh api repos/{owner}/{repo}/milestones/{number}
    ```
 
-   A successful exit code from step 2 is not proof; reading the result back is.
-4. **Report the result compactly** — see "Reporting" below.
+   A successful exit code from step 3 is not proof; reading the result back is.
+5. **Report the result compactly** — see "Reporting" below.
 
 ## Reporting
 
@@ -507,6 +518,9 @@ This rule sits downstream of several other contracts and does not redefine any o
 - Keep an open milestone PR unmerged through a real CI failure, investigate before recommending a
   remedy, and get explicit human authorization before handing `implement-it` an already-closed
   issue's scope to correct directly on the branch.
+- Re-query before retrying an interrupted or ambiguous mutation — an existing matching PR, or a
+  milestone already closed by an earlier attempt — and validate what's found rather than assuming
+  nothing happened.
 
 **Don't**
 - Infer PR readiness or completion from zero open issues alone.
@@ -517,6 +531,9 @@ This rule sits downstream of several other contracts and does not redefine any o
   milestone closure as something `rules/release.md` must wait for.
 - Propose or run either gate against Backlog.
 - Trust the closure command's exit code as proof of the resulting state.
+- Treat a failed or timed-out query as proof a prior mutation didn't happen, or identify an existing
+  PR by title alone.
+- Re-run the closure mutation against a milestone a prior attempt already closed.
 - Merge, close the milestone, or start release progression while an open milestone PR's CI is red.
 - Create a duplicate milestone PR without first checking for an existing one, or create any milestone
   PR before the human approves the exact proposed title, branches, and body.

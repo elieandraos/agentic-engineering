@@ -18,19 +18,25 @@ The lifecycle this rule verifies:
 implementation complete → full-suite verification → Gate 1
 Gate 1 approved → build semantic commits → narrowest-reliable verification per commit
   (when an intermediate committed state itself needs proof → isolation verification)
-all commits assembled → final full-suite verification at the completed-issue boundary
+all commits assembled → completed-issue verification (a fresh full-suite run, or the pre-Gate-1
+  run's own result, reused once its continued applicability to the final committed content is
+  established — see "Completed-issue verification: run or reuse" below)
 ```
 
-Two full-suite runs appear in that lifecycle — one before Gate 1, one at the completed-issue
-boundary — and they are not a duplicate of each other, even when both run the same command:
+Two full-suite verification checkpoints appear in that lifecycle — one before Gate 1, one at the
+completed-issue boundary — and neither is optional, even when the completed-issue checkpoint is
+satisfied by reusing the pre-Gate-1 result rather than running the suite again:
 
 > The pre-Gate-1 full suite proves the completed implementation works as one working tree, before
-> any commit history exists to review or split. The completed-issue full suite proves the final
-> assembled commit history — however many commits the issue became, whatever order they landed in —
-> reconstructs that same correct result once the semantic commits actually exist.
+> any commit history exists to review or split. The completed-issue checkpoint proves the final
+> assembled commit history — however many commits the issue became, whatever order they landed
+> in — reconstructs that same correct result once the semantic commits actually exist. A fresh run
+> proves this directly; a reused result proves it only once "Completed-issue verification: run or
+> reuse" below establishes that the pre-Gate-1 run still applies to the final committed content.
 
-Both stay in the loop. Don't drop one because the other already ran green — they prove different
-things, even when the command that produces the result is identical.
+Both checkpoints stay in the loop. Don't drop the completed-issue checkpoint because the pre-Gate-1
+run already went green — reuse is a way to satisfy it with evidence that still applies, never a
+reason to skip it.
 
 ## Discover the project's verification tools
 
@@ -80,6 +86,29 @@ scoping mode might replay stale results, or similar. An ordinary change with no 
 need a fresh clone, a full reinstall, or a cache purge before it can be verified — manufacturing that
 overhead for every change is exactly the kind of reflexive broadening this rule warns against
 elsewhere.
+
+### Preserve pre-existing worktree changes
+
+A starting or resumed session can encounter a worktree that already carries content this session
+didn't create — a prior session's unfinished work, or something the human left in progress. Before
+making or verifying any change, distinguish that pre-existing content from this task's own changes,
+and preserve what isn't this task's to touch.
+
+Recency, being uncommitted, or resembling the approved issue's scope does not by itself prove a
+change belongs to this session — appearance is not provenance. Use whatever reliable provenance is
+actually available to judge origin instead:
+
+- `git reflog` establishes commit/ref history — what `HEAD` pointed to, and what commands moved it —
+  but it does not prove who authored an uncommitted, never-committed edit; don't stretch it past what
+  it actually shows.
+- the session's own recorded start point (the working tree or commit state noted when this task
+  began);
+- an explicit statement from the human about what's already there and why.
+
+Ask the human when unresolved provenance would materially affect whether it's safe to continue —
+not on every harmless ambiguity, and not by discarding the work merely to obtain a clean checkout.
+Never invent ownership from appearance, and never modify or discard content whose origin can't be
+established this way.
 
 ## Reproducible install boundary
 
@@ -142,7 +171,7 @@ scope, before any commit history has been written to split it. It is the last po
 the implementation work" is answered without any interference from how it will later be divided
 into commits.
 
-## Default commit-building loop: narrowest reliable scope per commit, full suite once at the issue boundary
+## Default commit-building loop: narrowest reliable scope per commit, completed-issue checkpoint at the issue boundary
 
 > During commit construction, use the narrowest reliable verification scope that proves the
 > semantic commit. Do not broaden verification merely by habit, and do not narrow it past what the
@@ -168,15 +197,85 @@ every commit merely by habit. It's slow, and for a commit that's deliberately in
 complete but not yet activated, per `rules/commit-boundaries.md` — a broader run proves nothing the
 narrower, reliable one didn't already cover.
 
-Run the **full regression suite once**, at the completed-issue boundary: after the last commit for
-the issue, before reporting the issue done. Report the exact pass/skip/fail results wherever the
-project's tooling provides them.
+Satisfy the completed-issue checkpoint once, after the last commit for the issue, before reporting
+the issue done — either by running the full regression suite again or by reusing the pre-Gate-1
+result under the conditions in "Completed-issue verification: run or reuse" below. Report the exact
+result either way: pass/skip/fail counts for a fresh run, or the reused result and why it still
+applies.
 
-The two verifications prove different things:
+The two checks prove different things:
 
-- the narrowly-scoped verification proves the semantic decision that commit represents is correct;
-- the completed-issue full suite proves that the issue, landed as however many commits it took,
-  did not regress anything else in the system.
+- the narrowly-scoped, per-commit verification proves the semantic decision that commit represents
+  is correct;
+- the completed-issue checkpoint proves that the issue, landed as however many commits it took, did
+  not regress anything else in the system — whether that proof comes from a fresh run or an
+  established reuse of the pre-Gate-1 run.
+
+## Completed-issue verification: run or reuse
+
+> The completed-issue checkpoint's job is unchanged: prove the final assembled commit history
+> reconstructs the same correct result the pre-Gate-1 full suite already proved for the working
+> tree. What can change is how that proof is produced — a fresh full-suite run, or the pre-Gate-1
+> run's own result, reused once its continued applicability to the final committed content is
+> actually established. Reuse is evidence-based, never a default, and never a shortcut past this
+> checkpoint.
+
+**Run the full suite again** — the default, and the only correct choice whenever applicability
+can't be established below.
+
+**Reuse the pre-Gate-1 result**, only when every one of the following holds:
+
+1. **Identifiable evidence of an actual successful, complete run exists.** The pre-Gate-1 full
+   suite's own result is identifiable — its command, and the state it ran against — not merely
+   remembered or assumed from an earlier "it passed" summary.
+2. **The final committed content matches the tested content.** A clean worktree, an unchanged
+   `HEAD`, or a successful commit command are not, on their own, evidence of this — none of them
+   proves the tree the suite actually ran against is the same tree the assembled commits now
+   represent. Establish the match directly: for example, confirm the commits' combined diff against
+   the pre-Gate-1 starting point is exactly the content the pre-Gate-1 suite tested, with nothing
+   added, dropped, or altered while building commits.
+3. **Relevant test inputs and environment remain equivalent.** Dependencies, configuration,
+   generated inputs, and any other state the project's checks actually depend on haven't changed
+   between the pre-Gate-1 run and now. Where the project's checks consume commit metadata (an
+   environment-conditioned test, a hook that inspects the commit under verification), that
+   metadata's equivalence matters too — this checkpoint isn't only about file content when the
+   project's own tooling reads more than that.
+4. **No unresolved limitation undermines that equivalence.** A known gap in what the pre-Gate-1 run
+   checked, an unreachable diagnostic, or any other open question that could plausibly affect the
+   final state disqualifies reuse for that state.
+
+Use practical evidence actually available in the project, proportionate to the change — the diff
+between the pre-Gate-1 tree and the final assembled commits, the dependency manifest and lockfile
+state, configuration files touched while building commits, and whatever else the project's own
+checks actually depend on. This is not a mandatory snapshot system, and it does not require an
+exhaustive environment inventory for every issue — a small, low-risk issue with no dependency or
+configuration change, and an unchanged diff between assembly and the pre-Gate-1 run, clears this bar
+with correspondingly little evidence to check; a larger or riskier one needs correspondingly more.
+
+**If relevant content or inputs changed while building commits, or applicability can't actually be
+established, run the full suite again.** This includes a correction made after the pre-Gate-1 run —
+whether it originates from a `review-it` finding, a Gate 1/Gate 2 revision, or anything else: the
+corrected state must itself satisfy this checkpoint's own verification requirements before the issue
+is done. A narrowly-scoped, per-commit check is never a substitute where a full suite is what this
+checkpoint requires — commit-construction-time targeted verification and this checkpoint answer
+different questions (see "Default commit-building loop" above).
+
+**Report reuse honestly.** State plainly that the completed-issue checkpoint was satisfied by reuse,
+identify the earlier result being reused (what ran, when, against what state), and the evidence that
+established its continued applicability. Never report a reused result as if it were a newly executed
+run — the same discipline "Cache, replay, and impact-analysis results are not execution proof" below
+already applies to a single run's own execution, extended here to whether an entire checkpoint's
+proof came from this issue's own fresh execution or from an earlier one.
+
+This checkpoint's applicability judgment is separate from a single command's cache/replay behavior:
+a cached test-runner result, or a result selected through impact analysis, is not by itself evidence
+that a complete suite ran even once, and cannot alone establish condition 1 above — see "Cache,
+replay, and impact-analysis results are not execution proof" below.
+
+Final-state equivalence, however established, proves the completed-issue checkpoint alone. It does
+not prove any intermediate committed state along the way — isolation verification (below) remains
+the only way to prove an intermediate commit when that commit's own standalone correctness is a
+property that needs proving.
 
 ## Isolation verification: a deliberate escalation, not the default
 
@@ -204,8 +303,12 @@ The technique:
 4. `git stash pop` — restores the remaining work.
 5. Repeat for each subsequent semantic commit: stage the next group, commit, stash the rest, verify
    in isolation, pop.
-6. After the final commit, run the completed-issue full-suite check with nothing stashed — the
-   same check described above.
+6. After the final commit, satisfy the completed-issue checkpoint — ordinarily a fresh full-suite
+   run with nothing stashed. When step 3's own full-suite run against the final commit's isolated
+   state already covered this exact content with nothing left to stash afterward, that result may
+   be reused instead, under "Completed-issue verification: run or reuse" above; isolation
+   verification's per-commit runs happening at all does not by itself establish that reuse — the
+   same conditions apply.
 
 This is intentionally expensive — a full suite run per commit — which is exactly why it stays an
 escalation, not the default for every multi-commit issue. An issue with no ordering or
@@ -227,14 +330,20 @@ reporting only pass/fail:
   the full tally alongside it, replaying the rest;
 - **cached or replayed** — the result came from a prior run, not from re-execution now.
 
-At a boundary that specifically requires a fresh full-regression proof — the completed-issue boundary
-above, or isolation verification's per-commit check — use the project's uncached/full mode when the
-tooling offers one, rather than trusting a result that could have been produced by cache or replay at
-that specific boundary. This does not mean disabling caching, impact analysis, or targeted
-verification generally — those remain the correct, efficient default everywhere else in this rule's
-narrowest-reliable-scope model (see "Default commit-building loop" above). It means the two moments
-that specifically claim to prove a full regression must actually be shown to be that, not merely
-consistent with it.
+At a boundary that specifically requires a fresh full-regression proof — the pre-Gate-1 run, a fresh
+completed-issue run, or isolation verification's per-commit check — use the project's uncached/full
+mode when the tooling offers one, rather than trusting a result that could have been produced by
+cache or replay at that specific boundary. This does not mean disabling caching, impact analysis, or
+targeted verification generally — those remain the correct, efficient default everywhere else in
+this rule's narrowest-reliable-scope model (see "Default commit-building loop" above). It means a
+moment that specifically claims to prove a full regression must actually be shown to be that, not
+merely consistent with it.
+
+This applies to reuse exactly as it applies to a fresh run: a cache hit, a replayed result, or a
+subset selected through impact analysis must never manufacture evidence that a complete suite ran.
+It cannot, by itself, satisfy "Completed-issue verification: run or reuse" above's first
+condition — identifiable evidence of an actual successful, complete run — and it cannot substitute
+for a fresh run when reuse isn't otherwise established.
 
 ## Ordering commits to keep intermediate states valid
 
@@ -279,7 +388,12 @@ if they do. Should that situation actually arise, it's a genuine unresolved deci
   code-quality/static checks alike.
 - Fall back to a check's broader or project-wide mode when the project's tooling has no reliable
   way to scope it.
-- Run the full suite once more at the completed-issue boundary, after all commits are assembled.
+- Satisfy the completed-issue checkpoint by a fresh run by default, reusing the pre-Gate-1 result
+  only once its continued applicability to the final committed content is actually established.
+- Report a reused completed-issue result honestly — identify the earlier run and why it still
+  applies, never as if it were newly executed.
+- Preserve pre-existing worktree changes using reliable provenance, and ask the human when
+  unresolved provenance would materially affect safe continuation.
 - Use isolation verification when an intermediate committed state itself needs proof.
 - Inspect activation/configuration changes for tests and dependencies they newly make active.
 - Discover the project's test, format, lint, and static-analysis tooling — and what each can and
@@ -295,7 +409,14 @@ if they do. Should that situation actually arise, it's a genuine unresolved deci
   especially at a boundary that specifically requires a fresh full-regression proof.
 
 **Don't**
-- Treat the pre-Gate-1 and completed-issue full-suite runs as duplicates of each other.
+- Treat the pre-Gate-1 run and the completed-issue checkpoint as duplicates of each other, or as
+  interchangeable merely because reuse is available.
+- Infer reuse eligibility from a clean worktree, an unchanged `HEAD`, or a successful commit command
+  alone.
+- Treat a cached, replayed, or impact-analysis-selected result as evidence a complete suite ran, for
+  reuse eligibility or otherwise.
+- Assume uncommitted worktree content belongs to this session merely because it's recent,
+  uncommitted, or resembles the approved scope.
 - Run the full suite, or any other check's project-wide mode, after every commit merely by habit
   when a reliable scoped mode exists.
 - Narrow verification past what the project's tooling can meaningfully and reliably validate.

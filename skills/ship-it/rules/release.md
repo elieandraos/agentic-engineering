@@ -174,6 +174,15 @@ this approval is explicit and covers the version actually about to be published.
 
 ## 5. Publish using the project's discovered mechanism
 
+**Before running any part of this sequence, re-query the discovered mechanism's own source of truth
+for what a prior attempt may already have produced** — a tag pushed with no release created yet, a
+release drafted but not published, or an ambiguous outcome from a lost response. A failed or
+timed-out call is not proof nothing was published; requery before concluding the full sequence still
+needs to run. Validate whatever already exists against the approved version/target/title/body from
+step 4, then perform only the remaining steps. Never recreate, retarget, overwrite, or delete an
+existing, correct tag or release merely to restart the sequence from the beginning — preserve it and
+continue from where it actually left off.
+
 Use whatever release mechanism step 1 actually discovered — don't default to git tags, GitHub
 Releases, or any other specific tooling absent evidence for this project. Preserve the established
 tag/release semantics (tag type, what commit it targets, draft vs. published, prerelease flag) unless
@@ -212,6 +221,12 @@ extended here to releases. Re-fetch the tag and release from the source of truth
 A mismatch on any field is a failed validation to report and fix, not a cosmetic discrepancy to gloss
 over because the publish command didn't error.
 
+A **partial outcome** — the tag exists but no release references it, or a release exists in draft
+state with the tag still missing — is not a failed validation to discard and restart; it's the
+remaining part of step 5's sequence still to perform, using the approved content already confirmed
+at step 4. Report it as what it actually is: what already exists and validated correctly, and what
+remains.
+
 Report the result compactly — what was created, and a field-by-field confirmation — not a re-print of
 the whole release body.
 
@@ -245,6 +260,8 @@ the whole release body.
 - Present version, tag target, title, and full body together, and get explicit approval before
   publishing.
 - Publish through the mechanism discovered in step 1, preserving its established semantics.
+- Re-query for a prior attempt's partial result before publishing, and perform only the remaining
+  steps when one exists.
 - Re-fetch and validate every required field after publication.
 - Report results compactly rather than re-printing the release body.
 
@@ -257,5 +274,9 @@ the whole release body.
 - Assume a specific tag/release command sequence without discovery evidence for this repository.
 - Publish before the human has approved the exact final version, target, title, and body.
 - Trust a publish command's exit code as proof of the resulting state.
+- Recreate, retarget, overwrite, or delete an existing correct tag or release merely to restart the
+  publish sequence.
+- Treat a partial publish outcome (e.g. a tag with no release) as a failure to discard rather than
+  remaining work to finish.
 - Invent deployment, rollback, prerelease, or changelog automation the repository shows no evidence
   of wanting.

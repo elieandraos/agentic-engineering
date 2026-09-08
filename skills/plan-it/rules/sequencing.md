@@ -116,6 +116,30 @@ Create issues in the stable topological order: capture each created issue's real
 created, resolve a dependent issue's canonical references to real `#N`s before creating it,
 and never derive the issue set back from created issues or a rendered preview.
 
+### Resuming an interrupted batch creation
+
+Before creating or mutating more of an approved batch, re-query GitHub for members this same
+interrupted attempt may already have created — a failed or timed-out call is not proof nothing
+happened; the create may have succeeded before its response was lost. Search by the approved
+canonical definition's actual content, not by title alone, since a title match doesn't prove it's
+the same member. Validate each match found against its approved canonical definition
+(`rules/review.md`'s applicable checks) before treating it as already done, capture its real GitHub
+number the same way a fresh creation would, and create only the remaining approved members —
+resolving their dependency references to the real `#N`s now captured for every member already
+created, in this attempt or an earlier one. Never recreate, retarget, or duplicate a correctly
+created member merely to restart the batch from the beginning.
+
+Continue only from the canonical definitions, approved scope, and approval actually available right
+now — this session's own record, or reliably reconstructible from what's already on GitHub (a
+created issue's own body, once fetched and checked against `rules/issue-conventions.md`). If those
+canonical definitions, the approved scope, or the human's approval can no longer be reliably
+established — for example, a new session with no memory of the original planning conversation, and
+nothing durable to recover them from — explain plainly what's missing and ask the human. Never
+reconstruct the approved batch from guesses, and never infer its missing, not-yet-created members
+from whatever issues happen to already exist. A durable, canonical storage location for approved
+issue definitions is a deliberately deferred decision, not implemented by this rule — see
+`rules/issue-conventions.md`'s "Canonical definitions."
+
 ## Handoff
 
 `rules/review.md` owns issue quality, dependency-quality validation, structural/rendered integrity, and

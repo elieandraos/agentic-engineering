@@ -46,10 +46,12 @@ first" below, confirm the issue's commits are reachable on the correct remote br
    An empty result means every local commit, including the issue's, is already on the remote
    branch — skip straight to "Ask first." A non-empty result means the issue's commits still need to
    be pushed.
-3. **If they aren't remote yet, ask for explicit authorization to push.** This is a permission check
-   for a mutating remote action, not a third review gate — Gate 1 and Gate 2
-   (`rules/review-gates.md`) already approved the implementation and the commit structure; this only
-   asks whether to make those already-approved commits reachable on the remote.
+3. **Before asking, confirm the approval this push relies on is still valid** — per
+   `rules/review-gates.md`'s "Approval validity before Gate 2 and before push." **If they aren't
+   remote yet, ask for explicit authorization to push.** This is a permission check for a mutating
+   remote action, not a third review gate — Gate 1 and Gate 2 (`rules/review-gates.md`) already
+   approved the implementation and the commit structure; this only asks whether to make those
+   already-approved commits reachable on the remote, once that approval is confirmed still to apply.
 4. **Push normally once authorized.** A plain push to the branch identified in step 1 — never
    `--force` or an equivalent override. A push rejected because the remote has diverged is a genuine
    problem to surface to the human, not something to force past.
@@ -148,6 +150,8 @@ from commits and conversation. It should be a concise summary, not a transcript.
 
 - **What was implemented** — a short summary of the outcome.
 - **Verification results** — test counts, full-suite pass/skip/fail, per `rules/verification.md`.
+  When the completed-issue checkpoint was satisfied by reuse rather than a fresh run, say so, and
+  name the earlier run being reused — never state a reused result as if it were freshly executed.
 - **The actual commit SHAs** that implement the issue — the same SHAs "Push readiness" above
   confirmed are reachable on the remote branch.
 - **Anything discovered during implementation or review that's worth preserving** — the kind of

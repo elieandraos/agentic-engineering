@@ -12,6 +12,14 @@ current **canonical issue definition** — never reconstructed from an earlier p
 draft. See `SKILL.md`'s non-negotiable contracts and `rules/review.md`'s three integrity checks for
 how this is enforced; this file doesn't restate that mechanism.
 
+**A durable, canonical storage location for approved issue definitions — beyond the session that
+approved them and the GitHub issues eventually created from them — is explicitly deferred, not
+resolved.** No `issue-plan.md`-equivalent file, approval registry, or other persistence mechanism is
+introduced by this methodology. Recovery from an interrupted batch relies on the simpler procedure in
+`rules/sequencing.md`'s "Resuming an interrupted batch creation": query GitHub for what already
+exists, continue only from canonical definitions, scope, and approval that are actually still
+available, and ask the human rather than guessing when they aren't.
+
 ## 2. Title convention
 
 One form, for every issue regardless of layer, shape, or origin (planned, extension, bug, refactor,

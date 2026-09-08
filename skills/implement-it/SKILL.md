@@ -124,9 +124,9 @@ Trigger on requests shaped like:
 ## Rules
 
 - `review-gates.md` — the two pre-merge human approval gates (implementation review, then
-  commit-plan review), how Gate 1 consumes `review-it`'s result, and the conditions that always
-  warrant a stop; consult once implementation is ready to report, and again once a commit plan is
-  ready to propose.
+  commit-plan review), how Gate 1 consumes `review-it`'s result, the approval-validity check before
+  Gate 2 and before push, and the conditions that always warrant a stop; consult once implementation
+  is ready to report, and again once a commit plan is ready to propose.
 - [`review-it`](../review-it/) — independently callable implementation review; invoke standalone
   against the completed working tree once implementation and verification are complete, before
   reporting at Gate 1 (`review-gates.md`'s "Consuming review-it's result").
@@ -134,9 +134,11 @@ Trigger on requests shaped like:
   message content, the `Refs #N` trailer, and safely folding in review corrections; consult while
   inspecting the diff and building the commit plan, after Gate 1.
 - `verification.md` — verification scope: the narrowest reliable scope per commit across tests,
-  formatting, linting, and static analysis, the two distinct full-suite moments, the stronger
-  isolation technique for proving a split, and ordering commits around feature-activation risk;
-  consult while implementing and while building/ordering commits.
+  formatting, linting, and static analysis; the two distinct full-suite checkpoints, and when the
+  completed-issue one may be satisfied by an established reuse of the pre-Gate-1 result instead of a
+  fresh run; the stronger isolation technique for proving a split; preserving pre-existing worktree
+  changes using reliable provenance; and ordering commits around feature-activation risk; consult
+  while implementing and while building/ordering commits.
 - `issue-closure.md` — whether and how to close an issue: asking first, the closing recipe, and
   post-mutation validation; consult after the completed-issue full-suite pass, once commits exist.
   Closure is intentional before a milestone's PR merges.
