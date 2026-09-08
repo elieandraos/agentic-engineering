@@ -1,6 +1,6 @@
 # Ecosystem migration plan — Lab · Document · Plan · Implement · Review · Ship
 
-**Status: Steps 1–5 approved; Step 6 implemented, pending Control Room review.** Step 3 passed Control Room review at commit
+**Status: Steps 1–6 approved; v2.0.0 publication pending separate approval.** Step 3 passed Control Room review at commit
 `ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`, and the user's confirmation to record that approval was
 itself recorded at commit `b2fad42f1e4e73e482e7a49921bed6e47b1795a7`. Step 4 — establishing
 `review-it` and integrating it before Gate 1 (§5) — was implemented on top of that HEAD at commit
@@ -33,10 +33,11 @@ and correcting several inaccurate claims found in the first pass's documentation
 release proposals, at commit `bbed1f367e2b870168d6d3ab94198b8c430c8972`, then a second, narrower
 correction pass fixing five remaining findings against `ship-it.md`'s entry-condition scoping,
 `review-it.md`'s comparison-override wording, `implement-it.md`'s stack-composition explanation, the
-consumer-exercise prerequisites, and the evidence statements' precision, at the commit that adds
-this sentence. See Step 6's own implementation and correction records below. **Step 6 is implemented
-and corrected, pending Control Room review —
-not approved, not released.**
+consumer-exercise prerequisites, and the evidence statements' precision, at commit
+`4247a829e55f260ab86a61daf72ef6193b21979c`. See Step 6's own implementation, correction, and approval
+records below. **Step 6 passed Control Room review at that commit, and the user confirmed proceeding
+to finalize the v2.0.0 release proposal.** This approval covers the reviewed source and documentation
+at that commit; it does not establish successful consumer execution.
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
@@ -1280,6 +1281,15 @@ does not authorize it.
 
 ### Step 6 — Reconcile public documentation, validate the combined ecosystem, prepare publication
 
+**Approved by Control Room** at commit `4247a829e55f260ab86a61daf72ef6193b21979c`, with the user's
+confirmation to record the approval. The third correction pass resolved the `ship-it.md`
+entry-condition scoping, `review-it.md` comparison-override wording, `implement-it.md`
+stack-composition explanation, consumer-exercise prerequisite, and evidence-precision findings. This
+is source-review approval — a full re-read, repository-wide searches, `git diff --check`, and bounded
+static walkthroughs against the reconciled documentation and the underlying skill contracts; it does
+not establish successful consumer execution. Publication of `v2.0.0` requires its own, separate
+approval (see the finalized release proposal below).
+
 - **Outcome/boundaries.** `README.md`, `roadmap.md`, `docs/skill-consumption.md` (only if its
   illustrated skill list/paths actually changed), and every `skills/*/README.md` reconciled to the
   six-capability shape in §1. No runtime behavior changes in this step. This step grants no commit
@@ -1438,8 +1448,12 @@ step's own authorization scope (§5's boundaries above).
 flagged, not addressed. No new runtime-contract contradiction was found during this reconciliation;
 none is reported separately, since none exists to report.
 
-**Next execution proposals**, both bounded, separately authorized, and **not performed by this
-step**:
+**Deferred consumer-validation options — not the immediate next task.** The user will handle
+consumer installation/update manually; a separate `useOrbit` inspection, adoption plan, or formal
+exercise of either proposal below is not the immediate next task and is not required to finalize or
+publish the `v2.0.0` release proposal (see "Finalized v2.0.0 release proposal" below). Both proposals
+are retained here, bounded and separately authorized, as optional validation a human may choose to
+run later — not as mandatory next steps:
 
 1. **A real `useOrbit` installation/refresh and end-to-end consumer exercise.**
    - **Prerequisites.** Access to `useOrbit`'s actual local environment — its current
@@ -1567,70 +1581,145 @@ step**:
      through `ship-it`, a real PR; agree on cleanup (deleting the sample repository, or
      reverting/closing what was created) before running it.
 
-**Concise v2.0.0 release proposal.**
+**Finalized v2.0.0 release proposal.** This is the one concrete, current proposal for this release —
+it replaces the outline above in place rather than standing alongside it as a competing version. It
+remains a proposal: not approved, and no tag, draft release, published release, PR, or deployment has
+been created for it.
 
-- **Ownership changes to record.** `lab-it` narrowed (guide creation/maintenance/review moved to new
-  `document-it`, with the actual relationship between the two now reciprocal — see
-  `artifacts/lab-it.md` §7 — not one-directional); `ship-it` narrowed (branch readiness through issue
-  closure moved to new `implement-it`); `review-it` introduced as a new, independently callable
-  review skill wired into `implement-it`'s Gate 1 and into `ship-it`'s delivery-correction flow;
-  `ship-it`'s CI-failure handling now explicitly splits investigation/authorization (`ship-it`) from
-  performing the correction (`implement-it`); `ship-it` gained authorized milestone PR creation (Step
-  3, already implemented and Control-Room-approved before this step); three new architecture
-  dossiers (`document-it.md`, `implement-it.md`, `review-it.md`) now exist alongside the three
-  corrected ones (§ this correction pass, below).
-- **Consumer migration implications — the single fact release notes must state plainly.** A
-  repository-managed consumer refreshing only its existing managed skills (not adding the newly
-  named ones) keeps its refreshed `ship-it`, `lab-it`, and `plan-it` working, but does not by itself
-  gain `document-it`, `implement-it`, or `review-it` (see proposal 1 above, "The exercise's actual
-  prerequisite") — the implementation/gate/commit/verification/closure behavior that moved out of
-  `ship-it` and into `implement-it` is therefore only reachable once the consumer explicitly adds
-  `implement-it` (and, for Gate 1's review step, `review-it`). This must be stated as the release's
-  headline compatibility note, not left for a consumer to discover by trial.
-- **One consistent validation bar, not two different ones stated in different places.** This
-  proposal states a single bar: static, source-only validation (this step's own walkthroughs, plus
-  the three new dossiers' own source review) establishes that the reconciled documentation and the
-  underlying skill contracts agree with each other. It does **not**, by itself, establish that the
-  six-skill ecosystem behaves correctly for a real consumer — that requires running at least one of
-  the two proposed exercises above, and both together provide stronger evidence than either alone
-  (the `useOrbit` exercise proves a real repository-managed consumer can adopt the new skills without
-  losing existing behavior; the portability exercise proves the six skills hold their stack-neutral
-  claims outside this repository's own Laravel/Inertia usage — they test different things, not the
-  same thing twice). Recommendation, for the human's later approval rather than silently decided
-  here: run the `useOrbit` exercise before publishing `v2.0.0`, since it directly tests the
-  compatibility note above against a real repository-managed consumer; treat the portability
-  exercise as valuable but not release-blocking, since no current consuming project depends on
-  non-Laravel portability today. This is a recommendation, not a settled decision — the human may
-  instead require both, or neither, before authorizing publication.
-- **Applicable publication procedure, resolving the merged-PR mismatch.** `ship-it/rules/release.md`
-  governs how a *consuming project's* release is discovered, drafted, approved, published, and
-  validated, entered once that project's own milestone PR has merged — that entry precondition
-  presumes the milestone-PR delivery model `release.md` is written for. **This repository does not
-  run its own pipeline against changes to itself**: every commit in this migration, including this
-  one, was authored, reviewed, and pushed directly to `main` by explicit human authorization, with no
-  PR or merge step anywhere in this repository's own history. Confirmed by direct evidence, not
-  merge-commit absence alone (a squash or rebase merge can integrate a PR while leaving no merge
-  commit, so `git log --merges` reporting zero on its own would not have ruled that out): `gh pr
-  list --state all` against this repository returns zero pull requests in any state — open, closed,
-  or merged — confirming no PR has ever existed here, not only that none left a merge commit. This
-  repository's own prior release, `v1.0.0`, was published the same way — tagged and published
-  directly from commit `585a5d426e55fc3d586a9d3b95a43f85baf974ad` ("Add MIT license for the 1.0
-  release") on `main` (confirmed by `git log -1 v1.0.0`), with no PR behind it, consistent with the
-  same `gh pr list --state all` result and independently confirmed via `gh release view v1.0.0`
-  showing that tag's commit and publish record directly. The applicable path for `v2.0.0` is
-  therefore this repository's own established
-  precedent, not `release.md`'s consuming-project entry trigger: apply `release.md`'s substantive
-  draft → explicit approval → publish → re-fetch-and-validate sequence directly against `main`'s
-  reviewed tip, once Steps 1-6 have all passed Control Room review, exactly as `v1.0.0` did. This
-  does not invent a merged PR, does not create an artificial PR merely to satisfy `release.md`'s
-  wording, and does not change `release.md`'s own portable rule — that rule stays correctly written
-  for what it actually governs, a consuming project's real milestone-PR delivery; this repository's
-  own release of itself is simply not an instance of that, the same way it wasn't for `v1.0.0`.
-  **Available on `main` is distinct from published:** everything this migration describes is already
-  reachable by a fresh `npx skills add elieandraos/agentic-engineering` GitHub-source install
-  (`docs/skill-consumption.md` §13 — no release or tag is required for that), but no `v2.0.0` tag or
-  GitHub Release exists yet, and none is created by this plan. This proposal does not itself
-  authorize creating that tag or release.
+**Proposed tag and title.** Tag `v2.0.0`; release title **"Agentic Engineering v2.0.0 — Lab ·
+Document · Plan · Implement · Review · Ship."**
+
+**Why this is a major release.** Responsibilities moved between skills, not merely within one:
+implementation, verification, Gate 1/Gate 2, commit construction, and issue closure moved out of
+`ship-it` into new `implement-it`; guide creation, review, and maintenance moved out of `lab-it` into
+new `document-it`; independent implementation review is now a separately named skill, `review-it`. A
+consumer who only refreshes its existing managed skills keeps `lab-it`, `plan-it`, and `ship-it`
+working, but does not thereby gain any of that relocated behavior — that requires an explicit
+migration step (below), which is the definition of a breaking, major-version change for this
+ecosystem's consumers.
+
+**Complete proposed release-note text:**
+
+> ## Agentic Engineering v2.0.0
+>
+> **Lab. Plan. Implement. Review. Ship — with the right stack.**
+>
+> This release splits the previous three-skill pipeline (`lab-it` / `plan-it` / `ship-it`) into six
+> capabilities, moving implementation-review, recovery, and verification responsibilities to where
+> they now belong. It is a major release: responsibilities moved between skills, and a project that
+> only refreshes its existing managed skills will not gain the relocated behavior described below
+> without an explicit migration step.
+>
+> ### What changed
+>
+> - **`document-it` (new).** Creates, updates, and reviews explanatory architecture guides, in
+>   Markdown, a Claude Artifact, or both. Narrowed out of `lab-it`, which no longer owns guide
+>   creation, review, or maintenance — `lab-it` now routes guide-shaped requests to `document-it` and
+>   draws on it only for its own investigation-evidence discipline.
+> - **`implement-it` (new).** Owns approved issue/milestone intake, working-branch readiness,
+>   implementation, verification, issue-level Git workflow, Gate 1 and Gate 2, commit construction,
+>   authorized push, issue closure, and next-issue recommendations. Narrowed out of `ship-it`, which
+>   no longer performs any of this.
+> - **`review-it` (new).** Independently callable implementation assurance for a worktree, branch, or
+>   PR. Invoked by `implement-it` before Gate 1, and again during an authorized delivery correction;
+>   also callable entirely standalone, with no prior session required.
+> - **`lab-it` (narrowed).** Architecture investigation, verified explanations, and approved
+>   `plan.md` synthesis only. Guide output moved to `document-it`.
+> - **`ship-it` (narrowed).** Milestone PR readiness and authorized creation, post-merge delivery,
+>   milestone closure, and release. No longer implements, verifies, or closes individual issues —
+>   that is `implement-it`'s job. Its CI-failure handling on an open milestone PR now explicitly
+>   splits investigation and authorization (`ship-it`) from performing the correction
+>   (`implement-it`).
+> - **Implementation-review, recovery, and verification improvements.** Gate 1's stop condition now
+>   includes a clean or resolved `review-it` pass; worktree provenance is judged from reliable
+>   signals (git reflog, a session's own recorded start point, an explicit human statement) rather
+>   than appearance; an empty dependency-ready set is no longer treated as sufficient for milestone
+>   handoff when issues remain open but blocked; interrupted batch creation re-queries GitHub before
+>   retrying; approval validity is re-checked against the current diff/issue body before Gate 2 and
+>   before push; verification evidence is tied to the commit/diff it was produced against; the
+>   completed-issue full-suite checkpoint may reuse an established earlier full-suite result under
+>   four stated conditions, never a cache hit or a selected subset alone.
+>
+> ### Install / migrate
+>
+> ```shell
+> npx skills add elieandraos/agentic-engineering
+> ```
+>
+> Reinstall or select all six portable skills — `lab-it`, `document-it`, `plan-it`, `implement-it`,
+> `review-it`, `ship-it` — so your existing skills are refreshed to this release and the three new
+> names are added. **Refreshing only the skills you already have updates `lab-it`, `plan-it`, and
+> `ship-it` in place but does not add `document-it`, `implement-it`, or `review-it`** — a refresh
+> never adds a skill a project didn't already install. Keep any applicable stack companion (e.g.
+> `laravel-inertia-stack`) installed as before; this release does not change stack-companion
+> behavior.
+>
+> ### Validation
+>
+> This release was validated by source review: a full re-read of every changed and new file,
+> repository-wide searches for stale ownership references, `git diff --check`, relative-Markdown-link
+> resolution across every changed file, and bounded static walkthroughs of each migration step's key
+> scenarios against the actual owning `SKILL.md`/rule files. One bounded Git-mechanics experiment
+> exercised `review-it`'s comparison-base and state-identity behavior directly. **No skill was
+> invoked end to end, and no consuming project's installation, refresh, or pipeline run was performed
+> as part of this release** — this is source-level validation, not consumer proof.
+>
+> ### Known deferred items
+>
+> - Canonical issue-definition durable storage remains deferred — no `issue-plan.md`-equivalent file
+>   or approval registry is introduced; recovery relies on querying GitHub directly.
+> - The `laravel-inertia-stack` / Laravel Boost precedence rule for conflicting guidance remains
+>   unresolved and out of scope for this release.
+> - A real consumer installation/refresh exercise and a non-Laravel portability exercise remain
+>   available as optional, separately authorized follow-up validation — not performed for this
+>   release, and not a precondition of it.
+
+**Migration instruction (short form, for consumers).** Reinstall or select all six portable skills
+from this repository — `lab-it`, `document-it`, `plan-it`, `implement-it`, `review-it`, `ship-it` —
+so existing skills are refreshed and the three new names are added. Preserve any applicable stack
+companion already installed (e.g. `laravel-inertia-stack`); this release does not change
+stack-companion behavior. Updating only the skill names a project already has does **not** add the
+three missing skills — a refresh never adds a skill a project didn't already install.
+
+**Validation actually performed for this release (accurate, not end-to-end).** Source review of
+every changed and new file across Steps 2-6; repository-wide searches for stale ownership and
+cross-reference claims; `git diff --check` on every touched pass; a Python-based relative-Markdown-
+link resolution check; bounded static walkthroughs (reasoning through the relevant rule files against
+a scenario, no skill invoked) covering each step's key scenarios, listed in full in §6 above; and one
+bounded Git-mechanics experiment (Step 4's correction record) exercising `review-it`'s comparison-base
+and state-identity behavior against real Git state. **No end-to-end consumer execution was
+performed**: no skill was invoked as a live session, and no `useOrbit` or other consuming project's
+installation, refresh, or pipeline run occurred. The two consumer-validation exercises above remain
+available, deferred, optional follow-up — not a precondition of this proposal.
+
+**Known deferred items (brief, not expanding this release's scope).** Canonical issue-definition
+durable storage (§3.2, §7); the `laravel-inertia-stack`/Boost precedence question (§7 item 1); the
+real `useOrbit` consumer exercise and the non-Laravel portability exercise (above) — both now
+explicitly deferred, optional options rather than a gate on this proposal, since the user will handle
+consumer installation/update manually.
+
+**Proposed publication procedure (this repository's established direct-main release approach).**
+`ship-it/rules/release.md` governs a *consuming project's* release, entered once that project's own
+milestone PR has merged — this repository does not run its own pipeline against changes to itself.
+Every commit in this migration was authored, reviewed, and pushed directly to `main` by explicit
+human authorization, with no PR or merge step anywhere in this repository's own history: `gh pr list
+--state all` returns zero pull requests in any state, and this repository's prior release, `v1.0.0`,
+was tagged and published the same way, directly from commit
+`585a5d426e55fc3d586a9d3b95a43f85baf974ad` on `main` (confirmed via `git log -1 v1.0.0` and `gh
+release view v1.0.0`), with no PR behind it. The applicable path for `v2.0.0` is that same
+established precedent: apply `release.md`'s substantive draft → explicit approval → publish →
+re-fetch-and-validate sequence directly against `main`'s reviewed tip.
+
+**Release candidate.** The candidate commit for the `v2.0.0` tag is `main`'s tip immediately after
+this plan-finalization edit is committed and pushed — the final commit reported at the end of this
+task — not a SHA hard-coded into this file, since this file cannot reference the hash of the commit
+that contains it without an editing loop. Before publication, `ship-it` must independently re-fetch
+and confirm that candidate commit and this exact release-note text against the human's explicit
+approval — publication is a separate, later authorized action, not performed by this proposal.
+**Available on `main` is distinct from published:** everything this migration describes is already
+reachable by a fresh `npx skills add elieandraos/agentic-engineering` GitHub-source install
+(`docs/skill-consumption.md` §13 — no release or tag is required for that), but no `v2.0.0` tag or
+GitHub Release exists yet, and none is created by this plan.
 
 **Corrected.** A bounded correction/completion pass on top of the reviewed commit
 `d9f1f710ca4c1cd0c2ecf78907ccbe43f09013a6`, addressing findings against Step 6's first pass:
@@ -1769,6 +1858,13 @@ the release proposal above); whether to run either exercise now or defer publica
 the `laravel-inertia-stack`/Boost precedence question (§7 item 1), unaffected by this pass and still
 out of scope for this migration.
 
+**Superseded by the Step 6 approval and the finalized release proposal below.** The human has since
+decided to handle consumer installation/update manually; a formal `useOrbit` exercise or portability
+exercise is not required before this release proposal, and neither is presented as a publication gate
+in the "Finalized v2.0.0 release proposal" section above. Both remain available as deferred, optional
+validation a human may choose to run later. The `laravel-inertia-stack`/Boost precedence question
+remains unaffected and out of scope.
+
 **Third correction pass.** A bounded pass on top of commit
 `bbed1f367e2b870168d6d3ab94198b8c430c8972`, limited to `artifacts/ship-it.md`,
 `artifacts/review-it.md`, `artifacts/implement-it.md`, and this file, addressing five remaining
@@ -1862,12 +1958,14 @@ validation, not runtime or consumer proof — no skill was invoked, no `useOrbit
 project was touched, and this pass's own commit and push to `origin/main` (a real GitHub mutation)
 is the only GitHub-state change it made; no PR, tag, release, or deployment occurred.
 
-**Step 6 implemented and corrected, pending Control Room review — not approved, not released.**
-This step's own authorized commit and push to `origin/main` did occur, per the explicit
-authorization that opened this step and its correction pass — that is how this record and the
-reconciled documentation exist on `main` at all. No PR, tag, release, or deployment was created by
-either pass. Neither consumer exercise above was run, and no consuming project was touched or
-refreshed.
+**Step 6 passed Control Room review at commit `4247a829e55f260ab86a61daf72ef6193b21979c`, and the
+user confirmed recording that approval.** This step's own authorized commit and push to `origin/main`
+did occur, per the explicit authorization that opened this step and its correction passes — that is
+how this record and the reconciled documentation exist on `main` at all. No PR, tag, release, or
+deployment was created by any of its passes. Neither consumer exercise above was run, and no
+consuming project was touched or refreshed. **This approval covers the reviewed source and
+documentation; it does not establish successful consumer execution.** Publication of `v2.0.0` remains
+a separate, later decision — see the finalized release proposal above.
 
 ---
 
@@ -1939,3 +2037,18 @@ reliable signals, §3.2).
   task. No skill file, `README.md`, `roadmap.md`, `docs/` file, or the three pre-existing untracked
   files was touched. Nothing was staged, committed, pushed, or changed on GitHub; `plan.md` is left
   unstaged.
+- This pass (recording Step 6's approval and finalizing the v2.0.0 release proposal): branch `main`,
+  local and `origin/main` both at `4247a829e55f260ab86a61daf72ef6193b21979c` before editing (verified
+  by `git fetch` and comparing `git log` on both); `git status --porcelain` before editing showed only
+  the same three pre-existing untracked files (`control-room-responsibilities.md`, `skills-audit.md`,
+  `subagents.md`) — no intervening changes to reconcile. Only `plan.md` was edited: the top-of-file
+  status line and Step 6 narrative were updated to record Control Room approval of Steps 1-6; the two
+  consumer-exercise proposals under Step 6 were marked deferred, optional options rather than
+  mandatory next steps; and the release-proposal section was rewritten in place into one concrete,
+  finalized `v2.0.0` proposal (tag, title, complete release-note text, migration instructions,
+  accurate validation statement, deferred items, and a publication procedure identifying the release
+  candidate as this task's final pushed commit rather than a self-referential hard-coded SHA). No
+  skill file, `README.md`, `roadmap.md`, `docs/` file, or the three pre-existing untracked files was
+  touched. `git diff --check` on the resulting change is clean. Nothing was tagged, released,
+  drafted, or deployed; `plan.md` is the only file staged and committed, then pushed to `origin/main`
+  without force.
