@@ -25,7 +25,8 @@ state.
 
 ## Establish the comparison baseline, where one applies
 
-A worktree or branch review needs a baseline to diff against:
+A worktree, branch, or PR review needs a baseline to diff against — and, for a branch or PR, the
+correct starting point for that diff, not only its endpoint.
 
 - **Uncommitted changes** compare against `HEAD`, and the comparison must cover the actual in-scope
   content: staged changes, unstaged changes to already-tracked files, and new files that are part of
@@ -34,18 +35,42 @@ A worktree or branch review needs a baseline to diff against:
   reports) and inspect their actual content directly, in addition to the tracked diff, whenever
   they're part of what's being reviewed. Never stage a file, or otherwise mutate the worktree's
   index or content, merely to bring it into a diff for inspection — read it as it stands.
-- **A branch's full diff** compares against its actual intended base, discovered — in order of
-  reliability — from: an associated PR's declared base branch when one exists; the branch's
-  configured upstream or tracking branch; or an explicit target stated in the request. Only fall
-  back to the merge-base with the project's trunk branch once none of these is available; that
-  fallback is for a branch with no other declared target, not the correct comparison for a branch
-  that actually targets another feature or release branch. Diffing a stacked branch against trunk
-  instead of its real target silently pulls in that other branch's own unrelated, already-in-review
-  changes as if this review's target had introduced them — treat that as a correctness risk to
-  avoid, not a harmless default. Ask the human only when the available evidence leaves genuinely
-  ambiguous, materially different candidate bases; otherwise use the most reliable evidence found.
-- **A PR's baseline** is the PR's own declared base branch, discovered from GitHub — never assumed
-  from local branch naming.
+- **Discover the intended base**, for a branch or PR review, in order of reliability:
+  1. An explicit comparison stated in the request controls this review outright — use it, even when
+     it differs from what an associated PR would otherwise indicate.
+  2. Absent an explicit request, an associated PR's own declared base branch, discovered from
+     GitHub — never assumed from local branch naming.
+  3. Absent both, other reliable evidence of the actual intended integration target — for example, a
+     release- or branching-convention documented in project instructions, or an explicit statement
+     already in the conversation about which branch this work is meant to land on.
+
+  A branch's configured upstream or tracking branch is **not** evidence of its intended integration
+  target, and is not a tier in this order at all. A feature branch commonly tracks its own remote
+  counterpart (e.g. `origin/feature-x`) — that names where the branch's own commits are pushed, not
+  what it's meant to merge into. Never select the tracking branch as the comparison base merely
+  because it happens to be configured.
+
+  Fall back to the merge-base with the project's trunk branch only once none of the tiers above is
+  available — a defensible last resort, never the default first choice. Ask the human only when the
+  available evidence leaves genuinely ambiguous, materially different candidate bases; otherwise use
+  the most reliable evidence found.
+- **Diff from the merge-base, not the base's current tip.** Once the intended base is established,
+  identify the changes the reviewed branch or PR actually introduces by diffing from the merge-base
+  of that base and the reviewed head — not a direct comparison against the base's current tip, which
+  would also include whatever the base branch has itself gained since the branch diverged. This is
+  the ordinary comparison for a branch or PR review; preserve it unless the request explicitly asks
+  for a different comparison, per tier 1 above.
+- **A PR's baseline** is the PR's own declared base branch, discovered from GitHub. When the
+  request's explicit comparison differs from the PR's actual declared base, use the requested
+  comparison per the discovery order above, and label it plainly in the review as the requested
+  comparison, distinct from the PR's own declared base — never present the two as if they were the
+  same thing.
+
+Diffing against the wrong base or the wrong starting point — trunk instead of a branch's real
+target, the base's current tip instead of the merge-base, or a requested comparison silently
+reported as if it were the PR's own — silently misattributes changes the reviewed head did not
+introduce, or hides the actual comparison in use. Treat this as a correctness risk to avoid, not a
+harmless default.
 
 Not every review needs a baseline — inspecting one already-isolated commit or a single file in
 isolation does not. Treat this as conditional, not universal.

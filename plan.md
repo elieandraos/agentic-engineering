@@ -4,10 +4,11 @@
 `ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`, and the user's confirmation to record that approval was
 itself recorded at commit `b2fad42f1e4e73e482e7a49921bed6e47b1795a7`. Step 4 — establishing
 `review-it` and integrating it before Gate 1 (§5) — was implemented on top of that HEAD at commit
-`8dc3eaec11b52b829b54e7e224b1b0daae809ec4`, then received one correction pass on top of that same
-implementation correcting Gate 1's review-input/outcome contract, the authorized-scope-change
-exemption's breadth, stack-companion-independent framework checking, and review-target/coverage/
-identity precision. See Step 4's own implementation and correction records below. **Step 4 is
+`8dc3eaec11b52b829b54e7e224b1b0daae809ec4`, then received one correction pass, approved by the
+Control Room, at commit `7750870bb1b1251f256649352fa380db3037b058` (Gate 1's review-input/outcome
+contract, the authorized-scope-change exemption's breadth, and stack-companion-independent framework
+checking), and a second, bounded correction pass narrowing comparison-base selection and comparison
+identity in `review-it`. See Step 4's own implementation and correction records below. **Step 4 is
 implemented and corrected, pending Control Room review — it is not yet approved.** Step 5 has not
 started.
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
@@ -880,20 +881,26 @@ pre-existing untracked files (`control-room-responsibilities.md`, `skills-audit.
    backing, rather than presenting the latter as a discovered project rule.
 4. **Review target, coverage, and identity, made precise.** `rules/scope.md`'s comparison-baseline
    procedure previously defaulted every branch review to the trunk merge-base regardless of the
-   branch's actual intended target. Corrected to discover the real base, in order of reliability,
-   from an associated PR's declared base, the branch's configured upstream, or an explicit request
-   target, falling back to trunk only once none of these exists — preventing a stacked branch's
-   diff from silently absorbing another branch's own unrelated changes. The same section now states
-   that a worktree review's in-scope content includes staged, unstaged, and untracked files, that an
+   branch's actual intended target, and treated a branch's configured upstream/tracking branch as
+   valid evidence of that target. Corrected — see this step's own subsequent correction pass below,
+   which supersedes both of those points: an explicit request controls the comparison outright, then
+   an associated PR's declared base, then other reliable integration-target evidence; a configured
+   upstream/tracking branch is explicitly excluded, since it names where a branch's own commits push,
+   not what it merges into; trunk is a last-resort fallback; and the diff is taken from the
+   merge-base with the resolved base, not the base's current tip. The same section states that a
+   worktree review's in-scope content includes staged, unstaged, and untracked files, that an
    untracked file needs its own direct inspection since a `HEAD`-relative diff never surfaces one,
    and that no file is ever staged or otherwise mutated merely to bring it into view.
-   `rules/verification.md`'s "Staleness" section is renamed "Staleness and review identity" and now
-   distinguishes a committed target's identity (its commit SHA alone) from a dirty worktree's (`HEAD`
-   plus the actual diff/untracked-content identity actually reviewed, since `HEAD` alone cannot
-   distinguish two different dirty states); it states plainly this is not a registry or durable
-   review-storage mechanism, only this invocation's own report stating what it checked. A material
-   change invalidates the prior pass for that surface even when `HEAD` doesn't move. A new paragraph
-   states that a scoped re-review names the surface it actually rechecked and must not imply it
+   `rules/verification.md`'s "Staleness" section is renamed "Staleness and review identity." Its
+   original description here — that a committed target's identity is its commit SHA alone — was
+   itself inaccurate for a branch or PR review and is corrected by this step's subsequent correction
+   pass, below, to also record the resolved base, the comparison-start SHA, and the comparison
+   method; an isolated commit reviewed with no comparison is still identified by its SHA alone. A
+   dirty worktree's identity remains `HEAD` plus the actual diff/untracked-content identity actually
+   reviewed, since `HEAD` alone cannot distinguish two different dirty states. None of this is a
+   registry or durable review-storage mechanism — only each invocation's own report stating what it
+   checked. A material change invalidates the prior pass for that surface even when `HEAD` doesn't
+   move. A scoped re-review names the surface it actually rechecked and must not imply it
    independently rechecked the whole implementation; the "Reviewed target and state" report-shape
    bullet was corrected to match.
 - **Validation performed:** full re-read of every corrected file; a repository-wide search
@@ -919,6 +926,51 @@ pre-existing untracked files (`control-room-responsibilities.md`, `skills-audit.
 - **No unresolved material issue from this correction.** §7's remaining open items are unchanged and
   stay Step 5's own scope; Step 4 remains implemented and corrected, pending Control Room review, not
   approved.
+
+**Corrected (comparison-base and comparison-identity precision).** A second, bounded correction pass
+on top of commit `7750870bb1b1251f256649352fa380db3037b058`, addressing the one remaining
+review-comparison issue in `review-it`; the Gate 1, authorization-exemption, and stack corrections
+above passed Control Room review and are preserved unchanged. Two findings corrected, both in
+`rules/scope.md` and `rules/verification.md`:
+
+1. **Comparison-base selection.** The prior pass's discovery order treated a branch's configured
+   upstream/tracking branch as valid evidence of its intended integration target. Corrected: an
+   explicit request comparison controls the review outright; otherwise an associated PR's declared
+   base, or other reliable evidence of the actual intended target; a configured upstream/tracking
+   branch is explicitly excluded, since a feature branch commonly tracks its own remote counterpart
+   rather than its intended merge target; trunk is used only as a last-resort fallback. The ordinary
+   comparison now diffs from the merge-base with the resolved base, not the base's current tip, and a
+   requested comparison that differs from a PR's actual declared base is labeled as such rather than
+   presented as the PR's own.
+2. **Comparison identity.** The prior pass's staleness rule claimed a committed target — including a
+   branch or PR — is identified by its head commit SHA alone. That claim was itself inaccurate: the
+   identical head diffed against two different bases produces two different diffs. Corrected to
+   record the head SHA, the resolved base, the comparison-start (merge-base) SHA where one applies,
+   and the comparison method; an isolated commit reviewed with no comparison is still identified by
+   its SHA alone, and dirty-worktree content identification is unchanged. A changed base or
+   comparison — not only a changed `HEAD` — now explicitly invalidates a prior clean result. A scoped
+   re-review states its checked surface alongside this same state/comparison identity, not the
+   surface alone. No registry, persistence mechanism, or new tooling was introduced.
+
+- **Validation performed:** full re-read of both corrected files; `git diff --check` clean; every
+  relative Markdown link in the corrected files confirmed to resolve; a repository-wide search
+  confirming no other file (`SKILL.md`, `README.md`, `checklist.md`, `implement-it/rules/
+  review-gates.md`) restated the corrected upstream-tracking or commit-SHA-alone claims, so no
+  further cross-reference correction was needed. A disposable Git repository (created and destroyed
+  outside the working tree) verified the underlying Git mechanics the corrected text depends on: a
+  pushed feature branch tracking its own remote counterpart, confirmed to produce an empty, useless
+  diff against that counterpart; an explicit comparison against a parent feature branch via their
+  merge-base, confirmed to isolate exactly the child branch's own introduced change; the identical
+  head commit diffed against two different bases (the parent branch versus trunk), confirmed to
+  produce two different diffs — trunk's additionally, silently including the parent branch's own
+  commit; and a material edit to an already-reviewed file with no new commit, confirmed to leave
+  `HEAD` unchanged while the reviewed content changed, with the resulting scoped re-review able to
+  state both the checked surface and the full state/comparison identity together. This is Git-
+  mechanics verification of the corrected procedure's claims, not proof from invoking `review-it`
+  itself — the skill was not invoked, and no consuming project was touched.
+- **No unresolved material issue from this correction.** §7's remaining open items are unchanged and
+  stay Step 5's own scope. Step 4 remains implemented and corrected, pending Control Room review, not
+  approved; Step 5 remains unstarted.
 
 ### Step 5 — Strengthen recovery, adopt the approved verification policy
 

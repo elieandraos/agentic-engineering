@@ -45,40 +45,60 @@ discipline `plan-it/rules/review.md` already applies to issue review. State that
 enough to actually distinguish the reviewed state from a different one, not merely a label that
 happens to be available:
 
-- **A committed target** — a branch, a PR, or an isolated commit — is identified by its exact
-  commit SHA. State it plainly; it names precisely what was reviewed, with nothing further needed.
-- **A worktree carrying uncommitted content** is not fully identified by `HEAD` alone. `HEAD` names
-  only the last commit; it says nothing about the staged, unstaged, or untracked content sitting on
-  top of it, and two different dirty states can share the identical `HEAD`. State the `HEAD` commit
-  plus an identity for the actual uncommitted content reviewed: the tracked diff's own content (a
-  content hash, or the diff itself when short enough to state in full) and an explicit accounting of
-  every untracked file reviewed, by path and content as reviewed (`rules/scope.md`'s "Establish the
-  comparison baseline"). This is not a durable registry or storage mechanism `review-it` maintains
-  between invocations — each invocation states its own identity fresh, in its own report; it exists
-  so the identity alone lets the caller recognize exactly what state was checked.
+- **A branch or PR review** is not fully identified by its head commit SHA alone — the identical
+  head diffed against a different base produces a different diff, and can produce different
+  findings, so the head SHA by itself does not name what was actually reviewed. State: the head
+  commit SHA; the resolved base (the branch or ref actually used, per `rules/scope.md`'s "Establish
+  the comparison baseline"); the actual comparison-start SHA where one applies (the merge-base of
+  that base and the head, when the merge-base method was used); and the comparison method itself —
+  a merge-base diff against the resolved base, or the request's own explicit alternative comparison,
+  named as what it actually is. This combination, not the head SHA alone, is what distinguishes this
+  review from a different review of the identical head compared against a different base.
+- **An isolated commit reviewed with no comparison** — its own content inspected directly, not
+  diffed against a base — is identified by its exact commit SHA alone; there is no base to record.
+- **A worktree carrying uncommitted content** is not fully identified by `HEAD` alone either. `HEAD`
+  names only the last commit; it says nothing about the staged, unstaged, or untracked content
+  sitting on top of it, and two different dirty states can share the identical `HEAD`. State the
+  `HEAD` commit plus an identity for the actual uncommitted content reviewed: the tracked diff's own
+  content (a content hash, or the diff itself when short enough to state in full) and an explicit
+  accounting of every untracked file reviewed, by path and content as reviewed (`rules/scope.md`'s
+  "Establish the comparison baseline").
 
-A material change to the reviewed surface after this pass invalidates it for that surface, whether
-or not `HEAD` itself moved — an edit made to an already-reviewed file with no new commit is still a
-material change the prior identity above no longer describes. The caller — a human, or
-`implement-it` before Gate 1 — requests a fresh pass, full or scoped to the correction, before
-relying on this result again. `review-it` does not track or store a review's history itself; each
-invocation is stateless with respect to any prior pass, and relies entirely on the caller supplying
-the current state to check.
+None of the above is a durable registry or storage mechanism `review-it` maintains between
+invocations — each invocation states its own identity fresh, in its own report; it exists so the
+identity alone lets the caller recognize exactly what state, and what comparison, was actually
+checked.
+
+A material change invalidates this pass for the affected surface, whether or not `HEAD` itself
+moved: an edit made to an already-reviewed file with no new commit is a material change; so is a
+change to the resolved base or the comparison method — a different declared base, a rebase, or a
+switch from one comparison to another — even when the head commit is unchanged. Never carry forward
+a clean result across a changed base or comparison merely because the head SHA looks the same;
+reassess before relying on it again. The caller — a human, or `implement-it` before Gate 1 —
+requests a fresh pass, full or scoped to the correction, before relying on this result again.
+`review-it` does not track or store a review's history itself; each invocation is stateless with
+respect to any prior pass, and relies entirely on the caller supplying the current state and
+comparison to check.
 
 **A scoped re-review** — invoked against only the affected surface after a fix — states plainly
-which files or surface it actually checked this time. It must not imply, by omission or general
-language, that it independently rechecked the entire implementation; its "Reviewed target and
-state" (below) names the scoped surface explicitly, not the whole worktree/branch/PR identity as if
-a full pass had run again.
+which files or surface it actually checked this time, alongside the same state/comparison identity
+described above for whatever it was actually run against. Naming the surface does not replace
+naming that identity; both are required. It must not imply, by omission or general language, that it
+independently rechecked the entire implementation; its "Reviewed target and state" (below) names the
+scoped surface explicitly alongside that identity, not the whole worktree/branch/PR's full identity
+as if every category had run again.
 
 ## Report shape
 
 Every `review-it` result states:
 
 - **Reviewed target and state** — the worktree, branch, or PR reviewed, and its precise identity per
-  "Staleness and review identity" above (a commit SHA for a committed target; `HEAD` plus the actual
-  diff/untracked-content identity for a dirty worktree). A scoped re-review states the scoped
-  surface it actually checked, not the whole target's identity.
+  "Staleness and review identity" above: for a branch or PR, the head SHA, the resolved base, the
+  comparison-start SHA where one applies, and the comparison method; for an isolated commit with no
+  comparison, its commit SHA alone; for a dirty worktree, `HEAD` plus the actual diff/
+  untracked-content identity. A scoped re-review states the scoped surface it actually checked
+  alongside that same identity, not the whole target's full-coverage identity as if every category
+  had run again.
 - **Confirmed findings** — ordered by consequence, each with its file or location, the evidence or
   reasoning that verified it, and its concrete consequence if left unaddressed.
 - **Verification performed** — which checks `review-it` actually ran or traced itself, distinguished
