@@ -1,12 +1,13 @@
 # Ecosystem migration plan — Lab · Document · Plan · Implement · Review · Ship
 
-**Status: Step 1 approved; Step 2 implemented, pending Control Room review.** This revision
-corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The architecture
-and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 — extracting
-`document-it` and narrowing `lab-it` (§5) — has been implemented on top of reviewed HEAD
-`0b6b5587c56d40eda18e8fb1294913af83e52e8d`; see the implementation record appended to Step 2's own
-entry below. Implementing Step 2 does not authorize Step 3 or any later step — each remaining step
-still requires its own go-ahead, per §5.
+**Status: Step 1 approved; Step 2 implemented and corrected once, pending Control Room review.**
+This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
+architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
+extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
+`0b6b5587c56d40eda18e8fb1294913af83e52e8d`, then received one correction pass on top of reviewed
+HEAD `84877dfca972e91c413370f2609a8c81aeba54f4`; see the implementation and correction records
+appended to Step 2's own entry below. Implementing and correcting Step 2 does not authorize Step 3
+or any later step — each remaining step still requires its own go-ahead, per §5.
 
 **Source of truth for this initiative.** This is the change plan for splitting the current
 `lab-it` / `plan-it` / `ship-it` ecosystem into `lab-it` (narrowed), `document-it` (new), `plan-it`
@@ -464,10 +465,10 @@ step is published in a mixed or half-migrated state.
   workflows as `lab-it`'s) is untouched — that content reconciliation is Step 6's "broader
   public-documentation rewrite," not this step's. `artifacts/lab-it.md`'s one link to
   `../skills/lab-it/rules/plan-synthesis.md` was already correct and needed no change.
-- `rules/template.html`'s own header comment still says "the lab-it guide-writing workflow" — left
-  as-is per this step's explicit "moved verbatim" instruction; it is now a stale self-reference
-  inside an unmodified file, not a broken cross-file link, and is flagged here rather than silently
-  fixed or silently left unflagged.
+- `rules/template.html`'s own header comment still said "the lab-it guide-writing workflow" — left
+  as-is per this step's explicit "moved verbatim" instruction; flagged here as a stale
+  self-reference inside an unmodified file, not a broken cross-file link. Corrected in this step's
+  own follow-up correction pass, below.
 - **Validation performed:** full re-read of both resulting skills and every affected supporting
   file; frontmatter and Markdown structure checked in both `SKILL.md` files; a diff of each moved
   rule file against its pre-move committed content, confirming every delta is an intentional
@@ -483,6 +484,39 @@ step is published in a mixed or half-migrated state.
   with a partial update failure; reusing sufficient evidence versus routing a missing investigation
   through `lab-it`) — all traced correctly through the new files with no coherence gap found. No
   Artifact was published and no consuming project was touched, per this step's authorization scope.
+
+**Corrected.** One correction pass on top of reviewed HEAD
+`84877dfca972e91c413370f2609a8c81aeba54f4`, addressing four findings against `document-it`:
+
+1. `document-it/SKILL.md`'s frontmatter and `README.md`'s "not for" line previously implied
+   debugging and diff review "stay with `lab-it`," alongside investigation, architecture decisions,
+   and `plan.md` synthesis, which do. Corrected to state debugging/diff review as simply out of
+   scope, with no owner implied — no new owner introduced, no unbuilt skill activated.
+2. Reconciled Markdown location: `docs/` is now stated as the default for a *new* guide only, in
+   `SKILL.md`'s "Format selection." An update preserves the guide's existing path, including one
+   outside `docs/`, unless the user explicitly authorizes relocation — stated in `SKILL.md`'s
+   identity-preservation bullet, and `rules/review.md`'s Markdown format-specific check now accepts
+   a preserved out-of-`docs/` path rather than flagging it.
+3. Carried the existing single-format-update exception (`SKILL.md`'s "Maintaining both formats")
+   through `rules/maintenance.md` (claim-graph, redeployment, and sequence steps) and
+   `rules/review.md` (the "Both formats maintained" check and a new "does not flag" entry): default
+   stays synchronized; an explicit single-format request updates only that format and reports the
+   other's resulting divergence, never presented as a failure or as both outputs being current.
+4. `rules/template.html`'s header comment corrected: "the lab-it guide-writing workflow" →
+   "the document-it guide-writing workflow"; the favicon cross-reference anchor updated from
+   `#choosing-a-favicon` to `#choosing-a-favicon-artifact-only`, matching `doc-style.md`'s actual
+   heading. No other HTML, CSS, or JavaScript changed — confirmed by diffing the corrected file
+   against its prior committed content, which shows only these two comment-text hunks.
+
+**Validation performed:** full re-read of every edited file; a repo-wide search confirming no
+remaining reference to the old `#choosing-a-favicon` anchor or to the debugging/diff-review
+misattribution; `git diff --check` clean; four focused static walkthroughs against the corrected
+files (a debugging/diff-review request lands with neither skill claiming it; updating an existing
+root-level `architecture.md` preserves its path outside `docs/` without the review checklist
+flagging it; updating only the Markdown half of a maintained pair honors that scope and reports the
+Artifact's resulting divergence, not a failure; an ordinary paired update with no format
+restriction still synchronizes both outputs) — all four traced correctly with no coherence gap
+found.
 
 ### Step 3 — Extract `implement-it`, narrow `ship-it`
 

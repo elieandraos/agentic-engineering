@@ -1,6 +1,6 @@
 ---
 name: document-it
-description: "Creates, updates, and reviews explanatory architecture guides in Markdown, a Claude Artifact, or both — reusing sufficient, current, verified understanding already available, and routing to lab-it's investigation method only when evidence is missing or stale. Trigger to document existing architecture, update an existing guide, or review a guide's completeness. Not for investigating a system from scratch, debugging, reviewing a diff, resolving architecture decisions for a proposed feature, or synthesizing plan.md — those stay with lab-it."
+description: "Creates, updates, and reviews explanatory architecture guides in Markdown, a Claude Artifact, or both — reusing sufficient, current, verified understanding already available, and routing to lab-it's investigation method only when evidence is missing or stale. Trigger to document existing architecture, update an existing guide, or review a guide's completeness. Not for debugging or reviewing a diff. Not for investigating a system from scratch, resolving architecture decisions for a proposed feature, or synthesizing plan.md — those stay with lab-it."
 ---
 
 # document-it
@@ -41,8 +41,10 @@ they've already specified. Don't infer the format from context.
 
 - **Artifact** output uses `rules/template.html` and requires the `artifact-design` skill and the
   `Artifact` tool. Load `artifact-design` before writing any Artifact page.
-- **Markdown** output lives under the consuming repository's own `docs/` directory; create that
-  directory if it doesn't already exist. Markdown has no `template.html` equivalent and does not
+- **Markdown**, for a **new guide**, lives under the consuming repository's own `docs/` directory;
+  create that directory if it doesn't already exist. This default applies to a new guide only —
+  updating an existing Markdown guide preserves its current path instead, including one outside
+  `docs/` (see "Update an existing guide"). Markdown has no `template.html` equivalent and does not
   need Artifact-specific tooling — it must work without it.
 - If the requested format's publishing capability is unavailable (no `Artifact` tool, no write
   access to the target repository), explain that plainly and ask the user how to proceed. Never
@@ -133,8 +135,11 @@ when verified reality requires it.
 
 **Preserve identity by default:**
 
-- **Markdown** — the same file path. Preserve unaffected front matter, title, and other metadata,
-  while allowing the changes the requested update actually requires.
+- **Markdown** — the same file path, even one outside the consuming repository's `docs/`
+  directory; `docs/` is only the default location for a new guide, not a requirement imposed
+  retroactively. Relocate only when the user explicitly authorizes it. Preserve unaffected front
+  matter, title, and other metadata, while allowing the changes the requested update actually
+  requires.
 - **Artifact** — the same `url` and the same favicon.
 
 ## Maintaining both formats
@@ -148,10 +153,12 @@ When a guide is maintained in both Markdown and Artifact:
   apply to Artifact only; a link-integrity/structure check applies to Markdown only).
 - **Keep the association between the two outputs discoverable** through a minimal cross-reference
   each carries to the other's location — not a registry, and nothing beyond that is required.
-- **Report precisely which outputs changed**, and name any remaining divergence or publication
-  failure, rather than reporting a single "done." A partial failure (e.g., the Markdown update
-  succeeds but the Artifact can't be reached) is reported as exactly that — which document
-  changed, which stayed stale, and why.
+- **Report precisely which outputs changed**, and name any remaining divergence, rather than
+  reporting a single "done." State the reason, and distinguish two different cases: a publication
+  failure (e.g., the Markdown update succeeds but the Artifact can't be reached) versus the user
+  explicitly limiting this update to one format. The second is authorized divergence, not a
+  defect — report which output changed, which the user chose to leave as-is, and don't claim the
+  untouched one is current.
 
 ## Review a guide
 

@@ -153,12 +153,15 @@ hold up to the light.
 
 - **Artifact.** Is the favicon present, stable across redeploys, and domain-appropriate? For an
   update, does the guide still live at its preserved `url`, per `rules/maintenance.md`?
-- **Markdown.** Does the file live at its expected or preserved path under the consuming
-  repository's `docs/` directory? Do internal links — to headings within the guide, to referenced
-  source paths, and to a paired Artifact if one exists — actually resolve?
+- **Markdown.** For a new guide, does the file live under the consuming repository's `docs/`
+  directory? For an update, does the file still live at the guide's existing path — accept a path
+  outside `docs/` as correctly preserved identity, not a defect, unless the user explicitly
+  authorized relocating it? Do internal links — to headings within the guide, to referenced source
+  paths, and to a paired Artifact if one exists — actually resolve?
 - **Both formats maintained.** Are the architectural claims synchronized between them, per
-  `SKILL.md`'s "Maintaining both formats"? Does each carry a working cross-reference to the
-  other's location?
+  `SKILL.md`'s "Maintaining both formats" — or, when the user explicitly scoped this update to one
+  format, is the other output's resulting divergence reported rather than left unstated or
+  presented as current? Does each carry a working cross-reference to the other's location?
 
 ### Overall
 
@@ -194,3 +197,7 @@ hold up to the light.
 - A "when applicable" checklist category that doesn't apply to this architecture.
 - A stated known gap, unless it contradicts another claim, hides a material consequence, or is
   presented misleadingly.
+- Divergence between two maintained formats that the user explicitly authorized for this update,
+  as long as the divergence is reported and neither output is presented as current when it isn't.
+- A Markdown guide's path outside the consuming repository's `docs/` directory, when that path is
+  the guide's preserved existing identity rather than a new guide's location choice.

@@ -71,9 +71,11 @@ hero or introductory framing, navigation or section labels, prose, diagrams, tab
 spec-strip facts, source references, decisions and trade-offs, limitations or deferred work, and
 closing material. None of these is mandatory in every guide — update whichever the guide actually
 uses to state the claim, forming the smallest complete connected set, not just the section the
-issue happened to name. When both formats are maintained, the claim graph spans both — a claim
-changed in one carries the same obligation in the other, per `SKILL.md`'s "Maintaining both
-formats."
+issue happened to name. When both formats are maintained, the claim graph spans both by default —
+a claim changed in one carries the same obligation in the other, per `SKILL.md`'s "Maintaining
+both formats." When the user explicitly limits this update to one format, update only that
+format's claim graph, and record the resulting divergence in the other rather than leaving it
+unstated.
 
 ## Implementation-only changes
 
@@ -119,9 +121,11 @@ format.
 After editing: for an **Artifact**, redeploy through the `Artifact` tool with the same `url` and
 the same favicon. For **Markdown**, save to the same file path, preserving unaffected metadata.
 Then run `rules/review.md` against the whole updated guide — every maintained format, not only the
-one edited first — not only the sections you touched, paying particular attention to the claims
-you changed and whatever depends on them. Confirm the changes don't contradict untouched material
-elsewhere in the guide.
+one edited first, confirming that a format deliberately left unupdated by the user's request has
+its resulting divergence accurately reported rather than left unstated or presented as current —
+not only the sections you touched, paying particular attention to the claims you changed and
+whatever depends on them. Confirm the changes don't contradict untouched material elsewhere in the
+guide.
 
 ## Sequence
 
@@ -131,7 +135,8 @@ elsewhere in the guide.
 3. Classify it (see "Reconcile before editing") and determine the complete connected scope.
 4. Stop for unresolved authority or a material decision — route it to the user, or to `lab-it` when
    it requires fresh investigation or an architecture decision.
-5. Update only the affected claim graph, in every maintained format.
+5. Update only the affected claim graph — in every maintained format by default, or only the
+   format the user explicitly authorized, recording the resulting divergence in the other.
 6. Preserve unaffected narrative and the guide's identity.
 7. Remove stale deferred-work claims and update whatever they affected.
 8. Reread the edit as present-tense architecture, not release notes.

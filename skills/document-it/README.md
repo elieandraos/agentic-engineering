@@ -10,8 +10,8 @@ investigation method only when evidence is missing or stale.
 - A published guide needs reconciling with verified current reality.
 - An existing guide needs an independent completeness check.
 
-Not for investigating a system from scratch, debugging, reviewing a diff, resolving architecture
-decisions for a proposed feature, or synthesizing `plan.md` — those stay with
+Not for debugging or reviewing a diff. Not for investigating a system from scratch, resolving
+architecture decisions for a proposed feature, or synthesizing `plan.md` — those stay with
 [`lab-it`](../lab-it/).
 
 ## Boring prompts
