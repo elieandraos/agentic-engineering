@@ -199,10 +199,11 @@ complete but not yet activated, per `rules/commit-boundaries.md` — a broader r
 narrower, reliable one didn't already cover.
 
 Satisfy the completed-issue checkpoint once, after the last commit for the issue, before reporting
-the issue done — either by running the full regression suite again or by reusing the pre-Gate-1
-result under the conditions in "Completed-issue verification: run or reuse" below. Report the exact
-result either way: pass/skip/fail counts for a fresh run, or the reused result and why it still
-applies.
+the issue done — either by running the full regression suite again or by reusing an earlier
+qualifying full-suite result (the pre-Gate-1 run, or a run already executed directly against the
+final committed state) under the conditions in "Completed-issue verification: run or reuse" below,
+which owns those conditions; this summary doesn't restate them. Report the exact result either way:
+pass/skip/fail counts for a fresh run, or the reused result and why it still applies.
 
 The two checks prove different things:
 

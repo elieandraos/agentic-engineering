@@ -1,6 +1,6 @@
 # Ecosystem migration plan — Lab · Document · Plan · Implement · Review · Ship
 
-**Status: Steps 1–4 approved.** Step 3 passed Control Room review at commit
+**Status: Steps 1–5 approved.** Step 3 passed Control Room review at commit
 `ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`, and the user's confirmation to record that approval was
 itself recorded at commit `b2fad42f1e4e73e482e7a49921bed6e47b1795a7`. Step 4 — establishing
 `review-it` and integrating it before Gate 1 (§5) — was implemented on top of that HEAD at commit
@@ -20,9 +20,13 @@ constitute, Control Room approval of this step's own implementation. Step 5 was 
 commit `297036f1aa36aff934c82fcc2fc65e96ab2827ab`, then received one bounded correction pass
 separating recovered content from approval evidence, making the approval-validity check reachable
 on every continuation path, distinguishing a discovered PR from a recovered creation attempt, and
-reconciling the final isolation run with completed-issue verification. See Step 5's own
-implementation and correction records below. **Step 5 is implemented and corrected, pending Control
-Room review — it is not yet approved.** Step 6 has not started.
+reconciling the final isolation run with completed-issue verification, at commit
+`45509d7aaf63b18d637ea42c596ad829ebc4b6b9`. See Step 5's own implementation, correction, and
+approval records below. **Step 5 passed Control Room review at that commit, with one small,
+wording-only cleanup applied on top of it while recording the approval** (generalizing a leftover
+narrow-reuse phrase in "Default commit-building loop" to match the two reuse sources
+"Completed-issue verification: run or reuse" already defines). Step 6 is next; implementation has
+not started.
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
@@ -1217,9 +1221,14 @@ Room approval of this step's own implementation are kept distinct throughout; th
 A) remains explicitly deferred, not resolved, by this correction.
 
 - **Validation performed:** full re-read of every corrected file; a repository-wide search confirming
-  no remaining reference to validating a discovered PR against a proposal that may not exist, to
-  reconstructing approval from a created issue's body alone, or to the completed-issue checkpoint
-  naming only the pre-Gate-1 run as reusable; `git diff --check` clean; YAML frontmatter of
+  no remaining reference to validating a discovered PR against a proposal that may not exist, or to
+  reconstructing approval from a created issue's body alone. **This search was incomplete**: it missed
+  one remaining narrow-reuse reference — "Default commit-building loop"'s completed-issue-checkpoint
+  summary still named only the pre-Gate-1 run as reusable, rather than both sources the owning
+  section actually defines. That gap was found and corrected in this step's own follow-up cleanup
+  pass, below; it does not indicate a defect in the owning "Completed-issue verification: run or
+  reuse" section itself, which already stated both sources correctly at the time. `git diff --check`
+  clean; YAML frontmatter of
   `implement-it/SKILL.md` parsed successfully; every relative Markdown link in the corrected files
   confirmed to resolve. Seven bounded static walkthroughs run against the corrected file content: a
   published issue whose content is recoverable but whose human-approval evidence is missing, correctly
@@ -1237,8 +1246,27 @@ A) remains explicitly deferred, not resolved, by this correction.
   walkthroughs, not runtime or consumer proof — no skill was actually invoked, and no real GitHub
   issue, PR, milestone, tag, or release was created or exercised, per this pass's authorization scope.
 
-**Step 5 remains implemented and now corrected, pending Control Room review — it is not approved.**
-Step 6 has not started.
+**Bounded cleanup**, on top of commit `45509d7aaf63b18d637ea42c596ad829ebc4b6b9` (the corrected and
+Control-Room-reviewed result): `implement-it/rules/verification.md`'s "Default commit-building loop"
+completed-issue-checkpoint summary — the one gap the correction pass's own validation search missed
+(see the corrected validation note above) — now names reuse of "an earlier qualifying full-suite
+result (the pre-Gate-1 run, or a run already executed directly against the final committed state)"
+and explicitly states that "Completed-issue verification: run or reuse" owns the eligibility
+conditions, without restating or altering them. A repository-wide search after this edit confirmed
+no remaining reference names only the pre-Gate-1 run as reusable anywhere in the repository. This
+edit is wording-only: it does not change which content qualifies for reuse, only which section of
+the rule states that both sources qualify. This is source review of a small, targeted text change,
+distinct from any actual consumer execution — no skill was invoked, and no consuming project was
+touched.
+
+**Approved.** Step 5 passed Control Room review at commit
+`45509d7aaf63b18d637ea42c596ad829ebc4b6b9`, with this minor wording cleanup applied on top of that
+reviewed commit as part of recording the approval, not as new substantive change. No blocking
+findings remain in the reviewed changes. Validation comprises source review, static walkthroughs,
+and bounded Git-mechanics checks recorded above; no consuming-project invocation of any skill in
+this ecosystem has been performed. Durable issue-definition storage remains explicitly deferred, not
+resolved, by this approval. Step 6 is next; its implementation has not started, and this approval
+does not authorize it.
 
 ### Step 6 — Reconcile public documentation, validate the combined ecosystem, prepare publication
 
