@@ -44,14 +44,23 @@ first" below, confirm the issue's commits are reachable on the correct remote br
    ```
 
    An empty result means every local commit, including the issue's, is already on the remote
-   branch — skip straight to "Ask first." A non-empty result means the issue's commits still need to
-   be pushed.
-3. **Before asking, confirm the approval this push relies on is still valid** — per
-   `rules/review-gates.md`'s "Approval validity before Gate 2 and before push." **If they aren't
-   remote yet, ask for explicit authorization to push.** This is a permission check for a mutating
-   remote action, not a third review gate — Gate 1 and Gate 2 (`rules/review-gates.md`) already
-   approved the implementation and the commit structure; this only asks whether to make those
-   already-approved commits reachable on the remote, once that approval is confirmed still to apply.
+   branch. A non-empty result means the issue's commits still need to be pushed.
+3. **Either way, confirm the approval this step relies on is still valid** — per
+   `rules/review-gates.md`'s "Approval validity before Gate 2 and before push," which owns the
+   substantive check; this rule only routes to it. Run it on both paths, not only the one that
+   pushes — resumed work with nothing left to push still needs its Gate 1/Gate 2 approval confirmed
+   applicable before advancing toward closure, exactly as much as work that still needs pushing
+   does. Remote presence never substitutes for that confirmation, and closure never proceeds on
+   presence alone. If the check finds missing or stale approval evidence, report it and resolve it
+   the way `rules/review-gates.md` directs — never silently assume the approval still applies.
+   - **Already remote (step 2 was empty).** Once approval validity is confirmed, skip straight to
+     "Ask first" below.
+   - **Not remote yet.** Once approval validity is confirmed, ask for explicit authorization to
+     push — unless push authorization for this exact content was already granted earlier in this
+     same session and remains applicable, in which case proceed to step 4 without asking a second,
+     redundant time. Re-check applicability again immediately before the actual push mutation, even
+     when authorization was granted earlier: preserve it if it still demonstrably applies; if it no
+     longer does, that's a stop, not a silent reuse.
 4. **Push normally once authorized.** A plain push to the branch identified in step 1 — never
    `--force` or an equivalent override. A push rejected because the remote has diverged is a genuine
    problem to surface to the human, not something to force past.

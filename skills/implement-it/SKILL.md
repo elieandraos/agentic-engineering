@@ -135,8 +135,9 @@ Trigger on requests shaped like:
   inspecting the diff and building the commit plan, after Gate 1.
 - `verification.md` — verification scope: the narrowest reliable scope per commit across tests,
   formatting, linting, and static analysis; the two distinct full-suite checkpoints, and when the
-  completed-issue one may be satisfied by an established reuse of the pre-Gate-1 result instead of a
-  fresh run; the stronger isolation technique for proving a split; preserving pre-existing worktree
+  completed-issue one may be satisfied by an established reuse of an earlier full-suite result — the
+  pre-Gate-1 run, or a run already executed against the final committed state — instead of a fresh
+  run; the stronger isolation technique for proving a split; preserving pre-existing worktree
   changes using reliable provenance; and ordering commits around feature-activation risk; consult
   while implementing and while building/ordering commits.
 - `issue-closure.md` — whether and how to close an issue: asking first, the closing recipe, and

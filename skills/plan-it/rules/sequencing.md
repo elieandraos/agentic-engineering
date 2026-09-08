@@ -129,16 +129,29 @@ resolving their dependency references to the real `#N`s now captured for every m
 created, in this attempt or an earlier one. Never recreate, retarget, or duplicate a correctly
 created member merely to restart the batch from the beginning.
 
-Continue only from the canonical definitions, approved scope, and approval actually available right
-now — this session's own record, or reliably reconstructible from what's already on GitHub (a
-created issue's own body, once fetched and checked against `rules/issue-conventions.md`). If those
-canonical definitions, the approved scope, or the human's approval can no longer be reliably
-established — for example, a new session with no memory of the original planning conversation, and
-nothing durable to recover them from — explain plainly what's missing and ask the human. Never
-reconstruct the approved batch from guesses, and never infer its missing, not-yet-created members
-from whatever issues happen to already exist. A durable, canonical storage location for approved
-issue definitions is a deliberately deferred decision, not implemented by this rule — see
-`rules/issue-conventions.md`'s "Canonical definitions."
+Continue only from canonical definitions, approved scope, and approval evidence actually available
+right now — and keep those as separate questions, because a live GitHub issue answers only the
+first of them. A created issue, once fetched, establishes its own current published content and
+identity — recovering that content directly from the issue is legitimate. It does **not**, by
+itself, establish that a human ever approved that content, or approved it as part of the original
+batch: the issue's existence, and even its conformity with `rules/issue-conventions.md`'s format,
+are evidence of what got published, never evidence of who approved it or under what scope. Require
+independently available evidence of the actual approval instead — this session's own record of it,
+or an explicit statement from the human confirming it — before treating a recovered definition as
+still approved.
+
+If the canonical definitions, the approved scope, or that independent approval evidence can no
+longer be reliably established — for example, a new session with no memory of the original planning
+conversation, and nothing durable to recover them from — explain plainly what's missing and ask the
+human. Never derive the approved batch from whatever subset already happens to be published, and
+never reconstruct it from guesses. A recovered definition backed by genuine, independently evidenced
+prior approval may resume straight into creation; recovering content without that evidence produces
+a **draft**, not an already-approved member — take it back through `rules/review.md`'s normal review
+and approval gates before creating it, the same as any other unapproved definition. Recovering
+content and recovering approval are different acts; only the second authorizes skipping approval a
+second time. A durable, canonical storage location for approved issue definitions is a deliberately
+deferred decision, not implemented by this rule — see `rules/issue-conventions.md`'s "Canonical
+definitions."
 
 ## Handoff
 

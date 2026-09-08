@@ -15,8 +15,14 @@ approved verification policy (§5) — has been implemented on top of that HEAD,
 previously open decisions (§7) settled directly by the user ahead of implementation: canonical
 issue-definition durable storage deferred, not resolved; the completed-issue-boundary full-suite
 reuse-eligibility rule adopted as stated in `implement-it/rules/verification.md`'s "Completed-issue
-verification: run or reuse." See Step 5's own implementation record below. **Step 5 is implemented,
-pending Control Room review — it is not yet approved.** Step 6 has not started.
+verification: run or reuse" — that decision settlement is distinct from, and does not itself
+constitute, Control Room approval of this step's own implementation. Step 5 was implemented at
+commit `297036f1aa36aff934c82fcc2fc65e96ab2827ab`, then received one bounded correction pass
+separating recovered content from approval evidence, making the approval-validity check reachable
+on every continuation path, distinguishing a discovered PR from a recovered creation attempt, and
+reconciling the final isolation run with completed-issue verification. See Step 5's own
+implementation and correction records below. **Step 5 is implemented and corrected, pending Control
+Room review — it is not yet approved.** Step 6 has not started.
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
@@ -338,7 +344,9 @@ neither survives this correction):
 **Resolved by Step 5's review**, no longer open: the reuse-eligibility rule for the completed-issue
 checkpoint. Both checkpoints (pre-Gate-1, completed-issue) remain required — reuse is a way to
 satisfy the second, never a reason to drop it. The completed-issue checkpoint may be satisfied by
-reusing the pre-Gate-1 result only once four conditions are all established: identifiable evidence
+reusing an earlier full-suite result — the pre-Gate-1 run, or one already executed directly against
+the final committed state (e.g. isolation verification's last per-commit run, when nothing remained
+stashed afterward) — only once four conditions are all established: identifiable evidence
 of an actual successful, complete run; the final committed content matching the tested content
 (never inferred from a clean worktree, an unchanged `HEAD`, or a successful commit command alone);
 equivalent relevant test inputs and environment (dependencies, configuration, generated inputs, and
@@ -1029,9 +1037,12 @@ unresolved; this approval does not settle either decision or authorize Step 5 im
   #10, #13, #21) are now resolved and how.
 
 **Implemented.** Starting point: branch `main`, HEAD `ace3453596624c1baf6295549de4fc7bd96e9480`
-(the commit recording Step 4's Control Room approval and this step's two settled decisions), working
-tree clean except the three pre-existing untracked files (`control-room-responsibilities.md`,
-`skills-audit.md`, `subagents.md`), left untouched.
+(the commit recording Step 4's Control Room approval; that commit itself left this step's two
+decisions in §7 open — the user settled them directly in the handoff that authorized this step's
+implementation, not through a separate commit, and that settlement is distinct from Control Room
+approval of this step's own implementation, which remains pending), working tree clean except the
+three pre-existing untracked files (`control-room-responsibilities.md`, `skills-audit.md`,
+`subagents.md`), left untouched.
 
 **Decisions applied**, both recorded here as the user's explicit settlement, superseding the prior
 open-item wording in §3.2/§3.4/§7:
@@ -1041,8 +1052,9 @@ open-item wording in §3.2/§3.4/§7:
   migration. Retained instead: the simple recovery procedure below.
 - **B. Full-suite result reuse permitted at the completed-issue boundary.** The full suite before
   each issue's Gate 1 remains required, whether implementing one issue or working through a
-  milestone; after commits are assembled, the pre-Gate-1 result may satisfy completed-issue
-  verification only once its continued applicability is established — otherwise, run the full suite
+  milestone; after commits are assembled, an earlier successful full-suite result may satisfy
+  completed-issue verification only once its continued applicability is established — otherwise, run
+  the full suite
   again.
 
 **Owning files and behavioral changes:**
@@ -1137,7 +1149,96 @@ designed, with no unexpected defect discovered in the files it touched.
 recorded scope boundary, not an oversight; no location, creation/update timing, approval
 relationship, mapping, or retirement mechanism is introduced by this or any step of this migration.
 
-**Step 5 is implemented, pending Control Room review — it is not approved.** Step 6 has not started.
+**Corrected.** One bounded correction pass on top of the implementation commit
+`297036f1aa36aff934c82fcc2fc65e96ab2827ab`, addressing four findings against the recovery and
+reuse rules above. Both settled decisions (A and B) are preserved unchanged — no durable
+issue-planning file or registry, and conditional full-suite reuse at the completed-issue boundary.
+
+1. **Content recovery separated from approval evidence.** `plan-it/rules/sequencing.md`'s
+   "Resuming an interrupted batch creation" previously allowed canonical definitions, scope, and
+   approval to all be reconstructed from a created issue's body once checked against
+   `rules/issue-conventions.md`'s format. A live issue's conformity with that format proves what got
+   published, never that a human approved it or approved it as part of the original batch. Corrected
+   to require independently available evidence of the actual approval (this session's own record, or
+   an explicit human statement) before treating a recovered definition as still approved; a
+   definition recovered without that evidence is a **draft** routed back through `rules/review.md`'s
+   normal review and approval gates, not an already-approved member to create directly. When
+   canonical definitions or approval evidence can't be reliably recovered, this rule already asked
+   the human rather than guessing — that behavior is preserved, now correctly gated on approval
+   evidence specifically, not merely on published content. No persistence machinery introduced.
+2. **The approval-validity check made reachable on every continuation path.** `implement-it/rules/
+   issue-closure.md`'s "Push readiness" previously ran the "Approval validity before Gate 2 and
+   before push" check (`rules/review-gates.md`) only on the path that still needed to push — the
+   "already remote" path skipped straight to "Ask first," bypassing it. Corrected so step 3 confirms
+   approval validity on both paths before advancing toward closure; the substantive check stays owned
+   by `review-gates.md`, this rule only routes to it. For a pending push, applicability is now
+   re-checked immediately before the actual push mutation even when authorization was already granted
+   earlier in the session — a still-applicable authorization is preserved without a redundant
+   question; one that no longer applies is a stop, not a silent reuse. Missing or stale approval
+   evidence is reported and resolved through `review-gates.md`, never silently assumed valid because
+   commits are already remote.
+3. **Discovering an existing PR separated from validating a recovered creation attempt.**
+   `ship-it/rules/milestone-completion.md`'s "Milestone PR creation" step 2 previously required
+   validating any found PR against "the approved proposal," which only exists when this workflow
+   itself proposed it — a manually created or otherwise independently opened PR has no such proposal
+   to validate against. Corrected into three cases: an existing PR is identified and reported from
+   repository/head/base and milestone evidence alone, with no prior proposal required to recognize
+   it; a PR that is this workflow's own interrupted creation attempt, with its approved proposal still
+   available, is validated against that exact title/branches/body; and when the necessary proposal or
+   approval evidence is missing, that limitation is reported plainly rather than inventing a proposal,
+   duplicating the PR, or silently changing its content. Exact-content approval before any new
+   creation (step 4) and the human merge boundary are both unchanged.
+4. **The final isolation run reconciled with completed-issue verification.** `implement-it/rules/
+   verification.md`'s reuse conditions previously named only the pre-Gate-1 run as reusable evidence,
+   while isolation verification's own final checkpoint (step 6) separately permitted reusing its own
+   last per-commit run under those same conditions — a run that was never the pre-Gate-1 run, an
+   incoherence between the two sections. Corrected: "Completed-issue verification: run or reuse" now
+   recognizes two reuse sources — the pre-Gate-1 run (still requiring the diff-equivalence check to
+   establish condition 2) and a full-suite run already executed directly against the final committed
+   state itself, such as isolation verification's last per-commit run when nothing remained stashed
+   afterward (which satisfies condition 2 by construction, since it already ran against exactly that
+   content). Conditions 1, 3, and 4 apply to both sources equally. An intermediate isolated run that
+   does not correspond to the actual final committed state — superseded by a later commit — cannot
+   satisfy this checkpoint under either source; only a run genuinely executed against the final state
+   qualifies. Isolation step 6 was reconciled to state this directly rather than vaguely gesture at
+   "reuse... under conditions above." The lifecycle diagram, the "two full-suite runs" framing, the
+   "Default commit-building loop" closing paragraph, the honest-reporting requirement (now naming
+   which specific execution satisfies the checkpoint, never mislabeling an isolation run as the
+   pre-Gate-1 run), and the Do list were all generalized to match — one owner
+   ("Completed-issue verification: run or reuse") still states the four conditions; nothing else
+   restates them. `implement-it/SKILL.md`'s rule-index entry and `plan.md`'s own §3.4/§7 summaries
+   received the same minimal correction.
+
+`plan.md` also corrected its own inaccurate claim that commit `ace3453596624c1baf6295549de4fc7bd96e9480`
+recorded this step's two settled decisions — that commit recorded Step 4's Control Room approval and
+left those two decisions open in §7; the user settled them afterward, directly in the handoff that
+authorized this step's implementation, not through a separate commit. Decision settlement and Control
+Room approval of this step's own implementation are kept distinct throughout; the storage gap (decision
+A) remains explicitly deferred, not resolved, by this correction.
+
+- **Validation performed:** full re-read of every corrected file; a repository-wide search confirming
+  no remaining reference to validating a discovered PR against a proposal that may not exist, to
+  reconstructing approval from a created issue's body alone, or to the completed-issue checkpoint
+  naming only the pre-Gate-1 run as reusable; `git diff --check` clean; YAML frontmatter of
+  `implement-it/SKILL.md` parsed successfully; every relative Markdown link in the corrected files
+  confirmed to resolve. Seven bounded static walkthroughs run against the corrected file content: a
+  published issue whose content is recoverable but whose human-approval evidence is missing, correctly
+  producing a draft routed back through normal review rather than a silently reused approval; commits
+  already remote with prior gate evidence missing, correctly stopping at the approval-validity check
+  instead of proceeding straight to "Ask first"; existing, still-applicable push authorization reused
+  without a redundant question, re-checked immediately before the actual push mutation; a manually
+  created PR discovered with no earlier proposal from this workflow, correctly identified and reported
+  without inventing or requiring a proposal; an interrupted PR-creation attempt recovered and validated
+  against its actually-available approved proposal; the final isolated full-suite run, covering exactly
+  the completed committed state with nothing left stashed, directly satisfying the completed-issue
+  checkpoint; and an earlier isolated run superseded by a later commit correctly failing to satisfy
+  that checkpoint, requiring a fresh or genuinely final run instead. All seven traced correctly through
+  the corrected file content with no coherence gap found. This is source validation from static
+  walkthroughs, not runtime or consumer proof — no skill was actually invoked, and no real GitHub
+  issue, PR, milestone, tag, or release was created or exercised, per this pass's authorization scope.
+
+**Step 5 remains implemented and now corrected, pending Control Room review — it is not approved.**
+Step 6 has not started.
 
 ### Step 6 — Reconcile public documentation, validate the combined ecosystem, prepare publication
 
@@ -1206,8 +1307,9 @@ Resolved by explicit user decision ahead of Step 5, implemented and pending Cont
 equivalent file, approval registry, or other persistence mechanism is introduced; a simple
 GitHub-query recovery procedure is retained instead (§3.2, finding #21; see Step 5's own record);
 **the completed-issue-boundary full-suite reuse-eligibility rule** is settled — both checkpoints
-stay required, and the completed-issue one may be satisfied by an established reuse of the
-pre-Gate-1 result under the four conditions stated in
+stay required, and the completed-issue one may be satisfied by an established reuse of an earlier
+full-suite result (the pre-Gate-1 run, or one already executed against the final committed state)
+under the four conditions stated in
 `skills/implement-it/rules/verification.md`'s "Completed-issue verification: run or reuse" (§3.4;
 see Step 5's own record).
 

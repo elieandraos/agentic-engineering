@@ -209,14 +209,30 @@ already-reviewed shape applied to a new mutation, not a new kind of gate.
    then a pattern inferred from established history, then ask the human when the evidence is
    ambiguous or conflicting. Do not assume a base branch, head-branch naming, or PR-template
    requirement without evidence.
-2. **Check for an existing matching PR before proposing creation.** Query the repository for an open
-   PR already carrying this milestone's head branch — a matching title alone is not sufficient
-   identity, since a differently-scoped PR can share a title; confirm the actual head branch. A
-   failed or timed-out query is not proof no PR exists — retry it before concluding creation is
-   still needed. Finding a match means creation is not this rule's next step: validate it against
-   the approved proposal (base branch, and the milestone reference "The milestone-PR reference
-   convention" requires) and report the existing PR instead of proposing a duplicate — never create
-   a second PR for an attempt that already succeeded.
+2. **Check for an existing PR before proposing creation.** Query the repository for an open PR
+   against this milestone's head branch — a matching title alone is not sufficient identity, since a
+   differently-scoped PR can share a title; confirm the actual repository, head, and base branches,
+   and the milestone reference "The milestone-PR reference convention" expects. A failed or
+   timed-out query is not proof no PR exists — retry it before concluding creation is still needed.
+
+   - **An existing PR is found.** Identify and report what it actually is — number, base, head,
+     title, and body — from that repository/head/base and milestone evidence alone. Recognizing it
+     never requires a prior proposal from this workflow: a PR a human opened directly, or one from
+     another process, is just as real a match as one this workflow itself proposed.
+   - **The found PR is this workflow's own interrupted creation attempt, and its approved
+     proposal is still available** (this session's own record of the exact title, base/head, and
+     body approved in step 4 below). Validate the recovered PR against that exact proposal —
+     title, branches, and body — the same standard a fresh creation's post-mutation check applies
+     (step 5 below). A mismatch is a failed validation to report, not a discrepancy to accept
+     silently.
+   - **The proposal or approval evidence that stricter validation needs is missing** — a
+     discovered PR this workflow never proposed, or one whose original proposal can no longer be
+     recovered. Report that limitation plainly rather than inventing a proposal to validate
+     against, duplicating the PR to force a fresh approval cycle, or silently changing its content
+     to match what would have been proposed.
+
+   Either way, finding a match means creation is not this rule's next step — never create a second
+   PR for one that already exists.
 3. **Draft the PR at PR scope.** Title, base and head branches, and a body referencing the milestone
    per "The milestone-PR reference convention" above — describing the integrated change as a whole,
    the same altitude distinction `rules/release.md` draws between a commit, a PR, and a release.
