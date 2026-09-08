@@ -41,6 +41,16 @@ Explore repeatable testing using [`scenarios.md`](scenarios.md) as the starting 
 
 The initial cases, framework, and any later CI integration remain future decisions. Use a small pilot to judge usefulness, execution cost, and maintenance effort before expanding coverage.
 
+### Public landing page
+
+Explore designing and deploying a public landing page that tells the ecosystem's story through concise copy, interactive examples, and visual progression. Follow a representative mission from an initial question through Lab, Plan, Implement, Review, and Ship, with Document and stack companions available alongside the workflow.
+
+- **Creative direction:** explore a space/universe or mission-control theme, with light gamification that helps visitors discover each capability and understand its role.
+- **Motion:** consider smooth scrolling and scroll-driven animation inspired by Lenis, with clear navigation and a readable reduced-motion experience.
+- **Content:** emphasize purpose, practical outcomes, and how to get started; link to the repository and documentation for implementation detail.
+
+Visual identity, interaction design, animation tooling, hosting, domain, and deployment remain future decisions. Review a small storytelling prototype before committing to the full site.
+
 ## Deferred questions
 
 - Clarify precedence between `laravel-inertia-stack` and Laravel Boost guidance if a concrete disagreement appears. The v2.0.0 audit identified missing conflict handling, not an established conflict.
