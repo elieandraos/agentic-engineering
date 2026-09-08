@@ -11,12 +11,12 @@ Investigate in the Lab. Plan the work. Implement the change. Review it. Ship it.
 | Lab | [`lab-it`](skills/lab-it/) | Verified architecture understanding, or an approved `plan.md` |
 | Plan | [`plan-it`](skills/plan-it/) | Implementation-ready GitHub issues |
 | Implement | [`implement-it`](skills/implement-it/) + project context + applicable stack companion | Verified, reviewed implementation, committed |
-| Review | [`review-it`](skills/review-it/) | Independently callable implementation assurance — findings, or a clean result |
-| Ship | [`ship-it`](skills/ship-it/) | Milestone PR, merge, and release lifecycle |
+| Review | [`review-it`](skills/review-it/) | Implementation assurance — findings, or a clean result |
+| Ship | [`ship-it`](skills/ship-it/) | Milestone PR proposed, then release once merged |
 
-These skills do not assume a language, framework, or project layout. The consuming project supplies those; each skill supplies the method.
+These skills do not assume a language, framework, or project layout. The consuming project supplies those; each skill supplies the method. **PR approval and merge always stay with a human** — no skill in this pipeline merges its own work.
 
-Use only the stage you need. [`plan-it`](skills/plan-it/) can start from a direct feature request or an approved `plan.md`; [`implement-it`](skills/implement-it/) can start from any approved GitHub issue, whether or not [`plan-it`](skills/plan-it/) created it; [`review-it`](skills/review-it/) reviews any worktree, branch, or PR standalone, with no prior session in this ecosystem required.
+Use only the stage you need. [`plan-it`](skills/plan-it/) can start from a direct feature request or an approved `plan.md`; [`implement-it`](skills/implement-it/) can start from any approved GitHub issue, whether or not [`plan-it`](skills/plan-it/) created it, and invokes [`review-it`](skills/review-it/) before its own implementation gate; `review-it` is also independently callable on its own, reviewing any worktree, branch, or PR standalone, with no prior session in this ecosystem required.
 
 ## Document as you go
 

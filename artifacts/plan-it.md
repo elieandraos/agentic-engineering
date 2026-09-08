@@ -388,8 +388,13 @@ are all present; a polished draft or the file's mere existence is never enough o
 metadata and issues are created and validated. From there, `implement-it` owns branch readiness,
 review gates (including the standalone `review-it` invocation before Gate 1), commits, verification,
 and issue closure — including live dependency readiness as issues actually close, and which ready
-issue to implement next, neither of which this skill decides. Once a milestone has zero open issues
-remaining, `ship-it` owns PR readiness/creation, post-merge milestone closure, and release. A wave
+issue to implement next, neither of which this skill decides. `ship-it` owns milestone delivery
+through three separate entry points, only one of which shares this skill's zero-open-issues
+condition: PR readiness/creation starts once a milestone genuinely has zero open issues remaining;
+investigation and continuation on an already-open milestone PR starts from the PR's own state
+instead, and does not re-require that count (a later discovered-work finding from this skill can
+reopen it while the PR still needs attention); and post-merge closure and release start from the
+human's merge confirmation and authorization, independent of any of this skill's own state. A wave
 (§8) is a dependency-safe presentation and creation order, not a live readiness signal.
 
 **Handoff to consuming stack/project guidance.** Every checklist, this dossier's canonical-issue

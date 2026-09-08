@@ -27,9 +27,12 @@ wording-only cleanup applied on top of it while recording the approval** (genera
 narrow-reuse phrase in "Default commit-building loop" to match the two reuse sources
 "Completed-issue verification: run or reuse" already defines). Step 6 — reconciling public
 documentation, validating the combined ecosystem from source, and preparing consumer-validation and
-publication proposals (§5) — was implemented on top of that HEAD, at the commit that adds this
-sentence. See Step 6's own implementation record below. **Step 6 is implemented, pending Control
-Room review — not approved, not released.**
+publication proposals (§5) — was implemented at commit `d9f1f710ca4c1cd0c2ecf78907ccbe43f09013a6`,
+then received one bounded correction/completion pass adding the three remaining architecture
+dossiers and correcting several inaccurate claims found in the first pass's documentation and
+consumer/release proposals, at the commit that adds this sentence. See Step 6's own implementation
+and correction records below. **Step 6 is implemented and corrected, pending Control Room review —
+not approved, not released.**
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
@@ -1434,68 +1437,105 @@ step**:
 1. **A real `useOrbit` installation/refresh and end-to-end consumer exercise.**
    - **Prerequisites.** Access to `useOrbit`'s actual local environment — its current
      `.agents/skills/**` real files, `skills-lock.json`, and any tracked agent-discovery symlinks —
-     is not assumed obtainable from its GitHub remote alone (per this step's own instruction); the
-     human must provide or grant access to that local state, and confirm whether this is a fresh
-     install or a refresh of an existing managed set, before the exercise can be scoped precisely.
-     This source repository at the Control-Room-reviewed Step 6 commit (or later, once further
-     reviewed) is the install source.
-   - **Intended changes (in `useOrbit`, not this repository).** Run `npx skills add
-     elieandraos/agentic-engineering` or the project's own `skills:refresh` script (per
-     `docs/skill-consumption.md` §8) against this source; commit the refreshed
-     `.agents/skills/**`, updated `skills-lock.json`, and any newly needed agent-discovery symlinks
-     under the repository-managed model (§4 of that document).
-   - **Scenarios.** The install/refresh correctly resolves to the current six skills — `lab-it`,
-     `document-it`, `plan-it`, `implement-it`, `review-it`, `ship-it` — replacing whatever mix
-     `useOrbit` currently has installed; one full pipeline pass exercised end to end against a real,
-     human-chosen, low-risk `useOrbit` issue or small milestone (investigation or planning through
-     implementation, `review-it`'s Gate-1 invocation, and a stop at milestone PR readiness or an
-     actual approved PR); a standalone `document-it` invocation independent of the pipeline,
-     confirming its "companion, not mandatory stage" identity holds in real use.
-   - **Success evidence.** `skills-lock.json` reflects the six skills at this source's current
-     content hash; `.agents/skills/**` and any tracked discovery symlinks match; the exercised
-     pipeline pass reaches its expected human checkpoints (Gate 1 citing `review-it`'s result, Gate
-     2's commit-plan approval, a milestone PR-readiness report) with no unexplained gap or
-     misrouted skill (`lab-it` does not attempt to publish a guide; `ship-it` does not attempt to
-     implement code). Any defect found is reproduced, attributed to a specific owning file in this
-     source repository, and corrected there — never patched only in `useOrbit`'s installed copy, per
-     `docs/skill-authoring-methodology.md`'s canonical-source discipline.
+     is not assumed obtainable from its GitHub remote alone; the human must provide or grant access
+     to that local state before the exercise can be scoped precisely. This source repository at the
+     Control-Room-reviewed Step 6 commit (or later, once further reviewed) is the install source.
+   - **Distinguish refreshing from adding, explicitly, before touching anything.** Inspect
+     `useOrbit`'s actual current `skills-lock.json` and managed set first. If it already has
+     `lab-it`, `plan-it`, and `ship-it` installed under their pre-migration contract, an ordinary
+     `skills:refresh` of exactly those three picks up this source's current content for them — which
+     now includes `ship-it`'s narrowed scope — but **does not by itself add `document-it`,
+     `implement-it`, or `review-it`**, since a refresh only touches skills the project already named
+     (`docs/skill-consumption.md` §9's proportional-validation model, and §8's "naming the managed
+     skills explicitly keeps a refresh scoped to what the project actually installed"). Installing
+     the three newly named skills is a separate, explicit decision for the human to make and for
+     `useOrbit` to record in its own `skills-lock.json`, discovery symlinks, and refresh-script
+     skill list — not an automatic consequence of refreshing what's already there. State this
+     distinction to the human before running anything, and let them choose refresh-only,
+     add-the-three, or both.
+   - **Preserve what's unrelated.** `useOrbit`'s existing stack companions (e.g.
+     `laravel-inertia-stack`, if installed) and any other skill this repository doesn't publish are
+     left untouched by either a refresh or an addition — this exercise never implies the six
+     portable skills replace `useOrbit`'s entire installed set, only that they're the set this
+     repository's own pipeline consists of now.
+   - **Intended changes (in `useOrbit`, not this repository).** Whichever of refresh or addition the
+     human chooses, run it via `npx skills add`/`skills update` (per `docs/skill-consumption.md`
+     §3/§8) against this source; commit the resulting `.agents/skills/**`, updated
+     `skills-lock.json`, and any newly needed agent-discovery symlinks and refresh-script entries
+     under the repository-managed model (§4-§5 of that document) — reconciling each of those four
+     artifacts only where `useOrbit`'s actual setup requires it, not as a blanket rewrite.
+   - **Scenarios, with an exact stopping point.** One full pipeline pass exercised against a real,
+     human-chosen, low-risk `useOrbit` issue or small milestone: investigation or planning through
+     implementation, `review-it`'s Gate-1 invocation, Gate 2's commit-plan approval, push, and issue
+     closure. **This exercise is scoped to stop at milestone PR readiness or, at most, an actual
+     approved PR's creation** — it does not extend through human PR merge, post-merge milestone
+     closure, or release. If it stops at PR readiness or creation, post-merge delivery and release
+     remain unexercised by this proposal and need their own later exercise or authorization before
+     either is considered validated. A standalone `document-it` invocation independent of the
+     pipeline confirms its "companion, not mandatory stage" identity holds in real use.
+   - **Success evidence.** `skills-lock.json` reflects whichever skills were refreshed or added at
+     this source's current content hash; `.agents/skills/**` and any tracked discovery symlinks
+     match; unrelated installed skills and stack companions are byte-identical to their pre-exercise
+     state; the exercised pipeline pass reaches its expected human checkpoints (Gate 1 citing
+     `review-it`'s result, Gate 2's commit-plan approval) with no unexplained gap or misrouted skill.
+     Any defect found is reproduced, attributed to a specific owning file in this source repository,
+     and corrected there — never patched only in `useOrbit`'s installed copy.
    - **Restoration needs.** Agree with the human, before starting, whether any real GitHub artifacts
      the exercise creates in `useOrbit` (an issue, a milestone, a PR) are kept as genuine low-risk
      work or explicitly closed/cleaned up afterward. Capture `useOrbit`'s pre-exercise branch,
-     working-tree, `.agents/skills/**`, and `skills-lock.json` state before starting, so an unwanted
-     result can be reverted.
+     working-tree, `.agents/skills/**`, `skills-lock.json`, and refresh-script state before starting,
+     so an unwanted result can be reverted.
 
 2. **A non-Laravel portability exercise, without a custom stack companion.**
    - **Coverage scope**, explicit and justified — replacing this step's own outline's stale
      "three portable skills" wording, written before `document-it`, `implement-it`, and `review-it`
      existed: all six current portable skills — `lab-it`, `document-it`, `plan-it`, `implement-it`,
      `review-it`, `ship-it`. None of the six carries stack-specific vocabulary in its current rule
-     files (each skill's own "Boundaries and confidence" section, or this step's corresponding
-     dossier, states this as a property of how the files are currently written); the migration's own
-     goal is that none of the six requires a stack companion to run. `laravel-inertia-stack` itself
-     is explicitly excluded — it is the one skill meant to be stack-specific, and exercising it
-     against a non-Laravel project would prove nothing.
+     files; the migration's own goal is that none of the six requires a stack companion to run.
+     `laravel-inertia-stack` itself is explicitly excluded — it is the one skill meant to be
+     stack-specific, and exercising it against a non-Laravel project would prove nothing.
    - **Prerequisites.** A sample project on a genuinely different stack (no Laravel, Inertia, Vue, or
      Pest), with no stack companion from this repository installed into it.
    - **Intended changes.** Install (disposable or personal-mode, per `docs/skill-consumption.md` §2
      — repository-managed commitment is not required for this exercise) this source's six portable
      skills into the sample project.
-   - **Scenarios.** `lab-it` investigates something real in the sample project's actual stack with no
-     Laravel-specific vocabulary leaking into its questions or output; `document-it` creates or
-     updates a guide there; `plan-it` plans a small feature into GitHub issues against that project's
-     real conventions; `implement-it` implements one approved issue there, verified with that
-     project's own discovered test/lint tooling (never a Laravel-specific command), invoking
-     `review-it` before Gate 1; `review-it` runs standalone against that branch/PR, confirming its
-     "Project/stack convention compliance" category correctly falls back to project-instructions-only
-     checking with no custom companion installed — narrowly verified by Step 4's Git-mechanics pass,
-     but never yet exercised against a real non-Laravel project; `ship-it` takes the resulting
-     milestone through PR readiness/creation.
-   - **Success evidence.** No skill's output, question, or generated artifact references Laravel,
-     Inertia, Vue, Pest, or any Laravel Boost skill; each skill's tooling/convention discovery
-     correctly falls back to the sample project's own instructions/configuration/established usage
-     rather than silently failing or inventing a Laravel-shaped default. A defect (a hidden stack
-     assumption anywhere in the six skills) is reproduced, attributed to a specific file, and
-     corrected in this source repository.
+   - **Scenarios, with an exact stopping point.** `lab-it` investigates something real in the sample
+     project's actual stack; `document-it` creates or updates a guide there; `plan-it` plans a small
+     feature into GitHub issues against that project's real conventions; `implement-it` implements
+     one approved issue there, verified with that project's own discovered test/lint tooling,
+     invoking `review-it` before Gate 1; `review-it` runs standalone against that branch/PR,
+     confirming `rules/scope.md`'s "Discover applicable conventions" and `rules/checklist.md`'s
+     "Project and stack convention compliance" actually hold against a real, non-Laravel project —
+     see "Correcting no-companion review expectations" below for what this specifically checks;
+     `ship-it` takes the resulting milestone through PR readiness/creation. **This exercise, like
+     the `useOrbit` one, is scoped to stop at milestone PR readiness or PR creation** — post-merge
+     closure and release are not exercised by it.
+   - **Correcting no-companion review expectations.** The owning rule
+     (`review-it/rules/scope.md`'s "Discover applicable conventions") does not say a missing stack
+     companion goes quiet on framework concerns — it says the opposite: framework and technology
+     conventions are discovered the same way project conventions are, from project instructions,
+     configuration, established repository usage, and other available authoritative guidance the
+     project itself references, plus ordinary engineering reasoning about the stack; only the
+     specific sub-check that depends on a *custom companion's own rules*, with no other available
+     authoritative source, is skipped. This exercise's success bar reflects that precisely: a
+     `review-it` finding about the sample project's real stack is expected and correct when it's
+     grounded in one of those available sources, and each finding states plainly whether it rests on
+     an established project requirement or on general technical reasoning with no such backing —
+     `rules/scope.md`'s own text was source-reviewed for this proposal, but this exact behavior has
+     not yet been exercised against a real non-Laravel project (see `artifacts/review-it.md` §8 for
+     what a prior Git-mechanics experiment actually tested instead — comparison-base and
+     state-identity behavior, not this stack-aware discovery path).
+   - **Judge portability by correct behavior, not silence about technology names.** The sample
+     project's own real stack (its actual framework, language, and tooling) is expected to appear by
+     name throughout every skill's output where it's actually relevant — a `review-it` finding
+     grounded in that project's own conventions, an `implement-it` verification report naming its
+     actual test runner, a `document-it` guide describing its actual architecture. What each skill
+     must *not* do is state or assume a Laravel-, Inertia-, Vue-, or Pest-specific convention as a
+     general rule when the sample project's own evidence doesn't support it, or silently degrade a
+     framework check to nothing merely because `laravel-inertia-stack` isn't installed. A defect (a
+     hidden Laravel-shaped assumption anywhere in the six skills, or a check that goes silent it
+     shouldn't) is reproduced, attributed to a specific file, and corrected in this source
+     repository.
    - **Restoration needs.** The sample project should be disposable or already treated as low-stakes
      by the human, since `implement-it`'s exercise necessarily produces a real commit and, if carried
      through `ship-it`, a real PR; agree on cleanup (deleting the sample repository, or
@@ -1504,37 +1544,202 @@ step**:
 **Concise v2.0.0 release proposal.**
 
 - **Ownership changes to record.** `lab-it` narrowed (guide creation/maintenance/review moved to new
-  `document-it`); `ship-it` narrowed (branch readiness through issue closure moved to new
-  `implement-it`); `review-it` introduced as a new, independently callable review skill wired into
-  `implement-it`'s Gate 1 and into `ship-it`'s delivery-correction flow; `ship-it`'s CI-failure
-  handling now explicitly splits investigation/authorization (`ship-it`) from performing the
-  correction (`implement-it`); `ship-it` gained authorized milestone PR creation (Step 3, already
-  implemented and Control-Room-approved before this step).
+  `document-it`, with the actual relationship between the two now reciprocal — see
+  `artifacts/lab-it.md` §7 — not one-directional); `ship-it` narrowed (branch readiness through issue
+  closure moved to new `implement-it`); `review-it` introduced as a new, independently callable
+  review skill wired into `implement-it`'s Gate 1 and into `ship-it`'s delivery-correction flow;
+  `ship-it`'s CI-failure handling now explicitly splits investigation/authorization (`ship-it`) from
+  performing the correction (`implement-it`); `ship-it` gained authorized milestone PR creation (Step
+  3, already implemented and Control-Room-approved before this step); three new architecture
+  dossiers (`document-it.md`, `implement-it.md`, `review-it.md`) now exist alongside the three
+  corrected ones (§ this correction pass, below).
 - **Consumer migration implications — the single fact release notes must state plainly.** A
-  repository-managed consumer refreshing only its existing managed skills (not adding the two new
-  ones) would silently lose implementation/gate/commit/verification/closure behavior from its
-  refreshed `ship-it`, since that behavior moved out of `ship-it` entirely and now lives under
-  `implement-it`'s name — the capability isn't gone, but a consumer that doesn't also install
-  `implement-it` (and, for Gate 1's review step, `review-it`) loses access to it. This must be
-  stated as the release's headline compatibility note, not left for a consumer to discover by trial.
-- **Remaining validation before this can be called validated, not merely implemented.** This step's
-  own static, source-only walkthroughs (above), plus both unrun exercises proposed above — the
-  `useOrbit` consumer exercise and the non-Laravel portability check.
-- **Applicable publication procedure.** This migration introduces no new release-policy content:
-  `ship-it/rules/release.md` already governs how a release is actually discovered, drafted,
-  approved, published, and validated, per this repository's own established conventions — not
-  invented here. **Available on `main` is distinct from published:** everything this migration
-  describes is currently reachable by a fresh `npx skills add elieandraos/agentic-engineering`
-  GitHub-source install (`docs/skill-consumption.md` §13 — no release or tag is required for that),
-  but no version tag or GitHub Release exists yet for this migration, and none is created by this
-  plan. A `v2.0.0` tag/release is a distinct, separately authorized publication act — appropriate
-  once Steps 1-6 have all passed Control Room review and, ideally, informed by at least one of the
-  two consumer exercises above. This proposal does not itself authorize creating that tag or
-  release.
+  repository-managed consumer refreshing only its existing managed skills (not adding the newly
+  named ones) keeps its refreshed `ship-it`, `lab-it`, and `plan-it` working, but does not by itself
+  gain `document-it`, `implement-it`, or `review-it` (see proposal 1 above, "Distinguish refreshing
+  from adding") — the implementation/gate/commit/verification/closure behavior that moved out of
+  `ship-it` and into `implement-it` is therefore only reachable once the consumer explicitly adds
+  `implement-it` (and, for Gate 1's review step, `review-it`). This must be stated as the release's
+  headline compatibility note, not left for a consumer to discover by trial.
+- **One consistent validation bar, not two different ones stated in different places.** This
+  proposal states a single bar: static, source-only validation (this step's own walkthroughs, plus
+  the three new dossiers' own source review) establishes that the reconciled documentation and the
+  underlying skill contracts agree with each other. It does **not**, by itself, establish that the
+  six-skill ecosystem behaves correctly for a real consumer — that requires running at least one of
+  the two proposed exercises above, and both together provide stronger evidence than either alone
+  (the `useOrbit` exercise proves a real repository-managed consumer can adopt the new skills without
+  losing existing behavior; the portability exercise proves the six skills hold their stack-neutral
+  claims outside this repository's own Laravel/Inertia usage — they test different things, not the
+  same thing twice). Recommendation, for the human's later approval rather than silently decided
+  here: run the `useOrbit` exercise before publishing `v2.0.0`, since it directly tests the
+  compatibility note above against a real repository-managed consumer; treat the portability
+  exercise as valuable but not release-blocking, since no current consuming project depends on
+  non-Laravel portability today. This is a recommendation, not a settled decision — the human may
+  instead require both, or neither, before authorizing publication.
+- **Applicable publication procedure, resolving the merged-PR mismatch.** `ship-it/rules/release.md`
+  governs how a *consuming project's* release is discovered, drafted, approved, published, and
+  validated, entered once that project's own milestone PR has merged — that entry precondition
+  presumes the milestone-PR delivery model `release.md` is written for. **This repository does not
+  run its own pipeline against changes to itself**: every commit in this migration, including this
+  one, was authored, reviewed, and pushed directly to `main` by explicit human authorization, with no
+  PR or merge step anywhere in this repository's own history (confirmed by inspection: zero merge
+  commits in `git log --merges`). This repository's own prior release, `v1.0.0`, was published the
+  same way — tagged and published directly from commit `585a5d426e55fc3d586a9d3b95a43f85baf974ad`
+  ("Add MIT license for the 1.0 release") on `main`, with no PR behind it (confirmed via `gh release
+  view v1.0.0`). The applicable path for `v2.0.0` is therefore this repository's own established
+  precedent, not `release.md`'s consuming-project entry trigger: apply `release.md`'s substantive
+  draft → explicit approval → publish → re-fetch-and-validate sequence directly against `main`'s
+  reviewed tip, once Steps 1-6 have all passed Control Room review, exactly as `v1.0.0` did. This
+  does not invent a merged PR, does not create an artificial PR merely to satisfy `release.md`'s
+  wording, and does not change `release.md`'s own portable rule — that rule stays correctly written
+  for what it actually governs, a consuming project's real milestone-PR delivery; this repository's
+  own release of itself is simply not an instance of that, the same way it wasn't for `v1.0.0`.
+  **Available on `main` is distinct from published:** everything this migration describes is already
+  reachable by a fresh `npx skills add elieandraos/agentic-engineering` GitHub-source install
+  (`docs/skill-consumption.md` §13 — no release or tag is required for that), but no `v2.0.0` tag or
+  GitHub Release exists yet, and none is created by this plan. This proposal does not itself
+  authorize creating that tag or release.
 
-**Step 6 implemented, pending Control Room review — not approved, not released.** No commit,
-PR, tag, release, or deployment was created by this step. Neither consumer exercise above was run,
-and no consuming project was touched or refreshed.
+**Corrected.** A bounded correction/completion pass on top of the reviewed commit
+`d9f1f710ca4c1cd0c2ecf78907ccbe43f09013a6`, addressing findings against Step 6's first pass:
+
+- **The architecture dossier set is now complete.** New: `artifacts/document-it.md`,
+  `artifacts/implement-it.md`, `artifacts/review-it.md` — each covering that skill's own current
+  architecture, rationale, ownership, and evidence-calibrated confidence, inspecting the pre-Step-6
+  dossiers at `891b2ee887917b2145b37f85860697301a5c1db6` for rationale worth preserving in its new
+  owner (the guide rendering/identity/accessibility reasoning moved from the old `lab-it.md` §6 into
+  `document-it.md` §4; the branch-readiness/gates/commits/verification/closure/sequencing reasoning
+  moved from the old `ship-it.md` into `implement-it.md` §3-§9, updated for `review-it`'s Gate 1 role,
+  the completed-issue reuse rule, worktree-provenance preservation, and delivery corrections;
+  `review-it.md` is written fresh, since that skill has no predecessor). **The first pass's stated
+  reason for omitting these — "the authoring methodology's 'do not create extra dossiers merely for
+  symmetry'... and this migration's own instruction not to create one" — was a misapplication of
+  that principle, not a categorical prohibition.** These three dossiers exist for a substantive
+  reason the principle's own text permits: explaining architecture actually distinct from any
+  existing dossier and preserving rationale that would otherwise have no home now that `lab-it.md`
+  and `ship-it.md` are narrowed — not adding files merely to match sibling skills' shape.
+- **`artifacts/lab-it.md` §7 corrected from one-directional to reciprocal.** The prior text claimed
+  "this skill never hands work to `document-it`." `lab-it/SKILL.md`'s own routing table contradicts
+  that: a guide-shaped request is routed to `document-it` — a real handoff `lab-it` performs, not
+  only one `document-it` reaches backward for. §7, §6, and §8 were corrected to state both
+  directions: `lab-it` routes a guide-shaped request to `document-it`; `document-it` draws on
+  `lab-it`'s evidence discipline only for its own narrower missing/stale-evidence sub-problem and
+  receives verified findings back. Neither direction was ever, or is now claimed to be, the other
+  skill's terminal output.
+- **`artifacts/ship-it.md` corrected on three points.** (1) §2 and §7's "this skill's only
+  input"/"only upstream input" framing was in tension with §1's own "never requires proof that a
+  particular `implement-it` session produced the state" claim — corrected so both sections agree:
+  milestone work ordinarily arrives as `implement-it`'s closed work, but this skill checks GitHub's
+  actual current state directly rather than requiring evidence of a specific session. (2) §3's
+  readiness conditions stated "required manual verification is complete, or explicitly not
+  applicable" — the owning rule (`milestone-completion.md`'s "The three conditions") states no such
+  alternative; corrected to the rule's actual two conditions, "final manual testing has actually
+  happened" and "that testing found nothing further to do," with no "not applicable" branch. (3) §4's
+  CI-failure resumption was corrected to state precisely what the owning rule's steps 6-7 actually
+  say: this skill resumes by confirming CI runs again once a correction is verified and pushed — not
+  by waiting until CI is already green — and a red result on that re-run returns to step 1, repeating
+  until CI is genuinely green, with no merge/closure/release proceeding merely because it is.
+- **`artifacts/plan-it.md`'s handoff explanation corrected** to stop implying all of `ship-it`'s
+  ownership begins "once a milestone has zero open issues remaining" — only PR readiness/creation
+  actually shares that precondition; investigation/continuation on an open PR and post-merge closure/
+  release each start from their own separate condition, per `ship-it.md` §1.
+- **`README.md` corrected**: the Ship row's result column implied `ship-it` owns merge
+  ("Milestone PR, merge, and release lifecycle") — corrected to "Milestone PR proposed, then release
+  once merged," with an explicit added sentence that PR approval and merge always stay with a human,
+  no skill in this pipeline merges its own work. Also added: `implement-it` invokes `review-it`
+  before its own implementation gate, while `review-it` remains independently callable on its own —
+  the prior text only implied the second half of that.
+- **This proposal's consumer and release content corrected**, in place, above:
+  - The `useOrbit` exercise now explicitly distinguishes refreshing an existing managed set from
+    adding the three newly named skills (a refresh alone does not add `document-it`, `implement-it`,
+    or `review-it`), states that existing stack companions and unrelated skills are preserved, and
+    names its own exact stopping point (milestone PR readiness or creation — post-merge delivery and
+    release are not exercised by it).
+  - The portability exercise's success criterion — "no skill's output... references Laravel,
+    Inertia, Vue, Pest" — was a blanket prohibition on naming any technology, when the actual owning
+    rule (`review-it/rules/scope.md`'s "Discover applicable conventions") explicitly keeps framework
+    checks available from project instructions, configuration, established usage, and ordinary
+    engineering reasoning even with no stack companion installed, skipping only the one sub-check
+    that genuinely depends on a custom companion's own rules. Corrected to judge portability by
+    correct behavior against the sample project's own real stack, not silence about that stack's
+    name.
+  - The claim that this behavior was "narrowly verified by Step 4's Git-mechanics pass" was
+    inaccurate — that experiment (recorded in Step 4's own correction record above) tested Git
+    comparison-base and state-identity mechanics, not `review-it`'s stack-aware convention discovery
+    at all. Corrected to state plainly that this specific behavior remains source-reviewed only, not
+    exercised by any experiment to date (see `artifacts/review-it.md` §8, which states the same
+    correction on the skill's own side).
+  - The remaining-validation bar previously required both exercises in one paragraph
+    ("plus both unrun exercises proposed above") and then quietly reduced that to "ideally... at
+    least one" in the release-procedure paragraph — two different bars stated in two places.
+    Corrected to one consistent bar: static/source validation alone does not establish consumer
+    correctness; running at least one real exercise does, and the two exercises test different
+    things (repository-managed adoption without regression, versus cross-stack portability), so
+    running both is stronger than either alone. A recommendation — run the `useOrbit` exercise before
+    publishing, treat the portability exercise as valuable but not release-blocking — is offered for
+    the human's own later approval, not silently decided by this correction.
+  - The publication-procedure section previously pointed at `ship-it/rules/release.md`'s
+    merged-PR-triggered entry with no acknowledgment that this repository has never merged a PR
+    against itself. Corrected by inspecting this repository's actual history (`git log --merges`:
+    zero merge commits across every step of this migration; `gh release view v1.0.0`: this
+    repository's one prior release was tagged and published directly from a `main` commit,
+    `585a5d426e55fc3d586a9d3b95a43f85baf974ad`, with no PR) and proposing the applicable path
+    accordingly: apply `release.md`'s substantive draft/approve/publish/validate sequence directly
+    against `main`'s reviewed tip, matching this repository's own `v1.0.0` precedent, rather than
+    `release.md`'s consuming-project merged-PR entry trigger. This does not invent a merged PR,
+    does not create an artificial PR to satisfy the wording, and does not change `release.md`'s own
+    portable rule, which remains correctly written for what it actually governs.
+- **This step's own execution record corrected.** The closing line previously read "No commit, PR,
+  tag, release, or deployment was created by this step" — inaccurate: this step's own authorized
+  commit and push to `origin/main` did occur (that is how the reconciled documentation and this
+  record exist on `main` at all); only PR/tag/release/deployment were correctly stated as not
+  created. Corrected above.
+
+**Validation performed for this correction pass.** Full re-read of every corrected and newly created
+file. `git diff --check` clean. The same Python-based relative-Markdown-link resolution check,
+re-run across every changed and new file, confirmed every link resolves. Repository-wide searches
+confirmed each corrected claim's old wording no longer appears anywhere in the repository: "never
+hands work to," "one direction only"/"one-directional" (`lab-it.md`'s old §7 framing); "explicitly
+not applicable" (the readiness-condition wording, checked against both `artifacts/ship-it.md` and
+the owning rule file itself); "narrowly verified by Step 4"; the blanket Laravel/Inertia/Vue/Pest
+technology-name prohibition; and the "No commit, PR, tag" closing line. `git status --porcelain`
+confirmed the three pre-existing untracked files (`control-room-responsibilities.md`,
+`skills-audit.md`, `subagents.md`) remain untouched and unstaged, and confirmed no runtime file
+(`skills/*/SKILL.md` or `skills/*/rules/*.md`), `roadmap.md`, `docs/skill-consumption.md`, or
+`docs/skill-authoring-methodology.md` was touched by this pass, per its own authorization scope.
+
+Static walkthroughs were re-run against the actual owning files, this time specifically exercising
+the corrected handoffs and independent entry points: a guide-shaped request reaching `lab-it` and
+being routed to `document-it`, traced against `lab-it/SKILL.md`'s own routing table rather than
+assumed; a missing-evidence documentation request routed from `document-it` into `lab-it`'s
+investigation discipline and back, traced against `document-it/SKILL.md`'s "Evidence: reuse first,
+route to `lab-it` only when needed"; an open milestone PR's CI failure followed through
+`milestone-completion.md`'s steps 1-7 exactly (investigate → determine scope → authorize → correct
+via `implement-it` → resume → re-check CI → repeat on red, proceed only on green plus separate
+authorization) rather than the dossier's own earlier, looser paraphrase; a milestone PR-readiness
+check walked against `milestone-completion.md`'s literal three conditions, confirming no
+"not-applicable" branch exists for manual testing; and a non-Laravel `review-it` invocation walked
+against `rules/scope.md`'s "Discover applicable conventions" and `rules/checklist.md`'s "Project and
+stack convention compliance," confirming a framework finding grounded in project instructions,
+configuration, or established usage is expected and correctly attributed, not suppressed, with no
+stack companion installed. All traced correctly through the actual current file content with no
+coherence gap found. **This remains source validation, not runtime or consumer proof** — no skill
+was invoked, no `useOrbit` or other consuming project was touched, and no GitHub state was mutated.
+
+**Remaining decisions**, presented with evidence and a recommendation, for the human's own later
+approval — none silently resolved by this pass: which of the two proposed consumer exercises (or
+both) to require before authorizing `v2.0.0` publication (this pass recommends the `useOrbit`
+exercise as release-relevant and the portability exercise as valuable but not release-blocking, per
+the release proposal above); whether to run either exercise now or defer publication further; and
+the `laravel-inertia-stack`/Boost precedence question (§7 item 1), unaffected by this pass and still
+out of scope for this migration.
+
+**Step 6 implemented and corrected, pending Control Room review — not approved, not released.**
+This step's own authorized commit and push to `origin/main` did occur, per the explicit
+authorization that opened this step and its correction pass — that is how this record and the
+reconciled documentation exist on `main` at all. No PR, tag, release, or deployment was created by
+either pass. Neither consumer exercise above was run, and no consuming project was touched or
+refreshed.
 
 ---
 

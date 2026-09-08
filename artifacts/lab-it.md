@@ -153,9 +153,10 @@ its workflow actually needs it:
 Guide-writing, guide-scaffold, guide-review, and guide-maintenance rules — formerly this skill's
 own — now live entirely under `document-it` and are not duplicated here; §7 states the boundary.
 
-Outside this skill, the only downstream cross-skill handoff is an approved `plan.md` — a
-standalone investigation's recap is a complete result on its own and never implies a downstream
-handoff. Once approved, `plan-it` treats the plan as canonical: it can still validate a
+Outside this skill, two things ever cross to another skill: an approved `plan.md`, handed to
+`plan-it`, and a guide-shaped request, routed to `document-it` (§7) — a standalone investigation's
+recap, by contrast, is a complete result on its own and implies no downstream handoff at all. Once
+approved, `plan-it` treats the plan as canonical: it can still validate a
 current-state fact against current evidence when drafting issues, and can flag a derived constraint
 whose stated premise no longer holds, but it does not re-open a locked decision or re-derive
 architecture from scratch. That consumption is governed by
@@ -170,13 +171,22 @@ mutates GitHub and never performs Git workflow.
 `document-it` is a separate, independently callable skill, not a narrowed remnant of this one — it
 owns guide creation, guide maintenance, and guide review in both Markdown and Artifact form, along
 with the rendering, identity, and review architecture those require. This skill does not own, and
-this dossier does not describe, any of that. The relationship runs in one direction only:
-`document-it` draws on this skill's evidence discipline (§2) when its own currently available
-understanding is missing or stale, reusing sufficient verified evidence rather than repeating a
-full investigation from scratch — this skill never hands work to `document-it`, and a published or
-updated guide never implies a handoff back here. File extension does not decide ownership either
-way: an approved `plan.md` stays this skill's even though it's a `.md` file, and a Markdown
-architecture guide is `document-it`'s even though it isn't an Artifact.
+this dossier does not describe, any of that architecture — see
+[`document-it`'s own dossier](document-it.md).
+
+**The relationship runs in both directions, not one.** This skill's own routing table
+(`SKILL.md`'s "What this skill does") recognizes a guide-shaped request — document, update, or
+review an architecture guide — as outside its own scope and routes it to `document-it`: that is a
+real handoff this skill performs, not merely `document-it` reaching backward into this one. In the
+other direction, `document-it` draws on this skill's evidence discipline (§2) only for its own
+narrower missing-or-stale-evidence sub-problem, reusing sufficient verified evidence rather than
+repeating a full investigation from scratch; an investigation entered this way ends by handing back
+verified findings to `document-it`, never by this skill drafting or publishing a guide itself.
+Neither direction produces the other skill's terminal output: this skill never publishes a guide,
+and `document-it` never reaches an architecture decision with the user or synthesizes a `plan.md`
+on its own. File extension does not decide ownership either way: an approved `plan.md` stays this
+skill's even though it's a `.md` file, and a Markdown architecture guide is `document-it`'s even
+though it isn't an Artifact.
 
 ## 8. Boundaries, non-goals, and current confidence
 
@@ -187,12 +197,13 @@ creation/maintenance/review (§7), feature classification, issue decomposition, 
 mutation, delivery sequencing, or Git workflow — those stay with `document-it`, `plan-it`, and the
 consuming project.
 
-The planning workflow's only external handoff is an approved `plan.md` to `plan-it`; that
-dependency does not make this skill tracker- or stack-specific.
+This skill's two external handoffs — an approved `plan.md` to `plan-it`, and a guide-shaped request
+routed to `document-it` (§7) — do not make this skill tracker- or stack-specific.
 
 **Architectural coherence.** Two workflows produce two genuinely distinct outputs — a verified
 answer and a decision handoff — under one shared evidence discipline, with a single owned rule file
-and a clearly stated, one-directional boundary with `document-it`.
+and a clearly stated, reciprocal boundary with `document-it`: each skill routes the other's
+shaped requests to it, and neither performs the other's terminal output.
 
 **Current, honest limits:**
 

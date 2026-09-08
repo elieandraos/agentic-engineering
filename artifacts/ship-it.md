@@ -50,13 +50,16 @@ shares one working branch, ever continues into this skill, and only once that mi
 dependency-ready-set recompute (owned by `implement-it/rules/sequencing.md`) reports zero open
 issues remaining.
 
-This skill's upstream input is `implement-it`'s own completed, verified, closed work — issue
+Milestone work ordinarily arrives here as `implement-it`'s completed, verified, closed work — issue
 implementation, both review gates (including the standalone `review-it` invocation before Gate 1),
 semantic commit construction, verification, and issue closure are entirely `implement-it`'s
-architecture, not restated here. What this skill needs from that upstream state is narrow and
-factual: which issues are closed, whether the milestone's shared branch exists and is current, and —
-during a delivery correction (§4) — that any authorized fix actually lands through `implement-it`'s
-own lifecycle rather than being performed by this skill directly.
+architecture, not restated here. **This skill does not require proof that a particular `implement-it`
+session produced that state, though**, consistent with §1: it checks the milestone's and PR's actual
+current GitHub state directly — which issues are closed, whether the milestone's shared branch
+exists and is current — rather than requiring evidence of a specific prior session. During a
+delivery correction (§4), the one thing this skill does require is that any authorized fix actually
+lands through `implement-it`'s own lifecycle rather than being performed by this skill directly; it
+does not itself re-derive or duplicate that lifecycle.
 
 ## 3. Milestone PR readiness
 
@@ -72,13 +75,13 @@ Three conditions are re-confirmed fresh, together, every time this gate runs:
   issues to a closed state inside `implement-it`, so this condition is really "is that
   already-established, per-issue verified state complete across the whole set," not a fresh check
   of its own.
-- **Required manual verification is complete, or explicitly not applicable.** Whether final manual
-  testing has actually happened is not something GitHub state can answer — it's asked of the human
-  directly, never inferred from all issues being closed or from time having passed.
-- **No unresolved implementation finding blocks the milestone.** If that manual testing pass finds
-  something, the gate does not pass — the finding becomes a new issue attached to the still-open
-  milestone (never a silent reopening of whatever issue it was found near), and the gate is re-run
-  from scratch once that new issue closes.
+- **Final manual testing has actually happened.** This isn't something GitHub state can answer —
+  it's asked of the human directly, never inferred from all issues being closed or from time having
+  passed. The owning rule states this condition as a direct yes/no confirmation, with no
+  "not applicable" alternative to substitute for actually asking.
+- **That testing found nothing further to do.** If it did, this gate does not pass — the finding
+  becomes a new issue attached to the still-open milestone (never a silent reopening of whatever
+  issue it was found near), and the gate is re-run from scratch once that new issue closes.
 
 Passing all three produces a report — "the branch looks ready" — not a mutation. Once ready, this
 skill discovers the project's PR conventions, checks for an existing matching PR before proposing
@@ -104,8 +107,13 @@ authority, not by convenience:
 - **`implement-it` performs any authorized correction**, using the same lifecycle it already owns
   for ordinary issue work: it invokes `review-it` and Gate 1/Gate 2 as applicable, constructs the
   commit(s), verifies, and pushes once authorized.
-- **This skill resumes** — re-running real CI and reporting — once the correction lands and CI is
-  green.
+- **This skill resumes once the correction is verified and pushed**, by confirming real CI runs
+  again against the PR — not by waiting until CI is already green before doing anything. A red
+  result on that re-run returns to step 1 of this same section (the PR stays unmerged, investigate
+  again) — there is no cap on how many times this can legitimately repeat before the PR is actually
+  green. Only once it is does this skill progress further, and even then only toward whichever next
+  boundary the human separately authorizes: no merge, milestone closure, or release proceeds merely
+  because CI turned green.
 
 Only the *who performs the fix* changed from an earlier design; the underlying policy (narrow
 authorized direct fix versus discovered-work intake) is unchanged. This is the same authorization
@@ -176,11 +184,12 @@ approved assumptions, or a choice the evidence can't narrow down on its own.
 | [`milestone-completion.md`](../skills/ship-it/rules/milestone-completion.md) | Milestone PR readiness and creation, the CI-failure-on-an-open-PR investigation/authorization split (§4), and the milestone closure gate |
 | [`release.md`](../skills/ship-it/rules/release.md) | Post-merge authorization's release branch: policy discovery, understanding and drafting a release, approval, publication, and post-publication validation |
 
-**Upstream handoff, from `implement-it`.** This skill's only input is already-closed, already-verified
-work on a milestone's shared branch — sequencing, branch readiness, both review gates,
-`review-it`-backed implementation assurance, commit construction, verification, and issue closure
-are entirely `implement-it`'s architecture, referenced here only as the fact this skill's gates
-depend on, never restated.
+**Upstream handoff, from `implement-it`.** Milestone work ordinarily arrives here as already-closed,
+already-verified work on a milestone's shared branch — sequencing, branch readiness, both review
+gates, `review-it`-backed implementation assurance, commit construction, verification, and issue
+closure are entirely `implement-it`'s architecture, referenced here only as the fact this skill's
+gates depend on, never restated. As §1 and §2 state, this skill checks that state directly from
+GitHub rather than requiring proof of a specific `implement-it` session behind it.
 
 **Stack/project implementation guidance never reaches this skill.** Application code, framework
 conventions, and implementation tooling belong to `implement-it` and whatever stack companion a
