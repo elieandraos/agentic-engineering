@@ -1,24 +1,28 @@
 ---
 name: implement-it
-description: "Implementation-stage skill in the Agentic Engineering pipeline. Takes any approved GitHub issue satisfying its entry contract — whether `plan-it` drafted it or it already existed some other way — and carries it through working-branch readiness, the implementation itself, verification, semantic commits, issue closure, and dependency-ready recalculation for the next issue. Use when implementing, committing, verifying, or closing an approved issue, checking what's next in a milestone, or performing an authorized delivery correction handed back from `ship-it`. Performs the approved implementation itself, consulting the applicable stack companion for implementation knowledge and conventions — it does not own framework-specific conventions, decide what work should exist, or handle milestone PR readiness, PR creation, or release."
+description: "Implementation-stage skill in the Agentic Engineering pipeline. Takes any approved GitHub issue satisfying its entry contract — whether `plan-it` drafted it or it already existed some other way — and carries it through working-branch readiness, the implementation itself, verification, semantic commits, issue closure, and dependency-ready recalculation for the next issue. Use when implementing, committing, verifying, or closing an approved issue, checking what's next in a milestone, or performing a human-authorized delivery correction handed back from `ship-it`. Performs the approved implementation itself, consulting the applicable stack companion for implementation knowledge and conventions — it does not own framework-specific conventions, decide what work should exist, or handle milestone PR readiness, PR creation, or release."
 ---
 
 # implement-it
 
 ## What this skill is
 
-`implement-it` is the implementation stage of the Agentic Engineering pipeline. It starts from an
-approved GitHub issue produced by `plan-it` and carries that single issue's work through verified
-Git/GitHub implementation, ending at issue closure and the next-issue recommendation.
+`implement-it` is the implementation stage of the Agentic Engineering pipeline. It starts from any
+approved, implementation-ready GitHub issue — whether `plan-it` drafted it or it already existed
+some other way — and carries that single issue's work through verified Git/GitHub implementation,
+ending at issue closure and the next-issue recommendation. It also accepts an explicitly
+human-authorized delivery correction handed to it directly by `ship-it`, which requires no issue to
+exist at all (see "Delivery corrections" below).
 
 ## Pipeline position
 
 `lab-it → plan-it → implement-it → ship-it`
 
-This skill intentionally begins only once planning has produced approved work — it never decides
-what work should exist, and never starts earlier than an already-approved issue. It hands off to
-`ship-it` once a milestone's dependency-ready set is genuinely empty, or when `ship-it` itself hands
-back an authorized delivery correction during milestone delivery.
+This skill intentionally begins only once an issue is approved, or a delivery correction is
+explicitly authorized — it never decides what work should exist. It hands off to `ship-it` once a
+milestone genuinely has zero open issues remaining, not merely an empty dependency-ready set (open
+issues can all be blocked without the milestone being done — `rules/sequencing.md`'s "When the ready
+set is empty"), or once it has performed a correction `ship-it` hands back.
 
 ## What it owns
 
@@ -42,8 +46,9 @@ back an authorized delivery correction during milestone delivery.
 - Application or framework implementation conventions — a stack companion, when one applies, owns
   those; this skill performs the work using them.
 - Milestone PR readiness, PR creation, and merge strategy.
-- Investigating or explaining a delivery/CI failure before a correction is authorized (`ship-it`'s
-  job) — this skill performs the correction once `ship-it` hands it back as authorized.
+- Investigating or explaining a delivery/CI failure, and securing the human's authorization for a
+  correction (`ship-it`'s job) — this skill performs the correction only once that human
+  authorization has actually been given and `ship-it` hands the fix off.
 - Post-merge authorization, release, and post-release milestone completion.
 - Deployment automation.
 
@@ -53,12 +58,19 @@ idioms — belongs entirely to that companion or to project instructions, never 
 
 ## Entry contract
 
-Accept any approved issue that meets `plan-it`'s entry contract, regardless of whether `plan-it`
-drafted it — what matters is that it's approved, not who authored it. For a single named issue,
-complete only that issue's authorized lifecycle (implementation through closure and the next-issue
-recommendation); this does not by itself authorize continuing into another issue, or into milestone
-delivery. For a milestone request, manage progress issue by issue, per "Milestone progression"
-below.
+For ordinary implementation work, accept any GitHub issue that meets the structural and content
+quality bar `plan-it`'s `rules/issue-conventions.md` and `rules/review.md` define, and that carries
+the human's approval to implement it — regardless of whether `plan-it` drafted it or it was authored
+some other way. What matters is that it meets that bar and is approved, not who wrote it; do not
+recreate or replan an issue that already meets it merely because `plan-it` didn't produce it. For a
+single named issue, complete only that issue's authorized lifecycle (implementation through closure
+and the next-issue recommendation); this does not by itself authorize continuing into another issue,
+or into milestone delivery. For a milestone request, manage progress issue by issue, per "Milestone
+progression" below.
+
+An authorized delivery correction (see "Delivery corrections" below) is a separate entry route with
+a different prerequisite: it requires the human's explicit authorization, not an approved issue, and
+stays available whether or not an issue is open, or was ever created for that scope at all.
 
 ## Milestone progression
 
@@ -70,14 +82,18 @@ milestone (zero open issues) hands off to `ship-it`'s milestone PR-readiness ass
 
 ## Delivery corrections
 
-When `ship-it` investigates a CI failure on an open milestone PR and determines a correction is
-within approved scope (`ship-it/rules/milestone-completion.md`'s "CI failure on an open milestone
-PR"), it hands the fix to this skill. Perform that correction through this same lifecycle — Gate 1
-and Gate 2 as applicable, verification, commit construction, and authorized push — whether or not
-the original issue is still open. This route stays available without requiring an open issue to
-exist; it does not require reopening a closed issue, and it is separate from genuinely new scope,
-which still goes through `plan-it`'s discovered-work intake. Once the correction is verified and
-pushed, `ship-it` resumes the delivery workflow.
+When `ship-it` investigates a CI failure on an open milestone PR, determines a correction stays
+within already-approved scope, and the human explicitly authorizes it
+(`ship-it/rules/milestone-completion.md`'s "CI failure on an open milestone PR"), it hands the
+authorized fix to this skill. Accept this entry only once that human authorization actually
+accompanies the handoff — `ship-it`'s own determination that a fix stays in scope is necessary but
+never sufficient by itself; without the human's explicit authorization there is nothing yet for this
+skill to perform. Once accepted, perform the correction through this same lifecycle — Gate 1 and
+Gate 2 as applicable, verification, commit construction, and authorized push — whether or not the
+original issue is still open. This route stays available without requiring an open issue to exist;
+it does not require reopening a closed issue, and it is separate from genuinely new scope, which
+still goes through `plan-it`'s discovered-work intake. Once the correction is verified and pushed,
+`ship-it` resumes the delivery workflow.
 
 ## Composition
 
@@ -115,7 +131,7 @@ Trigger on requests shaped like:
 - `sequencing.md` — branch readiness before starting an issue (Backlog/hotfix on the trunk branch vs.
   a shared milestone branch, inspected/recommended/created only with human approval), and, after a
   validated closure, recomputing the milestone's dependency-ready set and reporting/recommending the
-  next issue — or handing off to `ship-it/rules/milestone-completion.md` when the milestone is
-  genuinely empty.
+  next issue — or handing off to `ship-it/rules/milestone-completion.md` when zero open issues
+  remain, as distinct from an empty ready set with blocked issues still open.
 
 > Detailed operational behavior lives in `rules/*.md`.

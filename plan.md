@@ -1,6 +1,6 @@
 # Ecosystem migration plan — Lab · Document · Plan · Implement · Review · Ship
 
-**Status: Step 1 approved; Step 2 approved by Control Room at HEAD `894a6af508c9f574bd739e4974deff780c88b406`; Step 3 implemented on top of that commit, pending Control Room review.**
+**Status: Step 1 approved; Step 2 approved by Control Room at HEAD `894a6af508c9f574bd739e4974deff780c88b406`; Step 3 implemented and corrected once, pending Control Room review.**
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
@@ -8,9 +8,12 @@ extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top
 HEAD `84877dfca972e91c413370f2609a8c81aeba54f4`, and that corrected result was approved by the
 Control Room at HEAD `894a6af508c9f574bd739e4974deff780c88b406`; see the implementation and
 correction records appended to Step 2's own entry below. Step 3 — extracting `implement-it` and
-narrowing `ship-it` (§5) — was implemented on top of that approved HEAD; see the implementation
-record appended to Step 3's own entry below. Implementing Step 3 does not authorize Step 4 or any
-later step — each remaining step still requires its own go-ahead, per §5.
+narrowing `ship-it` (§5) — was implemented on top of that approved HEAD at commit
+`40c7b9b374894d2e9cbb59c9f6cc37661dd8d1be`, then received one correction pass on top of that same
+implementation correcting authorization wording, entry-condition scope, and blocked-vs-completed
+language; see the implementation and correction records appended to Step 3's own entry below.
+Implementing and correcting Step 3 does not authorize Step 4 or any later step — each remaining step
+still requires its own go-ahead, per §5.
 
 **Source of truth for this initiative.** This is the change plan for splitting the current
 `lab-it` / `plan-it` / `ship-it` ecosystem into `lab-it` (narrowed), `document-it` (new), `plan-it`
@@ -647,6 +650,73 @@ untouched.
   coherence gap found. This is source validation from static walkthroughs, not runtime or consumer
   proof — no skill was actually invoked, no PR or milestone was created, and no consuming project was
   touched, per this step's authorization scope.
+
+**Corrected.** One correction pass on top of the implementation commit
+`40c7b9b374894d2e9cbb59c9f6cc37661dd8d1be`, addressing three findings against `implement-it` and
+`ship-it`:
+
+1. **Authorization and CI-correction ownership.** Replaced every instance of wording that treated
+   `ship-it`'s own investigation or scope determination as sufficient to authorize a delivery
+   correction (`implement-it/SKILL.md`'s "What this skill is," "What it does not own," and "Delivery
+   corrections"; `ship-it/SKILL.md`'s "Composition" and "What it owns"; `ship-it/rules/
+   milestone-completion.md`'s "CI failure on an open milestone PR" intro and steps framing, "Cross-
+   rule dependencies," and "What this rule does not do"). The human authorizes; `ship-it`
+   investigates, explains, and requests any missing authorization; `implement-it` performs the
+   authorized correction using project guidance and applicable stack/implementation skills; new-scope
+   findings still route to `plan-it`'s discovered-work intake; `ship-it` resumes delivery afterward.
+   Corrected the CI-failure section's step attribution: steps 1–5 (investigate, determine scope, ask
+   for and secure authorization, route new scope) are `ship-it`'s; only step 6 (performing the
+   correction) is `implement-it`'s, and only once authorized — the prior text wrongly attributed
+   steps 4 onward to `implement-it`. `implement-it/SKILL.md`'s "Delivery corrections" now explicitly
+   states that `ship-it`'s scope determination is necessary but never sufficient by itself, and that
+   this skill accepts the entry only once human authorization actually accompanies the handoff.
+   `ship-it/rules/milestone-completion.md`'s "Milestone PR creation" was also corrected: an existing
+   request to check readiness or create the PR already authorizes preparing the proposal (steps 1–3)
+   without a redundant "may I start" question, while explicit approval of the exact title/base/head/
+   body (step 4) before creation is preserved unchanged.
+2. **Entry-condition reconciliation.** `implement-it/SKILL.md`'s "What this skill is" no longer
+   restricts entry to an issue "produced by `plan-it`"; its "Entry contract" now points to `plan-it`'s
+   actual `rules/issue-conventions.md` and `rules/review.md` instead of an undefined "`plan-it`'s
+   entry contract," states the ordinary-issue prerequisite applies "for ordinary implementation
+   work" specifically, and adds that an authorized delivery correction is a separate entry route
+   needing no issue at all — reconciling the two without contradiction, and without requiring
+   recreating or replanning a valid issue. `ship-it/SKILL.md`'s "What this skill is" and "Pipeline
+   position" no longer state a single shared precondition ("once `implement-it` has closed every
+   issue"); they now distinguish three entry points with different prerequisites — PR-readiness/
+   creation (zero open issues, re-checked fresh), investigation/continuation on an already-open PR
+   (starts from the PR's own state, no re-required issue count), and post-merge closure/release
+   (starts from the human's merge confirmation and authorization, independent of any `implement-it`
+   session history) — and state plainly that each checks GitHub's actual current state rather than
+   requiring proof of a prior `implement-it` session. `ship-it/README.md` and `implement-it/README.md`
+   received the matching narrative corrections.
+3. **Blocked-versus-completed correction.** Replaced remaining uses of an empty dependency-ready set
+   as sufficient for PR-readiness handoff with the actual condition, zero open issues, distinguished
+   from an empty ready set that can still hold open, blocked issues:
+   `implement-it/SKILL.md`'s "Pipeline position" and its `sequencing.md` rule-index entry;
+   `ship-it/rules/milestone-completion.md`'s "Where this phase starts," "The three conditions" item
+   1, "Cross-rule dependencies," "What this rule does not do," and "Do / Don't."
+
+**Validation performed:** full re-read of every corrected file; a repository-wide search for
+"investigation authorizes," "its investigation," "ready set is actually empty," "ready set comes
+back empty," "dependency-ready set is genuinely empty," "produced by `plan-it`," and "`plan-it`'s
+entry contract," confirming zero remaining matches; `git diff --check` clean; YAML frontmatter of
+both `SKILL.md` files parsed successfully. Six focused static walkthroughs run against the corrected
+files: an approved issue authored outside `plan-it` (accepted without replanning, per the actual
+quality/approval bar it must meet); an authorized correction to a closed issue versus the same
+correction without authorization (the former proceeds through `implement-it`'s lifecycle, the latter
+has nothing for `implement-it` to perform); an existing open PR's CI failure investigated and
+continued after a follow-up issue reopens the milestone's issue count (not blocked by the
+reintroduced open issue, since PR investigation/continuation doesn't re-require zero open issues); a
+post-merge release entry with no prior `implement-it` session history in the conversation (proceeds
+from the human's merge confirmation and authorization alone); open-but-all-blocked issues correctly
+reported as blockers, not handed to `ship-it`, versus a genuinely zero-open-issues milestone that is;
+and a PR-creation request proceeding directly to proposal preparation with no redundant "may I
+start" question, then stopping for explicit approval of the exact title/base/head/body before
+creation. All six traced correctly through the corrected files with no coherence gap found. This is
+source validation from static walkthroughs, not runtime or consumer proof — no skill was actually
+invoked and no issue, PR, or release was created. Test policy, commit rules, and release mechanics
+are unchanged by this pass; `review-it` remains unbuilt and outside Gate 1, per Step 4's own pending
+boundary.
 
 ### Step 4 — Establish `review-it`, integrate before Gate 1
 

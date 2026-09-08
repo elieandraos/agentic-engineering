@@ -9,8 +9,9 @@ Take a completed milestone from PR readiness through delivery and release.
 - Checking whether a milestone is ready to close.
 - Publishing a release once a milestone's PR has merged.
 
-This skill starts once [`implement-it`](../implement-it/) has closed every issue in a
-milestone — it doesn't implement code itself.
+This skill checks the milestone's or PR's actual current GitHub state for each of these — it
+doesn't require proof that a particular [`implement-it`](../implement-it/) session produced that
+state, and it doesn't implement code itself.
 
 ## Boring prompts
 
@@ -26,9 +27,10 @@ milestone — it doesn't implement code itself.
 
 1. Confirm the milestone's three PR-readiness conditions.
 2. Discover the project's PR conventions, propose the PR, and create it once approved.
-3. If CI fails on the open PR, investigate and explain the correction —
-   [`implement-it`](../implement-it/) performs any authorized fix, and this skill resumes once
-   it's verified and CI is green.
+3. If CI fails on the open PR, investigate, explain the correction, and request the human's
+   authorization for it — once given, [`implement-it`](../implement-it/) performs the fix using
+   project guidance and applicable stack/implementation skills, and this skill resumes once it's
+   verified and CI is green.
 4. Once the human confirms the PR merged and authorizes the post-merge progression, close the
    milestone and draft, approve, publish, and validate the release.
 

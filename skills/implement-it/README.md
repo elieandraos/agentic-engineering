@@ -6,7 +6,8 @@ Take an approved GitHub issue from implementation through verified commits and c
 
 - Implementing, committing, verifying, or closing an approved issue.
 - Checking what's next once a milestone issue closes.
-- Performing an authorized delivery correction that `ship-it` has handed back.
+- Performing a delivery correction that the human has explicitly authorized and `ship-it` has
+  handed back — this doesn't require an issue to exist.
 
 The issue can come from [`plan-it`](../plan-it/) or already exist through another valid
 route — what matters is that it's approved, not who drafted it.
@@ -26,8 +27,8 @@ route — what matters is that it's approved, not who drafted it.
 3. Stop for human review — once on the implementation, once on the proposed commit plan.
 4. Build coherent commits and push them, once authorized.
 5. Close the issue only once its commits are reachable on the remote.
-6. Recompute the milestone's dependency-ready set and recommend the next issue — or hand off
-   to [`ship-it`](../ship-it/) once the milestone is genuinely empty.
+6. Recompute the milestone's dependency-ready set and recommend the next issue — or, once zero
+   open issues remain (not merely an empty ready set), hand off to [`ship-it`](../ship-it/).
 
 ## Ownership
 
