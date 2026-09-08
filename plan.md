@@ -1,6 +1,7 @@
 # Ecosystem migration plan — Lab · Document · Plan · Implement · Review · Ship
 
-**Status: Step 1 approved; Step 2 approved by Control Room at HEAD `894a6af508c9f574bd739e4974deff780c88b406`; Step 3 implemented and corrected once, pending Control Room review.**
+**Status: Steps 1–3 approved.** Step 3 passed Control Room review at commit
+`ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`. Step 4 is next and has not started.
 This revision corrects the previously reviewed version (HEAD `468715d`) per explicit feedback. The
 architecture and decisions recorded here are settled, and Step 1 (this plan) is approved. Step 2 —
 extracting `document-it` and narrowing `lab-it` (§5) — was implemented on top of reviewed HEAD
@@ -11,9 +12,11 @@ correction records appended to Step 2's own entry below. Step 3 — extracting `
 narrowing `ship-it` (§5) — was implemented on top of that approved HEAD at commit
 `40c7b9b374894d2e9cbb59c9f6cc37661dd8d1be`, then received one correction pass on top of that same
 implementation correcting authorization wording, entry-condition scope, and blocked-vs-completed
-language; see the implementation and correction records appended to Step 3's own entry below.
-Implementing and correcting Step 3 does not authorize Step 4 or any later step — each remaining step
-still requires its own go-ahead, per §5.
+language. The corrected result passed Control Room review at commit
+`ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`; the user requested that approval be recorded before
+starting Step 4. See Step 3's implementation, correction, and approval records below. Approval of
+Step 3 does not authorize Step 4 or any later step — each remaining step requires its own go-ahead,
+per §5.
 
 **Source of truth for this initiative.** This is the change plan for splitting the current
 `lab-it` / `plan-it` / `ship-it` ecosystem into `lab-it` (narrowed), `document-it` (new), `plan-it`
@@ -325,28 +328,25 @@ part of this policy is open.
 
 ### 3.5 `ship-it`'s new PR-creation responsibility
 
-Today, PR creation is explicitly out of scope everywhere it's mentioned (`SKILL.md`'s "What it does
-not own"; `milestone-completion.md`'s "It does not create the PR... PR creation, review, and merge
-stay human-owned"; `release.md`'s "PR creation and merge strategy are not owned by this rule"). The
-agreed target gives `ship-it` **authorized** PR creation — the human still approves and merges.
+**Implemented and approved in Step 3** at commit
+`ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`. `ship-it` owns authorized milestone PR creation;
+the human retains PR approval and merge. The operational procedure lives in
+[`skills/ship-it/rules/milestone-completion.md`](skills/ship-it/rules/milestone-completion.md),
+under "Milestone PR creation."
 
-Proposed shape, mirrored from `release.md`'s already-reviewed pattern (discover policy → draft →
-human approval → act → validate), so this is a bounded, precedented addition:
+The reviewed procedure:
 
-1. Once Milestone PR readiness's three conditions pass, discover the project's PR-target/base-branch
-   convention the same way `release.md` discovers release policy (explicit repo convention first,
-   then inferred history, then ask if ambiguous).
-2. Draft a PR description at PR altitude, referencing the milestone (the existing "milestone-PR
-   reference convention" `milestone-completion.md` already states as an observed contract — this
-   makes it something `ship-it` itself produces instead of only being aware of).
-3. Present title, base/head branches, and body together; require explicit human approval before
-   creating anything — the same two-step "may I start" / "is this exact content right" split
-   `release.md` already uses.
-4. Create the PR through the discovered mechanism; re-fetch and validate the result (number, base,
-   head, title, body) instead of trusting the creation command's exit code.
+1. Once the three PR-readiness conditions pass, discover the project's PR conventions.
+2. Check for an existing matching PR before proposing creation.
+3. Prepare the title, base/head branches, and body referencing the milestone.
+4. Obtain explicit approval of that exact proposal before creating the PR. An existing request to
+   check readiness or create the PR already authorizes preparation; no redundant start request is
+   required.
+5. Create through the discovered mechanism, then re-fetch and validate the actual result.
+6. Leave PR approval and merge with the human; follow the existing CI-failure procedure when needed.
 
-**Open**: this exact procedure has not itself been reviewed the way `release.md` was — it is
-proposed for Step 3's review, not pre-approved by virtue of being written down here.
+This approval records source review of the implemented procedure. No live PR-creation exercise or
+consumer validation has been performed.
 
 ---
 
@@ -391,7 +391,7 @@ Artifact, with its location now settled under the consuming repo's `docs/` (§3.
 **Proposed, still requiring a decision** (not silently approved by this plan): canonical
 issue-definition durable storage location and lifecycle (§3.2); the completed-issue-boundary
 full-suite reuse-eligibility rule (§3.4 — this is now the only open item in the verification
-policy); `ship-it`'s new PR-creation procedure, proposed but not yet reviewed on its own (§3.5).
+policy). `ship-it`'s PR-creation procedure is implemented and approved under Step 3 (§3.5).
 Checklist wording, exact filenames, and other procedural detail (`review-it`'s per-item checklist,
 the exact worktree-provenance signal, the approval-staleness re-confirmation wording, the
 Markdown/Artifact association mechanism) are authoring work for their owning steps' own review, not
@@ -526,9 +526,15 @@ found.
 
 ### Step 3 — Extract `implement-it`, narrow `ship-it`
 
+**Approved by Control Room** at commit `ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`, with the
+user's confirmation to record the approval. The correction pass resolved the authorization,
+entry-condition, and blocked-versus-completed findings. Existing review gates, test policy, commit
+rules, and release mechanics remain preserved. This is source-review approval; consumer execution
+remains untested. Step 4 requires its own go-ahead.
+
 - **Outcome/boundaries.** `implement-it` exists and handles single-issue and milestone-mode
   implementation identically to current `ship-it`, using only moved files; `ship-it` is narrowed to
-  milestone delivery and gains the proposed PR-creation procedure (§3.5); every cross-reference in
+  milestone delivery and gains the reviewed PR-creation procedure (§3.5); every cross-reference in
   §2.2's table is updated in this same pass, in both directions — retained `ship-it` files' pointers
   into the files that just moved, and moved files' self-references and pointers back to the files
   that stayed behind.
@@ -549,8 +555,8 @@ found.
 - **Preserved vs. changed.** Gate mechanics, commit derivation, existing verification lifecycle,
   issue closure, branch readiness, and next-issue recommendation move intact (self-referential
   wording is corrected as part of the move; content is otherwise unchanged here — Step 5 owns the
-  verification-policy content change). Deliberate: `ship-it` gains PR creation (§3.5, not yet
-  reviewed on its own — implemented here as a proposal for this step's review, not pre-approved);
+  verification-policy content change). Deliberate: `ship-it` gains PR creation (§3.5, implemented
+  and approved through this step's review);
   `milestone-completion.md`'s CI-failure section is rewritten so `ship-it` investigates/explains and
   `implement-it` performs any authorized correction (§2.2) — the underlying policy (narrow authorized
   direct fix vs. discovered-work intake) is unchanged, only the named executor is. `review-it` is
@@ -827,13 +833,14 @@ questions for the user (§5).
 2. The completed-issue-boundary full-suite reuse-eligibility rule: what counts as "demonstrably
    applicable" prior coverage (§3.4) — this changes an existing unconditional requirement and is not
    treated as approved by writing it here — Step 5.
-3. `ship-it`'s proposed PR-creation procedure (§3.5) — precedented by `release.md`'s pattern, but
-   not itself reviewed yet — Step 3.
-4. `laravel-inertia-stack`'s unresolved precedence rule for conflicting Boost-skill guidance
+3. `laravel-inertia-stack`'s unresolved precedence rule for conflicting Boost-skill guidance
    (finding #7) — out of scope for this migration; flagged only so it isn't lost, not addressed by
    any step above.
 
-Resolved by this correction pass, no longer open: `document-it`'s Markdown location (settled as the
+Resolved by Step 3's Control Room review: `ship-it`'s PR-creation procedure (§3.5), approved as
+implemented at commit `ab3ea28413d28b0a20a7d7a2c0f73a9e2587b9ea`.
+
+Resolved by the earlier planning correction pass, no longer open: `document-it`'s Markdown location (settled as the
 consuming repo's `docs/`, §3.3); the format-selection and no-silent-substitution behavior for a new
 or existing guide (§3.3); the delivery-correction ownership split (§2.2); the verification policy's
 per-issue vs. milestone-entry question (there is no separate milestone-entry boundary, §3.4); the
