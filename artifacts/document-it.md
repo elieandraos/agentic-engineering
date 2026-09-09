@@ -232,11 +232,16 @@ dependency and must work without either. Neither makes this skill tracker- or st
 - The syntax highlighter enhances five named languages with a disclosed, safe fallback for anything
   else — a bounded, honestly-scoped renderer capability, not a hidden assumption, but still a literal
   list: a guide documenting a system in an unlisted language renders that code unhighlighted, not
-  mis-rendered. Content preservation through highlighting — comments, strings, and PHP attributes
-  surviving intact, and an unsupported or missing `data-lang` reaching the plain-text fallback rather
-  than aborting the highlighting pass for every block after it — is confirmed by executing the
-  shipped script against a minimal DOM stub in Node (`scenarios.md`'s template follow-up records).
-  That is script-execution verification, not a rendered page or a published Artifact; real-browser
+  mis-rendered. For the specific hand-written fixtures exercised (comment/string/PHP-attribute
+  interactions, HTML-sensitive characters, escaped quotes, a missing or unsupported `data-lang`, and
+  one snippet per supported language), content preservation through highlighting — the original
+  source recoverable from the rendered spans, and the plain-text fallback reached rather than
+  aborting the highlighting pass for every later block — is confirmed by executing the shipped script
+  against a minimal DOM stub in Node (`scenarios.md`'s template follow-up records). That confirmation
+  covers those specific fixtures, not a fuzz corpus or the full breadth of each language's syntax —
+  a case `scenarios.md` itself flags as unexercised (an attribute inside a template-literal string,
+  or immediately adjacent to a string or comment with no separating whitespace) is not covered by it
+  — and it is script-execution verification, not a rendered page or a published Artifact; real-browser
   rendering of the highlighted output remains unexercised by this evidence.
 - The responsive two-column shell's mobile breakpoint (§4) — the sticky section nav becoming a
   static block at or below 880px — is confirmed by source and cascade inspection only: enumerating

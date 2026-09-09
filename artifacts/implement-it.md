@@ -195,11 +195,21 @@ correction or silently lost. This recipe supports a path only when its unrelated
 resolves cleanly to one of a small number of classifications relative to `HEAD` (none, fully staged,
 or fully unstaged); a path where the correction can't be cleanly separated from every other
 difference, or where the unrelated content's staged/unstaged shape can't be established that way,
-falls outside what this recipe supports. Whenever separation or restoration can't be established,
-the procedure stops before clearing, staging, or resetting anything in the real repository, and
-reports the specific obstacle for a human decision rather than guessing past it. See
-`rules/commit-boundaries.md`'s "Review corrections fold into their semantic commit" for the full
-mechanics; this dossier does not restate them.
+falls outside what this recipe supports.
+
+Two different failure points call for two different responses, not one. A **preflight separation or
+classification failure** — the correction can't be cleanly isolated from every other difference, or
+the unrelated content's staged/unstaged shape can't be established — is detected before any real
+mutation: nothing has yet been cleared, staged, or reset, so the procedure stops and reports the
+specific obstacle, leaving the repository exactly as found. A **restoration failure**, by contrast,
+can only surface after reconstruction has already happened — once the owning commit has been rewound
+and the semantic commits already rebuilt — when reapplying a correction-touched path's set-aside
+unrelated content back against its new, reconstructed content fails to merge cleanly. At that point
+the real repository already carries the reconstructed commits; the procedure stops and preserves the
+captured recovery data (the scratch location's contents) for a retry or a hand-off, rather than
+guessing at a resolution or discarding anything — it does not, and cannot, undo the reconstruction
+that already happened. See `rules/commit-boundaries.md`'s "Review corrections fold into their
+semantic commit" for the full mechanics; this dossier does not restate them.
 
 ## 6. Verification model
 
@@ -461,6 +471,8 @@ preservation technique it shares with isolation verification went through a furt
 round instead: disposable Git repositories, created and discarded outside this project, ran the
 literal commands both the earlier and corrected procedures specify, with results inspected via
 `git log`, `git show`, `git diff`, and `git stash list` (`scenarios.md`'s four follow-up records).
-That is executed Git-mechanics verification, not a live consumer run — no agent has carried out a
-request end to end through this skill's own activation, gates, or reporting using either procedure,
-and that remains open. Validation beyond one real consuming project also remains unproven.
+That is executed Git-mechanics verification: it confirms the underlying Git commands behave as the
+corrected procedures specify, not that this skill's own activation, gates, or reporting have carried
+a request through either procedure end to end. This dossier's evidence does not include such a live
+run — whether one has happened outside the record this dossier draws on is not something it
+establishes either way. Validation beyond one real consuming project also remains unproven.
