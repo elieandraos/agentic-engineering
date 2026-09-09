@@ -166,18 +166,42 @@ rewrite. This maintenance boundary applies generally, not only to this skill's o
    (`rules/issue-closure.md`'s "Push readiness": `git fetch origin <branch>`, then
    `git log origin/<branch>..HEAD --oneline` — every commit this reconstruction touches must appear
    in that list). If O predates the unpublished range, this recipe does not apply.
-2. **Protect unrelated worktree content.** If the working tree or index carries anything that isn't
-   part of this reconstruction — a stray staged change, other unstaged edits, untracked files — set
-   it aside first using the qualified procedure in `rules/verification.md`'s "Preserving unrelated
-   worktree content during a Git rewrite." Reconstruction must never fold that content into a task
-   commit, and must restore it exactly as found once reconstruction is done.
-3. **Rewind to the owning commit's parent, keeping everything from O through `HEAD` staged**:
+2. **Capture the correction itself as a patch, separately from any unrelated content.** The
+   uncommitted correction and unrelated worktree content (a stray staged change, other unstaged
+   edits, untracked files) must not be protected by the same, indiscriminate step — doing so hides
+   the correction along with everything else, and makes it unavailable exactly when O needs to be
+   rebuilt. Instead:
+   - Stage exactly the correction's own changes: `git add <path>` for a file the correction owns
+     outright, or `git add -p` (selecting only the correction's hunks) when a file also carries
+     unrelated content — the same patch-level staging step 7 below uses for splitting O from a later
+     commit applies here too, one file can carry both a correction and something unrelated.
+   - Export that staged content to a patch file with zero context, so it stays applicable regardless
+     of what else is nearby in the same file: `git diff -U0 --staged -- <path(s)> >
+     <correction.patch>`.
+   - Unstage again — `git restore --staged <path(s)>` — returning the working tree to exactly its
+     starting combined state. Nothing durable has changed yet; this is a capture step only, and the
+     correction's content now exists as a file, never only as something to be retyped from memory.
+3. **Remove the correction from the working tree**, leaving only unrelated content behind:
+   `git apply --unidiff-zero -R <correction.patch>`. If this reversal fails — a genuine conflict
+   between the correction and adjacent unrelated content, not merely mismatched context — stop. Do
+   not guess which lines belong to which. Report the conflict; the captured patch file and the
+   untouched working tree are the recovery data, and neither is discarded by this step failing.
+4. **Protect whatever unrelated content remains** using the qualified procedure in
+   `rules/verification.md`'s "Preserving unrelated worktree content during a Git rewrite," unmodified
+   — the working tree at this point carries nothing but unrelated content, so that procedure needs no
+   special handling for the correction. When step 3 left a clean tree (no unrelated content existed),
+   that procedure's own clean-tree check means it protects nothing, correctly.
+5. **Rewind to the owning commit's parent, keeping everything from O through `HEAD` staged**:
    `git reset --soft O~1` (or the equivalent parent reference) — not a hard-coded `HEAD~1`, which
    only reaches the single most recent commit and cannot fold a correction into an earlier one. This
    stages the combined diff of every commit from O through `HEAD` in one index; it does not, on its
    own, separate that index back into O's corrected content and whatever later commits actually
    contain.
-4. **Rebuild each semantic commit from that combined index, in order, staging only that commit's own
+6. **Reapply the correction, now that the tree reflects O through `HEAD`'s original combined
+   content**: `git apply --unidiff-zero --index <correction.patch>`. This folds the correction into
+   the staged content precisely where O's own changes live, making it available at exactly the
+   reconstruction step that needs it, rather than only after reconstruction is already finished.
+7. **Rebuild each semantic commit from that combined index, in order, staging only that commit's own
    content each time.** A single reconstructed commit is not the same thing as "one whole file" —
    use `git restore --staged <path>` to unstage what a later commit owns, and `git add -p` (or an
    equivalent patch-level staging tool) to stage only part of a file when O's correction and a later
@@ -185,16 +209,18 @@ rewrite. This maintenance boundary applies generally, not only to this skill's o
    - **Before every `git commit` in this rebuild, inspect the actual staged diff**
      (`git diff --staged`) and confirm it contains exactly the intended semantic group — no more, no
      less — rather than trusting which `git add` commands were run.
-   - Commit, then verify the resulting state in isolation before moving to the next group when that
-     commit's own standalone correctness needs proving (`rules/verification.md`'s isolation
-     escalation).
+   - Commit, then verify the resulting commit in isolation before moving to the next group — every
+     commit this reconstruction produces needs `rules/verification.md`'s isolation-verification
+     technique, not only when it happens to be convenient. Reconstructing semantic history from an
+     already-implemented diff, after the fact, is exactly the case that technique reserves the
+     escalation for.
    - Repeat until every group from O through `HEAD` has its own commit again: O reconstructed with
      the correction folded in, then each subsequent original commit rebuilt intact from the
      remaining staged content — unless the correction itself changes what a later commit should
      contain.
-5. **Restore the protected content** from step 2, using that same procedure's restoration steps,
+8. **Restore the protected content** from step 4, using that same procedure's restoration steps,
    once every reconstructed commit exists.
-6. **Confirm nothing unrelated leaked in.** After the last commit, `git status` and `git diff` should
+9. **Confirm nothing unrelated leaked in.** After the last commit, `git status` and `git diff` should
    show exactly the restored unrelated content and nothing else outstanding from this reconstruction.
 
 The result reads as if it had been built that way from the start — there's no trace in the history

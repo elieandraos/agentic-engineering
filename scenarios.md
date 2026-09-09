@@ -976,3 +976,135 @@ exercised, though the corrected procedure's owning-commit-range logic does not d
 length. `implement-it`'s own reporting and gate behavior around this procedure (how it would present
 the reconstruction plan, or ask before rewriting) was not exercised — only the underlying Git
 mechanics were.
+
+## Follow-up correction: combined reconstruction, stash identity, verification policy (2026-09-09b)
+
+This section records a second, bounded correction against commit
+[`d6220f07c327cc0b5cc5632857aa509511a9fede`](https://github.com/elieandraos/agentic-engineering/commit/d6220f07c327cc0b5cc5632857aa509511a9fede)
+— the first IMP-05–08 correction pass above. Control Room review of that commit found three
+remaining defects, all in the same two rule files. This section supplements, and does not replace,
+either the original 2026-09-08 audit or the first follow-up validation above; their pinned source,
+observations, counts, and results are unchanged.
+
+**What each defect was, and what changed:**
+
+1. **The reconstruction procedure's own "protect unrelated content" step used an unqualified sweep
+   that also hid an uncommitted task correction, not only genuinely unrelated work.** Because that
+   step protected everything indiscriminately and restored it only after every commit was already
+   rebuilt, a correction belonging to the commit being reconstructed was unavailable at the one step
+   that needed it — reconstructing that commit without it, silently.
+   `skills/implement-it/rules/commit-boundaries.md`'s "Something already committed, correction needed
+   before push" now captures the correction as a zero-context patch file *before* anything is
+   protected (`git diff -U0 --staged -- <path> > correction.patch`), reverse-applies it out of the
+   working tree (`git apply --unidiff-zero -R`) so only genuinely unrelated content remains to be
+   stashed, then reapplies the same patch (`git apply --unidiff-zero --index`) immediately after the
+   reset to the owning commit's parent — exactly the step that needs it. The correction's content
+   never leaves git tooling; it is never retyped or reconstructed from memory.
+2. **The qualified stash-preservation procedure tracked an entry by its `stash@{n}` position and
+   message, both of which can drift or repeat.**
+   `skills/implement-it/rules/verification.md`'s "Preserving unrelated worktree content during a Git
+   rewrite" now records the entry's commit SHA immediately on creation (`git rev-parse stash@{0}`)
+   and uses that SHA as the entry's identity throughout. `apply` accepts the bare SHA directly; `drop`
+   does not — the procedure now resolves the SHA to its current `stash@{n}` selector
+   (`git stash list --format='%gd %H'`, matched by SHA) immediately before every drop, and stops
+   without dropping anything if no current entry matches the recorded SHA.
+3. **The reconstruction procedure's per-commit verification had been reworded from a mandatory
+   requirement to a conditional one** ("...when that commit's own standalone correctness needs
+   proving"), softening the previous pass's own restatement of the pre-existing policy. Step 7 of the
+   reconstruction procedure now states the requirement unconditionally again — every commit the
+   reconstruction produces is verified in isolation before the next is built — while leaving
+   `rules/verification.md`'s general "a deliberate escalation, not the default" framing for ordinary,
+   non-reconstruction commit building untouched; that section already lists post-hoc history
+   reconstruction as one of the cases the escalation is reserved for, so this is a restatement of an
+   existing, unweakened trigger, not a new policy.
+
+**Tested state:** the corrected rule text as it exists in this working tree, built on top of
+`d6220f07c327cc0b5cc5632857aa509511a9fede` on `main` (this pass's own changes land as ordinary new
+commits after it, under the same non-rewrite boundary as the first pass).
+
+**Method:** executed Git-mechanics verification only, in disposable repositories created and
+discarded under a session scratch directory, never inside this project. `implement-it` itself was not
+invoked in a live agent session for this follow-up either — the same limitation the first follow-up
+record states applies here too.
+
+**What the first follow-up's fixtures established, and what they did not:** the first follow-up
+validated IMP-05 (unrelated staged work excluded) and IMP-06 (owning-commit-range reconstruction)
+*separately* — no fixture combined an uncommitted correction with simultaneous unrelated staged work,
+and the stash-identity check used single-entry, non-conflicting scenarios (a clean tree with an older
+stash for IMP-07; a single mixed-staging entry for IMP-08). Combining a live correction with unrelated
+work, and exercising stash identity under repeated-message/shifting-position conditions, are new
+coverage added by this pass, not a re-run of the same ground.
+
+**Fixtures, steps, and results:**
+
+- **Defect 1 — combined fixture, non-shared files.** `base → A (a.txt) → B (b.txt)`, all unpublished;
+  an uncommitted correction to `a.txt` (belonging to `A`) coexists with unrelated staged `u.txt`.
+  *Reproduced the defect* first: applying the prior (`d6220f0`) procedure's single indiscriminate
+  stash step hid both the correction and `u.txt` together; the correction was restored only after `A`
+  and `B` were already rebuilt, leaving reconstructed `A` at `git show HEAD~1:a.txt` →
+  `"A original content"` (uncorrected) with the fix sitting as a leftover unstaged diff on top of
+  `B`. *Corrected procedure:* capture-patch → reverse-apply → stash `u.txt` alone → reset to `O~1` →
+  reapply the patch → rebuild. Reconstructed `A` (`git show HEAD~1:a.txt`) returned
+  `"A corrected content"`; `B` (`git show HEAD:b.txt`) returned `"B content"` unchanged; `u.txt`,
+  restored via its recorded SHA, matched its original content and its original staged state
+  (`A  u.txt`), and never appeared in either commit's diff.
+- **Defect 1 — shared-file variant.** Same history shape, but the correction (line 1) and unrelated
+  work (line 3) land in the *same* file, `shared.txt`, both initially unstaged, plus a second,
+  wholly-unrelated staged file `u2.txt`. `git add -p` isolated the correction's hunk; `git diff -U0
+  --staged` captured it; a first reverse-apply attempt without `--unidiff-zero` failed
+  (`error: patch does not apply` — git rejects zero-context patches by default as a fuzz-match
+  safeguard) and `--unidiff-zero` was required for both the reversal and the later reapplication.
+  After reversal, `shared.txt` held only the unrelated line-3 change; both `shared.txt`'s unrelated
+  hunk and `u2.txt` were then protected in one ordinary qualified-procedure stash. Reconstructed `A`
+  (`git show HEAD~1:shared.txt`) held all three lines with only line 1 corrected
+  (`CORRECTION-l1/l2/l3`); after restoration, `shared.txt`'s working tree showed the corrected,
+  committed line 1 plus the unrelated line-3 change auto-merged back on top as an unstaged diff
+  (matching its original unstaged state), and `u2.txt` returned staged, matching its original staged
+  state.
+- **Defect 1 — degenerate case (no unrelated content).** Same procedure run with no `U` at all: after
+  the reverse-apply, the working tree was already clean, so the qualified stash-protection step's own
+  clean-tree check (from the first pass) correctly created no entry, and none was restored at the
+  end. Reconstruction still completed correctly.
+- **Defect 1 — genuine conflict.** The correction's captured patch was reverse-applied against a tree
+  where an unrelated edit had *overwritten the same line* (not merely sat nearby). The reversal failed
+  cleanly (`error: patch failed` / `patch does not apply`); the working tree was left completely
+  unmodified and the captured patch file remained on disk — confirming the "stop, do not guess, both
+  the patch and the working tree remain the recovery data" behavior is backed by `git apply`'s actual
+  all-or-nothing-per-file failure behavior, not merely asserted.
+- **Defect 2 — SHA-vs-selector acceptance.** Confirmed directly: `git stash apply <SHA>` succeeded
+  against a stash no longer at `stash@{0}`; `git stash drop <SHA>` on the same entry failed with
+  `error: '<sha>' is not a stash reference`. This is the concrete basis for the corrected procedure's
+  "apply accepts a bare SHA; drop does not, resolve first" instruction.
+- **Defect 2 — identical messages, changing positions.** Two stash entries pushed with the *same*
+  message (`"isolation-step"`) over different files, then a third, differently-named stash pushed
+  afterward to shift positions further (final order: `stash@{0}`=third, `stash@{1}`=second
+  same-message entry, `stash@{2}`=first same-message entry). Resolving each recorded SHA via
+  `git stash list --format='%gd %H'` correctly identified each entry's true current position
+  (`stash@{2}` and `stash@{1}` respectively) despite the identical messages and the shift. Applying
+  and dropping the *first* entry by its resolved selector restored only that entry's own file content;
+  the second same-message entry and the unrelated third entry were confirmed unaffected and still
+  present (`git stash list` showed exactly two remaining entries, matching their recorded SHAs)
+  afterward.
+- **Defect 2 — unresolved identity.** A SHA that was never actually pushed (a fabricated value) was
+  looked up against a live stash list; the matching lookup returned empty, cleanly and
+  unambiguously distinguishing "not found" from a wrong guess — matching the corrected procedure's
+  "stop and report, don't drop anything" instruction for this case. The real, unrelated entry present
+  in the list was confirmed untouched by the failed lookup.
+- **Defect 3 — composition with the mandatory per-commit isolation step.** In the non-shared combined
+  fixture above, after committing reconstructed `A`, a second, concurrent qualified-stash entry (a
+  distinct SHA, a distinct message) was created to isolate `A` for verification while the
+  still-unrestored `U`-protecting entry from Defect 1's fix remained in the stash list at the same
+  time. Both entries' SHAs were resolved and acted on independently and correctly — the isolation
+  entry was applied, verified, and dropped without disturbing `U`'s entry, and `U`'s entry was later
+  applied, verified, and dropped without any trace of the isolation entry's own content. This confirms
+  the mandatory-isolation restatement composes cleanly with Defect 1/2's fixes rather than requiring
+  a special case.
+
+**Limitations:** the same file-scale, submodule, LFS, and binary-content limitations as the first
+follow-up apply here. The shared-file variant used a 3-line file with a single-line correction hunk
+and a single-line unrelated hunk on non-adjacent lines once zero-context patches were used; a
+correction and unrelated content on directly adjacent lines within the same hunk boundary were not
+separately exercised, and would likely surface as the same genuine-conflict path already validated
+above rather than a silent misattribution, but that specific adjacency was not tested. `implement-it`
+itself was not invoked in a live agent session for this pass either — only the underlying Git
+mechanics were exercised, the same distinction the first follow-up record draws.
