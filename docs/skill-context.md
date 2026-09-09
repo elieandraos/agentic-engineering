@@ -1,31 +1,51 @@
 # Skill Context Consumption
 
-Dated measurements of how much an agent actually loads to use a skill in this repository, and what
-it does not load merely because the skill is installed. This document is the single, ongoing home
-for these numbers — later passes append a new dated section rather than silently overwriting this
-one's figures.
+Dated file-size measurements for this repository's skills, and modeled estimates — built from those
+measurements, under explicit assumptions stated where they're used — of what a representative
+workflow would load and what it does not load merely because a skill is installed. The file sizes
+are direct measurements; the workflow-level figures are arithmetic over named files, not an observed
+session's actual consumption. This document is the single, ongoing home for these numbers — later
+passes append a new dated section rather than silently overwriting this one's figures.
 
 **Authority boundary.** This document measures and models context cost; it does not change any
 skill's operational rules, gates, or approvals. Where a reduction is proposed below, the proposal is
 inert until a separate authoring pass implements it under
 [`docs/skill-authoring-methodology.md`](skill-authoring-methodology.md).
 
-**Revision note (2026-09-09b).** This revises the first 2026-09-09 version of this same document,
+**Revision note (2026-09-09b).** This revised the first 2026-09-09 version of this same document,
 which mixed two different units (byte counts from `wc -c` presented alongside Unicode-character
 description limits), listed workflow-file orders that didn't match the owning skill's actual
 lifecycle, and stated some conditional dependencies as absolute ("never loaded together," "never
-pulls in") without checking every owning rule file first. This version corrects all three; the
-numbers below replace, rather than supplement, that first version's tables.
+pulls in") without checking every owning rule file first.
+
+**Revision note (2026-09-09c).** This further corrects the 2026-09-09b version: it pins measurement
+to a single explicit commit (`667fab15`, not the prior version's ambiguous "built on top of
+`cd2f3f5`" framing); removes an internal contradiction where `implement-it`'s own table claimed
+`rules/verification.md` was "the single largest supporting file among the six portable skills" while
+`ship-it`'s table separately, and correctly, named `rules/milestone-completion.md` as the largest
+file overall; removes an unsupported "two orders of magnitude below any workflow" claim (the
+smallest modeled workflow is well under one order of magnitude above discovery metadata) and an
+unsupported "no real workflow loads this whole figure" guarantee; corrects the reconstruction-recipe
+character range in "Concrete reduction opportunities" (it previously included the file's general
+Do/Don't summary and excluded the common no-reconstruction "nothing committed yet" case); qualifies
+the README/SKILL.md duplication finding and the reduction proposals' savings language as estimates,
+not established facts or measured benefits; and adds the `plan-it` secondary-checklist,
+`laravel-inertia-stack` testing/`php-conventions.md`, `artifact-design`, and `implement-it`
+entry-contract details the workflow estimates previously omitted. Each version's numbers replace,
+rather than supplement, the version before it.
 
 ## Measurement date and source
 
-Measured 2026-09-09, against this repository's working tree, built on top of commit `cd2f3f5` on
-`main` — this pass's own changes land as ordinary new commits after it, not a rewrite of it. Skill
-file sizes change as skills evolve; treat every number below as true of that pinned revision, not a
-standing fact — re-run "Reproducing these numbers" below against the current tree to refresh them.
-This supersedes, for directory-wide and workflow-level figures, the narrower SKILL.md-only table in
-`scenarios.md`'s "Entry-point size observations" (2026-09-08); that table's own pinned-commit
-figures are unchanged and preserved there as a historical record, not restated here as current.
+Measured 2026-09-09, against the `skills/` tree at commit
+[`667fab1555d33fec8031a27aa85296f7103d4159`](https://github.com/elieandraos/agentic-engineering/commit/667fab1555d33fec8031a27aa85296f7103d4159)
+on `main`. Every figure below describes that pinned revision specifically, not a later working tree —
+this correction pass's own edits to this file land as an ordinary new commit after it, and do not
+themselves change any file the figures describe. Skill file sizes change as skills evolve; treat
+every number below as true of `667fab15` and nothing later — re-run "Reproducing these numbers"
+below against whatever revision you actually want to describe to refresh them. This supersedes, for
+directory-wide and workflow-level figures, the narrower SKILL.md-only table in `scenarios.md`'s
+"Entry-point size observations" (2026-09-08); that table's own pinned-commit figures are unchanged
+and preserved there as a historical record, not restated here as current.
 
 ## Method
 
@@ -70,9 +90,11 @@ distinct tiers, at three different times:
    request; it loads the ones the request's own shape requires — though, as "Estimated file-loading
    costs" below details, "the ones a shape requires" is not always a single file per concern: a
    mixed-characteristic `plan-it` feature or a `laravel-inertia-stack` blueprint with its own internal
-   routing can require more than the primary table entry alone. Markdown files here are not chunked
-   or partially loaded — once a workflow needs a file, that file's complete size is the cost,
-   regardless of how much of it the current path actually exercises.
+   routing can require more than the primary table entry alone. This document assumes whole-file
+   reads throughout: once a workflow needs a file, its complete size is counted as the cost,
+   regardless of how much of it the current path actually exercises. A tool capable of a partial or
+   offset-limited read could load less than that in a real session; this document does not model
+   that possibility, and states it as an explicit assumption rather than a guaranteed mechanism.
 
 ## Discovery metadata
 
@@ -91,8 +113,10 @@ running:
 | ship-it | 923 |
 | **Total** | **5,011** |
 
-Rough tokens: ~1,253. This is the entire cost of having all seven skills installed but unused in a
-given session — roughly two orders of magnitude below any single activated workflow below.
+Rough tokens: ~1,253. This is the combined length of the seven `description` fields alone, measured
+the same way as every other figure in this document — it is not a full accounting of installation or
+session overhead, since a harness may add its own formatting, wrapper text, or additional metadata
+around each description that this document does not measure.
 
 ## Activated SKILL.md sizes
 
@@ -140,9 +164,10 @@ mid-workflow.
 | `rules/sequencing.md` | 8,862 |
 | `README.md` (not referenced from `SKILL.md`) | 3,156 |
 
-`rules/verification.md` is the single largest supporting file among the six portable skills, and
-`rules/commit-boundaries.md` is second — both are flagged in "Concrete reduction opportunities"
-below.
+`rules/verification.md` and `rules/commit-boundaries.md` are the two largest supporting files within
+`implement-it` itself — both are flagged in "Concrete reduction opportunities" below. Neither is the
+largest file in the repository overall: `ship-it/rules/milestone-completion.md` (38,499 characters,
+see below) is larger than both.
 
 ### lab-it
 
@@ -240,9 +265,12 @@ its own phase — a pre-merge PR-readiness check does not need `release.md` at a
 
 All 57 files under `skills/`: **467,861 characters** (470,648 bytes — the 2,787-byte gap is the same
 multi-byte-punctuation effect described in "Method" above, accumulated across every file). Rough
-tokens: **~116,965**. No real workflow loads this whole figure at once — it is the sum across all
-seven skills' entrypoints, rules, blueprints, templates, and READMEs, useful only as an upper bound
-against which the workflow estimates below should be read.
+tokens: **~116,965**. This is the sum across all seven skills' entrypoints, rules, blueprints,
+templates, and READMEs — every file this document measures, whether or not any single workflow
+would ever open all of them together. It is presented as an upper-bound reference point for scale,
+not a claim about what any specific workflow actually loads; every modeled workflow estimate below
+is a small fraction of it, but this document does not assert that no session ever approaches the
+full figure.
 
 ## Estimated file-loading costs for representative workflows
 
@@ -259,9 +287,11 @@ didn't model).
 
 **Excluded from every estimate**, per this task's own scope: application/project code the workflow
 reads or writes, prior conversation history, tool-call output (command results, diffs, search
-results), and any external companion skill this repository does not publish (Laravel Boost's
-`laravel-best-practices`, `testing-best-practices`, `inertia-vue-development` — real cost when
-installed, but not measurable from this repository). `README.md` files are excluded by default: five
+results), and any external companion skill this repository does not publish — Laravel Boost's
+`laravel-best-practices`, `testing-best-practices`, and `inertia-vue-development` (real cost when
+installed, but not measurable from this repository), and the `artifact-design` skill that
+`document-it/SKILL.md` requires loading before writing any Artifact page (same caveat: real cost,
+external to this repository, not measured here). `README.md` files are excluded by default: five
 of the seven skills' `SKILL.md` files never mention `README.md`, so an executing agent has no stated
 reason to open it. The two exceptions — `plan-it` and `laravel-inertia-stack`, whose `SKILL.md` text
 each point a reader to `README.md` — are called out in their rows below rather than silently folded
@@ -271,61 +301,91 @@ a human maintainer reading the same file, is not something this document can ass
 a skill's author or a project's installer, not a running pipeline workflow, and no `SKILL.md` or rule
 file in this repository references either one.
 
+**A separate assumption for `implement-it`'s two rows below:** `implement-it/SKILL.md`'s "Entry
+contract" names `plan-it/rules/issue-conventions.md` and `plan-it/rules/review.md` by name, to
+describe the quality bar an issue must already meet before `implement-it` accepts it. Nothing in
+that text instructs `implement-it` to re-open those files itself — the ordinary path trusts that an
+already-approved issue meets the bar, rather than re-verifying it against `plan-it`'s own rules each
+time. This document assumes that ordinary path and does not count either `plan-it` file in the
+`implement-it` rows below; a session that did re-open them for some other reason (an explicit
+re-verification, a dispute about whether an issue actually qualifies) would add
+`plan-it/rules/issue-conventions.md` (19,801 characters) and/or `rules/review.md` (16,800
+characters) on top of the totals shown.
+
 | Workflow | Files counted (in order) | Characters | Rough tokens |
 | --- | --- | ---: | ---: |
 | **review-it, standalone review** | `SKILL.md` (6,052) → `rules/scope.md` (9,064) → `rules/checklist.md` (9,235) → `rules/verification.md` (8,686) | 33,037 | 8,259 |
 | **lab-it, investigation-and-answer only** | `SKILL.md` (7,497) — `rules/plan-synthesis.md` not reached; no `plan.md` was requested | 7,497 | 1,874 |
 | **lab-it, plan feature architecture** | `SKILL.md` (7,497) → `rules/plan-synthesis.md` (12,789) | 20,286 | 5,072 |
 | **document-it, new Markdown guide from already-sufficient evidence** | `SKILL.md` (13,742) → `rules/doc-style.md` (7,645) → `rules/review.md` (13,001); `lab-it` not routed to (evidence already sufficient) | 34,388 | 8,597 |
-| **document-it, new Artifact guide** | same as above, plus `rules/template.html` (20,913) | 55,301 | 13,825 |
-| **document-it, update routed through `lab-it` for stale evidence (cross-skill)** | `SKILL.md` (13,742) → `lab-it/SKILL.md` (7,497, cross-skill) → `rules/maintenance.md` (8,903) → `rules/review.md` (13,001) | 43,143 | 10,786 |
+| **document-it, new Artifact guide** | same as above, plus `rules/template.html` (20,913); the external `artifact-design` skill this requires is not counted (excluded above) | 55,301 | 13,825 |
+| **document-it, reconcile an existing Markdown guide for a connected architectural change, evidence routed through `lab-it` for staleness (cross-skill)** | `SKILL.md` (13,742) → `lab-it/SKILL.md` (7,497, cross-skill) → `rules/maintenance.md` (8,903) → `rules/doc-style.md` (7,645, since `rules/maintenance.md` routes there for how a connected change gets written) → `rules/review.md` (13,001); `rules/template.html` is not reached because this is a Markdown, not an Artifact, guide | 50,788 | 12,697 |
 | **plan-it, one resource/CRUD feature, UI in scope, no prior `plan.md`, single-shape (no secondary checklist)** | `SKILL.md` (6,542) → `rules/feature-classification.md` (3,171) → `rules/resource-feature-checklist.md` (9,796) → `rules/design-reconciliation.md` (6,514) → `rules/issue-conventions.md` (19,801) → `rules/sequencing.md` (10,509) → `rules/review.md` (16,800); `rules/capability-checklist.md`, `rules/plan-md-input.md`, and `rules/discovered-work.md` are the unused alternates for this shape. A mixed-characteristic feature would add `rules/capability-checklist.md` (4,930) on top, per `rules/feature-classification.md`'s secondary-questions allowance | 73,133 | 18,283 |
 | **implement-it, one ordinary issue, no stack companion, cross-skill `review-it` call before Gate 1** | `SKILL.md` (10,042) → `rules/sequencing.md` (8,862) → `rules/verification.md` (35,260) → `review-it/SKILL.md` (6,052, cross-skill) → `review-it/rules/scope.md` (9,064) → `review-it/rules/checklist.md` (9,235) → `review-it/rules/verification.md` (8,686) → `rules/review-gates.md` (13,015) → `rules/commit-boundaries.md` (23,510) → `rules/issue-closure.md` (14,243); `review-it` is invoked before Gate 1's report — well before `commit-boundaries.md` or `issue-closure.md` are reached, not after them — and `sequencing.md`/`verification.md` are each read once and reused later in the same pass (the post-closure ready-set recompute, and the per-commit/completed-issue verification checkpoints) | 137,969 | 34,492 |
-| **implement-it, same issue, `laravel-inertia-stack` composed for one filtered-index task (cross-skill, including the blueprint's own testing cross-references)** | everything in the row above, plus `laravel-inertia-stack/SKILL.md` (4,164, cross-skill), `blueprints/filters-and-sorting.md` (6,743), `rules/request-normalization.md` (2,761), the four filter/sort templates (1,270 + 999 + 985 + 1,550 = 4,804), and — per that blueprint's own "Testing" section — `rules/test-ownership.md` (4,364) and `blueprints/pest-testing.md` (7,201) | 168,006 | 42,002 |
+| **implement-it, same issue, `laravel-inertia-stack` composed for one filtered-index task (cross-skill, including the blueprint's own further cross-references)** | everything in the row above, plus `laravel-inertia-stack/SKILL.md` (4,164, cross-skill), `blueprints/filters-and-sorting.md` (6,743), `rules/request-normalization.md` (2,761), the four filter/sort templates (1,270 + 999 + 985 + 1,550 = 4,804), `rules/test-ownership.md` (4,364) and `blueprints/pest-testing.md` (7,201) per that blueprint's own "Testing" section, and `rules/php-conventions.md` (1,239) per the same blueprint's own "Naming and location" section, which cites it for the abstract base-class-vs-`final`-subclass convention the new concrete `{Model}Filter`/`{Model}Sort` classes this task authors must follow | 169,245 | 42,311 |
 | **ship-it, PR-readiness check only** | `SKILL.md` (5,919) → `rules/milestone-completion.md` (38,499) | 44,418 | 11,105 |
 | **ship-it, full PR-readiness → post-merge closure and release** | `SKILL.md` (5,919) → `rules/milestone-completion.md` (38,499, read once, reused for both the readiness check and the later closure gate) → `rules/release.md` (17,050) | 61,468 | 15,367 |
 
 The largest single-workflow figure above (implement-it composed with the Laravel companion,
-including its internal testing cross-references, for one task, ~42,002 rough tokens) is roughly 36%
-of the repository-wide total (~116,965 rough tokens) — still well under "everything installed," even
-for the most cross-skill, most-composed representative case this document models.
+including that blueprint's own further cross-references, for one task, ~42,311 rough tokens) is
+roughly 36% of the repository-wide total (~116,965 rough tokens) — a comparison of two figures this
+document itself defines, not a claim about a real session's measured usage; it illustrates that even
+the most cross-skill, most-composed representative case this document models stays well short of the
+repository-wide sum.
 
 ## Concrete reduction opportunities (proposals, not applied in this pass)
 
 These are candidates for a future authoring pass under
 [`docs/skill-authoring-methodology.md`](skill-authoring-methodology.md). None is applied here — this
 task's scope is measurement and documentation correction, not restructuring or shortening any
-operational rule.
+operational rule. Every character figure below (a section's current size, a proposed split's
+resulting file sizes) is a measurement of what exists today; any character reduction implied by a
+proposal is a conditional estimate of what a future split could remove from a given workflow's
+load, not a measured runtime benefit — no split, merge, or rewording proposed here has actually been
+implemented or benchmarked.
 
-1. **Repair-history narration embedded inside an operational rule file.**
-   `skills/implement-it/rules/commit-boundaries.md` carries five inline parentheticals citing
-   `scenarios.md` while narrating *why* a step matters (e.g., "reproduced concretely: three separate
-   hunks in one file: one unrelated hunk already staged, one unrelated hunk still unstaged, and the
-   correction itself unstaged; the prior extraction-by-subtraction folded the unstaged unrelated hunk
-   into the 'correction' and round-tripped anyway — see `scenarios.md`" at line 189). Across all five
-   occurrences (lines 189, 199, 210, 248, 264) these parentheticals total exactly 655 characters of
-   defect-history narration inside a file that loads on every commit-boundary consult, ordinary or
-   corrective. **What could change:** shorten each to a bare citation (e.g., "(see `scenarios.md` for
-   the reproduced failure)") and move the narrative detail entirely into `scenarios.md`, which already
-   carries the full reproduction. **What must be preserved:** the operational instruction each
-   parenthetical is attached to (the stop conditions, the positive-isolation requirement, the
-   round-trip check) is unrelated to this trim and must not change; per
-   `docs/skill-authoring-methodology.md` Section 4, "a compact example materially teaches the rule"
-   can still justify keeping a short version rather than deleting it outright — the proposal is
-   compression, not blanket removal.
+1. **Repair-history narration mixed with necessary behavioral teaching, in a file that must also
+   work when installed standalone.** `skills/implement-it/rules/commit-boundaries.md` carries five
+   inline parentheticals citing `scenarios.md` (lines 189, 199, 210, 248, 264; 655 characters
+   combined). They are not uniform. Two of them — line 210 ("reproduced concretely; see
+   `scenarios.md`") and line 264 ("verified in practice; see `scenarios.md`") — add no concrete
+   detail beyond the citation itself; the sentence each is attached to already states the behavioral
+   fact in full without it, so these two are pure repair-history narration. The other three — line
+   189's three-hunk example, line 199's tooling-refuses-on-identical-adjacent-text example, and line
+   248's both-staged-together example — each carry a compact, concrete illustration of a non-obvious
+   stop condition, closer to `docs/skill-authoring-methodology.md` Section 4's "a compact example
+   materially teaches the rule" exception than to removable history. **Any change here must also
+   account for how this skill is actually consumed:** per `docs/skill-consumption.md`, an installed
+   copy carries only `skills/<name>/` — `scenarios.md` is never installed alongside it, so "(see
+   `scenarios.md`)" is already a dangling reference for every consuming project, not a convenient
+   shorthand. **What could change:** remove the citation and the narration wrapper from the two
+   citation-only parentheticals (lines 210, 264) entirely, since the owning sentence already states
+   the fact on its own; for the three example-bearing parentheticals (lines 189, 199, 248), rephrase
+   each as a self-contained example inside the rule itself, with no `scenarios.md` reference, rather
+   than compressing it into a citation that would mean nothing outside this source repository. **What
+   must be preserved:** the operational instruction each parenthetical is attached to (the stop
+   conditions, the positive-isolation requirement, the round-trip check) is unrelated to this change;
+   this is a proposal to make the file's own examples self-sufficient, not to remove the teaching
+   content the three compact examples currently carry.
 
 2. **A large file bundling a common path with a rare, conditional sub-procedure.**
-   `skills/implement-it/rules/commit-boundaries.md` is 23,510 characters; lines 1–148 (8,366
-   characters) cover ordinary commit-boundary derivation, consulted on every issue, while lines
-   149–343 (15,144 characters, roughly 64% of the file) are the history-reconstruction recipe used
-   only when a correction must fold into an already-committed, not-yet-pushed commit — a materially
-   rarer case than ordinary boundary derivation. **What could change:** route the reconstruction
-   procedure to its own file (e.g. `rules/commit-reconstruction.md`), consulted only from
+   `skills/implement-it/rules/commit-boundaries.md` is 23,510 characters, in three parts. Lines
+   1–157 (8,798 characters) cover ordinary commit-boundary derivation plus the common "nothing
+   committed yet" review-correction case — both consulted on every issue. Lines 158–326 (14,144
+   characters, roughly 60% of the file) are the history-reconstruction recipe itself ("Something
+   already committed, correction needed before push"), used only when a correction must fold into an
+   already-committed, not-yet-pushed commit — a materially rarer case than ordinary boundary
+   derivation. Lines 328–342 (567 characters) are a general "Do / Don't summary" covering the whole
+   file's guidance, not reconstruction-specific, and would stay with the ordinary-guidance portion
+   regardless of any split. **What could change:** route only the reconstruction recipe (lines
+   158–326) to its own file (e.g. `rules/commit-reconstruction.md`), consulted only from
    `commit-boundaries.md`'s "Something already committed, correction needed before push" heading, so
-   an ordinary issue's commit-building pass no longer pays for a procedure it never reaches. **What
-   must be preserved:** the reconstruction procedure's own steps, its scratch-directory,
-   positive-isolation, and classification-stop mechanics, and its cross-references to
-   `rules/verification.md`'s stash-identity procedure — none of that changes, only which file owns it.
+   an ordinary issue's commit-building pass — including the common no-reconstruction-needed case —
+   no longer pays for a procedure it never reaches. **What must be preserved:** the reconstruction
+   procedure's own steps, its scratch-directory, positive-isolation, and classification-stop
+   mechanics, its cross-references to `rules/verification.md`'s stash-identity procedure, and the
+   general Do/Don't summary's place in the remaining file — none of that changes, only which file
+   owns the reconstruction recipe specifically.
 
 3. **A large file covering several distinct conditional surfaces.**
    `skills/ship-it/rules/milestone-completion.md` (38,499 characters, the largest file in this skill
@@ -343,14 +403,18 @@ operational rule.
    preserved:** every gate, condition, and cross-reference currently stated — a split changes which
    file a reader opens, not what the rule says or when it applies.
 
-4. **Duplicated explanation, checked and not found at repository scope.** README.md and SKILL.md
-   pairs were compared across all seven skills for restated content (`docs/skill-authoring-
-   methodology.md` Section 7 flags this as a known failure mode). No pair currently restates the
-   other: each README explains lifecycle and reasoning in plain prose for a human maintainer, while
-   each SKILL.md states the operational ownership and routing table an agent needs — the intended,
-   complementary split, even for the two skills (`plan-it`, `laravel-inertia-stack`) whose SKILL.md
-   points to its README rather than restating it. This is recorded as a checked-and-clear result, not
-   a defect, so a future pass does not have to re-derive it.
+4. **Duplicated explanation: checked in one reading pass, none found — not a claim that none
+   exists.** README.md and SKILL.md pairs were compared across all seven skills for restated content
+   (`docs/skill-authoring-methodology.md` Section 7 flags this as a known failure mode). This reading
+   found no pair that clearly restates the other: each README explains lifecycle and reasoning in
+   plain prose for a human maintainer, while each SKILL.md states the operational ownership and
+   routing table an agent needs — the intended, complementary split, even for the two skills
+   (`plan-it`, `laravel-inertia-stack`) whose SKILL.md points to its README rather than restating it.
+   This is a manual comparison by one reader, not an exhaustive or automated content-similarity
+   check, so it establishes "no restatement found in this pass," not "no overlap exists anywhere in
+   these fourteen files" — a future pass with different scrutiny, or a change to either file, could
+   still find something this one missed. Recorded so a future pass starts from what was actually
+   checked, not to foreclose checking again.
 
 ## Metadata correction
 
