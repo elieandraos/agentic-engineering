@@ -55,7 +55,7 @@ post-merge progression — which may include drafting and publishing a release (
 milestone issue, closing the milestone (`rules/milestone-completion.md`'s closure gate). A single
 question can cover both, e.g. "close the milestone and start the release?" — but they are separate
 mutations, and completing one is never a precondition for starting the other (see
-`rules/milestone-completion.md`'s "Milestone closure and release do not gate each other"). Do not
+`rules/milestone-lifecycle.md`'s "Milestone closure and release do not gate each other"). Do not
 begin policy discovery below until this authorization is explicit.
 
 This is a separate, earlier gate from step 4's approval of the exact release content, the same way
@@ -243,9 +243,9 @@ the whole release body.
   beyond what step 1 actually found evidence for.
 - **It does not decide milestone closure, and does not gate it.** `rules/milestone-completion.md`'s
   closure gate starts from the same post-merge authorization this rule's step 0 asks for, not from
-  this rule's publication having completed — see that rule's "Milestone closure and release do not
-  gate each other." A milestone can close before, after, or without regard to the timing of this
-  rule's release.
+  this rule's publication having completed — see `rules/milestone-lifecycle.md`'s "Milestone closure
+  and release do not gate each other." A milestone can close before, after, or without regard to the
+  timing of this rule's release.
 
 ## Do / Don't
 

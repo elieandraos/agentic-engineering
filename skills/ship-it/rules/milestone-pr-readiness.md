@@ -6,11 +6,11 @@ Once a delivery/phase milestone genuinely has zero open issues remaining — the
 `implement-it/rules/sequencing.md`'s dependency-ready recompute reports, checked directly against
 current GitHub state rather than requiring evidence that a specific `implement-it` session produced
 it — this file governs whether the milestone's shared branch is ready to become a PR, and the
-authorized creation of that PR once it is. See `rules/milestone-completion.md`'s "Where this phase
+authorized creation of that PR once it is. See `rules/milestone-lifecycle.md`'s "Where this phase
 starts" for how this fits the full delivery lifecycle end to end, including what happens once the PR
 opens (`rules/ci-failure-correction.md`) and once it merges
 (`rules/milestone-completion.md`'s closure gate). A Backlog or other persistent catch-all milestone
-never reaches this gate — see `rules/milestone-completion.md`'s "Backlog is exempt."
+never reaches this gate — see `rules/milestone-lifecycle.md`'s "Backlog is exempt."
 
 ## Milestone PR readiness
 
@@ -141,7 +141,7 @@ already-reviewed shape applied to a new mutation, not a new kind of gate.
    actual result — number, base, head, title, and body — instead of trusting the creation command's
    exit code. A mismatch is a failed validation to report and fix, not a cosmetic discrepancy.
 6. **PR approval and merge stay entirely human-owned from here.** Creating the PR triggers the
-   project's real CI (see `rules/milestone-completion.md`'s "Where this phase starts"); this rule does
+   project's real CI (see `rules/milestone-lifecycle.md`'s "Where this phase starts"); this rule does
    not review, approve, or merge it.
 
 ## Reporting
@@ -178,9 +178,11 @@ This rule sits downstream of several other contracts and does not redefine any o
 - **`plan-it`'s `rules/issue-conventions.md`** owns milestone classification, naming,
   descriptions, and issue drafting. This rule consumes that classification and description as
   given; it does not decide what belongs in a milestone, name one, or draft its description.
-- **`rules/milestone-completion.md`** owns the full delivery lifecycle's entry map ("Where this phase
-  starts"), what counts as a delivery/phase milestone, the Backlog exemption, and the closure gate
-  this readiness gate is deliberately narrower than. This rule does not redefine any of those.
+- **`rules/milestone-lifecycle.md`** owns the full delivery lifecycle's entry map ("Where this phase
+  starts"), what counts as a delivery/phase milestone, the Backlog exemption, and the milestone
+  description as scope contract. This rule does not redefine any of those.
+- **`rules/milestone-completion.md`** owns the closure gate this readiness gate is deliberately
+  narrower than. Not restated here.
 
 ## What this rule does not do
 
@@ -200,7 +202,7 @@ This rule sits downstream of several other contracts and does not redefine any o
 - Ask the human directly whether final manual testing has happened, rather than inferring it.
 - File a manual-testing finding as a new Discovered-work issue, referencing the original.
 - Treat the milestone description as the scope contract when one exists
-  (`rules/milestone-completion.md`'s "The milestone description, when present, is the scope
+  (`rules/milestone-lifecycle.md`'s "The milestone description, when present, is the scope
   contract").
 - Discover PR conventions, check for an existing matching PR, and present a complete title/branches/
   body proposal for explicit human approval before creating the milestone PR.

@@ -20,7 +20,7 @@ specific `implement-it` session behind it — it starts from the PR's own curren
 > (`rules/milestone-completion.md`, which hasn't happened yet because there's no merge to confirm).
 
 This is not a new gate with its own approval — it's this rule naming a moment
-`rules/milestone-completion.md`'s own phase diagram ("Where this phase starts") would otherwise pass
+`rules/milestone-lifecycle.md`'s own phase diagram ("Where this phase starts") would otherwise pass
 over silently: real CI running against an already-open, not-yet-merged milestone PR can fail, and the
 milestone stays in this in-between state — PR open, not merged, not authorized for post-merge
 progression — until it's resolved.
@@ -98,9 +98,10 @@ This rule sits downstream of several other contracts and does not redefine any o
 - **`implement-it/rules/issue-closure.md`** already closed the issue whose scope a correction may
   touch — this rule doesn't redecide whether that closure was correct, and doesn't require reopening
   it to authorize a direct fix against its scope.
-- **`rules/milestone-completion.md`** owns the full delivery lifecycle's entry map ("Where this phase
-  starts") this section names one moment of, and the post-merge authorization/closure gate this
-  section's step 7 defers to. This rule does not redefine either.
+- **`rules/milestone-lifecycle.md`** owns the full delivery lifecycle's entry map ("Where this phase
+  starts") this section names one moment of. This rule does not redefine it.
+- **`rules/milestone-completion.md`** owns the post-merge authorization/closure gate this section's
+  step 7 defers to. Not restated here.
 
 ## What this rule does not do
 

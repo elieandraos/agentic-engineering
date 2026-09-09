@@ -192,7 +192,7 @@
     },
     {
       "name": "ship-it: PR readiness and authorized creation, local files only",
-      "notes": "Local-file subtotal only. milestone-pr-readiness.md's own citation into milestone-completion.md's shared guidance is conditional (a manual-testing finding needing scope interpretation, or confirming Backlog eligibility) \u2014 see the 'broader estimate' row below for when that citation is actually followed.",
+      "notes": "Local-file subtotal only. milestone-pr-readiness.md's own citation into milestone-lifecycle.md's shared guidance is conditional (a manual-testing finding needing scope interpretation, or confirming Backlog eligibility) \u2014 see the 'broader estimate' row below for when that citation is actually followed.",
       "files": [
         "skills/ship-it/SKILL.md",
         "skills/ship-it/rules/milestone-pr-readiness.md"
@@ -200,16 +200,16 @@
     },
     {
       "name": "ship-it: PR readiness, broader estimate (shared guidance actually consulted)",
-      "notes": "Adds rules/milestone-completion.md when the pass actually follows milestone-pr-readiness.md's own citation into it.",
+      "notes": "Adds rules/milestone-lifecycle.md when the pass actually follows milestone-pr-readiness.md's own citation into it. Since the milestone-guidance split, this addition no longer also pulls in milestone-completion.md's closure mechanics.",
       "files": [
         "skills/ship-it/SKILL.md",
         "skills/ship-it/rules/milestone-pr-readiness.md",
-        "skills/ship-it/rules/milestone-completion.md"
+        "skills/ship-it/rules/milestone-lifecycle.md"
       ]
     },
     {
       "name": "ship-it: CI-failure investigation and correction handoff",
-      "notes": "Step 3 of ci-failure-correction.md unconditionally directs consulting implement-it/rules/review-gates.md's 'when to stop and ask' standard, so that file is mandatory for this path, not merely conditional.",
+      "notes": "Step 3 of ci-failure-correction.md unconditionally directs consulting implement-it/rules/review-gates.md's 'when to stop and ask' standard, so that file is mandatory for this path, not merely conditional. This path never needs milestone-lifecycle.md or milestone-completion.md: CI-failure investigation is self-contained.",
       "files": [
         "skills/ship-it/SKILL.md",
         "skills/ship-it/rules/ci-failure-correction.md",
@@ -218,18 +218,20 @@
     },
     {
       "name": "ship-it: post-merge closure only",
-      "notes": "Closure is self-contained in milestone-completion.md.",
+      "notes": "No longer self-contained in milestone-completion.md alone: the closure gate's own eligibility check (is this a delivery/phase milestone, not Backlog) depends on milestone-lifecycle.md's classification and Backlog-exemption guidance, so a real closure pass loads both files.",
       "files": [
         "skills/ship-it/SKILL.md",
-        "skills/ship-it/rules/milestone-completion.md"
+        "skills/ship-it/rules/milestone-completion.md",
+        "skills/ship-it/rules/milestone-lifecycle.md"
       ]
     },
     {
       "name": "ship-it: full delivery happy path (readiness -> creation -> closure -> release, no CI failure)",
-      "notes": "Already includes milestone-completion.md, so the PR-readiness row's own broader-estimate distinction does not add anything further here.",
+      "notes": "Already includes milestone-lifecycle.md (closure's own eligibility check requires it) and milestone-completion.md, so the PR-readiness row's own broader-estimate distinction does not add anything further here.",
       "files": [
         "skills/ship-it/SKILL.md",
         "skills/ship-it/rules/milestone-pr-readiness.md",
+        "skills/ship-it/rules/milestone-lifecycle.md",
         "skills/ship-it/rules/milestone-completion.md",
         "skills/ship-it/rules/release.md"
       ]

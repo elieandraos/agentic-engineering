@@ -196,7 +196,8 @@ approved assumptions, or a choice the evidence can't narrow down on its own.
 |---|---|
 | [`milestone-pr-readiness.md`](../skills/ship-it/rules/milestone-pr-readiness.md) | Milestone PR readiness (§3) and authorized creation |
 | [`ci-failure-correction.md`](../skills/ship-it/rules/ci-failure-correction.md) | The CI-failure-on-an-open-PR investigation/authorization split (§4) |
-| [`milestone-completion.md`](../skills/ship-it/rules/milestone-completion.md) | The shared delivery-lifecycle entry map, what counts as a delivery/phase milestone, the Backlog exemption, and the milestone closure gate (§5) |
+| [`milestone-lifecycle.md`](../skills/ship-it/rules/milestone-lifecycle.md) | The shared delivery-lifecycle entry map, what counts as a delivery/phase milestone, the Backlog exemption, the milestone description as scope contract, and why closure and release don't gate each other — freely consultable, no mutation of its own |
+| [`milestone-completion.md`](../skills/ship-it/rules/milestone-completion.md) | The milestone closure gate (§5): eligibility, authorization, the validated mutation, interrupted-attempt recovery, and reporting |
 | [`release.md`](../skills/ship-it/rules/release.md) | Post-merge authorization's release branch: policy discovery, understanding and drafting a release, approval, publication, and post-publication validation |
 
 **Upstream handoff, from `implement-it`.** Milestone work ordinarily arrives here as already-closed,

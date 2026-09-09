@@ -191,12 +191,19 @@ conditional file a typical review skips.
 
 ### ship-it
 
-`rules/milestone-completion.md` owns the shared delivery-lifecycle entry map and the closure gate;
-`rules/milestone-pr-readiness.md` and `rules/ci-failure-correction.md` own the two earlier,
-narrower surfaces and each cite `milestone-completion.md`'s shared guidance conditionally rather
-than restating it. `rules/ci-failure-correction.md`'s own step 3 unconditionally directs consulting
-`implement-it/rules/review-gates.md`, which the CI-failure-investigation workflow row therefore
-counts as mandatory, not merely conditional.
+`rules/milestone-lifecycle.md` owns the shared delivery-lifecycle entry map, delivery/phase-
+milestone recognition, the Backlog exemption, the milestone description as scope contract, and why
+closure and release don't gate each other — freely consultable guidance with no mutation of its own.
+`rules/milestone-completion.md` owns only the closure gate: eligibility, authorization, the
+validated mutation, interrupted-attempt recovery, and reporting; its own eligibility check for "is
+this a delivery/phase milestone" now itself depends on `rules/milestone-lifecycle.md`, so a real
+closure pass loads both files, not `rules/milestone-completion.md` alone.
+`rules/milestone-pr-readiness.md` and `rules/ci-failure-correction.md` own the two earlier, narrower
+surfaces and each cite `rules/milestone-lifecycle.md`'s shared guidance conditionally rather than
+restating it — the split lets a PR-readiness pass that needs that guidance load it without also
+loading the closure mechanics `rules/milestone-completion.md` carries. `rules/ci-failure-correction.md`'s
+own step 3 unconditionally directs consulting `implement-it/rules/review-gates.md`, which the
+CI-failure-investigation workflow row therefore counts as mandatory, not merely conditional.
 
 ## Frontmatter validation
 
