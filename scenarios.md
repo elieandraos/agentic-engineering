@@ -890,3 +890,89 @@ Keep scenario IDs stable. Preserve this baseline result when a fix lands; add th
 4. **Real-environment follow-up:** separately exercise one complete issue lifecycle, a non-Laravel project without a companion, an actual Markdown/Artifact pair, and the installed Laravel/Boost composition. Those runs are not already completed by this document and are not newly imposed as a publication gate.
 
 Known deferred topics remain deferred: durable issue-definition storage and the custom-stack/Boost precedence question were not resolved here. The intentional Git/GitHub dependency and manual pause between milestone issues were not classified as defects.
+
+## Follow-up validation: IMP-05–08 corrections (2026-09-09)
+
+This section records a bounded correction pass against the four `implement-it` defects/gaps the
+2026-09-08 audit above flagged in the "Findings to address first" table: IMP-05, IMP-06, IMP-07, and
+IMP-08. It supplements, and does not replace, those original records — their pinned source,
+observations, and counts above are unchanged.
+
+**What changed:** `skills/implement-it/rules/commit-boundaries.md`'s "Review corrections fold into
+their semantic commit" section replaced the hard-coded `git reset --soft HEAD~1` recipe with a
+procedure that determines the actual owning unpublished commit, confirms the full affected range is
+unpublished, protects unrelated worktree content before rewriting, and rebuilds each semantic commit
+from the combined index with a staged-diff check before every commit (patch-level staging via `git
+add -p` / `git restore --staged` for a file whose content spans more than one semantic group).
+`skills/implement-it/rules/verification.md` gained a new "Preserving unrelated worktree content
+during a Git rewrite" procedure — a qualified stash-identity-verify-restore sequence, used by both
+that reconstruction and the isolation-verification technique — replacing the previous unqualified
+`git stash push -u` / `git stash pop` pair in the isolation loop.
+
+**Tested state:** the corrected rule text as it exists in this working tree, built on top of pinned
+commit `07bb5bfaf7ca1ac8be1280902095d2f52c712cb1` on `main` (this pass's own changes land as ordinary
+new commits after it, per the same non-rewrite boundary described below).
+
+**Method:** executed Git-mechanics verification only — disposable Git repositories created and
+discarded outside this project (under a session scratch directory, not committed here), each running
+the literal `git` commands the old and new rule text specify, with results inspected via `git log`,
+`git show`, `git diff --staged`, `git status --porcelain`, and `git stash list`. This is the same
+"Executed" evidence tier the original audit used for the HTML-script cases, applied here to Git
+commands instead. **`implement-it` itself was not invoked in a live agent session** for this
+follow-up — no agent carried out a request end to end through the skill's own activation, gates, or
+reporting; only the underlying Git recipes were exercised directly. That remains an open item for the
+"Real-environment follow-up" list above, not something this record claims to have done.
+
+**Fixtures, steps, and results:**
+
+- **IMP-05 (IMP-05 High).** Repo with commit `base`, then one unpublished commit combining groups A
+  (`a.txt`) and B (`b.txt`), then unrelated file `u.txt` staged on top. *Original recipe:* `git reset
+  --soft HEAD~1` staged all three files; `git add a.txt && git commit` committed all three (A, B, and
+  U together) into one commit, because plain `git add` cannot narrow a commit below what is already
+  staged — confirmed by inspecting `git show --stat` of the resulting commit. *Corrected recipe:* `U`
+  was set aside via the qualified stash procedure before the reset; `git restore --staged` /
+  targeted `git add` plus a `git diff --staged --stat` check before each commit produced two commits
+  containing exactly `a.txt` and exactly `b.txt`; `U` was restored afterward in its original staged
+  state (verified via `git show :u.txt` and `git status --porcelain`) and never appeared in either
+  commit. Result: defect reproduced, corrected procedure verified on the same fixture shape.
+- **IMP-06 (Normal).** Repo with `base → A (a.txt) → B (b.txt)`, all unpublished; a correction to
+  `a.txt` made as an uncommitted edit while `HEAD` is `B`. *Original recipe:* `git reset --soft
+  HEAD~1` reached only `B`'s parent (which happens to be `A` in this two-commit fixture) but the
+  literal "selectively add and commit" step folded the correction into one commit sitting after the
+  unchanged `A` commit; `git show <A>:a.txt` still returned the pre-correction content — `A` itself
+  stayed defective. *Corrected recipe:* the owning commit `O` (`A`) was identified explicitly, `git
+  reset --soft O~1` was used instead of a fixed `HEAD~1`, and the combined index was split back into
+  a reconstructed `A` (correction folded in) and an intact `B`; `git show <new-A>:a.txt` returned the
+  corrected content and `git show HEAD:b.txt` returned `B`'s unchanged content. Result: defect
+  reproduced, corrected procedure verified on the same fixture shape.
+- **IMP-07 (High).** Repo with an older unrelated stash created first, then a final semantic commit
+  leaving a clean working tree. *Original recipe:* `git stash push -u` on the clean tree created no
+  new entry ("No local changes to save"); the subsequent unqualified `git stash pop` nonetheless
+  applied and dropped the older, unrelated stash, materializing `old.txt` into the tree. *Corrected
+  procedure:* checking `git status --porcelain` first and skipping stashing entirely on a clean tree
+  left the older stash untouched (`git stash list` unchanged, working tree still clean). Result:
+  defect reproduced, corrected procedure verified on the same fixture shape.
+- **IMP-08 (Normal).** Repo with `mixed.txt` partially staged (one staged hunk, one unstaged hunk)
+  and an untracked `new_untracked.txt` present together. *Original recipe:* plain `git stash push -u`
+  / `git stash pop` (no `--index`) restored file content but collapsed the staged hunk back to
+  unstaged — `git diff --staged` was empty after the pop where it should not have been. *Corrected
+  procedure:* `git stash push -u` followed by `git stash apply --index <recorded stash>` reproduced
+  the exact pre-isolation `git diff --staged` and `git diff` output for `mixed.txt` and the exact
+  untracked file content, confirmed before the entry was dropped. Result: defect reproduced,
+  corrected procedure verified on the same fixture shape.
+- **Restoration-failure handling (supports IMP-07/IMP-08's recovery-data requirement).** A qualified
+  stash entry was created over an unstaged edit, then an independent conflicting commit was made to
+  the same line before restoration was attempted. `git stash apply --index` reported a merge conflict
+  (`Auto-merging`, `CONFLICT (content)`), left the working tree with an honest `UU` conflict marker,
+  and — matching `git stash apply`'s own default behavior — did not drop the stash entry
+  (`git stash list` still showed it afterward). This confirms the corrected procedure's "do not drop
+  on conflict, report the specific problem" step is backed by `git stash apply`'s actual behavior, not
+  merely asserted.
+
+**Limitations:** all fixtures used small, single- or two-file repositories with no submodules, LFS
+content, or binary files; behavior on those is unverified. The IMP-06 fixture is the minimal
+two-commit case the original finding described; a longer unpublished range was not separately
+exercised, though the corrected procedure's owning-commit-range logic does not depend on the range
+length. `implement-it`'s own reporting and gate behavior around this procedure (how it would present
+the reconstruction plan, or ask before rewriting) was not exercised — only the underlying Git
+mechanics were.

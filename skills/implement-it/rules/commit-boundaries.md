@@ -156,14 +156,50 @@ No separate "fix review comments" commit exists, because none of the work had be
 the correction was made.
 
 **Something already committed, correction needed before push.** Don't bolt a fixup commit on top.
-Rebuild history so the correction lands inside the commit it actually belongs to:
+Rebuild history so the correction lands inside the commit it actually belongs to — but only within
+the unpublished range. Rewriting a commit already reachable on the remote branch is outside this
+recipe entirely: that requires specific human authorization and a different path, never a silent
+rewrite. This maintenance boundary applies generally, not only to this skill's own commits.
 
-1. `git reset --soft HEAD~1` — undoes the commit, keeps every change staged.
-2. Selectively `git add` and `git commit` per semantic group.
-3. Verify each resulting commit in isolation before moving to the next (`rules/verification.md`).
+1. **Find the owning commit and confirm it's unpublished.** Identify which commit the correction
+   actually belongs to — call it O. Confirm every commit from O through `HEAD` is still unpublished
+   (`rules/issue-closure.md`'s "Push readiness": `git fetch origin <branch>`, then
+   `git log origin/<branch>..HEAD --oneline` — every commit this reconstruction touches must appear
+   in that list). If O predates the unpublished range, this recipe does not apply.
+2. **Protect unrelated worktree content.** If the working tree or index carries anything that isn't
+   part of this reconstruction — a stray staged change, other unstaged edits, untracked files — set
+   it aside first using the qualified procedure in `rules/verification.md`'s "Preserving unrelated
+   worktree content during a Git rewrite." Reconstruction must never fold that content into a task
+   commit, and must restore it exactly as found once reconstruction is done.
+3. **Rewind to the owning commit's parent, keeping everything from O through `HEAD` staged**:
+   `git reset --soft O~1` (or the equivalent parent reference) — not a hard-coded `HEAD~1`, which
+   only reaches the single most recent commit and cannot fold a correction into an earlier one. This
+   stages the combined diff of every commit from O through `HEAD` in one index; it does not, on its
+   own, separate that index back into O's corrected content and whatever later commits actually
+   contain.
+4. **Rebuild each semantic commit from that combined index, in order, staging only that commit's own
+   content each time.** A single reconstructed commit is not the same thing as "one whole file" —
+   use `git restore --staged <path>` to unstage what a later commit owns, and `git add -p` (or an
+   equivalent patch-level staging tool) to stage only part of a file when O's correction and a later
+   commit's content share one file.
+   - **Before every `git commit` in this rebuild, inspect the actual staged diff**
+     (`git diff --staged`) and confirm it contains exactly the intended semantic group — no more, no
+     less — rather than trusting which `git add` commands were run.
+   - Commit, then verify the resulting state in isolation before moving to the next group when that
+     commit's own standalone correctness needs proving (`rules/verification.md`'s isolation
+     escalation).
+   - Repeat until every group from O through `HEAD` has its own commit again: O reconstructed with
+     the correction folded in, then each subsequent original commit rebuilt intact from the
+     remaining staged content — unless the correction itself changes what a later commit should
+     contain.
+5. **Restore the protected content** from step 2, using that same procedure's restoration steps,
+   once every reconstructed commit exists.
+6. **Confirm nothing unrelated leaked in.** After the last commit, `git status` and `git diff` should
+   show exactly the restored unrelated content and nothing else outstanding from this reconstruction.
 
 The result reads as if it had been built that way from the start — there's no trace in the history
-that it was originally committed differently.
+that it was originally committed differently, and every intermediate commit still satisfies "What
+makes a commit coherent" above.
 
 Never preserve every conversational step as its own commit "for the record." The history should read
 as a sequence of decisions, not a transcript.

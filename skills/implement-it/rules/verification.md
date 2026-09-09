@@ -298,6 +298,44 @@ remains the only way to prove an intermediate commit when that commit's own stan
 is a property that needs proving, distinct from whether its state happens to also satisfy this
 checkpoint.
 
+## Preserving unrelated worktree content during a Git rewrite
+
+Any procedure in this skill that needs to temporarily clear the working tree or index around content
+that is not part of what it's isolating or reconstructing — the isolation technique below, or
+`rules/commit-boundaries.md`'s reconstruction of an unpublished commit — uses this same qualified
+procedure. Never substitute an unqualified `git stash push` / `git stash pop` pair for it: an
+unqualified pop restores whatever is topmost on the stash, which is not necessarily the entry this
+step created, and can silently apply or drop an unrelated, older stash instead.
+
+1. **Check whether there's anything to set aside.** `git status --porcelain`. If the working tree and
+   index are already clean, skip stashing entirely — do not run `git stash push` against a clean
+   tree, and do not run any restoration step afterward.
+2. **Otherwise, create the entry with an identifiable message**: `git stash push -u -m
+   "<description>"`. Confirm a new entry was actually created — compare `git stash list` before and
+   after, or read the command's own confirmation. A push against a tree with nothing to save reports
+   "No local changes to save" and creates nothing; treat that as the clean-tree case in step 1, not
+   as a created entry to restore later.
+3. **Record the new entry's exact identity** — its `stash@{n}` reference together with its
+   message — at the moment it's created. Resolve identity fresh when restoring rather than assuming
+   it stays `stash@{0}`; never operate on a bare index position.
+4. Do the isolated work.
+5. **Restore only that recorded entry, preserving the original staged/unstaged distinction**:
+   `git stash apply --index <the recorded stash>`.
+6. **Verify before dropping.** Confirm the restoration actually matches what was set aside — the same
+   file contents, and the same staged/unstaged split — using `git status --porcelain` and the
+   relevant diffs, before removing the entry. Only after that confirmation, `git stash drop <that
+   entry>`.
+7. **On conflict or failed verification: do not drop the entry, and do not report the restoration as
+   successful.** Leave it in place, report the specific conflict or mismatch, and let the human
+   decide how to resolve it — the content stays recoverable exactly because the entry was never
+   dropped.
+8. **Never act on a stash entry this procedure did not itself create in this step** — an older,
+   unrelated entry is left exactly as found, whether or not it would apply cleanly.
+
+This is the smallest reliable procedure for this specific need. It is not a general Git-management
+subsystem, and using it here does not mandate stashing, or any other isolation mechanism, for
+ordinary work that never needed to clear the tree in the first place.
+
 ## Isolation verification: a deliberate escalation, not the default
 
 > Do not use isolation verification merely because an issue was split into multiple commits. Use it
@@ -315,15 +353,19 @@ Reach for this when, for example:
 The technique:
 
 1. Commit the semantic group.
-2. `git stash push -u -m "<description>"` — hides every remaining change (staged, unstaged, and
-   untracked), leaving the working tree at exactly the state of the commits made so far.
+2. Set aside every remaining change (staged, unstaged, and untracked) using the qualified procedure
+   in "Preserving unrelated worktree content during a Git rewrite" above, leaving the working tree at
+   exactly the state of the commits made so far. When nothing remains — the commit just made was the
+   last one, and the working tree is already clean — that procedure creates no entry; proceed
+   straight to step 3 against the already-clean tree.
 3. Run the project's full formatting/lint/static checks and its **full** regression suite against
    that isolated committed state — the same full scope as pre-Gate-1 and completed-issue
    verification, not the narrower per-commit scoping used during construction. Judge the lint/
    format/static results against the regression-baseline model above, same as at pre-Gate-1.
-4. `git stash pop` — restores the remaining work.
-5. Repeat for each subsequent semantic commit: stage the next group, commit, stash the rest, verify
-   in isolation, pop.
+4. Restore the set-aside entry from step 2, per that same procedure — only when step 2 actually
+   created one.
+5. Repeat for each subsequent semantic commit: stage the next group, commit, set aside the rest,
+   verify in isolation, restore.
 6. After the final commit, satisfy the completed-issue checkpoint — ordinarily a fresh full-suite
    run with nothing stashed. When step 3's own full-suite run against the final commit's isolated
    state already covered this exact content, with nothing left to stash afterward, that run
