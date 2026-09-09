@@ -232,7 +232,18 @@ dependency and must work without either. Neither makes this skill tracker- or st
 - The syntax highlighter enhances five named languages with a disclosed, safe fallback for anything
   else — a bounded, honestly-scoped renderer capability, not a hidden assumption, but still a literal
   list: a guide documenting a system in an unlisted language renders that code unhighlighted, not
-  mis-rendered.
+  mis-rendered. Content preservation through highlighting — comments, strings, and PHP attributes
+  surviving intact, and an unsupported or missing `data-lang` reaching the plain-text fallback rather
+  than aborting the highlighting pass for every block after it — is confirmed by executing the
+  shipped script against a minimal DOM stub in Node (`scenarios.md`'s template follow-up records).
+  That is script-execution verification, not a rendered page or a published Artifact; real-browser
+  rendering of the highlighted output remains unexercised by this evidence.
+- The responsive two-column shell's mobile breakpoint (§4) — the sticky section nav becoming a
+  static block at or below 880px — is confirmed by source and cascade inspection only: enumerating
+  every rule that can set the relevant properties, confirming their selectors share one specificity,
+  and resolving each property to whichever declaration is later in source order and applicable at
+  the given width. This is not a browser-rendered or computed-style result; treat it as unverified in
+  an actual browser until a connected browser tool or headless runner checks it directly.
 - Markdown output was extended from an originally Artifact-only contract (Step 2 of this
   repository's ecosystem migration). Its writing grammar, review checklist, and maintenance
   discipline are written to be format-equal by design, but that equality has not yet been exercised

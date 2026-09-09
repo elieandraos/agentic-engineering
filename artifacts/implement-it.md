@@ -187,6 +187,20 @@ describe this reconstruction only for commits that haven't been pushed yet; they
 technique for rewriting history that has already been shared, consistent with commit history being
 treated as effectively immutable once it leaves the local, unpushed state.
 
+**Reconstruction preserves unrelated content and its staged/unstaged shape, and is bounded to what
+it can safely classify.** Every path the correction touches is captured before anything is mutated,
+and the correction itself is isolated positively — never derived by subtracting a known piece from
+the combined content — so unrelated content sharing the same file is never folded into the
+correction or silently lost. This recipe supports a path only when its unrelated content, if any,
+resolves cleanly to one of a small number of classifications relative to `HEAD` (none, fully staged,
+or fully unstaged); a path where the correction can't be cleanly separated from every other
+difference, or where the unrelated content's staged/unstaged shape can't be established that way,
+falls outside what this recipe supports. Whenever separation or restoration can't be established,
+the procedure stops before clearing, staging, or resetting anything in the real repository, and
+reports the specific obstacle for a human decision rather than guessing past it. See
+`rules/commit-boundaries.md`'s "Review corrections fold into their semantic commit" for the full
+mechanics; this dossier does not restate them.
+
 ## 6. Verification model
 
 Verification proves different things at different boundaries, and one never substitutes for
@@ -442,6 +456,11 @@ repeated real Backlog and milestone delivery under this skill's predecessor, und
 `review-it` was extracted and the verification/recovery additions (this repository's Steps 4 and 5)
 were made. The `review-it`-integrated Gate 1, the reuse rule, worktree-provenance preservation, and
 approval-validity checking are each source-reviewed and static-walkthrough-validated (per their own
-implementation steps' records), but have not yet been exercised by a live consumer run since being
-added — this dossier does not claim otherwise. Validation beyond one real consuming project also
-remains unproven.
+implementation steps' records). The history-reconstruction procedure and the stash-identity
+preservation technique it shares with isolation verification went through a further, executed
+round instead: disposable Git repositories, created and discarded outside this project, ran the
+literal commands both the earlier and corrected procedures specify, with results inspected via
+`git log`, `git show`, `git diff`, and `git stash list` (`scenarios.md`'s four follow-up records).
+That is executed Git-mechanics verification, not a live consumer run — no agent has carried out a
+request end to end through this skill's own activation, gates, or reporting using either procedure,
+and that remains open. Validation beyond one real consuming project also remains unproven.
