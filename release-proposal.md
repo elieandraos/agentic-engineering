@@ -1,28 +1,51 @@
-# Next release — working draft
+# v2.0.3 — Release preparation
 
-**Status: unreleased working draft.** Each change recorded below carries its own review status — approved or pending — stated with that entry, not a single status for the whole draft. The release version, final scope, exact target commit, release notes, and publication remain separate decisions.
+**Status: publication and post-publication cleanup authorized by the user; not yet published.** The reviewed implementation and documentation are ready. Publication still needs execution and verification.
 
-The latest published baseline is [v2.0.2](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.2). Its completed proposal remains available in [Git history](https://github.com/elieandraos/agentic-engineering/blob/3271db87fa5ea437817bfdce877e602f7bb2827e/release-proposal.md).
+## Release identity
 
-## Recorded changes
+- Tag and title: `v2.0.3`.
+- Exact target commit: `db68fe72903060c7afc7ed87e28fccbdbc7dd9c8`.
+- Previous release: [v2.0.2](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.2).
+- This preparation file's own commit is after the target and does not change it.
 
-- **lab-it — proportional investigation and decision discussions.** Reuse reliable findings, inspect only as far as the request needs, and ask about unresolved material choices in dependency order. Use concrete scenarios to clarify ambiguity and identify when more evidence is needed. Familiar features can finish with a verified answer and a recommendation to use `plan-it`; resolving an architectural decision does not automatically produce a document. An explicitly requested `plan.md` retains the existing synthesis and approval procedure. Recommendations grant no approval and do not erase decisions already explicitly approved. The skill README and architecture dossier are reconciled. Source review approved at [3452a8f](https://github.com/elieandraos/agentic-engineering/commit/3452a8fdf677f9cbc9b9dc1ca4417ac36bc29af8).
-- **Roadmap — observe context during real useOrbit work.** Compare modeled workflow estimates with session context observations and task outcomes before deciding on reporting improvements or context budgets. Recorded at [23f46dd](https://github.com/elieandraos/agentic-engineering/commit/23f46dd993b7c6c42bd198c524d9eff01a3fae98).
-- **review-it — finding traceability, abstraction usefulness, and independent test expectations.** A finding that depends on a requirement or project convention now names that source concisely alongside its evidence and consequence, never inventing one where none exists and never requiring a requirement-by-requirement table. The Maintainability check adds a concrete removal/inlining thought experiment before flagging an abstraction as unnecessary complexity, and requires a stated consequence — a single caller or a thin wrapper alone, or a boundary the project has already established, is not by itself a finding. Test adequacy now flags an assertion whose expected side is built by re-exercising the same logic it's meant to prove rather than proving the behavior independently, while preserving legitimate integration assertions and established test-layer ownership (illustrated, where the Laravel companion is installed, by its Pest blueprint and test-ownership rule) and introducing no blanket ban on mocks, database assertions, or any particular test style. Implemented, pending Control Room review.
+This is a patch release: focused corrections and refinements to existing skills, with no new skill, ownership boundary, or approval gate.
 
-## Draft public release notes
+## Reviewed scope
 
-> More focused architecture discussions and clearer guidance for familiar features.
+- `lab-it` investigation and decision-discussion improvements, including its README and dossier: approved through [3452a8f](https://github.com/elieandraos/agentic-engineering/commit/3452a8fdf677f9cbc9b9dc1ca4417ac36bc29af8).
+- `review-it` finding traceability, abstraction usefulness, and independent test expectations: approved through [e72eb16](https://github.com/elieandraos/agentic-engineering/commit/e72eb16c0a8ef33f19ed6bfedccd4974ff7c6e6f).
+- `review-it` dossier reconciled with those rules at [82e708b](https://github.com/elieandraos/agentic-engineering/commit/82e708b755c047857d768ccd154556a717e53526).
+- Roadmap context monitoring retained; the completed adjacent-skill comparison item removed at the target commit.
+
+Recorded validation is source review and scenario walkthroughs. No live skill, consumer, or browser execution is claimed.
+
+## Complete release-note text
+
+> More focused architecture discussions and more precise implementation reviews.
 >
 > ### What changed
 >
-> - **lab-it.** Scales investigation and questions to the work. Reuses reliable findings, addresses unresolved decisions in a useful order, and clarifies ambiguous choices through concrete examples. Familiar features can proceed toward issue planning without an unnecessary design interview. A `plan.md` is produced only when explicitly requested, through the existing approval procedure.
-> - **Documentation.** Updated the `lab-it` README and architecture dossier. Added context monitoring during real useOrbit work to the roadmap.
+> - **lab-it.** Scales investigation and questions to the request, reuses reliable findings, and focuses discussion on unresolved decisions. Familiar features can proceed toward issue planning without an unnecessary design interview. A `plan.md` is produced only when explicitly requested, through the existing approval procedure.
+> - **review-it.** Connects findings to applicable requirements and project conventions, evaluates abstractions by their concrete costs, and checks that test expectations independently and meaningfully verify the intended behavior. Legitimate integration assertions and test-layer ownership are preserved.
+> - **Documentation.** Updated the skill documentation and architecture dossiers. Added context monitoring during real useOrbit work to the roadmap and removed the completed adjacent-skill comparison item.
+>
+> ### Install / update
+>
+> ```shell
+> npx skills add 'elieandraos/agentic-engineering#v2.0.3'
+> ```
+>
+> Select the skills and agent targets your project uses, and refresh their complete directories.
 >
 > ### Validation
 >
-> Reviewed source changes and walked through familiar-feature, architectural-decision, and explicitly requested plan scenarios. Recorded validation does not include live skill or consumer execution; context estimates are not observed session usage.
+> Validated through source review and scenario walkthroughs. The recorded validation does not include live skill execution, a consumer run, or observed session token usage.
 
-## Before publication
+## Publication and cleanup
 
-Reconcile the final change set, choose the version and exact target commit, finalize release notes and installation guidance, and obtain explicit publication authorization.
+1. Fetch current remote state. Confirm the exact target remains reachable from `origin/main`. Check for an existing `v2.0.3` tag and release before creating anything. Reconcile an already-completed matching publication rather than duplicating it; stop on a conflicting target or release identity without moving a tag.
+2. Create the tag at the exact target and publish a non-draft, non-prerelease GitHub release titled `v2.0.3`, using the release-note text above verbatim after stripping only the outer blockquote markers.
+3. Read the remote tag and release back. Verify the tag's resolved commit, title, body, and published status.
+4. Only after publication is verified, update `roadmap.md`'s current baseline to the published `v2.0.3` and its exact target, with a concise summary of this release and its actual validation. Preserve the real-use next steps, future directions, and deferred questions.
+5. Delete this root `release-proposal.md`; its content remains in Git history and the public notes live on the release. Commit and push only the roadmap-baseline update and proposal deletion. Leave unrelated local work, all runtime skill files, and consuming projects untouched.
