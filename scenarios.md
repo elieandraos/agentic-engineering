@@ -1640,3 +1640,86 @@ template follow-ups above.
 not invoke any Agent Skills loader or a live coding-agent session to confirm the corrected
 frontmatter actually parses and activates correctly at runtime — that remains the same category of
 gap the original audit's "Measured" method rows already disclose.
+
+## Documentation correction: unit consistency, workflow ordering, and dossier precision (2026-09-09h)
+
+This section records a bounded correction to the 2026-09-09g documentation pass above, made after
+Control Room review of `docs/skill-context.md`, all seven skill `README.md` "Context consumption"
+sections, and the `artifacts/implement-it.md` / `artifacts/document-it.md` edits that pass produced.
+It supplements, and does not replace, that record or any earlier one — the review-it description fix
+itself (966 characters) and every runtime rule/blueprint/template file are unchanged by this pass.
+
+**What was wrong, and what changed:**
+
+1. **Unit mixing.** The prior `docs/skill-context.md` reported file sizes from `wc -c` (bytes)
+   alongside description lengths measured in Unicode characters, without stating the difference. This
+   repository's prose uses multi-byte UTF-8 punctuation (em dashes, curly quotes) throughout, so the
+   two units diverge measurably — e.g. `skills/document-it/SKILL.md` is 13,742 characters but 13,844
+   bytes. Every table in `docs/skill-context.md` now reports Unicode characters only (Python `len()`
+   on UTF-8-decoded text), matching the unit the Agent Skills specification's 1,024-character limit
+   itself uses; the byte/character distinction and one worked example are now stated in the
+   document's "Method" section.
+2. **Stale README figures.** The prior pass's own README edits (adding "Context consumption"
+   sections) changed every README's size, but the supporting-file tables still showed pre-edit
+   figures. All README sizes, and every total and ranking derived from them, are recomputed against
+   this pass's final README content.
+3. **Unsupported "never loaded together" / "never reaches" claims.** Three were checked against
+   their owning rule files and found overstated: (a) `rules/feature-classification.md` explicitly
+   allows "secondary checklist questions" from the non-primary checklist for a mixed-characteristic
+   feature, so `plan-it`'s `resource-feature-checklist.md` and `capability-checklist.md` are not
+   always mutually exclusive; (b) `laravel-inertia-stack/blueprints/filters-and-sorting.md`'s own
+   "Testing" section routes further to `rules/test-ownership.md` and `blueprints/pest-testing.md`,
+   so a filtering task is not bounded to the primary routing-table row alone; (c)
+   `laravel-inertia-stack/SKILL.md` and `plan-it/SKILL.md` both explicitly point a reader to their
+   own `README.md` in their opening text, so the blanket claim that README files are "never
+   agent-loaded" did not hold for those two. All three are corrected in `docs/skill-context.md` and
+   in the affected skills' own README "Context consumption" sections, with the owning-file evidence
+   cited in place of the earlier absolute claim.
+4. **Wrong workflow ordering.** The `implement-it` workflow row placed `review-it`'s invocation after
+   `rules/issue-closure.md` in the stated file-loading order. Per `implement-it/SKILL.md`'s own
+   "Rules" list and lifecycle diagram, `review-it` is invoked before Gate 1's report — well before
+   `rules/commit-boundaries.md` (Gate 2 and the commit plan) or `rules/issue-closure.md` (after
+   commits exist) are reached. The row is corrected to: `sequencing.md` → `verification.md`
+   (implementing and pre-Gate-1) → `review-it`'s own files → `review-gates.md` → `commit-
+   boundaries.md` → `issue-closure.md`.
+5. **Workflow estimates stated as if measured.** The workflow-cost table's framing is rewritten to
+   state plainly that these are modeled unique-file text-volume sums under explicit assumptions
+   (whole-file reads, within-pass deduplication, README exclusion by default) — not an observed or
+   instrumented session's actual token consumption.
+6. **Dossier: preflight vs. restoration failure conflated.** `artifacts/implement-it.md` previously
+   described every separation/classification/restoration failure in the reconstruction procedure with
+   one blanket claim ("stops before clearing, staging, or resetting anything"). Checked against
+   `rules/commit-boundaries.md` steps 6 and 12: a preflight separation/classification failure (step 6)
+   is genuinely detected before any real mutation, but a restoration failure (step 12) can only occur
+   *after* reconstruction has already rewound and rebuilt the commits — at that point the real
+   repository already carries the reconstructed history, and what the procedure preserves is the
+   captured recovery data, not an untouched repository. The dossier now states both cases separately.
+7. **Dossier: totalizing confidence claim.** The same dossier's confidence section previously stated
+   "no agent has carried out a request end to end through this skill's own activation, gates, or
+   reporting using either procedure" — an unbounded claim about every agent everywhere. It now states
+   only what this dossier's own evidence shows: the disposable-repository experiments confirm the
+   underlying Git commands, not a live run through this skill's own activation and gates, and whether
+   such a run has happened outside this evidence is not something the record establishes either way.
+8. **document-it dossier: content-preservation confidence not scoped to tested fixtures.** The
+   highlighter content-preservation claim in `artifacts/document-it.md` is now explicitly scoped to
+   the specific hand-written fixtures the DOM-stub harness exercised, naming the case classes
+   `scenarios.md`'s own template follow-ups flag as unexercised (an attribute inside a
+   template-literal string; an attribute immediately adjacent to a string or comment). The
+   browser-validation limitation for the mobile-breakpoint claim, already correctly stated, is
+   unchanged.
+
+**Method:** every character count in `docs/skill-context.md` was recomputed with Python `len()` on
+UTF-8-decoded file content and cross-checked in this same pass against a fresh read of every file it
+cites — a full match was confirmed programmatically (see this pass's own validation script). The
+three corrected cross-reference claims were checked directly against the owning rule file's current
+text (`rules/feature-classification.md`, `blueprints/filters-and-sorting.md`, and a repository-wide
+grep of `skills/*/SKILL.md` for `README` references) before being restated. `git diff --check`
+reported no whitespace errors against the full changed set.
+
+**Result:** `docs/skill-context.md`, all affected README "Context consumption" sections, and both
+dossiers are corrected. This does not reopen or alter the original 2026-09-08 audit's counts, or the
+966-character review-it description fix from 2026-09-09g — both stand unchanged.
+
+**Limitations:** this pass corrects documentation and modeled estimates; it does not add new Git- or
+script-execution experiments beyond what 2026-09-09a–g already recorded, and does not itself
+constitute a live `implement-it` or `document-it` session.
