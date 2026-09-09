@@ -13,6 +13,14 @@ evidence — while inspecting the reviewed change itself.
 - Every finding traces to concrete code, configuration, or a diagnostic command's actual output —
   never a suspicion stated as fact. See `rules/verification.md` for how a candidate finding earns
   that status.
+- When a finding also depends on a requirement or project convention — not only on the
+  implementation evidence itself — identify that source (an issue, `plan.md`, a PR description,
+  project instructions, configuration, or an established repository convention) alongside the
+  evidence and the finding's concrete consequence. Name a source only when one actually exists;
+  never invent a requirement to back a finding that has none — say plainly that the finding rests on
+  general engineering reasoning instead. This applies across every category below wherever it's
+  relevant, not only "Project and stack convention compliance"; state it concisely next to the
+  finding, not as a mandatory requirement-by-requirement table.
 - A finding must materially affect correctness, security, data integrity, regressions,
   architectural fit, maintainability, convention compliance, test adequacy, or scope — a personal
   style preference the project's own conventions don't already support is not a finding (see "What
@@ -99,6 +107,20 @@ by the change, or a structure that makes an adjacent change harder than it needs
 finding in the actual diff and a concrete foreseeable consequence — not a general preference for a
 different style the project itself doesn't already establish.
 
+Before reporting an abstraction or added layer of indirection as unnecessary complexity, run the
+concrete thought experiment: if this layer were removed or inlined at its call site(s), would that
+actually eliminate unnecessary complexity — or would it instead spread important knowledge and
+responsibilities (a validation rule, a derivation, an invariant that has to hold everywhere it's
+used) back out across every caller, making each one responsible for reproducing it correctly? A
+layer that fails this test is doing real work, not indirection for its own sake. A single current
+caller or a thin wrapper is a fact about the code, not by itself proof of a problem — some
+single-caller abstractions exist deliberately, to isolate a boundary the project has already
+established (a repository pattern, a framework seam, a documented architectural layer, per
+"Architectural fit" above) even though only one call site happens to use it today. Report a finding
+here only once removing or inlining the layer has a stated, concrete consequence — the actual
+complexity it would remove, or the actual foreseeable change it would make harder — never merely
+because the abstraction currently has one caller.
+
 ### Project and stack convention compliance
 
 Check the change against applicable project instructions and, where one is installed and actually
@@ -110,10 +132,10 @@ invent one of those from general knowledge and present it as this project's own 
 A missing stack companion does not disable applicable framework checks elsewhere in this list — a
 correctness, security, or architectural-fit concern grounded in project instructions, configuration,
 established repository usage, or ordinary engineering reasoning about the stack still applies with
-no companion installed (`rules/scope.md`'s "Discover applicable conventions"). Distinguish, in the
-finding itself, an established project requirement — evidenced by one of those sources — from
-general technical reasoning with no such backing; state which one grounds the finding rather than
-presenting general reasoning as though it were a discovered project rule.
+no companion installed (`rules/scope.md`'s "Discover applicable conventions"). Apply the sourcing
+rule from "Philosophy," above, to any finding here: state whether it's grounded in an established
+project requirement or in general technical reasoning with no such backing, rather than presenting
+the latter as though it were a discovered project rule.
 
 ### Test adequacy
 
@@ -123,6 +145,25 @@ output, or one whose mocked dependency hides the real behavior under test, is a 
 established scope's material edge cases have some test coverage, or state plainly which don't. A
 passing test suite is not by itself evidence of adequate coverage — inspect what the tests actually
 assert, not only whether they pass.
+
+Also check whether an assertion's expected side independently proves the behavior under test, or
+merely repeats the implementation back at itself. An expected value that's literal, or derived by
+reasoning about the requirement, independently proves the outcome; an expected value built by
+exercising the same logic, class, or transformation the test exists to prove cannot catch a
+regression that stays internally self-consistent, because the "expected" side moves in lockstep with
+the code under test — that self-referential comparison is a finding when the test is the one
+specifically responsible for proving that value or transformation is correct. It is not a finding
+when what the test is actually responsible for proving is integration — that the right object
+reached the right collaborator, or the right model reached the right endpoint — and a separate,
+lower-level test already owns that value's own correctness; a legitimate integration assertion and
+established test-layer ownership are not defects. Where the Laravel companion is installed, its
+`blueprints/pest-testing.md` warning and `rules/test-ownership.md`'s no-redundancy rule work through
+one concrete version of this distinction: comparing an HTTP response against a Resource built from
+the same production Resource class proves wiring, while the Resource's own test owns proving each
+field's actual transformation. This is a distinction to apply, never a blanket rule against mocks,
+database assertions, or any other particular testing style — the concern is specifically an
+expectation that repeats the implementation instead of independently proving the behavior under
+test, not the technique used to express it.
 
 ### Accidental scope expansion
 

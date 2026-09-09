@@ -100,7 +100,10 @@ Every `review-it` result states:
   alongside that same identity, not the whole target's full-coverage identity as if every category
   had run again.
 - **Confirmed findings** — ordered by consequence, each with its file or location, the evidence or
-  reasoning that verified it, and its concrete consequence if left unaddressed.
+  reasoning that verified it, its concrete consequence if left unaddressed, and — when the finding
+  depends on a requirement or project convention (`rules/checklist.md`'s "Philosophy") — the
+  specific source that requirement or convention actually comes from, stated concisely rather than
+  as a requirement-by-requirement table.
 - **Verification performed** — which checks `review-it` actually ran or traced itself, distinguished
   from evidence supplied by others and not independently verified (see "Verify before reporting,"
   above).
