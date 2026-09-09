@@ -48,14 +48,17 @@ never by itself authorization to continue into the next, or into milestone deliv
 
 ## Context consumption
 
-Activation loads only `SKILL.md`. Its five rule files load individually as the lifecycle reaches
-the step each governs, roughly in this order: `sequencing.md` (branch readiness), `verification.md`
-(implementing and pre-Gate-1 verification), `review-gates.md` (Gate 1, then Gate 2),
-`commit-boundaries.md` (deriving and building the commit plan, after Gate 1), and
-`issue-closure.md` (once commits exist) — an ordinary single-issue pass typically reaches all five.
-[`review-it`](../review-it/) is invoked as a separate skill before Gate 1's report — well before
-`commit-boundaries.md` or `issue-closure.md` are reached — adding its own entrypoint and rule files
-to that pass. See [dated measurements and representative-workflow
+Activation loads only `SKILL.md`. Five of its six rule files load individually as an ordinary
+single-issue lifecycle reaches the step each governs, roughly in this order: `sequencing.md`
+(branch readiness), `verification.md` (implementing and pre-Gate-1 verification), `review-gates.md`
+(Gate 1, then Gate 2), `commit-boundaries.md` (deriving and building the commit plan, after Gate 1),
+and `issue-closure.md` (once commits exist). The sixth, `commit-reconstruction.md`, is conditional
+on top of that: `commit-boundaries.md` hands off to it only when a review correction belongs to a
+commit already committed locally but not yet pushed — an ordinary pass, and a correction found
+before anything is committed, never load it. [`review-it`](../review-it/) is invoked as a separate
+skill before Gate 1's report — well before `commit-boundaries.md` or `issue-closure.md` are
+reached — adding its own entrypoint and rule files to that pass. See [dated measurements and
+representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#implement-it).
 
 ## Install

@@ -131,8 +131,12 @@ Trigger on requests shaped like:
   against the completed working tree once implementation and verification are complete, before
   reporting at Gate 1 (`review-gates.md`'s "Consuming review-it's result").
 - `commit-boundaries.md` — how to turn an approved diff into semantic commits: boundary reasoning,
-  message content, the `Refs #N` trailer, and safely folding in review corrections; consult while
+  message content, the `Refs #N` trailer, and where a review correction lands; consult while
   inspecting the diff and building the commit plan, after Gate 1.
+- `commit-reconstruction.md` — the unpublished-history reconstruction procedure
+  `commit-boundaries.md` hands off to; consult only for its one specific trigger — a review
+  correction belongs to a commit already committed locally but not yet pushed. Ordinary commit
+  building, and a correction found before anything is committed, never need it.
 - `verification.md` — verification scope: the narrowest reliable scope per commit across tests,
   formatting, linting, and static analysis; the two distinct full-suite checkpoints, and when the
   completed-issue one may be satisfied by an established reuse of an earlier full-suite result — the

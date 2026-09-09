@@ -208,8 +208,10 @@ unrelated content back against its new, reconstructed content fails to merge cle
 the real repository already carries the reconstructed commits; the procedure stops and preserves the
 captured recovery data (the scratch location's contents) for a retry or a hand-off, rather than
 guessing at a resolution or discarding anything — it does not, and cannot, undo the reconstruction
-that already happened. See `rules/commit-boundaries.md`'s "Review corrections fold into their
-semantic commit" for the full mechanics; this dossier does not restate them.
+that already happened. `rules/commit-boundaries.md`'s "Review corrections fold into their semantic
+commit" classifies which of the two cases applies and hands the reconstruction case to
+`rules/commit-reconstruction.md`, which owns the full mechanics; this dossier does not restate
+them.
 
 ## 6. Verification model
 
@@ -407,7 +409,8 @@ narrow down on its own.
 |---|---|
 | [`sequencing.md`](../skills/implement-it/rules/sequencing.md) | Branch readiness before an issue starts, and recomputing/reporting the dependency-ready set after a validated closure |
 | [`review-gates.md`](../skills/implement-it/rules/review-gates.md) | The two pre-commit human approval gates, how Gate 1 consumes `review-it`'s result, approval validity before Gate 2 and before push, and the general standard for when a genuine unresolved decision forces a stop |
-| [`commit-boundaries.md`](../skills/implement-it/rules/commit-boundaries.md) | Deriving semantic commit boundaries from the reviewed diff, commit-message content, the issue-reference trailer, and folding in review corrections |
+| [`commit-boundaries.md`](../skills/implement-it/rules/commit-boundaries.md) | Deriving semantic commit boundaries from the reviewed diff, commit-message content, the issue-reference trailer, and classifying where a review correction lands — handing off to `commit-reconstruction.md` for the case that needs history rewritten |
+| [`commit-reconstruction.md`](../skills/implement-it/rules/commit-reconstruction.md) | The unpublished-history reconstruction procedure itself — owning-commit identification, positive-attribution capture, round-trip verification, classification stops, and restoration — used only once `commit-boundaries.md` hands off to it |
 | [`verification.md`](../skills/implement-it/rules/verification.md) | Verification scope at every lifecycle boundary, tool/starting-state discovery, worktree-provenance preservation, the completed-issue reuse rule, and isolation verification |
 | [`issue-closure.md`](../skills/implement-it/rules/issue-closure.md) | Confirming an issue's commits are reachable on the correct remote branch (pushing, with authorization, if not) before asking, whether and how to close it, the closing-comment contract, and post-mutation validation |
 | [`review-it`](../skills/review-it/) (separate skill, invoked, not owned) | The implementation-assurance checklist Gate 1 consumes as its third stop condition, and the same capability invoked again before a delivery correction's own Gate 1 |
