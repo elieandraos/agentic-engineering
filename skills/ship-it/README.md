@@ -42,17 +42,18 @@ Does not implement code. Deciding what work should exist belongs to
 
 ## Context consumption
 
-Activation loads only `SKILL.md`. Each of its four rule files loads for its own phase:
-`rules/milestone-pr-readiness.md` for the PR-readiness check and authorized creation;
-`rules/ci-failure-correction.md` only if real CI actually fails on the open PR;
-`rules/milestone-completion.md` for the shared delivery-lifecycle map and the closure gate; and
-`rules/release.md` only once a PR has merged. A PR-readiness check never reaches
-`rules/ci-failure-correction.md` or `rules/release.md`, since both gate on conditions (an open PR's
-CI, a confirmed merge) that haven't happened yet — but it can consult `rules/milestone-completion.md`'s
-shared guidance before merge, when actually needed for milestone classification, scope
-interpretation, or lifecycle orientation (e.g. scoping a manual-testing finding, or confirming
-Backlog eligibility); that file's closure procedure specifically remains gated by post-merge
-authorization. See [dated measurements and representative-workflow
+Activation loads only `SKILL.md`. Each of its four rule files loads for its own phase, and each
+phase's own gated action starts only once its own trigger actually fires — PR creation once
+readiness passes, the CI-failure investigation once real CI actually fails on an open PR, closure
+once post-merge authorization is given, and release publication once a PR has merged. That describes
+when each gated action may begin, not a claim that a file can never be consulted earlier:
+`rules/milestone-pr-readiness.md`'s own procedure, for example, draws explicit analogies to
+`rules/release.md`'s discovery-order and approval pattern while proposing the PR, and it can consult
+`rules/milestone-completion.md`'s shared guidance before merge too, when actually needed for
+milestone classification, scope interpretation, or lifecycle orientation (e.g. scoping a
+manual-testing finding, or confirming Backlog eligibility) — only that file's closure procedure
+specifically remains gated by post-merge authorization. See [dated measurements and
+representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#ship-it).
 
 ## Install

@@ -53,7 +53,8 @@ single-issue lifecycle reaches the step each governs, roughly in this order: `se
 (branch readiness), `verification.md` (implementing and pre-Gate-1 verification), `review-gates.md`
 (Gate 1, then Gate 2), `commit-boundaries.md` (deriving and building the commit plan, after Gate 1),
 and `issue-closure.md` (once commits exist). The other three are conditional escalations, loaded
-only when their own trigger fires, and their triggers are independent of each other:
+only when their own trigger fires, and each fires on a distinct condition — but not an unrelated
+one, since firing one can force another to fire too:
 `commit-reconstruction.md` loads only when a review correction belongs to a commit already committed
 locally but not yet pushed — a correction found before anything is committed never reaches it, by
 that file's own entry condition. `isolation-verification.md` and `worktree-preservation.md` load

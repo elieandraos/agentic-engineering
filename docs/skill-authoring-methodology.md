@@ -225,6 +225,13 @@ uses — rather than validating only by invoking an internal helper directly wit
 input; a helper can be provably correct in isolation while the path that actually reaches it in
 production silently excludes the exact case it was written to handle.
 
+Validating each step in isolation is not sufficient either: run the complete sequence end to end, and
+exercise the combined and failure/conflict cases a real invocation can actually produce — two
+conditions occurring together, an adjacent state that changes what an earlier step's own output
+contains, or the procedure's own stated failure path. A fix that passes every step alone can still
+fail once the steps compose, or once a condition the isolated tests never combined turns out to
+interact with another one.
+
 A consuming project typically holds a copied snapshot of a skill rather than a live reference back
 to its canonical source. When a defect surfaces through a consuming project's use, correct the
 canonical source first — the corrected file becomes the new source of truth, and any
@@ -239,6 +246,10 @@ next time a fresh copy is taken.
   resemble a single decision or a single gate.
 - Authority overlays — an approval gate, a review requirement — should not be modeled as a peer
   outcome alongside the substantive result they gate.
+- A file can mix freely consultable shared guidance with one specific gated mutation procedure.
+  Describe the two separately: a caller or summary must not claim the whole file is reachable only
+  once the gated procedure's own trigger fires, when part of it is orientation, classification, or
+  scope guidance a reader can consult at any point.
 - Assign one canonical owner to each contract or decision.
 - Route to the owning contract rather than duplicating it. A cross-reference stays accurate as the
   owning rule evolves; a restatement drifts out of sync with it silently.
@@ -282,7 +293,13 @@ reference.
 - A skill's own architecture dossier preserves current architecture, rationale, ownership,
   boundaries, and evidence-calibrated confidence, kept up to date as the skill changes — not
   case-by-case history, chronological evidence, removed prose, or per-pass disposition ledgers;
-  those remain in version control or a temporary authoring record instead.
+  those remain in version control or a temporary authoring record instead. Calibrate the confidence
+  claim to what was actually established, and say which: content read and cross-checked against its
+  stated ownership; a preserved staging, index, or worktree state confirmed by direct inspection; a
+  Git or shell mechanic actually executed with its output inspected; rendered behavior confirmed in a
+  real or scripted browser; or a live skill invocation carried through its own activation and gates.
+  These are different evidentiary tiers — state the one that actually backs a given claim, never the
+  strongest-sounding one available.
 - Project instruction files supply durable project context.
 - Code, configuration, and live systems remain authoritative for discoverable state.
 
@@ -290,6 +307,10 @@ Progressive disclosure:
 
 - keep the always-loaded entrypoint as short as the complete activation contract allows;
 - move substantial conditional guidance into routed references;
+- when extracting a conditional procedure's mechanics into its own routed file, keep the trigger —
+  the condition deciding whether the procedure applies at all — stated in the caller that hands off
+  to it, not only inside the extracted file; a reader deciding whether to open the reference needs
+  that condition without opening it first;
 - do not create extra files or routing layers without a real conditional need;
 - do not force every skill into the same folder or heading structure — let each file's own
   structure follow what it explains, not a template shared with sibling skills.
@@ -412,6 +433,11 @@ Three distinct categories, not one indivisible standard:
   useful specifically for testing whether one decision routes to exactly one owner.
 - Validation should test meaningful behavior and invariants, not merely match expected phrases or
   headings.
+- A runtime rule file's own references must resolve inside what an installed skill actually ships —
+  its own `skills/<name>/` directory — not a source-repository-only file such as an audit record, a
+  dossier, or a root-level history document. Check a citation against that installed boundary, not
+  only against the source repository's own working tree, where an unshipped file can still resolve
+  and mask the gap.
 
 Scope the search by dependency, not by convenience and not by an unbounded full-repository re-read:
 inspect the owning file itself; inspect its known callers, summaries, indexes, and any direct or
@@ -460,6 +486,9 @@ Before treating an authoring pass as complete, check:
 
 - **structure** — headings, tables, and lists render correctly, and the document's own section
   order matches its actual content rather than a template copied from an unrelated file;
+- **frontmatter** — required fields are present, and any constraint the skill-loading mechanism
+  actually enforces (a description-length limit, an allowed field set) is checked against the
+  current text itself, not assumed to still hold from an earlier pass;
 - **links** — every Markdown link resolves from the file that contains it;
 - **references** — every path, filename, and cross-reference names a location that currently
   exists, especially after a move or rename (Section 11);
@@ -468,5 +497,9 @@ Before treating an authoring pass as complete, check:
 - **templates** — a copy/adapt template still satisfies its stricter bar (Section 8): complete,
   target path and prerequisites stated, reconciliation instructions present, and syntactically or
   executably valid;
+- **size or context claims** — a stated cost or size figure is explicitly labeled as what it is: a
+  modeled estimate (a character count, an approximated token figure) or a measured runtime/session
+  consumption. Never present one as the other, and never let a modeled figure imply a measured
+  session actually ran;
 - **changed-file scope** — the set of files actually touched matches the intended scope of the
   pass, with no incidental unrelated edits folded in.

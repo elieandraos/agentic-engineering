@@ -638,22 +638,27 @@ minus the shared entry map, closure gate, and the short routing text that replac
 (+154).
 
 **Workflow estimates.** Each row's *local-file subtotal* is `SKILL.md` plus only the rule file(s)
-that surface's own procedure lives in — the minimal case, when no cross-reference into a different
-file is actually followed. Where a row's own procedure carries an explicit instruction to consult
-another file's content (not merely an orientation citation), a separate *broader estimate* adds that
-file's full size too, under this document's whole-file loading model (a followed reference loads the
-complete file, not only the cited section). Whether the broader estimate applies on a given pass is a
-conditional exclusion, not a default — stated per row below.
+that surface's own procedure lives in. Where that procedure's own text carries an explicit
+instruction to consult another file's content (not merely an orientation citation), a separate
+*broader estimate* adds that file's full size too, under this document's whole-file loading model (a
+followed reference loads the complete file, not only the cited section). Whether the broader estimate
+applies is stated per row, and not every case is optional: some are conditional on what the pass
+actually encounters (a manual-testing finding needing scope interpretation), but at least one below
+is a mandatory step in the row's own numbered procedure, not an edge case — there, the local-file
+subtotal alone understates the path's real minimum cost, not merely its ceiling.
 
-| Path | Local-file subtotal | Broader estimate (if applicable) |
+| Path | Local-file subtotal | Broader estimate |
 | --- | --- | --- |
-| **PR readiness and authorized creation** | `SKILL.md` (6,391) + `rules/milestone-pr-readiness.md` (14,394) = 20,785 chars, 5,196 tokens | + `rules/milestone-completion.md` (20,823) = 41,608 chars, 10,402 tokens — only when the pass actually follows `milestone-pr-readiness.md`'s own citation into `milestone-completion.md`'s shared guidance (scoping a manual-testing finding against the milestone description, or confirming Backlog eligibility); an ordinary pass that needs neither stays at the local-file subtotal |
-| **CI-failure investigation and correction handoff** | `SKILL.md` (6,391) + `rules/ci-failure-correction.md` (8,937) = 15,328 chars, 3,832 tokens | Not applicable — this file's own references to `milestone-completion.md` are orientation citations (naming what it is, where it starts), not an instruction to consult its content to complete the procedure |
+| **PR readiness and authorized creation** | `SKILL.md` (6,391) + `rules/milestone-pr-readiness.md` (14,394) = 20,785 chars, 5,196 tokens | *Conditional.* + `rules/milestone-completion.md` (20,823) = 41,608 chars, 10,402 tokens — only when the pass actually follows `milestone-pr-readiness.md`'s own citation into `milestone-completion.md`'s shared guidance (scoping a manual-testing finding against the milestone description, or confirming Backlog eligibility); an ordinary pass that needs neither stays at the local-file subtotal |
+| **CI-failure investigation and correction handoff** | `SKILL.md` (6,391) + `rules/ci-failure-correction.md` (8,937) = 15,328 chars, 3,832 tokens | *Mandatory, not merely conditional.* + `implement-it/rules/review-gates.md` (13,016, cross-skill) = 28,344 chars, 7,086 tokens. Step 3 of this procedure unconditionally directs consulting that file's "when to stop and ask" standard to determine whether a correction stays in scope — every real investigation reaches it, not only some. The local-file subtotal alone therefore does not establish this path's complete workflow cost; 28,344/7,086 is closer to the actual minimum. (This file's own citations of `rules/milestone-completion.md` remain orientation only, confirmed unchanged from the prior pass — naming what it is and where it starts, not an instruction to consult its content.) Step 6's handoff to `implement-it`'s own lifecycle once authorized — Gate 1/Gate 2, `commit-boundaries.md`, `verification.md` — is a separate skill invocation, modeled as `implement-it`'s own workflow cost elsewhere in this document, not folded into this row |
 | **Post-merge closure only** | `SKILL.md` (6,391) + `rules/milestone-completion.md` (20,823) = 27,214 chars, 6,804 tokens | Not applicable — closure is self-contained in this file |
 | **Full delivery, happy path** (readiness → creation → closure → release, no CI failure) | `SKILL.md` (6,391) + `rules/milestone-pr-readiness.md` (14,394) + `rules/milestone-completion.md` (20,823) + `rules/release.md` (17,052) = 58,660 chars, 14,665 tokens | Already includes `milestone-completion.md`, so the PR-readiness row's own broader-estimate distinction does not add anything further here |
 
-A full-delivery pass that also hits a CI failure would additionally load
-`rules/ci-failure-correction.md` (8,937 characters, ~2,234 tokens on top of the happy-path row).
+A full-delivery pass that also hits a CI failure reaches the CI-failure row's own mandatory
+dependency too (step 3's `implement-it/rules/review-gates.md` consultation): add
+`rules/ci-failure-correction.md` (8,937) plus `implement-it/rules/review-gates.md` (13,016) to the
+happy-path total — 58,660 + 21,953 = 80,613 characters, 20,153 tokens — not merely
+`ci-failure-correction.md`'s own 8,937 characters in isolation.
 
 **Change against the `667fab15` snapshot the rest of this document describes:**
 
