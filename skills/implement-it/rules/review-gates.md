@@ -106,8 +106,8 @@ Only after Gate 1 is approved:
 The plan must communicate:
 
 - the proposed grouping — which files, in which commit;
-- the commit order, and why (dependency order, or activation order — see `rules/verification.md`'s
-  ordering note);
+- the commit order, and why (dependency order, or activation order — see
+  `rules/activation-ordering.md`);
 - which tests travel with which commit, and why any commit is intentionally test-free
   (`rules/commit-boundaries.md`);
 - draft commit messages, or at minimum the one-sentence implementation decision each commit

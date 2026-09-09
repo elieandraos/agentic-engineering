@@ -48,26 +48,30 @@ never by itself authorization to continue into the next, or into milestone deliv
 
 ## Context consumption
 
-Activation loads only `SKILL.md`. Five of its eight rule files load individually as an ordinary
+Activation loads only `SKILL.md`. Five of its nine rule files load individually as an ordinary
 single-issue lifecycle reaches the step each governs, roughly in this order: `sequencing.md`
 (branch readiness), `verification.md` (implementing and pre-Gate-1 verification), `review-gates.md`
 (Gate 1, then Gate 2), `commit-boundaries.md` (deriving and building the commit plan, after Gate 1),
-and `issue-closure.md` (once commits exist). The other three are conditional escalations, loaded
+and `issue-closure.md` (once commits exist). The other four are conditional escalations, loaded
 only when their own trigger fires, and each fires on a distinct condition — but not an unrelated
 one, since firing one can force another to fire too:
 `commit-reconstruction.md` loads only when a review correction belongs to a commit already committed
 locally but not yet pushed — a correction found before anything is committed never reaches it, by
-that file's own entry condition. `isolation-verification.md` and `worktree-preservation.md` load
-whenever `verification.md`'s own isolation criteria are met — an intermediate committed state's own
-correctness needs proving on its own — which is a broader trigger than reconstruction: it applies
+that file's own entry condition. `activation-ordering.md` loads only when a commit being built
+activates configuration, a feature flag, environment-conditioned behavior, or another runtime
+activation gate — ordinary dependency ordering with no such gate never reaches it, and reaching it
+is itself one of the examples that can also trigger the isolation escalation below.
+`isolation-verification.md` and `worktree-preservation.md` load whenever `verification.md`'s own
+isolation criteria are met — an intermediate committed state's own correctness needs proving on its
+own — which is a broader trigger than reconstruction or activation ordering: it applies
 unconditionally to every commit `commit-reconstruction.md` rebuilds, but it can equally apply to an
 ordinary commit sequence built from a correction found before anything was committed, if that
 sequence's own commit order is load-bearing or an intermediate commit's standalone correctness can't
-otherwise be inferred. Only a pass that triggers none of `verification.md`'s isolation criteria and
-never needs history reconstruction loads none of the three. [`review-it`](../review-it/) is invoked
-as a separate skill before Gate 1's report — well before `commit-boundaries.md` or `issue-closure.md`
-are reached — adding its own entrypoint and rule files to that pass. See [the context-consumption
-model and representative-workflow
+otherwise be inferred. Only a pass that triggers none of `verification.md`'s isolation criteria,
+needs no activation-gate reordering, and never needs history reconstruction loads none of the four.
+[`review-it`](../review-it/) is invoked as a separate skill before Gate 1's report — well before
+`commit-boundaries.md` or `issue-closure.md` are reached — adding its own entrypoint and rule files
+to that pass. See [the context-consumption model and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#implement-it).
 
 ## Install

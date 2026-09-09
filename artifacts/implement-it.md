@@ -169,8 +169,8 @@ narrower concern layers on top: a commit that flips a runtime activation gate (a
 environment-conditioned behavior) can retroactively make previously dormant tests and code paths
 active the instant it lands, so an activating commit must land only after everything it activates —
 including a pre-existing test unrelated to the current issue — is already present in an earlier
-commit (§6's ordering note). These two orderings have not been observed to conflict; no precedence
-rule exists for the case where they might (§11).
+commit (`rules/activation-ordering.md`, summarized at §6). These two orderings have not been
+observed to conflict; no precedence rule exists for the case where they might (§11).
 
 **Deriving the plan requires inspecting the completed, approved implementation diff and the intended
 commit scope it actually contains** — the real diff, file by file, not necessarily an already-staged
@@ -275,13 +275,16 @@ depends on an earlier one already being in place — not invoked merely because 
 split into multiple commits. Its final per-commit run, when nothing remains stashed afterward,
 directly satisfies the completed-issue checkpoint under the reuse conditions above.
 
-**Ordering commits around activation risk.** A change to configuration, a feature flag, or another
-runtime activation gate can retroactively activate previously dormant tests and code paths the
-instant it lands. Before committing a step that flips such a gate, this skill identifies what
-becomes active as a result — including pre-existing tests the current issue didn't add — and
-verifies every dependency those paths require is already present in an earlier commit, reordering
-if not. `rules/commit-boundaries.md`'s dependency ordering and this activation-safety ordering have
-not been observed to conflict; no precedence rule exists for if they do (§11).
+**Ordering commits around activation risk** is `rules/activation-ordering.md`'s own procedure, not
+`verification.md`'s — `verification.md` only flags the risk and hands off. A change to
+configuration, a feature flag, or another runtime activation gate can retroactively activate
+previously dormant tests and code paths the instant it lands. Before committing a step that flips
+such a gate, this skill identifies what becomes active as a result — including pre-existing tests
+the current issue didn't add — and verifies every dependency those paths require is already present
+in an earlier commit, reordering if not. `rules/commit-boundaries.md`'s dependency ordering and this
+activation-safety ordering have not been observed to conflict; no precedence rule exists for if they
+do (§11). Reaching this procedure is itself one of the examples that can also trigger isolation
+verification, above, when the activation step's own intermediate state needs proving.
 
 ## 7. Issue completion and closure
 
@@ -411,7 +414,8 @@ narrow down on its own.
 | [`review-gates.md`](../skills/implement-it/rules/review-gates.md) | The two pre-commit human approval gates, how Gate 1 consumes `review-it`'s result, approval validity before Gate 2 and before push, and the general standard for when a genuine unresolved decision forces a stop |
 | [`commit-boundaries.md`](../skills/implement-it/rules/commit-boundaries.md) | Deriving semantic commit boundaries from the reviewed diff, commit-message content, the issue-reference trailer, and classifying where a review correction lands — handing off to `commit-reconstruction.md` for the case that needs history rewritten |
 | [`commit-reconstruction.md`](../skills/implement-it/rules/commit-reconstruction.md) | The unpublished-history reconstruction procedure itself — owning-commit identification, positive-attribution capture, round-trip verification, classification stops, and restoration — used only once `commit-boundaries.md` hands off to it |
-| [`verification.md`](../skills/implement-it/rules/verification.md) | Verification scope at every lifecycle boundary, tool/starting-state discovery, worktree-provenance preservation, the completed-issue reuse rule, and *when* isolation verification is warranted — handing off to `isolation-verification.md` for the technique itself |
+| [`verification.md`](../skills/implement-it/rules/verification.md) | Verification scope at every lifecycle boundary, tool/starting-state discovery, worktree-provenance preservation, the completed-issue reuse rule, and *when* isolation verification is warranted — handing off to `isolation-verification.md` for the technique itself and to `activation-ordering.md` for the activation-risk ordering procedure |
+| [`activation-ordering.md`](../skills/implement-it/rules/activation-ordering.md) | Ordering commits around a configuration, feature-flag, environment-conditioned, or other runtime activation-gate change — what becomes active, dependency verification, its relationship to `commit-boundaries.md`'s dependency ordering, and its relationship to the isolation-verification escalation; consulted only once a commit being built actually activates such a gate |
 | [`isolation-verification.md`](../skills/implement-it/rules/isolation-verification.md) | The per-commit full-suite escalation technique — commit, isolate, verify, restore — used only once `verification.md`'s trigger criteria apply, or unconditionally for every commit `commit-reconstruction.md` rebuilds |
 | [`worktree-preservation.md`](../skills/implement-it/rules/worktree-preservation.md) | The qualified stash-identity procedure for setting aside unrelated worktree content during a Git rewrite — shared, unmodified, by `isolation-verification.md` and `commit-reconstruction.md`; never invoked directly for ordinary work |
 | [`issue-closure.md`](../skills/implement-it/rules/issue-closure.md) | Confirming an issue's commits are reachable on the correct remote branch (pushing, with authorization, if not) before asking, whether and how to close it, the closing-comment contract, and post-mutation validation |
