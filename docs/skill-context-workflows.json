@@ -69,7 +69,7 @@
     },
     {
       "name": "document-it: standalone review of a single Markdown guide",
-      "notes": "Reviewing a published guide's completeness, independent of writing or updating it. Loads only SKILL.md's activation/routing and rules/review.md's checklist -- it never reaches rules/authoring.md, rules/doc-style.md, or rules/maintenance.md, since a standalone review needs no writing procedure. rules/review.md's own citations to SKILL.md's \"Maintaining both formats\" and to rules/maintenance.md for identity preservation are attributions to where those rules are authoritatively stated, not a requirement to open either file to answer the checklist's questions.",
+      "notes": "Reviewing a published guide's completeness, independent of writing or updating it. Assumes current evidence and rules/review.md's checklist answer every question on their own, with no need to open an additional owning reference -- under that assumption, this loads only SKILL.md's activation/routing and rules/review.md's checklist, and does not execute rules/authoring.md's writing procedure. rules/review.md's own citations to SKILL.md's \"Maintaining both formats\" and to rules/maintenance.md for identity preservation are consulted only when a specific claim actually needs checking against them; a review consulting one of those owning references for one fact is not the same as executing its writing procedure, but if that consultation happens, add the consulted file to this row rather than treating the two-file total as a hard ceiling.",
       "files": [
         "skills/document-it/SKILL.md",
         "skills/document-it/rules/review.md"
@@ -77,7 +77,7 @@
     },
     {
       "name": "document-it: standalone review of a paired Markdown + Artifact guide",
-      "notes": "Same file set as the single-Markdown-guide review row: rules/review.md carries one shared checklist for both formats, including the \"Both formats maintained\" synchronization and authorized-divergence checks, so reviewing a paired guide costs no additional file over reviewing one format alone.",
+      "notes": "Same assumption and file set as the single-Markdown-guide review row: rules/review.md carries one shared checklist for both formats, including the \"Both formats maintained\" synchronization and authorized-divergence checks, so reviewing a paired guide costs no additional file over reviewing one format alone, as long as current evidence and the checklist suffice without consulting further guidance.",
       "files": [
         "skills/document-it/SKILL.md",
         "skills/document-it/rules/review.md"

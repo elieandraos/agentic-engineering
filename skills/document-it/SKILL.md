@@ -43,11 +43,13 @@ publishing capability.
 
 ## Document existing architecture
 
-Triggered by a request to document existing architecture with no guide yet published for it.
-Route: establish sufficient current evidence (reuse, or route to `lab-it`) → recap and obtain
-confirmation → decide structure from the architectural center of gravity → write in the confirmed
-format(s) → publish/save → run `rules/review.md`. See `rules/authoring.md` for the full procedure,
-including the mandatory recap-and-confirm gate before anything is published or saved.
+Triggered by a user request for a new guide — an existing guide for this capability does not
+block an explicit request for another; that's a separate, deliberate choice the user is entitled
+to make, not an error condition. Route: establish sufficient current evidence (reuse, or route to
+`lab-it`) → recap and obtain confirmation → decide structure from the architectural center of
+gravity → write in the confirmed format(s) → publish/save → run `rules/review.md`. See
+`rules/authoring.md` for the full procedure, including the mandatory recap-and-confirm gate before
+anything is published or saved.
 
 ## Update an existing guide
 

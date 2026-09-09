@@ -49,32 +49,42 @@ Extracted `document-it`'s format-selection, new-guide-writing, and existing-guid
 procedures out of `SKILL.md` into a new `rules/authoring.md`, per
 `docs/skill-authoring-methodology.md`. `SKILL.md` now states only each procedure's triggering
 condition and hands off; activation, conditional routing, evidence reuse, ownership, the shared
-output non-negotiables, and "Maintaining both formats" stay in `SKILL.md` unchanged. Reconciled the
-callers this touches: `rules/maintenance.md`'s and `rules/review.md`'s cross-references,
-`rules/doc-style.md`'s responsibility-routing list, the skill `README.md`'s context-consumption
-note, and `artifacts/document-it.md`'s format-selection section and rule-ownership table. Updated
-`docs/skill-context-workflows.json`: added `rules/authoring.md` to the three existing
-new-guide/update workflow rows, and added two new rows — a standalone single-Markdown-guide review
-and a standalone paired-guide review — to demonstrate that review-only workflows never load the
-extracted writing procedures. Updated `docs/skill-context.md`'s `document-it` note to match, with
-no new historical measurement table added to that guide.
+output non-negotiables, and "Maintaining both formats" stay in `SKILL.md` unchanged. The new-guide
+trigger is a user's explicit request for a new guide — an existing guide for the same capability
+does not block that request; existing-guide-update identity preservation (same file path, same
+`url`/favicon) is unaffected. Reconciled the callers this touches: `rules/maintenance.md`'s and
+`rules/review.md`'s cross-references, `rules/doc-style.md`'s responsibility-routing list, the skill
+`README.md`'s context-consumption note, and `artifacts/document-it.md`'s format-selection section
+and rule-ownership table. Updated `docs/skill-context-workflows.json`: added `rules/authoring.md`
+to the three existing new-guide/update workflow rows, and added two new rows — a standalone
+single-Markdown-guide review and a standalone paired-guide review — each stating the assumption its
+two-file estimate rests on: current evidence and the checklist answer every question without
+consulting further guidance. A review consulting an owning reference such as
+`rules/maintenance.md` for one specific fact doesn't amount to executing `rules/authoring.md`'s
+writing procedure, and doesn't itself invalidate that estimate. Updated `docs/skill-context.md`'s
+`document-it` note to match, with no new historical measurement table added to that guide.
 
 Evidence: a line-level diff between the original `SKILL.md` sections and the new
 `rules/authoring.md` showed only the two relocated trigger sentences and three cross-references
 necessarily repointed (to `SKILL.md`'s "Maintaining both formats," to `SKILL.md`'s "Output-specific
-non-negotiables," and an internal same-file "below") — no other wording changed. Both trigger
-sentences were confirmed to remain verbatim in `SKILL.md`. All Markdown links in the seven touched
-files resolve; `git diff --check` is clean; `SKILL.md`'s frontmatter `description` is unchanged at
-553 characters. `scripts/measure_skill_context.py` runs clean against the new file list. Measured
-character counts (before -> after): `SKILL.md` 13,742 -> 7,793 (-43%); modeled "new Markdown guide"
-workflow 34,388 -> 35,926; "new Artifact guide" 55,301 -> 56,839; "reconcile existing Markdown
-guide" 50,788 -> 52,450 (each +4-8% from the added `rules/authoring.md` load); a standalone-review
-workflow's equivalent total (`SKILL.md` + `rules/review.md`) 26,743 -> 20,868 (-22%), since review
-workflows never load the new file. These are modeled workflow totals per
-`docs/skill-context.md`'s three-tier framework, not observed session usage. Preservation was traced
-statically across seven scenarios — new Markdown, new Artifact, both formats, existing-path update,
-inaccessible Artifact, an explicitly single-format update, and standalone Markdown/paired review —
-by reading the moved and reconciled text; no live skill invocation was run.
+non-negotiables," and an internal same-file "below") — no other wording changed; the extracted
+procedures themselves are unchanged by this correction. Both trigger sentences were confirmed to
+remain verbatim in `SKILL.md`. All Markdown links in the touched files resolve; `git diff --check`
+is clean; `SKILL.md`'s frontmatter `description` is unchanged at 553 characters.
+`scripts/measure_skill_context.py` runs clean against the file lists. Measured character counts
+(before extraction -> current, recalculated after this correction): `SKILL.md` 13,742 -> 7,923
+(-42%); modeled "new Markdown guide" workflow 34,388 -> 36,056 (+4.9%); "new Artifact guide"
+55,301 -> 56,969 (+3.0%); "reconcile existing Markdown guide" 50,788 -> 52,580 (+3.5%) — each
+increase from the added `rules/authoring.md` load, now slightly larger than the extraction's
+original +4.5%/+2.8%/+3.3% because this correction's new-guide-trigger rewording added characters
+to `SKILL.md`. The two standalone-review rows' two-file total (`SKILL.md` + `rules/review.md`)
+moved 26,743 -> 20,998 (-22%) under the stated assumption above. These are modeled workflow totals
+per `docs/skill-context.md`'s three-tier framework, not observed session usage. Preservation was
+traced statically across seven scenarios — new Markdown, new Artifact, both formats, existing-path
+update, inaccessible Artifact, an explicitly single-format update, and standalone Markdown/paired
+review — by reading the moved and reconciled text; no live skill invocation was run. This bounded
+correction pass specifically re-verified the new-guide-despite-existing-guide request, an ordinary
+existing-guide update, and the assumption stated by both review rows.
 
 ## Validation to retain
 

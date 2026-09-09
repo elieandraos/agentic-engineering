@@ -50,9 +50,12 @@ needs them — a new guide or an existing-guide update reaches `rules/authoring.
 connected architectural-change update to an Artifact guide can reach all five, since
 `rules/authoring.md` routes to `rules/maintenance.md`, and `rules/maintenance.md` and
 `rules/review.md` both route back to `rules/doc-style.md` for how a change gets written. A
-standalone review reaches only `rules/review.md` — it never needs the writing procedures in
-`rules/authoring.md`. A request routed to `lab-it` for missing or stale evidence additionally loads
-`lab-it`'s entrypoint.
+standalone review's baseline is just `rules/review.md`, on top of activation — it doesn't require
+executing `rules/authoring.md`'s writing procedure, whatever else the review consults along the
+way. That two-file estimate holds when current evidence and the checklist suffice on their own; a
+review may still consult an owning reference such as `rules/maintenance.md` for a specific
+identity-preservation fact without that constituting loading the writing procedure. A request
+routed to `lab-it` for missing or stale evidence additionally loads `lab-it`'s entrypoint.
 See [the context-consumption model and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#document-it).
 

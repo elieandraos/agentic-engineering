@@ -132,9 +132,14 @@ actually includes.
 (the Artifact scaffold) is the largest supporting file and loads only for Artifact output, never
 for a Markdown guide. `rules/maintenance.md` and `rules/review.md` both route back to
 `rules/doc-style.md` for how a change gets written, so a guide update can load more than its own
-primary rule file. A standalone review reaches only `rules/review.md` — it never loads
-`rules/authoring.md`, since reviewing a guide needs no writing procedure. See the `document-it`
-rows in `skill-context-workflows.json`, including the two standalone-review rows.
+primary rule file. A standalone review's modeled baseline is just `rules/review.md`, on top of
+activation — that two-file estimate holds when current evidence and the checklist answer every
+question on their own, without consulting further guidance; it does not depend on `rules/review.md`
+never citing an owning reference, since a review can consult a reference such as
+`rules/maintenance.md` for one specific fact without that amounting to executing
+`rules/authoring.md`'s writing procedure. See the `document-it` rows in
+`skill-context-workflows.json`, including the two standalone-review rows and the assumption each
+states.
 
 ### implement-it
 
