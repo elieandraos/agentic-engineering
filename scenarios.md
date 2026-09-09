@@ -1375,3 +1375,130 @@ mix of the four classification outcomes (no unrelated content, staged-only, unst
 mix) occurring simultaneously across those files in one reconstruction, was not exercised.
 `implement-it` itself was not invoked in a live agent session for this pass either — only the
 underlying Git mechanics were exercised, the same distinction every earlier follow-up record draws.
+
+## Follow-up correction: document-it Artifact-template highlighter and mobile nav (2026-09-09e)
+
+This section records a bounded correction pass against the three `document-it` `rules/template.html`
+defects the audit above recorded as DOC-03/DOC-04 (High), DOC-05 (Low), and DOC-08 (Low). It
+supplements, and does not replace, those original records — their pinned source, method, and
+observations above are unchanged. Only `skills/document-it/rules/template.html` and this file were
+touched; DOC-06 and DOC-07's Aligned results were re-run as regression checks, not changed.
+
+**Starting source:** pinned commit `0087a07b83ebc02d75401f347afdf1107c11b660` on `main`.
+
+**What changed, in `rules/template.html`:**
+
+- The `<script>` highlighter's `//`-comment pass for `php`/`ts` previously ran as its own regex
+  pass *before* the generic quoted-string pass, so a `//` occurring inside a quoted string (e.g. a
+  URL) was matched and stashed as a comment first, stranding the string's closing quote inside that
+  stash entry. The now-quote-less string regex then matched forward past the stash placeholder to
+  the *next* real quote in the source, wrapping the earlier placeholder inside its own stash entry —
+  a nested placeholder the single final restore pass (a one-shot, non-recursive `.replace`) cannot
+  reach, leaking raw `\u0000`/`\u0002` characters into the rendered HTML and silently reclassifying
+  part of the string as a comment. Fix: for `php`/`ts` only, comments and strings are now matched in
+  one combined regex pass (`//[^\n]*` alternated with the three string forms), so whichever
+  construct's start character is encountered first in left-to-right scanning — `//` or a quote —
+  consumes to its own natural end before the other pass ever sees that text. `vue`/`json`/`http`
+  (which have no comment syntax here) keep the prior string-only pass unchanged.
+- The supported-language guard `if (!SUPPORTED[lang])` did a plain property lookup on a `{}` object
+  literal, so a `data-lang` value that names an inherited `Object.prototype` member (e.g.
+  `"constructor"`) resolved truthy and fell through into the enhanced-highlighting path meant only
+  for the five real supported languages; `KEYWORDS['constructor']` is likewise inherited and not an
+  array, so `kws.join(...)` threw, and the uncaught exception aborted the `for` loop over all
+  `<pre>` blocks partway through — every block after the offending one, not just that one, was left
+  un-highlighted. Fix: the guard now uses
+  `Object.prototype.hasOwnProperty.call(SUPPORTED, lang)`, which is true only for `SUPPORTED`'s own
+  five keys, so any inherited-property label (or a missing `data-lang`) takes the plain-text
+  fallback instead of the enhanced path.
+- `.nav`'s mobile-width overrides (`position: static`, `border-right: none`, `border-bottom: ...`)
+  were declared inside a `@media (max-width: 880px)` block positioned *before* the base `.nav { ...
+  }` rule. Because both selectors are the plain class `.nav` (identical specificity), the later base
+  rule's `position: sticky` and `border-right: 1px solid var(--border)` won the cascade at every
+  width, including ≤880px — only a second, separate mobile block after the base rule (setting just
+  `height: auto`) actually took effect. Fix: the base `.nav` rule now keeps its original desktop
+  declarations unchanged, and a single mobile override block — `position: static`, `height: auto`,
+  `border-right: none`, `border-bottom: 1px solid var(--border)` — was moved to directly follow it,
+  so it now wins the cascade at ≤880px as originally intended; the `.shell` mobile override
+  (unaffected by this bug, since no later `.shell` rule competes with it) was left in place.
+
+**Method:** two independent checks, kept separate as the task requires:
+
+1. **JavaScript/DOM-stub execution (Node, no browser).** The same in-memory harness documented under
+   "Repeating the executed template cases" above — it extracts the shipped `<script>` verbatim from
+   `template.html` and runs it via `new Function("document", script)` against a minimal
+   `getAttribute`/`querySelector`/`textContent`/`innerHTML` stub, with no real DOM, no
+   `document-it` invocation, and no Artifact publish. It was first run unmodified against
+   `template.html` as it existed at the pinned starting commit to reproduce DOC-03/04/05, then run
+   again against the corrected file in this working tree, extended with new fixtures for the
+   validation items this task called for: escaped quotes, a comment marker inside a string, a quote
+   inside a `//` comment (both `ts` and `php`), HTML-sensitive characters (`<`, `>`, `&`) alongside a
+   comment and a string, a missing (`null`) `data-lang`, and one representative snippet for each of
+   the five supported languages (`php`, `ts`, `vue`, `json`, `http`). Every case additionally
+   round-trips the produced HTML back to source — stripping the generated `<span class="...">` tags
+   and reversing `escapeHtml`'s three entity substitutions — and asserts the result equals the
+   original fixture text exactly. This is a stronger check than reading a DOM stub's unchanged input
+   `textContent` back: it decodes the actual highlighter *output* and verifies no character was
+   dropped, duplicated, or left as an unresolved placeholder.
+2. **CSS cascade — source inspection only, with a stated tool limitation.** The Chrome browser
+   extension (`claude-in-chrome`) reported "not connected" when queried for a tab context in this
+   session, and no headless browser (Playwright, Puppeteer) was available locally without a network
+   package install, which was out of scope for this bounded correction. The `.nav`/`.shell` cascade
+   at 375px, 800px, and desktop widths was therefore verified by manual source inspection: enumerating
+   every rule that can set a `.nav` property, in file order, confirming all such selectors share the
+   same specificity (a single class selector), and resolving each property to whichever declaration
+   is later in source order and applicable at the given width — the standard cascade tie-break CSS
+   applies when specificity is equal. **This is a source-inspection result, not a browser-rendered or
+   computed-style result**, and should be re-verified against actual computed styles (e.g. via
+   `getComputedStyle` in a connected browser tab) before being treated as a full substitute for visual
+   confirmation.
+
+**Reproductions (against the unmodified pinned template):**
+
+- DOC-03 (`ts`, `const url = "https://example.com";\nconst mode = "safe";`): no thrown error;
+  output `<span class="tok-keyword">const</span> url = <span
+  class="tok-string">"https:\u00000\u0002\nconst mode = "</span>safe";` — an unresolved
+  `\u0000`/`\u0002` placeholder pair present, and decoding the spans back to source yields
+  `const url = "https:\u00000\u0002\nconst mode = "safe";`, not the original text. Matches the
+  DOC-03 record above exactly.
+- DOC-04 (`php`, `$url = "https://example.com";\n$mode = "safe";`): same shape of failure —
+  `<span class="tok-var">$url</span> = <span class="tok-string">"https:\u00000\u0002\n$mode =
+  "</span>safe";`, unresolved placeholder present. Matches the DOC-04 record above exactly.
+- DOC-05 (`data-lang="constructor"` block followed by an ordinary `ts` block): threw `TypeError:
+  kws.join is not a function`; both blocks' `innerHTML` remained empty (`""`), including the
+  well-formed `ts` block after it. Matches the DOC-05 record above exactly.
+
+**Corrected results (against `rules/template.html` in this working tree):**
+
+- DOC-03: `<span class="tok-keyword">const</span> url = <span
+  class="tok-string">"https://example.com"</span>;\n<span class="tok-keyword">const</span> mode =
+  <span class="tok-string">"safe"</span>;` — no error, no unresolved placeholder, decodes back to
+  the exact original source.
+- DOC-04: `<span class="tok-var">$url</span> = <span
+  class="tok-string">"https://example.com"</span>;\n<span class="tok-var">$mode</span> = <span
+  class="tok-string">"safe"</span>;` — same result shape, source fully preserved.
+- DOC-05: `constructor` block falls back to `x &lt; y` (escaped plain text, no throw); the
+  following `ts` block still highlights normally (`<span class="tok-keyword">const</span> ok =
+  true;`) — no longer aborted by the earlier block.
+- DOC-06 (regression, python fallback) and DOC-07 (regression, JSON) re-run unchanged from their
+  original Aligned results: no error, no unresolved placeholder, source preserved.
+- New checks — escaped quotes, a comment marker inside a string, and a quote inside a `//` comment
+  (`ts` and `php`) — all produced no error, no unresolved placeholder, and an exact source
+  round-trip; a `"http://foo"` string followed by a real trailing `// comment` correctly separated
+  the two (string tagged `tok-string`, comment tagged `tok-comment`, nothing swallowed either way).
+  HTML-sensitive characters (`<`, `>`, `&`) round-tripped correctly through both the plain-text
+  fallback and the enhanced path. The `null`/missing-`data-lang` fixture fell back to escaped plain
+  text with no error. One representative snippet per supported language (`php`, `ts`, `vue`, `json`,
+  `http`) each highlighted without error and round-tripped to its exact source text.
+- `git diff --check` against the changed file reported no whitespace errors (clean exit).
+
+**Limitations:** the JavaScript checks are Node `new Function` execution of the shipped script
+against a minimal object stub, as defined in "Repeating the executed template cases" above — not a
+live `document-it` invocation, not a rendered page, and not a published Artifact; DOM APIs beyond
+`getAttribute`/`querySelector`/`textContent`/`innerHTML` were never exercised. The CSS mobile-nav
+check is source inspection, explicitly not browser-rendered or computed-style verification, because
+the Chrome extension was unavailable and no headless browser was installed for this bounded pass —
+treat the DOC-08 fix as unverified in an actual browser until that gap is closed. Fixtures remain
+small, hand-written snippets, not a fuzz corpus or the full breadth of each language's syntax; no
+attempt was made to exercise nested-quote edge cases beyond one level (e.g. a `php` `#[...]`
+attribute containing an unterminated string), since that interaction predates this pass and was not
+part of the recorded DOC-03/04/05/08 defects.

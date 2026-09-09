@@ -92,10 +92,12 @@
   a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   .shell { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 0; max-width: 1180px; margin: 0 auto; }
-  @media (max-width: 880px) { .shell { grid-template-columns: 1fr; } .nav { position: static; border-right: none; border-bottom: 1px solid var(--border); } }
+  @media (max-width: 880px) { .shell { grid-template-columns: 1fr; } }
 
   .nav { position: sticky; top: 0; align-self: start; height: 100vh; overflow-y: auto; padding: 2.25rem 1.1rem 2rem; border-right: 1px solid var(--border); }
-  @media (max-width: 880px) { .nav { height: auto; } }
+  /* Must follow the base .nav rule above — same specificity, so an earlier occurrence would lose
+     the cascade to it and never take effect at mobile widths. */
+  @media (max-width: 880px) { .nav { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); } }
   .nav-mark { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 0 0 1.5rem; }
   .nav ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.1rem; }
   .nav a { display: flex; gap: 0.55rem; align-items: baseline; text-decoration: none; color: var(--muted); padding: 0.32rem 0.5rem; border-radius: 5px; font-size: 0.83rem; }
@@ -281,11 +283,15 @@
 
     var escaped = escapeHtml(codeEl.textContent);
 
-    if (!SUPPORTED[lang]) {
+    if (!Object.prototype.hasOwnProperty.call(SUPPORTED, lang)) {
       // Explicit plain-code fallback: escaped, never tokenized — an unsupported or missing
       // data-lang must not be processed by any supported-language rule below. Present-but-
       // unsupported still shows its ordinary label (via pre[data-lang]::before); a genuinely
-      // absent data-lang shows no label, since that CSS rule never matches it.
+      // absent data-lang shows no label, since that CSS rule never matches it. A plain `!
+      // SUPPORTED[lang]` lookup would resolve an inherited Object.prototype property (e.g.
+      // data-lang="constructor") as truthy and fall through into the highlighting logic below,
+      // which then throws on that label and aborts every remaining block — hasOwnProperty keeps
+      // the check limited to this object's own supported-language keys.
       codeEl.innerHTML = escaped;
       return;
     }
@@ -302,13 +308,26 @@
       // a plain [^\]]* would stop at the array's closing bracket instead of the attribute's.
       out = out.replace(/#\[(?:[^\[\]]|\[[^\]]*\])*\]/g, function (m) { return keep('<span class="tok-comment">' + m + '</span>'); });
     }
-    if (lang === 'php' || lang === 'ts') {
-      out = out.replace(/\/\/[^\n]*/g, function (m) { return keep('<span class="tok-comment">' + m + '</span>'); });
-    }
     if (lang === 'json') {
       out = out.replace(/"(?:\\.|[^"\\])*"(?=\s*:)/g, function (m) { return keep('<span class="tok-attr">' + m + '</span>'); });
     }
-    out = out.replace(/'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`/g, function (m) { return keep('<span class="tok-string">' + m + '</span>'); });
+    if (lang === 'php' || lang === 'ts') {
+      // Comments and strings matched in one combined pass, leftmost-construct-wins: matching them
+      // separately (comments first, as before) lets a `//` inside a quoted string be consumed as
+      // a comment start, which strands the string's closing quote inside the comment's stash entry
+      // and leaves the string regex unable to find a matching close quote — the string match then
+      // spans forward past the placeholder to the next real quote in the source, wrapping a nested,
+      // unresolved placeholder inside its own stash entry. Matching both constructs together means
+      // whichever one's start character (`//` or a quote) is actually encountered first consumes
+      // to its own natural end, so a `//` inside a string can't be read as a comment and a quote
+      // inside a `//` comment can't be read as a string.
+      out = out.replace(/\/\/[^\n]*|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`/g, function (m) {
+        var cls = m.slice(0, 2) === '//' ? 'tok-comment' : 'tok-string';
+        return keep('<span class="' + cls + '">' + m + '</span>');
+      });
+    } else {
+      out = out.replace(/'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`/g, function (m) { return keep('<span class="tok-string">' + m + '</span>'); });
+    }
 
     if (lang === 'php') {
       // Stashed like comments/strings above — otherwise the keyword pass below re-matches the
