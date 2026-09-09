@@ -10,11 +10,13 @@ This roadmap records the next practical steps and longer-term possibilities. Fur
 
 ## Current baseline
 
-[Agentic Engineering v2.0.0](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.0) is published: **Lab. Plan. Implement. Review. Ship — with the right stack.** `document-it` is an independently available companion.
+[v2.0.1](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.1) is published: **Lab. Plan. Implement. Review. Ship — with the right stack.** `document-it` is an independently available companion.
 
-The six-step migration is complete. Validation comprises source review, static walkthroughs, and bounded Git-mechanics checks; end-to-end consumer execution remains to be observed. The completed [migration plan is preserved at v2.0.0](https://github.com/elieandraos/agentic-engineering/blob/v2.0.0/plan.md) and in Git history.
+This patch improves unpublished-commit corrections and worktree preservation, fixes Artifact-template highlighting and mobile navigation, and corrects `review-it`'s description length. Conditional implementation and delivery procedures now live in focused supporting files. Scenario records, context estimates, and authoring guidance document the changes and their validation.
 
-**v2.0.1 is prepared, publication pending.** A patch-release proposal — Git-mechanics and Artifact-template fixes, a `review-it` frontmatter correction, `implement-it`/`ship-it` conditional-procedure file reorganization, and expanded documentation — is drafted at [`release-proposal.md`](release-proposal.md), targeting commit `0b74e5c3ce57abb555f800f0a9e7edac26c36abe`. Not yet tagged, drafted, or published; awaiting Control Room review and explicit publication authorization.
+Validation includes source review, static walkthroughs, disposable Git experiments, and template-script checks. The recorded checks do not include live skill or consumer execution, or browser rendering.
+
+The v2.0.0 migration is complete. Its [migration plan is preserved at v2.0.0](https://github.com/elieandraos/agentic-engineering/blob/v2.0.0/plan.md) and in Git history.
 
 ## Next steps
 
