@@ -10,11 +10,11 @@ This roadmap records the next practical steps and longer-term possibilities. Fur
 
 ## Current baseline
 
-[v2.0.1](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.1) is published: **Lab. Plan. Implement. Review. Ship — with the right stack.** `document-it` is an independently available companion.
+[v2.0.2](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.2) is published from [`c9d73ea`](https://github.com/elieandraos/agentic-engineering/commit/c9d73eae5d459f5f0ea62d55d82e5368c46acdb3): **Lab. Plan. Implement. Review. Ship — with the right stack.** `document-it` is an independently available companion.
 
-This patch improves unpublished-commit corrections and worktree preservation, fixes Artifact-template highlighting and mobile navigation, and corrects `review-it`'s description length. Conditional implementation and delivery procedures now live in focused supporting files. Scenario records, context estimates, and authoring guidance document the changes and their validation.
+This patch separates conditional guidance in `document-it`, `implement-it`, `ship-it`, and `plan-it` into focused supporting files, with responsibilities, approvals, and verification requirements preserved through source review. The simplified [context guide](docs/skill-context.md) uses a [measurement script](scripts/measure_skill_context.py) and explicit workflow definitions for repeatable breakdowns. [Test contracts](test-contracts.md) retain expected behavior and a framework-independent testing strategy.
 
-Validation includes source review, static walkthroughs, disposable Git experiments, and template-script checks. The recorded checks do not include live skill or consumer execution, or browser rendering.
+Recorded validation for v2.0.2 includes source comparisons, static routing walkthroughs, focused measurement-script checks, and independent arithmetic. These release checks do not include live skill or consumer execution, or observed session token usage; workflow totals remain modeled estimates.
 
 The v2.0.0 migration is complete. Its [migration plan is preserved at v2.0.0](https://github.com/elieandraos/agentic-engineering/blob/v2.0.0/plan.md) and in Git history.
 
@@ -37,7 +37,7 @@ These are possibilities, not commitments or a prescribed order:
 
 ### Skill testing
 
-Explore repeatable testing using [`scenarios.md`](scenarios.md) as the starting case inventory. Begin with a small selection of executable fixtures and explicit success criteria, preserving the distinction between source walkthroughs and observed runtime results.
+Explore repeatable testing using [`test-contracts.md`](test-contracts.md) for expected behavior and [`scenarios.md`](scenarios.md) for the case inventory and recorded evidence. Begin with a small selection of executable fixtures and explicit success criteria, preserving the distinction between source walkthroughs and observed runtime results.
 
 - **Deterministic checks:** validate skill metadata and test shipped code, templates, and Git recipes against concrete expected outputs and state-preservation assertions.
 - **Agent behavior evaluations:** exercise skill selection, review accuracy, scope boundaries, and approval handling in controlled project fixtures. Inspect actual actions and results, and repeat runs to assess consistency.
