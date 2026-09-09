@@ -66,8 +66,8 @@ sequence's own commit order is load-bearing or an intermediate commit's standalo
 otherwise be inferred. Only a pass that triggers none of `verification.md`'s isolation criteria and
 never needs history reconstruction loads none of the three. [`review-it`](../review-it/) is invoked
 as a separate skill before Gate 1's report — well before `commit-boundaries.md` or `issue-closure.md`
-are reached — adding its own entrypoint and rule files to that pass. See [dated measurements and
-representative-workflow
+are reached — adding its own entrypoint and rule files to that pass. See [the context-consumption
+model and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#implement-it).
 
 ## Install

@@ -47,7 +47,7 @@ GitHub issues belongs to [`plan-it`](../plan-it/); implementing it belongs to
 
 Activation loads only `SKILL.md`. Its one rule file, `rules/plan-synthesis.md`, loads only for the
 "Plan feature architecture" workflow — a plain investigation-and-answer request never reaches it.
-See [dated measurements and representative-workflow
+See [the context-consumption model and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#lab-it).
 
 ## Install

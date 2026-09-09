@@ -52,7 +52,7 @@ for what `rules/`, `blueprints/`, and `templates/` each mean. `SKILL.md`'s routi
 primary file(s) a given task needs, but a blueprint can route further on its own — the
 filtering/sorting blueprint's "Testing" section, for example, additionally routes to
 `rules/test-ownership.md` and `blueprints/pest-testing.md` for how its classes are tested. See
-[dated measurements and representative-workflow
+[the context-consumption model and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#laravel-inertia-stack).
 
 ## Install

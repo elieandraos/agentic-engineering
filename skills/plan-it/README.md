@@ -50,7 +50,7 @@ each step. `resource-feature-checklist.md` and `capability-checklist.md` are cho
 `feature-classification.md`'s shape, but a mixed-characteristic feature can pull secondary questions
 from the other checklist too — they are not always mutually exclusive. `plan-md-input.md` and
 `discovered-work.md` are alternate entry routes for the same request, depending on the work's
-origin. See [dated measurements and representative-workflow
+origin. See [the context-consumption model and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#plan-it).
 
 ## Install

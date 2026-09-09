@@ -1,0 +1,218 @@
+{
+  "$schema_note": "Modeled workflow estimates for scripts/measure_skill_context.py. Each workflow is an explicit, hand-maintained file list reconciled against the SKILL.md/rules routing that exists at the time this file was last edited — it is not derived by following Markdown links or by crawling directories, and it does not by itself prove what a real session actually loads. Update it when a skill's routing changes; the script will report drift between this file's own last edit and the skills/ tree's current revision, but cannot detect a routing change that silently makes a listed file stale or a real file missing from this list.",
+  "excluded_external": [
+    "Laravel Boost's laravel-best-practices, testing-best-practices, and inertia-vue-development skills — real cost when installed, not published in this repository, not measurable here.",
+    "The artifact-design skill that document-it/SKILL.md requires loading before writing any Artifact page — same caveat.",
+    "Application/project code, prior conversation history, and tool-call output (command results, diffs, search results) for every workflow."
+  ],
+  "excluded_project_docs": [
+    "docs/skill-authoring-methodology.md and docs/skill-consumption.md serve a skill's author or a project's installer, not a running pipeline workflow — no SKILL.md or rule file in skills/ references either one."
+  ],
+  "workflows": [
+    {
+      "name": "review-it: standalone review",
+      "notes": "All three rule files are consulted on essentially every invocation, in the order SKILL.md's own Rules list states.",
+      "files": [
+        "skills/review-it/SKILL.md",
+        "skills/review-it/rules/scope.md",
+        "skills/review-it/rules/checklist.md",
+        "skills/review-it/rules/verification.md"
+      ]
+    },
+    {
+      "name": "lab-it: investigation-and-answer only",
+      "notes": "rules/plan-synthesis.md loads only for the 'Plan feature architecture' workflow; a plain investigation-and-answer request never reaches it.",
+      "files": [
+        "skills/lab-it/SKILL.md"
+      ]
+    },
+    {
+      "name": "lab-it: plan feature architecture",
+      "notes": "",
+      "files": [
+        "skills/lab-it/SKILL.md",
+        "skills/lab-it/rules/plan-synthesis.md"
+      ]
+    },
+    {
+      "name": "document-it: new Markdown guide, evidence already sufficient",
+      "notes": "lab-it not routed to because evidence is already sufficient and current.",
+      "files": [
+        "skills/document-it/SKILL.md",
+        "skills/document-it/rules/doc-style.md",
+        "skills/document-it/rules/review.md"
+      ]
+    },
+    {
+      "name": "document-it: new Artifact guide",
+      "notes": "Same as the Markdown-guide row, plus the Artifact scaffold. The external artifact-design skill this requires is not counted (excluded_external).",
+      "files": [
+        "skills/document-it/SKILL.md",
+        "skills/document-it/rules/doc-style.md",
+        "skills/document-it/rules/review.md",
+        "skills/document-it/rules/template.html"
+      ]
+    },
+    {
+      "name": "document-it: reconcile existing Markdown guide, evidence routed through lab-it (cross-skill)",
+      "notes": "rules/maintenance.md routes to rules/doc-style.md for how a connected change gets written. rules/template.html is not reached because this is a Markdown, not an Artifact, guide.",
+      "files": [
+        "skills/document-it/SKILL.md",
+        "skills/lab-it/SKILL.md",
+        "skills/document-it/rules/maintenance.md",
+        "skills/document-it/rules/doc-style.md",
+        "skills/document-it/rules/review.md"
+      ]
+    },
+    {
+      "name": "plan-it: one resource/CRUD feature, UI in scope, single shape",
+      "notes": "rules/capability-checklist.md, rules/plan-md-input.md, and rules/discovered-work.md are the unused alternates for this shape.",
+      "files": [
+        "skills/plan-it/SKILL.md",
+        "skills/plan-it/rules/feature-classification.md",
+        "skills/plan-it/rules/resource-feature-checklist.md",
+        "skills/plan-it/rules/design-reconciliation.md",
+        "skills/plan-it/rules/issue-conventions.md",
+        "skills/plan-it/rules/sequencing.md",
+        "skills/plan-it/rules/review.md"
+      ]
+    },
+    {
+      "name": "plan-it: same feature, mixed characteristics (secondary checklist)",
+      "notes": "rules/feature-classification.md's own 'secondary questions' allowance adds rules/capability-checklist.md on top of the single-shape row.",
+      "files": [
+        "skills/plan-it/SKILL.md",
+        "skills/plan-it/rules/feature-classification.md",
+        "skills/plan-it/rules/resource-feature-checklist.md",
+        "skills/plan-it/rules/capability-checklist.md",
+        "skills/plan-it/rules/design-reconciliation.md",
+        "skills/plan-it/rules/issue-conventions.md",
+        "skills/plan-it/rules/sequencing.md",
+        "skills/plan-it/rules/review.md"
+      ]
+    },
+    {
+      "name": "implement-it: one ordinary issue, no stack companion, no isolation, no reconstruction (cross-skill review-it call before Gate 1)",
+      "notes": "The ordinary path per implement-it/SKILL.md's current Rules list. isolation-verification.md, worktree-preservation.md, and commit-reconstruction.md are not loaded on this path.",
+      "files": [
+        "skills/implement-it/SKILL.md",
+        "skills/implement-it/rules/sequencing.md",
+        "skills/implement-it/rules/verification.md",
+        "skills/review-it/SKILL.md",
+        "skills/review-it/rules/scope.md",
+        "skills/review-it/rules/checklist.md",
+        "skills/review-it/rules/verification.md",
+        "skills/implement-it/rules/review-gates.md",
+        "skills/implement-it/rules/commit-boundaries.md",
+        "skills/implement-it/rules/issue-closure.md"
+      ]
+    },
+    {
+      "name": "implement-it: same issue, isolation verification triggered (no reconstruction)",
+      "notes": "verification.md's own criteria for an intermediate committed state needing proof, without a review correction folding into an already-committed, unpublished commit.",
+      "files": [
+        "skills/implement-it/SKILL.md",
+        "skills/implement-it/rules/sequencing.md",
+        "skills/implement-it/rules/verification.md",
+        "skills/review-it/SKILL.md",
+        "skills/review-it/rules/scope.md",
+        "skills/review-it/rules/checklist.md",
+        "skills/review-it/rules/verification.md",
+        "skills/implement-it/rules/review-gates.md",
+        "skills/implement-it/rules/commit-boundaries.md",
+        "skills/implement-it/rules/issue-closure.md",
+        "skills/implement-it/rules/isolation-verification.md",
+        "skills/implement-it/rules/worktree-preservation.md"
+      ]
+    },
+    {
+      "name": "implement-it: same issue, unpublished-history reconstruction",
+      "notes": "commit-reconstruction.md mandates isolation verification for every rebuilt commit (its own step 11).",
+      "files": [
+        "skills/implement-it/SKILL.md",
+        "skills/implement-it/rules/sequencing.md",
+        "skills/implement-it/rules/verification.md",
+        "skills/review-it/SKILL.md",
+        "skills/review-it/rules/scope.md",
+        "skills/review-it/rules/checklist.md",
+        "skills/review-it/rules/verification.md",
+        "skills/implement-it/rules/review-gates.md",
+        "skills/implement-it/rules/commit-boundaries.md",
+        "skills/implement-it/rules/issue-closure.md",
+        "skills/implement-it/rules/commit-reconstruction.md",
+        "skills/implement-it/rules/isolation-verification.md",
+        "skills/implement-it/rules/worktree-preservation.md"
+      ]
+    },
+    {
+      "name": "implement-it: ordinary issue composed with laravel-inertia-stack for one filtered-index task (cross-skill)",
+      "notes": "blueprints/filters-and-sorting.md's own 'Testing' section routes further to rules/test-ownership.md and blueprints/pest-testing.md; its 'Naming and location' section cites rules/php-conventions.md for the abstract-base-class/final-subclass convention.",
+      "files": [
+        "skills/implement-it/SKILL.md",
+        "skills/implement-it/rules/sequencing.md",
+        "skills/implement-it/rules/verification.md",
+        "skills/review-it/SKILL.md",
+        "skills/review-it/rules/scope.md",
+        "skills/review-it/rules/checklist.md",
+        "skills/review-it/rules/verification.md",
+        "skills/implement-it/rules/review-gates.md",
+        "skills/implement-it/rules/commit-boundaries.md",
+        "skills/implement-it/rules/issue-closure.md",
+        "skills/laravel-inertia-stack/SKILL.md",
+        "skills/laravel-inertia-stack/blueprints/filters-and-sorting.md",
+        "skills/laravel-inertia-stack/rules/request-normalization.md",
+        "skills/laravel-inertia-stack/templates/app/Filters/QueryFilter.php",
+        "skills/laravel-inertia-stack/templates/app/Sorts/QuerySorter.php",
+        "skills/laravel-inertia-stack/templates/app/Models/Concerns/Filterable.php",
+        "skills/laravel-inertia-stack/templates/app/Models/Concerns/Sortable.php",
+        "skills/laravel-inertia-stack/rules/test-ownership.md",
+        "skills/laravel-inertia-stack/blueprints/pest-testing.md",
+        "skills/laravel-inertia-stack/rules/php-conventions.md"
+      ]
+    },
+    {
+      "name": "ship-it: PR readiness and authorized creation, local files only",
+      "notes": "Local-file subtotal only. milestone-pr-readiness.md's own citation into milestone-completion.md's shared guidance is conditional (a manual-testing finding needing scope interpretation, or confirming Backlog eligibility) — see the 'broader estimate' row below for when that citation is actually followed.",
+      "files": [
+        "skills/ship-it/SKILL.md",
+        "skills/ship-it/rules/milestone-pr-readiness.md"
+      ]
+    },
+    {
+      "name": "ship-it: PR readiness, broader estimate (shared guidance actually consulted)",
+      "notes": "Adds rules/milestone-completion.md when the pass actually follows milestone-pr-readiness.md's own citation into it.",
+      "files": [
+        "skills/ship-it/SKILL.md",
+        "skills/ship-it/rules/milestone-pr-readiness.md",
+        "skills/ship-it/rules/milestone-completion.md"
+      ]
+    },
+    {
+      "name": "ship-it: CI-failure investigation and correction handoff",
+      "notes": "Step 3 of ci-failure-correction.md unconditionally directs consulting implement-it/rules/review-gates.md's 'when to stop and ask' standard, so that file is mandatory for this path, not merely conditional.",
+      "files": [
+        "skills/ship-it/SKILL.md",
+        "skills/ship-it/rules/ci-failure-correction.md",
+        "skills/implement-it/rules/review-gates.md"
+      ]
+    },
+    {
+      "name": "ship-it: post-merge closure only",
+      "notes": "Closure is self-contained in milestone-completion.md.",
+      "files": [
+        "skills/ship-it/SKILL.md",
+        "skills/ship-it/rules/milestone-completion.md"
+      ]
+    },
+    {
+      "name": "ship-it: full delivery happy path (readiness -> creation -> closure -> release, no CI failure)",
+      "notes": "Already includes milestone-completion.md, so the PR-readiness row's own broader-estimate distinction does not add anything further here.",
+      "files": [
+        "skills/ship-it/SKILL.md",
+        "skills/ship-it/rules/milestone-pr-readiness.md",
+        "skills/ship-it/rules/milestone-completion.md",
+        "skills/ship-it/rules/release.md"
+      ]
+    }
+  ]
+}

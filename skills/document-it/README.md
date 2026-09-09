@@ -49,7 +49,7 @@ and `rules/template.html` each load individually as the current workflow needs t
 architectural-change update to an Artifact guide can reach all four, since `rules/maintenance.md`
 and `rules/review.md` both route back to `rules/doc-style.md` for how a change gets written. A
 request routed to `lab-it` for missing or stale evidence additionally loads `lab-it`'s entrypoint.
-See [dated measurements and representative-workflow
+See [the context-consumption model and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#document-it).
 
 ## Install

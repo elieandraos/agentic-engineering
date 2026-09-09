@@ -50,8 +50,8 @@ never grants authorization by itself — every gate it feeds stays a human appro
 
 Activation loads only `SKILL.md`. Unlike some sibling skills, all three of its rule files
 (`scope.md`, `checklist.md`, `verification.md`) are consulted on essentially every invocation, in
-that order — there is no large conditional file a typical review skips. See [dated measurements and
-representative-workflow
+that order — there is no large conditional file a typical review skips. See [the context-consumption
+model and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#review-it).
 
 ## Install

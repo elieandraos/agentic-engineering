@@ -47,8 +47,8 @@ and creation, CI-failure investigation, closure, and release. A file's shared or
 can be consulted before its own gated mutation actually executes; reaching that point is not itself
 approval for the mutation — readiness passing is not approval to create the PR, and a confirmed merge
 is not approval to publish the release. Each owning rule defines its own eligibility conditions and
-the separate human approval its mutation requires; this section does not restate them. See [dated
-measurements and representative-workflow
+the separate human approval its mutation requires; this section does not restate them. See [the
+context-consumption model and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#ship-it).
 
 ## Install
