@@ -10,11 +10,11 @@ This roadmap records the next practical steps and longer-term possibilities. Fur
 
 ## Current baseline
 
-[v2.0.2](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.2) is published from [`c9d73ea`](https://github.com/elieandraos/agentic-engineering/commit/c9d73eae5d459f5f0ea62d55d82e5368c46acdb3): **Lab. Plan. Implement. Review. Ship — with the right stack.** `document-it` is an independently available companion.
+[v2.0.3](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.3) is published from [`db68fe7`](https://github.com/elieandraos/agentic-engineering/commit/db68fe72903060c7afc7ed87e28fccbdbc7dd9c8): more focused architecture discussions and more precise implementation reviews.
 
-This patch separates conditional guidance in `document-it`, `implement-it`, `ship-it`, and `plan-it` into focused supporting files, with responsibilities, approvals, and verification requirements preserved through source review. The simplified [context guide](docs/skill-context.md) uses a [measurement script](scripts/measure_skill_context.py) and explicit workflow definitions for repeatable breakdowns. [Test contracts](test-contracts.md) retain expected behavior and a framework-independent testing strategy.
+This patch scales `lab-it`'s investigation and decision discussions to what the request actually needs, reusing reliable findings and reserving `plan.md` for an explicit request. `review-it` now names the requirement or convention behind a finding when one actually exists, judges an abstraction by a concrete removal/inlining cost rather than caller count alone, and checks that a test's expected value independently and correctly proves the behavior under test — while preserving legitimate integration assertions and established test-layer ownership. Skill READMEs and architecture dossiers are reconciled, the completed adjacent-skill comparison item is removed from Future directions below, and context monitoring during real useOrbit work is retained.
 
-Recorded validation for v2.0.2 includes source comparisons, static routing walkthroughs, focused measurement-script checks, and independent arithmetic. These release checks do not include live skill or consumer execution, or observed session token usage; workflow totals remain modeled estimates.
+Recorded validation for v2.0.3 is source review and scenario walkthroughs. These release checks do not include live skill, consumer, or browser execution, or observed session token usage.
 
 The v2.0.0 migration is complete. Its [migration plan is preserved at v2.0.0](https://github.com/elieandraos/agentic-engineering/blob/v2.0.0/plan.md) and in Git history.
 
