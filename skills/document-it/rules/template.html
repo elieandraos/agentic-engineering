@@ -284,14 +284,8 @@
     var escaped = escapeHtml(codeEl.textContent);
 
     if (!Object.prototype.hasOwnProperty.call(SUPPORTED, lang)) {
-      // Explicit plain-code fallback: escaped, never tokenized — an unsupported or missing
-      // data-lang must not be processed by any supported-language rule below. Present-but-
-      // unsupported still shows its ordinary label (via pre[data-lang]::before); a genuinely
-      // absent data-lang shows no label, since that CSS rule never matches it. A plain `!
-      // SUPPORTED[lang]` lookup would resolve an inherited Object.prototype property (e.g.
-      // data-lang="constructor") as truthy and fall through into the highlighting logic below,
-      // which then throws on that label and aborts every remaining block — hasOwnProperty keeps
-      // the check limited to this object's own supported-language keys.
+      // Escaped, untokenized fallback for an unsupported or missing data-lang; hasOwnProperty
+      // avoids matching inherited Object.prototype properties (e.g. data-lang="constructor").
       codeEl.innerHTML = escaped;
       return;
     }
@@ -303,26 +297,18 @@
       return '\u0000' + (stash.length - 1) + '\u0002';
     }
 
-    if (lang === 'php') {
-      // One level of nested [...] handled explicitly (e.g. #[Authorize('x', [A::class, 'b'])]) —
-      // a plain [^\]]* would stop at the array's closing bracket instead of the attribute's.
-      out = out.replace(/#\[(?:[^\[\]]|\[[^\]]*\])*\]/g, function (m) { return keep('<span class="tok-comment">' + m + '</span>'); });
-    }
     if (lang === 'json') {
       out = out.replace(/"(?:\\.|[^"\\])*"(?=\s*:)/g, function (m) { return keep('<span class="tok-attr">' + m + '</span>'); });
     }
     if (lang === 'php' || lang === 'ts') {
-      // Comments and strings matched in one combined pass, leftmost-construct-wins: matching them
-      // separately (comments first, as before) lets a `//` inside a quoted string be consumed as
-      // a comment start, which strands the string's closing quote inside the comment's stash entry
-      // and leaves the string regex unable to find a matching close quote — the string match then
-      // spans forward past the placeholder to the next real quote in the source, wrapping a nested,
-      // unresolved placeholder inside its own stash entry. Matching both constructs together means
-      // whichever one's start character (`//` or a quote) is actually encountered first consumes
-      // to its own natural end, so a `//` inside a string can't be read as a comment and a quote
-      // inside a `//` comment can't be read as a string.
-      out = out.replace(/\/\/[^\n]*|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`/g, function (m) {
-        var cls = m.slice(0, 2) === '//' ? 'tok-comment' : 'tok-string';
+      // Attributes (php; one level of nested [...] handled explicitly), comments, and strings
+      // matched in a single pass so whichever construct starts first wins and consumes to its own
+      // end, instead of one being misread as starting inside another — see scenarios.md.
+      var pattern = lang === 'php'
+        ? /#\[(?:[^\[\]]|\[[^\]]*\])*\]|\/\/[^\n]*|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`/g
+        : /\/\/[^\n]*|'(?:\\.|[^'\\])*'|"(?:\\.|[^"\\])*"|`(?:\\.|[^`\\])*`/g;
+      out = out.replace(pattern, function (m) {
+        var cls = m.charAt(0) === '#' || m.slice(0, 2) === '//' ? 'tok-comment' : 'tok-string';
         return keep('<span class="' + cls + '">' + m + '</span>');
       });
     } else {

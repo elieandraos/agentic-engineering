@@ -1502,3 +1502,96 @@ small, hand-written snippets, not a fuzz corpus or the full breadth of each lang
 attempt was made to exercise nested-quote edge cases beyond one level (e.g. a `php` `#[...]`
 attribute containing an unterminated string), since that interaction predates this pass and was not
 part of the recorded DOC-03/04/05/08 defects.
+
+## Follow-up correction: document-it Artifact-template PHP attribute ordering (2026-09-09f)
+
+This section records a bounded correction pass against a fourth `rules/template.html` highlighter
+defect, reported directly (not from a prior audit pass): the PHP `#[...]` attribute regex still ran
+as its own pass *before* the DOC-03/04 combined comment/string pass added in the prior follow-up
+above, so `#[...]`-shaped text inside a real `//` comment or a real quoted string was matched and
+stashed as an attribute before that surrounding construct was protected — reproducing the same
+nested-placeholder failure mode DOC-03/04 fixed, now triggered by the attribute pass instead of the
+old separate comment pass. It supplements, and does not replace, the prior two follow-up records —
+DOC-03/04/05/08's fixes and checks above are unchanged and were re-run as regressions. Only
+`skills/document-it/rules/template.html` and this file were touched.
+
+**Starting source:** commit `23ea271` on `main` (the prior follow-up's own commit).
+
+**Fixtures (both requested regressions, IDs DOC-09/DOC-10, plus a combined and two preservation
+checks):**
+
+- DOC-09 — `#[...]`-shaped text inside a real comment: `php`, `// See #[Example] before changing
+  this.`
+- DOC-10 — `#[...]`-shaped text inside a real string: `php`, `$example = "#[Example]";`
+- CHECK-attribute-comment-string-combined — both lines together in one block, exactly as reported:
+  `// See #[Example] before changing this.\n$example = "#[Example]";`
+- CHECK-attribute-genuine — a real attribute must still highlight as one unit:
+  `#[Route('/users')]\nfinal class UserController\n{\n}`
+- CHECK-attribute-nested-brackets — the existing one-level-nested-bracket case
+  (`#[Authorize('x', [A::class, 'b'])]\nfunction f() {}`) must still resolve as a single attribute
+  match, not stop early at the array's own closing bracket.
+
+**What changed, in `rules/template.html`:** the standalone `if (lang === 'php') { ... #[...] ...
+}` pass was removed, and its pattern was added as a third alternative — ahead of the `//` and
+string alternatives, php-only — to the same combined regex the prior follow-up introduced for
+comments and strings. The classification callback now checks the match's first character (`#` for
+an attribute, `//` for a comment, otherwise a string) instead of just the first two. Leftmost-match
+scanning then guarantees the same property this fixed for comments and strings: whichever
+construct's start character is encountered first in the source consumes to its own natural end, so
+`#[...]`-shaped text inside a comment or string can no longer be read as a real attribute, and (as
+before) a `//` inside a string still can't be read as a comment. Runtime comments were tightened to
+one or two lines pointing here for the mechanism; this record carries the defect history instead of
+the script.
+
+**Method:** the same DOM-stub harness used in the two prior follow-ups (`new Function("document",
+script)` against a minimal `getAttribute`/`querySelector`/`textContent`/`innerHTML` stub extracted
+from the shipped `<script>` — no real DOM, no `document-it` invocation, no Artifact publish), first
+run unmodified against the template as committed at `23ea271` to reproduce the defect, then run
+again against the corrected file in this working tree together with every fixture from the prior two
+follow-ups (DOC-03 through DOC-10 plus all `CHECK-*` cases) as a full regression pass. Every case
+round-trips the produced HTML back to source (strip the generated spans, reverse `escapeHtml`'s
+entity substitutions) and asserts exact equality with the original fixture text — the same
+stronger-than-`textContent` check used previously.
+
+**Reproduction (against `23ea271`, unmodified):**
+
+- DOC-09: no thrown error; output
+  `<span class="tok-comment">// See ` + NUL + `0` + STX + ` before changing this.</span>` — the
+  attribute's own `<span class="tok-comment">#[Example]</span>` stash entry never gets substituted
+  back in; decoding yields `// See ` + NUL + `0` + STX + ` before changing this.`, not the original
+  text. (NUL/STX here are the same U+0000/U+0002 marker characters DOC-03/04 identified, written out
+  rather than embedded literally in this file.)
+- DOC-10: same failure shape —
+  `<span class="tok-var">$example</span> = <span class="tok-string">"` + NUL + `0` + STX +
+  `"</span>;`, unresolved marker present, `#[Example]` lost from the visible/decoded text.
+- CHECK-attribute-comment-string-combined (both lines together): both failures occur in the same
+  block, one unresolved marker per line, confirming the interaction reproduces when the two lines
+  share a single highlighter pass exactly as reported.
+- CHECK-attribute-genuine and CHECK-attribute-nested-brackets both already passed at this commit —
+  the defect is specific to `#[...]`-shaped text appearing inside a comment or string, not to
+  genuine attribute recognition, which the fix must not regress.
+
+**Corrected results (against `rules/template.html` in this working tree):**
+
+- DOC-09: `<span class="tok-comment">// See #[Example] before changing this.</span>` — no error, no
+  unresolved marker, decodes back to the exact original source.
+- DOC-10: `<span class="tok-var">$example</span> = <span class="tok-string">"#[Example]"</span>;` —
+  same result shape, source fully preserved.
+- CHECK-attribute-comment-string-combined: both lines correct in one pass, matching the two
+  single-line results above.
+- CHECK-attribute-genuine: `<span class="tok-comment">#[Route('/users')]</span>` followed by the
+  `final class UserController` declaration highlighting normally — genuine attribute recognition
+  preserved.
+- CHECK-attribute-nested-brackets: `<span class="tok-comment">#[Authorize('x', [A::class,
+  'b'])]</span>` resolves as one match through the nested `[...]`, exactly as before this pass.
+- Full regression: every DOC-03 through DOC-10 fixture and every `CHECK-*` fixture from this and the
+  prior follow-up passed together in one run (23 cases, no error, no unresolved marker, exact
+  round-trip on every non-empty result).
+- `git diff --check` against the changed file reported no whitespace errors (clean exit).
+
+**Limitations:** same as the prior follow-up — DOM-stub Node execution, not a live `document-it`
+invocation, rendered page, or published Artifact; the CSS mobile-nav (DOC-08) verification remains
+source inspection only, unchanged by this pass since no browser tooling became available in the
+interim. Fixtures are still hand-written, not a fuzz corpus; attribute recognition inside a
+`` ` ``-delimited template-literal string, and an attribute immediately adjacent to (rather than
+inside) a string or comment with no separating whitespace, were not separately exercised.
