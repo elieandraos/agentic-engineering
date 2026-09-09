@@ -10,27 +10,31 @@ skill's operational rules, gates, or approvals. A reduction it identifies as wor
 inert until a separate authoring pass implements it under
 [`docs/skill-authoring-methodology.md`](skill-authoring-methodology.md).
 
-## Three loading tiers
+## Three loading tiers (a model, not an observed runtime guarantee)
 
-Installing a skill does not load its whole directory. What actually enters context happens in
-three distinct tiers, at three different times:
+Nothing here has been confirmed against a real agent session's actual context. What follows is the
+working model this document and its script use to reason about cost — installing a skill is
+assumed not to load its whole directory, with three distinct tiers assumed to enter context at
+three different times:
 
-1. **Discovery metadata** — each installed skill's frontmatter `description` (and `name`), read by
-   the agent to decide which skill, if any, applies to the current request. This is the only cost
-   an *inactive* skill has. It is paid for every installed skill, not only the one that ends up
-   activating, so it is a per-session tax that scales with how many skills are installed.
+1. **Discovery metadata** — each installed skill's frontmatter `description` (and `name`), assumed
+   read by the agent to decide which skill, if any, applies to the current request. Modeled as the
+   only cost an *inactive* skill has, paid for every installed skill, not only the one that ends up
+   activating — a per-session tax that scales with how many skills are installed, under this model.
 2. **Activated `SKILL.md`** — once a skill is selected, its complete `SKILL.md` (frontmatter plus
-   body) loads as one unit. This is the operational routing entrypoint: activation vocabulary,
-   ownership, and the routing table to supporting files. Nothing in a `SKILL.md` loads partially —
-   a large entrypoint costs its full size on every activation of that skill, regardless of which
-   workflow the request turns out to need.
-3. **Supporting files, on demand** — a `rules/`, `blueprints/`, or `templates/` file loads only
-   when the activated `SKILL.md`'s own routing, or a supporting file's own further routing, sends
-   the current workflow to it. A skill with many rule files does not load all of them for every
-   request; it loads the ones the request's own shape requires. That set is not always one file per
-   concern — a mixed-characteristic feature or a blueprint with its own internal routing can pull
-   in more than the primary table entry alone, and a followed cross-reference into another file's
-   shared guidance adds that file's full size, not just the cited section.
+   body) is assumed to load as one unit: the operational routing entrypoint stating activation
+   vocabulary, ownership, and the routing table to supporting files. This document assumes nothing
+   in a `SKILL.md` loads partially, so a large entrypoint is modeled as costing its full size on
+   every activation of that skill, regardless of which workflow the request turns out to need —
+   that assumption is not independently verified here.
+3. **Supporting files, on demand** — a `rules/`, `blueprints/`, or `templates/` file is assumed to
+   load only when the activated `SKILL.md`'s own routing, or a supporting file's own further
+   routing, sends the current workflow to it. Under this assumption, a skill with many rule files
+   does not load all of them for every request; it loads the ones the request's own shape requires.
+   That set is not always one file per concern — a mixed-characteristic feature or a blueprint with
+   its own internal routing can pull in more than the primary table entry alone, and a followed
+   cross-reference into another file's shared guidance is modeled as adding that file's full size,
+   not just the cited section.
 
 ## How to read the figures
 
@@ -49,10 +53,13 @@ tokenizer count and not an observed session's actual usage — real tokenization
   moment you run the script.
 - **A modeled workflow estimate** — a sum of file measurements standing in for a hypothetical
   loading sequence, under an explicit, hand-maintained file list
-  ([`docs/skill-context-workflows.json`](skill-context-workflows.json)) and three assumptions: whole-file
-  reads, deduplication of a file already opened earlier in the same modeled pass, and README
-  exclusion by default (a `SKILL.md` that doesn't mention `README.md` gives an agent no stated
-  reason to open it mid-workflow). No instrumentation of a real session backs these totals.
+  ([`docs/skill-context-workflows.json`](skill-context-workflows.json)) and three stated modeling
+  assumptions, none of them an observed or guaranteed runtime mechanic: **whole-file reads** (a
+  file that gets opened is assumed to contribute its complete size, never a partial section);
+  **deduplication** of a file already opened earlier in the same modeled pass; and **README
+  exclusion by default** (a `SKILL.md` that doesn't mention `README.md` is assumed to give an agent
+  no reason to open it mid-workflow — an assumption about likely behavior, not a proof that no
+  session ever opens it). No instrumentation of a real session backs these totals.
 - **Observed session consumption** — an actual agent session's measured token usage. This
   repository has none of this: nothing here has been benchmarked against a real run, and neither
   this document nor its script claims otherwise.
@@ -86,13 +93,24 @@ The script fails clearly, with a non-zero exit, if a workflow's configured file 
 that doesn't exist. It never writes or modifies a file.
 
 `docs/skill-context-workflows.json` is a hand-maintained, explicit list of representative
-workflows, seeded from this document's own prior workflow modeling and reconciled against each
-skill's current `SKILL.md` routing. It is not derived by recursively following Markdown links or
-crawling directories — an actual `SKILL.md` can route conditionally, compose across skills, or
-follow a further cross-reference inside a supporting file, none of which a link crawl would
-resolve correctly. Update the config file directly when a skill's routing changes; the script's
-revision check reports drift between the config and the `skills/` tree, but it cannot detect a
-routing change that silently makes a listed workflow stale, or a real path missing from the list.
+workflows, seeded from this document's own prior workflow modeling and checked against each
+skill's `SKILL.md` routing at the time it was last edited. It is not derived by recursively
+following Markdown links or crawling directories — an actual `SKILL.md` can route conditionally,
+compose across skills, or follow a further cross-reference inside a supporting file, none of which
+a link crawl would resolve correctly.
+
+**What the script's revision check does and does not establish.** It reports whether the working
+tree's `skills/` content and the workflow config differ from `git HEAD` right now — an uncommitted-
+change check, nothing more. It does not know when the config file was last reconciled against
+routing, and it cannot tell you whether a routing change that was already committed and merged
+cleanly has since made a listed workflow stale — a fully committed, clean working tree will still
+report "measured inputs match this revision" even if a skill's routing changed three commits ago
+and nobody updated the config to match. Detecting that kind of staleness is not something this
+script does; it would require tracking which commit last reconciled the config against routing, and
+no such mechanism exists here. Update the config file directly whenever you change a skill's
+routing, and treat "measured inputs match this revision" as "the working tree is clean," not as "the
+workflow definitions are still accurate."
+
 The config also records, per workflow, the assumptions behind it (e.g. which citation is
 conditional versus mandatory) and excludes content this repository cannot measure: external
 companion skills (Laravel Boost's `laravel-best-practices`, `testing-best-practices`, and
@@ -142,9 +160,14 @@ therefore reaches more files than the routing table's own single row names — s
 
 `rules/resource-feature-checklist.md` and `rules/capability-checklist.md` are chosen by
 `rules/feature-classification.md`'s shape classification, but a mixed-characteristic feature can
-load both, per that file's own secondary-questions allowance. `rules/plan-md-input.md` and
-`rules/discovered-work.md` are alternate entry routes for the same request, depending on the
-work's origin, not additive with the classification path.
+load both, per that file's own secondary-questions allowance. `rules/plan-md-input.md` (an approved
+`plan.md` origin) and `rules/discovered-work.md` (an unexpected-finding origin) are earlier pipeline
+steps that feed into classification, not routes that replace or skip it — per `SKILL.md`'s own
+numbered pipeline, both origins still reach `rules/feature-classification.md` and the same
+canonical-issue pipeline from there. A request with neither origin (a feature ask stated directly
+in conversation) enters straight at classification, which is what the modeled `plan-it` rows in
+`skill-context-workflows.json` assume; no workflow row there models the plan-md-input or
+discovered-work paths.
 
 ### review-it
 
