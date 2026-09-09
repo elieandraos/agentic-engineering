@@ -42,6 +42,14 @@ belong to [`lab-it`](../lab-it/) — file extension alone doesn't decide ownersh
 `plan.md` stays `lab-it`'s even though it's a `.md` file. Planning the resulting work into GitHub
 issues belongs to [`plan-it`](../plan-it/).
 
+## Context consumption
+
+Activation loads only `SKILL.md`. `rules/doc-style.md`, `rules/review.md`, `rules/maintenance.md`,
+and `rules/template.html` each load individually, only when the current workflow needs them — never
+all four for one request. A request routed to `lab-it` for missing or stale evidence additionally
+loads `lab-it`'s entrypoint. See [dated measurements and representative-workflow
+estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#document-it).
+
 ## Install
 
 ```shell

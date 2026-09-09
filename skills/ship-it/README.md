@@ -40,6 +40,14 @@ Does not implement code. Deciding what work should exist belongs to
 [`plan-it`](../plan-it/); implementation, verification, commits, and issue closure belong to
 [`implement-it`](../implement-it/); reviewing and merging the PR belongs to the human.
 
+## Context consumption
+
+Activation loads only `SKILL.md`. `rules/milestone-completion.md` (the largest rule file in this
+ecosystem, covering PR readiness, CI-failure investigation, and the closure gate) and `rules/release.md`
+each load only when their own phase is reached — a PR-readiness check alone does not reach
+`release.md`. See [dated measurements and representative-workflow
+estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#ship-it).
+
 ## Install
 
 ```shell

@@ -42,6 +42,15 @@ GitHub issue creation after approval. Implementation belongs to
 [`implement-it`](../implement-it/), with milestone delivery and release handled downstream by
 [`ship-it`](../ship-it/) — this skill plans the work, it doesn't build it.
 
+## Context consumption
+
+Activation loads only `SKILL.md`. Its nine rule files load individually as the pipeline reaches
+each step — several are mutually exclusive alternates for the same request, never loaded together:
+`resource-feature-checklist.md` or `capability-checklist.md` (never both), and `plan-md-input.md` or
+`discovered-work.md` depending on the work's origin. See [dated measurements and
+representative-workflow
+estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#plan-it).
+
 ## Install
 
 ```shell

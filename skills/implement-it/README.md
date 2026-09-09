@@ -46,6 +46,15 @@ milestone PR readiness, PR creation, and release belong to [`ship-it`](../ship-i
 A specific-issue request ends after that issue's own lifecycle — completing one issue is
 never by itself authorization to continue into the next, or into milestone delivery.
 
+## Context consumption
+
+Activation loads only `SKILL.md`. Its five rule files (`sequencing.md`, `review-gates.md`,
+`commit-boundaries.md`, `verification.md`, `issue-closure.md`) each load individually as the
+lifecycle reaches the step it governs — an ordinary single-issue pass typically reaches all five.
+[`review-it`](../review-it/) is invoked as a separate skill before Gate 1, adding its own entrypoint
+and rule files to that pass. See [dated measurements and representative-workflow
+estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#implement-it).
+
 ## Install
 
 ```shell
