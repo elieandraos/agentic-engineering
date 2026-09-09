@@ -433,11 +433,17 @@ Three distinct categories, not one indivisible standard:
   useful specifically for testing whether one decision routes to exactly one owner.
 - Validation should test meaningful behavior and invariants, not merely match expected phrases or
   headings.
-- A runtime rule file's own references must resolve inside what an installed skill actually ships —
-  its own `skills/<name>/` directory — not a source-repository-only file such as an audit record, a
-  dossier, or a root-level history document. Check a citation against that installed boundary, not
-  only against the source repository's own working tree, where an unshipped file can still resolve
-  and mask the gap.
+- A runtime rule file's own required references must resolve in the consuming environment, not only
+  in the source repository's own working tree — either bundled inside the citing skill's own
+  installed directory, or naming an identified, available dependency: a pipeline-stage skill a
+  declared handoff already names in both skills' own ownership sections, or an external tool or
+  companion skill the file itself names as a prerequisite (the way a stack companion names the Boost
+  skill it loads beside). Preserve those legitimate cross-skill and tooling references. What this
+  check rules out is different: a citation to a source-repository-only file — an audit record, a
+  dossier, a root-level history document — that never ships to any consumer and cannot substitute for
+  a required runtime instruction. Check a citation against what actually reaches the consuming
+  environment, not only the source repository's own working tree, where an unshipped file can still
+  resolve and mask the gap.
 
 Scope the search by dependency, not by convenience and not by an unbounded full-repository re-read:
 inspect the owning file itself; inspect its known callers, summaries, indexes, and any direct or
@@ -497,9 +503,12 @@ Before treating an authoring pass as complete, check:
 - **templates** — a copy/adapt template still satisfies its stricter bar (Section 8): complete,
   target path and prerequisites stated, reconciliation instructions present, and syntactically or
   executably valid;
-- **size or context claims** — a stated cost or size figure is explicitly labeled as what it is: a
-  modeled estimate (a character count, an approximated token figure) or a measured runtime/session
-  consumption. Never present one as the other, and never let a modeled figure imply a measured
-  session actually ran;
+- **size or context claims** — distinguish three different things a stated figure can be, and label
+  which one it is: a directly measured file character count (an actual reading of one file's
+  content); a modeled workflow estimate (a sum of such counts standing in for a hypothetical loading
+  sequence, plus any rough token approximation derived from it); and observed session consumption (an
+  actual agent session's measured token usage). Never let a modeled workflow total or a rough token
+  approximation imply an observed session actually ran, and never present a single file's directly
+  measured size as if it already accounted for a whole workflow's dependencies;
 - **changed-file scope** — the set of files actually touched matches the intended scope of the
   pass, with no incidental unrelated edits folded in.

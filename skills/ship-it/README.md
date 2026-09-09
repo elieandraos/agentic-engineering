@@ -42,18 +42,13 @@ Does not implement code. Deciding what work should exist belongs to
 
 ## Context consumption
 
-Activation loads only `SKILL.md`. Each of its four rule files loads for its own phase, and each
-phase's own gated action starts only once its own trigger actually fires — PR creation once
-readiness passes, the CI-failure investigation once real CI actually fails on an open PR, closure
-once post-merge authorization is given, and release publication once a PR has merged. That describes
-when each gated action may begin, not a claim that a file can never be consulted earlier:
-`rules/milestone-pr-readiness.md`'s own procedure, for example, draws explicit analogies to
-`rules/release.md`'s discovery-order and approval pattern while proposing the PR, and it can consult
-`rules/milestone-completion.md`'s shared guidance before merge too, when actually needed for
-milestone classification, scope interpretation, or lifecycle orientation (e.g. scoping a
-manual-testing finding, or confirming Backlog eligibility) — only that file's closure procedure
-specifically remains gated by post-merge authorization. See [dated measurements and
-representative-workflow
+Activation loads only `SKILL.md`. Each of its four rule files loads for its own phase — PR readiness
+and creation, CI-failure investigation, closure, and release. A file's shared or orientation guidance
+can be consulted before its own gated mutation actually executes; reaching that point is not itself
+approval for the mutation — readiness passing is not approval to create the PR, and a confirmed merge
+is not approval to publish the release. Each owning rule defines its own eligibility conditions and
+the separate human approval its mutation requires; this section does not restate them. See [dated
+measurements and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#ship-it).
 
 ## Install
