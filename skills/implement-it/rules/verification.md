@@ -7,10 +7,13 @@
 > needs proof, and the final assembled history are different things to prove — proving one does not
 > substitute for proving another.
 
-This rule owns what verification is required at each lifecycle boundary in `implement-it`, and
-the isolation-verification escalation for when an intermediate committed state itself needs proof.
-It does not own commit boundaries (`rules/commit-boundaries.md`) or the review gates verification
-results get reported into (`rules/review-gates.md`).
+This rule owns what verification is required at each lifecycle boundary in `implement-it`, including
+the decision for when an intermediate committed state itself needs isolation-verification proof —
+`rules/isolation-verification.md` owns that technique's mechanics, and
+`rules/worktree-preservation.md` owns the shared stash-preservation procedure both isolation
+verification and `rules/commit-reconstruction.md` use. It does not own commit boundaries
+(`rules/commit-boundaries.md`) or the review gates verification results get reported into
+(`rules/review-gates.md`).
 
 The lifecycle this rule verifies:
 
@@ -298,60 +301,6 @@ remains the only way to prove an intermediate commit when that commit's own stan
 is a property that needs proving, distinct from whether its state happens to also satisfy this
 checkpoint.
 
-## Preserving unrelated worktree content during a Git rewrite
-
-Any procedure in this skill that needs to temporarily clear the working tree or index around content
-that is not part of what it's isolating or reconstructing — the isolation technique below, or
-whatever `rules/commit-reconstruction.md`'s reconstruction of an unpublished commit protects this
-way — uses this same qualified procedure. Never substitute an unqualified `git stash push` /
-`git stash pop` pair for it: an unqualified pop restores whatever is topmost on the stash, which is
-not necessarily the entry this step created, and can silently apply or drop an unrelated, older stash
-instead. That reconstruction procedure protects most unrelated content this way, but excludes a
-correction-touched path that shares unrelated content with the correction itself — a stash entry's
-own restoration depends on the commit it was taken against still matching history, which reconstruction
-changes by design; that specific case is handled by a direct merge against the reconstructed content
-instead (`rules/commit-reconstruction.md`'s steps 7 and 12).
-
-1. **Check whether there's anything to set aside.** `git status --porcelain`. If the working tree and
-   index are already clean, skip stashing entirely — do not run `git stash push` against a clean
-   tree, and do not run any restoration step afterward.
-2. **Otherwise, create the entry with an identifiable message**: `git stash push -u -m
-   "<description>"`. Confirm a new entry was actually created — compare `git stash list` before and
-   after, or read the command's own confirmation. A push against a tree with nothing to save reports
-   "No local changes to save" and creates nothing; treat that as the clean-tree case in step 1, not
-   as a created entry to restore later.
-3. **Record the new entry's commit SHA, immediately**: `git rev-parse stash@{0}`. The SHA, not a
-   `stash@{n}` position or the message, is this entry's stable identity — a position shifts as other
-   stashes are pushed or dropped, and a message is not guaranteed unique (two entries can carry the
-   same description). Resolve the entry's current position from the recorded SHA whenever a
-   `stash@{n}` selector is actually needed; never assume a remembered position still applies.
-4. Do the isolated work.
-5. **Restore by the recorded SHA, preserving the original staged/unstaged distinction**:
-   `git stash apply --index <the recorded SHA>`. `apply` accepts a bare commit SHA directly — unlike
-   `drop` (step 7), it treats `<stash>` as any commit that looks like a stash, not only a
-   `stash@{n}` reflog entry.
-6. **Verify before dropping.** Confirm the restoration actually matches what was set aside — the same
-   file contents, and the same staged/unstaged split — using `git status --porcelain` and the
-   relevant diffs, before removing the entry.
-7. **Resolve the current selector before dropping — do not assume the SHA itself works.**
-   `git stash drop` only accepts a `stash@{n}` reflog entry, never a bare SHA. Immediately before
-   dropping, resolve which current position holds the recorded SHA: `git stash list --format='%gd
-   %H'`, and take the `%gd` of whichever line's SHA matches the one recorded in step 3. If no line
-   matches — the recorded entry can't be found in the current stash list — stop: do not guess a
-   position, and do not drop anything. Report that the entry's identity couldn't be resolved; nothing
-   is lost as long as nothing is dropped.
-8. **On conflict, failed verification, or unresolved identity: do not drop the entry, and do not
-   report the restoration as successful.** Leave it in place, report the specific problem, and let the
-   human decide how to resolve it — the content stays recoverable exactly because the entry was never
-   dropped.
-9. **Never act on a stash entry this procedure did not itself create in this step** — an older,
-   unrelated entry, even one carrying an identical message, is left exactly as found by matching its
-   SHA, never its position or message.
-
-This is the smallest reliable procedure for this specific need. It is not a general Git-management
-subsystem, and using it here does not mandate stashing, or any other isolation mechanism, for
-ordinary work that never needed to clear the tree in the first place.
-
 ## Isolation verification: a deliberate escalation, not the default
 
 > Do not use isolation verification merely because an issue was split into multiple commits. Use it
@@ -366,31 +315,8 @@ Reach for this when, for example:
 - an intermediate commit's standalone correctness can't safely be inferred from how the working
   tree was tested during implementation.
 
-The technique:
-
-1. Commit the semantic group.
-2. Set aside every remaining change (staged, unstaged, and untracked) using the qualified procedure
-   in "Preserving unrelated worktree content during a Git rewrite" above, leaving the working tree at
-   exactly the state of the commits made so far. When nothing remains — the commit just made was the
-   last one, and the working tree is already clean — that procedure creates no entry; proceed
-   straight to step 3 against the already-clean tree.
-3. Run the project's full formatting/lint/static checks and its **full** regression suite against
-   that isolated committed state — the same full scope as pre-Gate-1 and completed-issue
-   verification, not the narrower per-commit scoping used during construction. Judge the lint/
-   format/static results against the regression-baseline model above, same as at pre-Gate-1.
-4. Restore the set-aside entry from step 2, per that same procedure — only when step 2 actually
-   created one.
-5. Repeat for each subsequent semantic commit: stage the next group, commit, set aside the rest,
-   verify in isolation, restore.
-6. After the final commit, satisfy the completed-issue checkpoint — ordinarily a fresh full-suite
-   run with nothing stashed. When step 3's own full-suite run against the final commit's isolated
-   state already covered this exact content, with nothing left to stash afterward, that run
-   directly satisfies this checkpoint under "Completed-issue verification: run or reuse" above — its
-   content match (condition 2) holds by construction, since it already ran against the final
-   committed state itself, not an earlier one; conditions 1, 3, and 4 still need confirming, the
-   same as for any other reuse. Isolation verification's per-commit runs happening at all does not
-   by itself establish this: an isolated run for an earlier commit, superseded by a later one,
-   proves only that earlier state — not the final one now being reported done.
+See `rules/isolation-verification.md` for the technique itself, loaded only once one of the criteria
+above actually applies — not merely because an issue happened to split into multiple commits.
 
 This is intentionally expensive — a full suite run per commit — which is exactly why it stays an
 escalation, not the default for every multi-commit issue. An issue with no ordering or

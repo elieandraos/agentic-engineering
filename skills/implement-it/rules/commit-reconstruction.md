@@ -121,9 +121,9 @@ this skill's own commits.
    merge handles cleanly.
 8. **Protect whatever unrelated content remains** — every path the correction never touched, plus any
    correction-touched path step 7 didn't already clear — using the qualified procedure in
-   `rules/verification.md`'s "Preserving unrelated worktree content during a Git rewrite," unmodified.
-   When nothing remains (every touched path was cleared in step 7, and nothing else was ever
-   uncommitted), that procedure's own clean-tree check means it protects nothing, correctly.
+   `rules/worktree-preservation.md`, unmodified. When nothing remains (every touched path was cleared
+   in step 7, and nothing else was ever uncommitted), that procedure's own clean-tree check means it
+   protects nothing, correctly.
 9. **Rewind to the owning commit's parent, keeping everything from O through `HEAD` staged**:
    `git reset --soft O~1` (or the equivalent parent reference) — not a hard-coded `HEAD~1`, which
    only reaches the single most recent commit and cannot fold a correction into an earlier one. This
@@ -147,8 +147,9 @@ this skill's own commits.
       that looks plausible in context can still slip past it — steps 4–6 are what make the diff
       trustworthy in the first place.
     - Commit, then verify the resulting commit in isolation before moving to the next group — every
-      commit this reconstruction produces needs `rules/verification.md`'s isolation-verification
-      technique, not only when it happens to be convenient. Reconstructing semantic history from an
+      commit this reconstruction produces needs `rules/isolation-verification.md`'s technique (the
+      same escalation `rules/verification.md`'s "Isolation verification" section reserves for exactly
+      this case), not only when it happens to be convenient. Reconstructing semantic history from an
       already-implemented diff, after the fact, is exactly the case that technique reserves the
       escalation for.
     - Repeat until every group from O through `HEAD` has its own commit again: O reconstructed with

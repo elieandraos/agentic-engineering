@@ -141,9 +141,18 @@ Trigger on requests shaped like:
   formatting, linting, and static analysis; the two distinct full-suite checkpoints, and when the
   completed-issue one may be satisfied by an established reuse of an earlier full-suite result — the
   pre-Gate-1 run, or a run already executed against the final committed state — instead of a fresh
-  run; the stronger isolation technique for proving a split; preserving pre-existing worktree
-  changes using reliable provenance; and ordering commits around feature-activation risk; consult
-  while implementing and while building/ordering commits.
+  run; when the stronger isolation escalation is warranted, routing to `isolation-verification.md`
+  for the technique itself; preserving pre-existing worktree changes using reliable provenance; and
+  ordering commits around feature-activation risk; consult while implementing and while
+  building/ordering commits.
+- `isolation-verification.md` — the per-commit full-suite escalation technique
+  `verification.md`'s "Isolation verification" section triggers; consult only once that section's
+  own criteria actually apply, or when `commit-reconstruction.md` mandates it for every rebuilt
+  commit — never merely because an issue has multiple commits.
+- `worktree-preservation.md` — the qualified stash-based procedure for temporarily setting aside
+  unrelated worktree content during a Git rewrite, shared by `isolation-verification.md` and
+  `commit-reconstruction.md`; consult only from within one of those two procedures, never directly
+  for ordinary work.
 - `issue-closure.md` — whether and how to close an issue: asking first, the closing recipe, and
   post-mutation validation; consult after the completed-issue full-suite pass, once commits exist.
   Closure is intentional before a milestone's PR merges.
