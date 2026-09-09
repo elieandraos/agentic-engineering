@@ -276,15 +276,13 @@ split into multiple commits. Its final per-commit run, when nothing remains stas
 directly satisfies the completed-issue checkpoint under the reuse conditions above.
 
 **Ordering commits around activation risk** is `rules/activation-ordering.md`'s own procedure, not
-`verification.md`'s — `verification.md` only flags the risk and hands off. A change to
-configuration, a feature flag, or another runtime activation gate can retroactively activate
-previously dormant tests and code paths the instant it lands. Before committing a step that flips
-such a gate, this skill identifies what becomes active as a result — including pre-existing tests
-the current issue didn't add — and verifies every dependency those paths require is already present
-in an earlier commit, reordering if not. `rules/commit-boundaries.md`'s dependency ordering and this
-activation-safety ordering have not been observed to conflict; no precedence rule exists for if they
-do (§11). Reaching this procedure is itself one of the examples that can also trigger isolation
-verification, above, when the activation step's own intermediate state needs proving.
+`verification.md`'s — before treating dependency order as final, `verification.md` requires
+checking each commit against runtime activation (configuration, a feature flag,
+environment-conditioned behavior) and hands off to the extracted rule only when that check finds an
+effect. `rules/commit-boundaries.md`'s dependency ordering and this activation-safety ordering have
+not been observed to conflict; no precedence rule exists for if they do (§11). Reaching this
+procedure is itself one of the examples that can also trigger isolation verification, above, when
+the activation step's own intermediate state needs proving — `verification.md` owns that decision.
 
 ## 7. Issue completion and closure
 
@@ -415,7 +413,7 @@ narrow down on its own.
 | [`commit-boundaries.md`](../skills/implement-it/rules/commit-boundaries.md) | Deriving semantic commit boundaries from the reviewed diff, commit-message content, the issue-reference trailer, and classifying where a review correction lands — handing off to `commit-reconstruction.md` for the case that needs history rewritten |
 | [`commit-reconstruction.md`](../skills/implement-it/rules/commit-reconstruction.md) | The unpublished-history reconstruction procedure itself — owning-commit identification, positive-attribution capture, round-trip verification, classification stops, and restoration — used only once `commit-boundaries.md` hands off to it |
 | [`verification.md`](../skills/implement-it/rules/verification.md) | Verification scope at every lifecycle boundary, tool/starting-state discovery, worktree-provenance preservation, the completed-issue reuse rule, and *when* isolation verification is warranted — handing off to `isolation-verification.md` for the technique itself and to `activation-ordering.md` for the activation-risk ordering procedure |
-| [`activation-ordering.md`](../skills/implement-it/rules/activation-ordering.md) | Ordering commits around a configuration, feature-flag, environment-conditioned, or other runtime activation-gate change — what becomes active, dependency verification, its relationship to `commit-boundaries.md`'s dependency ordering, and its relationship to the isolation-verification escalation; consulted only once a commit being built actually activates such a gate |
+| [`activation-ordering.md`](../skills/implement-it/rules/activation-ordering.md) | Reordering commits when checking one against runtime activation finds an effect; owns that procedure and its relationship to `commit-boundaries.md`'s dependency ordering — consulted only once the check finds one |
 | [`isolation-verification.md`](../skills/implement-it/rules/isolation-verification.md) | The per-commit full-suite escalation technique — commit, isolate, verify, restore — used only once `verification.md`'s trigger criteria apply, or unconditionally for every commit `commit-reconstruction.md` rebuilds |
 | [`worktree-preservation.md`](../skills/implement-it/rules/worktree-preservation.md) | The qualified stash-identity procedure for setting aside unrelated worktree content during a Git rewrite — shared, unmodified, by `isolation-verification.md` and `commit-reconstruction.md`; never invoked directly for ordinary work |
 | [`issue-closure.md`](../skills/implement-it/rules/issue-closure.md) | Confirming an issue's commits are reachable on the correct remote branch (pushing, with authorization, if not) before asking, whether and how to close it, the closing-comment contract, and post-mutation validation |

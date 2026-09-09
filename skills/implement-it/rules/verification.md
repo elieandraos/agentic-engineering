@@ -356,14 +356,12 @@ for a fresh run when reuse isn't otherwise established.
 
 ## Ordering commits to keep intermediate states valid
 
-Watch for any change to configuration, feature flags, environment-conditioned behavior, or another
-runtime activation gate while building or ordering commits — flipping one of these can retroactively
-change what's under test, silently activating previously-inactive tests and code paths. Ordinary
-dependency ordering and intermediate-state coherence remain required for every commit plan
-regardless of whether this activation risk applies. Once a commit being built actually activates
-such a gate, see `rules/activation-ordering.md` for the detection procedure, its relationship to
-dependency ordering, and its relationship to isolation verification — this rule does not restate
-that procedure.
+Before treating a commit's dependency order as final, check it against runtime activation: does it
+change configuration, a feature flag, environment-conditioned behavior, or another activation
+gate? Never assume no effect without that check — flipping one of these can retroactively change
+what's under test. Dependency ordering and intermediate-state coherence remain required regardless
+of the answer. Only when the check finds an activation effect, see `rules/activation-ordering.md`
+for the procedure — this rule does not restate it.
 
 ## Do / Don't
 

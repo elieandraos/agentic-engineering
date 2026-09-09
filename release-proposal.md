@@ -93,56 +93,58 @@ existing-guide update, and the assumption stated by both review rows.
 
 Extracted `implement-it`'s "Ordering commits to keep intermediate states valid" section, including
 its "Relationship to dependency ordering" subsection, out of `rules/verification.md` into a new
-`rules/activation-ordering.md`, per `docs/skill-authoring-methodology.md`. Scope is unchanged:
-configuration, feature flags, environment-conditioned behavior, and other runtime activation gates
-generally — not only explicit feature flags. `verification.md` keeps the activation-risk trigger
-stated in place (what to watch for while building commits) and hands off to the extracted file only
-once a commit being built actually activates such a gate; ordinary dependency ordering and
-intermediate-state coherence remain required for every commit plan regardless. Testing policy,
-approvals, reconstruction, and preservation mechanics are unchanged; the reproducible-install
-section was not touched. Reconciled the callers this touches: `rules/commit-boundaries.md`'s step 6
-(dependency ordering, with the conditional handoff to the new file), `rules/review-gates.md`'s
-Gate 2 plan-description bullet, `SKILL.md`'s Rules list (new bullet, and `verification.md`'s bullet
-reworded to describe flagging rather than owning the procedure), `verification.md`'s own "Isolation
-verification" trigger example (repointed from an internal "below" to the new file), the skill
-`README.md`'s context-consumption note (nine rule files, four conditional escalations, and
-activation-ordering's relationship to the isolation escalation), and `artifacts/implement-it.md`'s
-§5 commit-architecture summary, §6 verification-model summary, and §11 rule-ownership table.
-Updated `docs/skill-context-workflows.json`: renamed and re-scoped the three implement-it workflow
-rows to state their activation-change assumption explicitly (ordinary work with no activation
-changes; activation-dependent commit ordering with its required isolation verification; and
-reconstruction with no activation changes), and added `rules/activation-ordering.md` to the
-activation-dependent row only. Updated `docs/skill-context.md`'s `implement-it` note to match, with
-no new historical measurement table added to that guide.
+`rules/activation-ordering.md`, per `docs/skill-authoring-methodology.md`, then tightened the
+extraction: shortened the new file's "When this applies" and "Relationship to isolation
+verification" prose, and reconciled every caller onto one trigger phrasing — inspect whether a
+change is to configuration, a feature flag, environment-conditioned behavior, or otherwise could
+affect runtime activation, and never assume no effect without that check. Scope is unchanged: those
+gates generally, not only explicit feature flags. Ordinary structural dependency ordering
+(`rules/commit-boundaries.md`'s step 6) remains universal and required regardless of the check's
+result. `verification.md` keeps that check stated in place and hands off to the extracted file, and
+retains sole authority over *when* isolation verification is warranted (`rules/verification.md`'s
+"Isolation verification" section) — activation-ordering.md names the relationship but does not
+itself decide it. Testing policy, approvals, reconstruction, and preservation mechanics are
+unchanged; the reproducible-install section was not touched.
 
-Evidence: a line-level diff between the original `verification.md` section and the new
-`rules/activation-ordering.md` showed the extracted body (the watch-for paragraph, the four-step
-procedure, the underlying-principle quote, the worked example, and the "Relationship to dependency
-ordering" subsection) is byte-identical to the source, with only a new "When this applies" section
-prepended and a new "Relationship to isolation verification" section appended — no other wording
-changed in the moved content. `verification.md`'s own remaining text has three changes: its opening
-ownership paragraph now names `rules/activation-ordering.md`, its "Isolation verification" trigger
-example is repointed from an internal "below" cross-reference to the extracted file, and the
-extracted section is replaced with a short routing stub that keeps the activation-risk trigger and
-scope statement visible without restating the procedure. All Markdown/backtick file references in
-the nine touched files resolve; `git diff --check` is clean; `SKILL.md`'s frontmatter `description`
-is unchanged at 839 characters. `scripts/measure_skill_context.py` runs clean against the updated
-file lists. Measured modeled-workflow character counts (before extraction -> after, source revision
-`7ead845`): "ordinary issue, no activation changes" 119,958 -> 119,448 (-0.4%, from
-`verification.md` shrinking with no new file loaded on this path); "activation-dependent ordering
-with its required isolation verification" 126,589 -> 129,344 (+2.2%, `verification.md`'s reduction
-offset by the added `rules/activation-ordering.md` load — routing overhead, not duplicated content);
-"unpublished-history reconstruction, no activation changes" 141,406 -> 140,896 (-0.4%, same
-reduction as the ordinary path, no new file loaded). These are modeled workflow totals per
-`docs/skill-context.md`'s three-tier framework, not observed session usage. Behavior was traced
-statically across four scenarios by reading the moved and reconciled text, not by a live skill
-invocation: ordinary dependency ordering with no activation gate (never reaches the extracted file,
-per its own "When this applies" entry condition); activation revealing an unrelated pre-existing
-test (the extracted procedure's step 2, preserved verbatim); activation preceding a commit it
-depends on (steps 3-4 and the worked example, preserved verbatim); and an unresolved conflict
-between dependency ordering and activation ordering (the preserved "Relationship to dependency
-ordering" subsection's routing to `rules/review-gates.md`'s "when to stop and ask," itself
-unchanged by this extraction).
+Reconciled the callers this touches: `rules/commit-boundaries.md`'s step 6 (now states the check
+explicitly, before treating dependency order as final), `rules/review-gates.md`'s Gate 2
+plan-description bullet (now makes consulting `activation-ordering.md` explicitly conditional on
+the check finding an effect, replacing the earlier general "dependency order, or activation order"
+pointer), `SKILL.md`'s Rules list (both the `verification.md` and `activation-ordering.md` bullets
+shortened to the check-and-handoff framing, dropping restated scope/rationale), the skill
+`README.md`'s context-consumption note, and `artifacts/implement-it.md`'s §6 verification-model
+summary and §11 rule-ownership table (both shortened to name ownership and the conditional handoff
+without restating the procedure's steps). Updated `docs/skill-context-workflows.json`'s three
+implement-it workflow rows' notes to the same phrasing, and `docs/skill-context.md`'s `implement-it`
+note to match, with no new historical measurement table added to that guide. File lists and routing
+are unchanged from the original extraction — only prose length and wording moved.
+
+Evidence: the extracted body (the watch-for paragraph, the four-step procedure, the
+underlying-principle quote, the worked example, and the "Relationship to dependency ordering"
+subsection) was re-diffed directly against source revision `7ead845`'s `rules/verification.md` and
+remains byte-identical — this tightening pass touched only the new file's surrounding "When this
+applies" and "Relationship to isolation verification" prose, not the preserved procedure. All
+Markdown/backtick file references in the nine touched files resolve; `git diff --check` is clean;
+`SKILL.md`'s frontmatter `description` is unchanged at 839 characters.
+`scripts/measure_skill_context.py` runs clean against the updated file lists. Measured
+modeled-workflow character counts (source revision `7ead845` -> current): "ordinary issue, no
+activation changes" 119,958 -> 119,300 (-0.5%, `verification.md` and its callers net shorter, no
+new file loaded on this path); "activation-dependent ordering with its required isolation
+verification" 126,589 -> 128,779 (+1.7%, down from the untightened pass's +2.2%, since
+`activation-ordering.md` itself is now shorter — remaining overhead is the routed file's own
+"When this applies"/relationship sections, not duplicated procedure); "unpublished-history
+reconstruction, no activation changes" 141,406 -> 140,748 (-0.5%, same net reduction as the
+ordinary path, no new file loaded). These are modeled workflow totals per `docs/skill-context.md`'s
+three-tier framework, not observed session usage. Behavior was verified statically by reading the
+moved and reconciled text, not by a live skill invocation, across three scenarios: ordinary work
+with no activation-affecting change (never reaches the extracted file, per its own "When this
+applies" entry condition, while `rules/commit-boundaries.md`'s step 6 still requires the check);
+configuration-driven activation (the extracted procedure's existing-test inspection, step 2, and
+its worked example, both preserved verbatim); and activation-dependent ordering requiring isolation
+verification (the extracted file's "Relationship to isolation verification" section correctly
+names `verification.md`, not itself, as the file owning that decision). The preserved "Relationship
+to dependency ordering" subsection's routing to `rules/review-gates.md`'s "when to stop and ask" for
+an unresolved dependency-vs-activation conflict is unchanged by this pass.
 
 ## Validation to retain
 

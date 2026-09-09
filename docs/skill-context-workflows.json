@@ -112,7 +112,7 @@
     },
     {
       "name": "implement-it: one ordinary issue, no stack companion, no activation changes, no isolation, no reconstruction (cross-skill review-it call before Gate 1)",
-      "notes": "The ordinary path per implement-it/SKILL.md's current Rules list. No commit in this issue flips a configuration/feature-flag/environment-conditioned gate, so rules/activation-ordering.md is not loaded; isolation-verification.md, worktree-preservation.md, and commit-reconstruction.md are not loaded on this path either.",
+      "notes": "The ordinary path per implement-it/SKILL.md's current Rules list. No commit in this issue affects runtime activation, so rules/activation-ordering.md is not loaded; isolation-verification.md, worktree-preservation.md, and commit-reconstruction.md are not loaded on this path either.",
       "files": [
         "skills/implement-it/SKILL.md",
         "skills/implement-it/rules/sequencing.md",
@@ -128,7 +128,7 @@
     },
     {
       "name": "implement-it: same issue, activation-dependent commit ordering with its required isolation verification (no reconstruction)",
-      "notes": "A commit being built flips a configuration/feature-flag/environment-conditioned gate, so verification.md's commit-building loop hands off to rules/activation-ordering.md for the reordering procedure; that same activation step is one of verification.md's own named examples for when an intermediate committed state needs isolation-verification proof, without a review correction folding into an already-committed, unpublished commit.",
+      "notes": "A commit being built affects runtime activation, so verification.md's required check hands off to rules/activation-ordering.md for the reordering procedure; that same activation step is one of verification.md's own named examples for when an intermediate committed state needs isolation-verification proof (verification.md's decision to make), without a review correction folding into an already-committed, unpublished commit.",
       "files": [
         "skills/implement-it/SKILL.md",
         "skills/implement-it/rules/sequencing.md",
@@ -147,7 +147,7 @@
     },
     {
       "name": "implement-it: same issue, unpublished-history reconstruction, no activation changes",
-      "notes": "commit-reconstruction.md mandates isolation verification for every rebuilt commit (its own step 11). No commit in this issue flips an activation gate, so rules/activation-ordering.md is not loaded.",
+      "notes": "commit-reconstruction.md mandates isolation verification for every rebuilt commit (its own step 11). No commit in this issue affects runtime activation, so rules/activation-ordering.md is not loaded.",
       "files": [
         "skills/implement-it/SKILL.md",
         "skills/implement-it/rules/sequencing.md",

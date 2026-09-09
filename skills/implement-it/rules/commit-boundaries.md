@@ -78,10 +78,10 @@ The procedure:
 3. Inspect the actual diff (`git status`, `git diff --stat`, then per-file diffs).
 4. Identify the implementation decisions the diff actually contains.
 5. Group changes by decision, not by file location or type.
-6. Order the groups by dependency. When a commit being built also activates configuration, a
-   feature flag, environment-conditioned behavior, or another runtime activation gate,
-   `rules/activation-ordering.md` can require reordering on top of this — see that rule's
-   "Relationship to dependency ordering" for how the two interact.
+6. Order the groups by dependency — always required. Before treating that order as final, check
+   whether any group changes configuration, a feature flag, environment-conditioned behavior, or
+   otherwise could affect runtime activation; never assume it doesn't without checking. If it does,
+   `rules/activation-ordering.md` can require reordering on top of dependency order.
 7. Verify each intermediate state would be coherent, per "What makes a commit coherent" above.
 8. Propose the commit plan for human review (Gate 2 — `rules/review-gates.md`) before writing a
    single commit.

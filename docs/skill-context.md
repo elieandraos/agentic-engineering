@@ -150,10 +150,9 @@ layered on top of it — see the three `implement-it` workflow variants (ordinar
 changes, activation-dependent ordering with its required isolation verification, and reconstruction
 with no activation changes) in `skill-context-workflows.json` for what each actually adds.
 `rules/activation-ordering.md` was extracted from `rules/verification.md`'s former "Ordering commits
-to keep intermediate states valid" section; `verification.md` keeps the activation-risk trigger
-stated in place and hands off to the extracted file only once a commit being built actually flips a
-configuration, feature-flag, or environment-conditioned gate — ordinary dependency ordering with no
-such gate never reaches it. `implement-it/SKILL.md`'s "Entry contract" names
+to keep intermediate states valid" section; `verification.md` keeps the runtime-activation check in
+place and hands off to the extracted file only once that check finds an effect.
+`implement-it/SKILL.md`'s "Entry contract" names
 `plan-it/rules/issue-conventions.md` and `rules/review.md` to describe the quality bar an approved
 issue already meets; the ordinary path does not re-open either file, so they are not counted in the
 modeled `implement-it` workflows.

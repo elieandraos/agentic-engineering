@@ -2,12 +2,10 @@
 
 ## When this applies
 
-`rules/commit-boundaries.md`'s derivation procedure orders commits by structural dependency (its
-step 6); `rules/verification.md`'s default commit-building loop hands off here whenever that
-ordering also touches a change to configuration, feature flags, environment-conditioned behavior,
-or another runtime activation gate. Consult this file only once one of those changes is actually
-part of the commits being built — ordinary dependency ordering with no such gate needs nothing
-beyond `rules/commit-boundaries.md`'s own step 6.
+Consult this file only once inspecting the commits being built shows one could affect runtime
+activation — a change to configuration, a feature flag, environment-conditioned behavior, or
+another activation gate. Structural dependency ordering (`rules/commit-boundaries.md`'s step 6)
+is required regardless and never needs this file on its own.
 
 ## Ordering commits to keep intermediate states valid
 
@@ -46,9 +44,7 @@ if they do. Should that situation actually arise, it's a genuine unresolved deci
 
 ## Relationship to isolation verification
 
-An activation step whose correctness depends on earlier commits already being in place is one of
-the examples `rules/verification.md`'s "Isolation verification: a deliberate escalation, not the
-default" names for when an intermediate committed state's own correctness needs proving — see that
-section for the full escalation criteria, and `rules/isolation-verification.md` for the technique
-itself. Reordering the commits correctly under this rule does not by itself supply that proof; when
-the activation step's own intermediate state also needs proving, both apply together.
+This ordering is one of `rules/verification.md`'s named triggers for isolation verification
+(`rules/isolation-verification.md`) — `verification.md` owns that decision, not this file.
+Reordering commits correctly here does not by itself supply that proof; when the activation step's
+own intermediate state also needs proving, both apply together.

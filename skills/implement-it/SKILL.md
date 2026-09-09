@@ -143,13 +143,11 @@ Trigger on requests shaped like:
   pre-Gate-1 run, or a run already executed against the final committed state — instead of a fresh
   run; when the stronger isolation escalation is warranted, routing to `isolation-verification.md`
   for the technique itself; preserving pre-existing worktree changes using reliable provenance; and
-  flagging activation risk while building commits, routing to `activation-ordering.md` for the
-  procedure itself; consult while implementing and while building/ordering commits.
-- `activation-ordering.md` — ordering commits around a configuration, feature-flag,
-  environment-conditioned, or other runtime activation-gate change: what tests and dependencies a
-  gate flip newly activates, its relationship to `commit-boundaries.md`'s dependency ordering, and
-  its relationship to the isolation-verification escalation; consult only once a commit being built
-  actually activates such a gate — ordinary dependency ordering never needs it.
+  checking each commit against runtime activation, routing to `activation-ordering.md` when that
+  check finds an effect; consult while implementing and while building/ordering commits.
+- `activation-ordering.md` — reordering commits when checking one against runtime activation
+  (configuration, a feature flag, environment-conditioned behavior) finds an effect; consult only
+  once that check finds one — ordinary dependency ordering never needs it.
 - `isolation-verification.md` — the per-commit full-suite escalation technique
   `verification.md`'s "Isolation verification" section triggers; consult only once that section's
   own criteria actually apply, or when `commit-reconstruction.md` mandates it for every rebuilt

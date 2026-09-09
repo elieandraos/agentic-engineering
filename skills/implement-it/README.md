@@ -57,10 +57,10 @@ only when their own trigger fires, and each fires on a distinct condition — bu
 one, since firing one can force another to fire too:
 `commit-reconstruction.md` loads only when a review correction belongs to a commit already committed
 locally but not yet pushed — a correction found before anything is committed never reaches it, by
-that file's own entry condition. `activation-ordering.md` loads only when a commit being built
-activates configuration, a feature flag, environment-conditioned behavior, or another runtime
-activation gate — ordinary dependency ordering with no such gate never reaches it, and reaching it
-is itself one of the examples that can also trigger the isolation escalation below.
+that file's own entry condition. `activation-ordering.md` loads only when checking a commit against
+runtime activation (configuration, a feature flag, environment-conditioned behavior) finds an
+effect — ordinary dependency ordering never reaches it, and reaching it is itself one of the
+examples that can also trigger the isolation escalation below.
 `isolation-verification.md` and `worktree-preservation.md` load whenever `verification.md`'s own
 isolation criteria are met — an intermediate committed state's own correctness needs proving on its
 own — which is a broader trigger than reconstruction or activation ordering: it applies
