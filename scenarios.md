@@ -1595,3 +1595,48 @@ source inspection only, unchanged by this pass since no browser tooling became a
 interim. Fixtures are still hand-written, not a fuzz corpus; attribute recognition inside a
 `` ` ``-delimited template-literal string, and an attribute immediately adjacent to (rather than
 inside) a string or comment with no separating whitespace, were not separately exercised.
+
+## Follow-up correction: review-it description metadata, context-consumption measurement (2026-09-09g)
+
+This section records a bounded correction against the META-01 defect the 2026-09-08 audit above
+recorded: `skills/review-it/SKILL.md`'s frontmatter `description` exceeded the Agent Skills
+specification's 1,024-character limit. It supplements, and does not replace, that original
+record — META-01's pinned source, method, and observation above are unchanged. This same pass also
+produced [`docs/skill-context.md`](docs/skill-context.md), the new dated home for context-consumption
+measurements referenced from each skill's `README.md`, and reconciled `artifacts/implement-it.md`
+and `artifacts/document-it.md` against the approved Git-repair and Artifact-template corrections
+recorded in the follow-up sections above; those changes are not repeated here in detail.
+
+**What changed:** the description was rewritten from **1,219 to 966 characters**. The ten-category
+checklist enumeration and the "every finding is verified... distinguished from an unresolved
+limitation" clause were removed — that detail already lives in the skill's body and in
+`rules/checklist.md`/`rules/verification.md` — while the purpose statement, the three discovery
+triggers (review implemented code, review a branch or PR, verify a correction before it's relied
+on), standalone and invoked availability (callable standalone with no prior `implement-it` session
+or `plan-it`-authored issue required; also callable by `implement-it` before Gate 1 and during an
+authorized delivery correction), and the reports-only ownership boundary (never fixes application
+code, never mutates GitHub or other live/production state, every correction returns to
+`implement-it`; does not own guide, issue/plan-synthesis, investigation, or commit-plan review) are
+all preserved, checked by direct comparison against the original 1,219-character text.
+
+**Method:** the same programmatic measurement META-01 used — extracting the frontmatter
+`description` field with a regular expression and measuring its length — re-run against the
+corrected file (966 characters, within the 1,024 limit) and against all seven `SKILL.md` files'
+frontmatter, confirming each has exactly `name` and `description` (no new metadata fields,
+invocation controls, or dependencies were introduced or found), each `name` matches its directory,
+and that `review-it` was the only one that had ever exceeded the limit. Markdown link resolution was
+programmatically re-checked for every file this pass touched (`docs/skill-context.md`, the seven
+skill `README.md` files, `skills/review-it/SKILL.md`, and `artifacts/implement-it.md` /
+`artifacts/document-it.md`), and `git diff --check` reported no whitespace errors against the full
+changed set.
+
+**Result:** META-01 is corrected; `review-it`'s description is now 966 characters, with its meaning
+and discovery triggers intact by direct comparison against the original text. This does not reopen
+or alter the original audit's counts (27 aligned, 18 defect, 2 gaps) — this is one follow-up
+correction to one already-recorded defect, the same pattern as the IMP-05–08 and `document-it`
+template follow-ups above.
+
+**Limitations:** this pass measured description length and link resolution programmatically; it did
+not invoke any Agent Skills loader or a live coding-agent session to confirm the corrected
+frontmatter actually parses and activates correctly at runtime — that remains the same category of
+gap the original audit's "Measured" method rows already disclose.
