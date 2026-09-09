@@ -1,12 +1,12 @@
 {
-  "$schema_note": "Modeled workflow estimates for scripts/measure_skill_context.py. Each workflow is an explicit, hand-maintained file list checked against the SKILL.md/rules routing that existed at the time this file was last edited — it is not derived by following Markdown links or by crawling directories, and it does not by itself prove what a real session actually loads. Update it whenever a skill's routing changes. The script's own revision check only reports whether the current working tree differs from git HEAD (an uncommitted-change check) — it does not know when this file was last reconciled against routing, and cannot detect a routing change that was already committed cleanly, which would leave a workflow row stale with no signal from the script. The script does separately fail clearly, per workflow, when a listed file is missing or git-ignored.",
+  "$schema_note": "Modeled workflow estimates for scripts/measure_skill_context.py. Each workflow is an explicit, hand-maintained file list checked against the SKILL.md/rules routing that existed at the time this file was last edited \u2014 it is not derived by following Markdown links or by crawling directories, and it does not by itself prove what a real session actually loads. Update it whenever a skill's routing changes. The script's own revision check only reports whether the current working tree differs from git HEAD (an uncommitted-change check) \u2014 it does not know when this file was last reconciled against routing, and cannot detect a routing change that was already committed cleanly, which would leave a workflow row stale with no signal from the script. The script does separately fail clearly, per workflow, when a listed file is missing or git-ignored.",
   "excluded_external": [
-    "Laravel Boost's laravel-best-practices, testing-best-practices, and inertia-vue-development skills — real cost when installed, not published in this repository, not measurable here.",
-    "The artifact-design skill that document-it/SKILL.md requires loading before writing any Artifact page — same caveat.",
+    "Laravel Boost's laravel-best-practices, testing-best-practices, and inertia-vue-development skills \u2014 real cost when installed, not published in this repository, not measurable here.",
+    "The artifact-design skill that document-it/SKILL.md requires loading before writing any Artifact page \u2014 same caveat.",
     "Application/project code, prior conversation history, and tool-call output (command results, diffs, search results) for every workflow."
   ],
   "excluded_project_docs": [
-    "docs/skill-authoring-methodology.md and docs/skill-consumption.md serve a skill's author or a project's installer, not a running pipeline workflow — no SKILL.md or rule file in skills/ references either one."
+    "docs/skill-authoring-methodology.md and docs/skill-consumption.md serve a skill's author or a project's installer, not a running pipeline workflow \u2014 no SKILL.md or rule file in skills/ references either one."
   ],
   "workflows": [
     {
@@ -36,9 +36,10 @@
     },
     {
       "name": "document-it: new Markdown guide, evidence already sufficient",
-      "notes": "lab-it not routed to because evidence is already sufficient and current.",
+      "notes": "lab-it not routed to because evidence is already sufficient and current. SKILL.md's \"Document existing architecture\" trigger hands off to rules/authoring.md for the write/publish procedure.",
       "files": [
         "skills/document-it/SKILL.md",
+        "skills/document-it/rules/authoring.md",
         "skills/document-it/rules/doc-style.md",
         "skills/document-it/rules/review.md"
       ]
@@ -48,6 +49,7 @@
       "notes": "Same as the Markdown-guide row, plus the Artifact scaffold. The external artifact-design skill this requires is not counted (excluded_external).",
       "files": [
         "skills/document-it/SKILL.md",
+        "skills/document-it/rules/authoring.md",
         "skills/document-it/rules/doc-style.md",
         "skills/document-it/rules/review.md",
         "skills/document-it/rules/template.html"
@@ -55,12 +57,29 @@
     },
     {
       "name": "document-it: reconcile existing Markdown guide, evidence routed through lab-it (cross-skill)",
-      "notes": "rules/maintenance.md routes to rules/doc-style.md for how a connected change gets written. rules/template.html is not reached because this is a Markdown, not an Artifact, guide.",
+      "notes": "SKILL.md's \"Update an existing guide\" trigger hands off to rules/authoring.md for locating the target and the situation handling; rules/authoring.md then points to rules/maintenance.md for the judgment calls, and rules/maintenance.md routes to rules/doc-style.md for how a connected change gets written. rules/template.html is not reached because this is a Markdown, not an Artifact, guide.",
       "files": [
         "skills/document-it/SKILL.md",
+        "skills/document-it/rules/authoring.md",
         "skills/lab-it/SKILL.md",
         "skills/document-it/rules/maintenance.md",
         "skills/document-it/rules/doc-style.md",
+        "skills/document-it/rules/review.md"
+      ]
+    },
+    {
+      "name": "document-it: standalone review of a single Markdown guide",
+      "notes": "Reviewing a published guide's completeness, independent of writing or updating it. Loads only SKILL.md's activation/routing and rules/review.md's checklist -- it never reaches rules/authoring.md, rules/doc-style.md, or rules/maintenance.md, since a standalone review needs no writing procedure. rules/review.md's own citations to SKILL.md's \"Maintaining both formats\" and to rules/maintenance.md for identity preservation are attributions to where those rules are authoritatively stated, not a requirement to open either file to answer the checklist's questions.",
+      "files": [
+        "skills/document-it/SKILL.md",
+        "skills/document-it/rules/review.md"
+      ]
+    },
+    {
+      "name": "document-it: standalone review of a paired Markdown + Artifact guide",
+      "notes": "Same file set as the single-Markdown-guide review row: rules/review.md carries one shared checklist for both formats, including the \"Both formats maintained\" synchronization and authorized-divergence checks, so reviewing a paired guide costs no additional file over reviewing one format alone.",
+      "files": [
+        "skills/document-it/SKILL.md",
         "skills/document-it/rules/review.md"
       ]
     },
@@ -172,7 +191,7 @@
     },
     {
       "name": "ship-it: PR readiness and authorized creation, local files only",
-      "notes": "Local-file subtotal only. milestone-pr-readiness.md's own citation into milestone-completion.md's shared guidance is conditional (a manual-testing finding needing scope interpretation, or confirming Backlog eligibility) — see the 'broader estimate' row below for when that citation is actually followed.",
+      "notes": "Local-file subtotal only. milestone-pr-readiness.md's own citation into milestone-completion.md's shared guidance is conditional (a manual-testing finding needing scope interpretation, or confirming Backlog eligibility) \u2014 see the 'broader estimate' row below for when that citation is actually followed.",
       "files": [
         "skills/ship-it/SKILL.md",
         "skills/ship-it/rules/milestone-pr-readiness.md"

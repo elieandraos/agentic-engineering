@@ -127,10 +127,14 @@ actually includes.
 
 ### document-it
 
-`rules/template.html` (the Artifact scaffold) is the largest supporting file and loads only for
-Artifact output, never for a Markdown guide. `rules/maintenance.md` and `rules/review.md` both
-route back to `rules/doc-style.md` for how a change gets written, so a guide update can load more
-than its own primary rule file. See the `document-it` rows in `skill-context-workflows.json`.
+`rules/authoring.md` owns format selection and the new-guide/existing-guide-update procedures;
+`SKILL.md` states only each workflow's trigger condition and hands off to it. `rules/template.html`
+(the Artifact scaffold) is the largest supporting file and loads only for Artifact output, never
+for a Markdown guide. `rules/maintenance.md` and `rules/review.md` both route back to
+`rules/doc-style.md` for how a change gets written, so a guide update can load more than its own
+primary rule file. A standalone review reaches only `rules/review.md` — it never loads
+`rules/authoring.md`, since reviewing a guide needs no writing procedure. See the `document-it`
+rows in `skill-context-workflows.json`, including the two standalone-review rows.
 
 ### implement-it
 

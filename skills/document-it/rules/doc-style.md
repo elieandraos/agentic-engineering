@@ -97,5 +97,6 @@ This file covers the grammar to write *with*. It doesn't own what belongs elsewh
 `rules/review.md` owns critically evaluating a finished guide — don't mistake self-checking
 against this file's block vocabulary for a review, that's a separate pass run once a draft
 exists; `rules/maintenance.md` owns changing an existing guide without breaking its narrative;
-`SKILL.md` owns which workflow you're in, which format(s) apply, and how these files route
-together.
+`rules/authoring.md` owns format selection and the new-guide/existing-guide-update procedures that
+call on this grammar; `SKILL.md` owns which workflow you're in, which format(s) apply, and how
+these files route together.

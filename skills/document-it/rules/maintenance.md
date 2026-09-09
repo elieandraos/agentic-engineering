@@ -1,10 +1,11 @@
 # Maintaining an architecture guide
 
-This file governs `SKILL.md`'s "Update an existing guide" workflow: how to reconcile a published
-architecture guide — Markdown, Artifact, or both — with verified current reality without breaking
-the identity and architectural meaning it already carries. `rules/review.md` judges whether a
-finished guide communicates its architecture; this file governs what you're allowed to touch when
-a guide already does, so a maintenance pass doesn't quietly undo that.
+This file governs the "Update an existing guide" workflow — triggered from `SKILL.md`, with its
+locating, situation-handling, and identity-preservation mechanics in `rules/authoring.md` — for how
+to reconcile a published architecture guide — Markdown, Artifact, or both — with verified current
+reality without breaking the identity and architectural meaning it already carries. `rules/review.md`
+judges whether a finished guide communicates its architecture; this file governs what you're allowed
+to touch when a guide already does, so a maintenance pass doesn't quietly undo that.
 
 Maintenance fails in two opposite directions: leaving stale documentation in place for the sake of
 continuity, and rewriting or restructuring the guide beyond what the verified change actually

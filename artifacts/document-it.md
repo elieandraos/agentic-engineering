@@ -57,6 +57,11 @@ arrives — directly, or routed here from `lab-it` — the result is always a gu
 
 ## 3. Format selection and identity
 
+[`rules/authoring.md`](../skills/document-it/rules/authoring.md) owns the operational mechanics
+below — format selection, new-guide writing, and existing-guide update — routed here from
+`SKILL.md`'s own trigger conditions for each. This section explains the reasoning and constraints
+behind that contract, not a second copy of it.
+
 **A new guide.** Ask the user whether they want an Artifact, Markdown, or both, unless they've
 already specified — never infer the format from context. Artifact output requires the
 `artifact-design` skill and the `Artifact` tool, loaded before writing any Artifact page. Markdown,
@@ -189,10 +194,11 @@ author decides what to act on.
 
 Every file under `rules/` answers a question none of the others do, and is loaded only when its
 workflow actually needs it — none is a universal prerequisite. `template.html` is deliberately not
-called a rule: it's a scaffold to edit, not a normative statement the way the other three are.
+called a rule: it's a scaffold to edit, not a normative statement the way the other four are.
 
 | File | Owns |
 |---|---|
+| [`rules/authoring.md`](../skills/document-it/rules/authoring.md) | Format selection, new-guide writing, and existing-guide-update mechanics — the operational procedure `SKILL.md` hands off to once its own trigger condition fires |
 | [`rules/doc-style.md`](../skills/document-it/rules/doc-style.md) | The writing grammar for guides: section rhythm, the content-block vocabulary in both Markdown and Artifact form, tone and evidence discipline, favicon stability |
 | [`rules/template.html`](../skills/document-it/rules/template.html) (scaffold, not a rule) | The Artifact HTML/CSS/JS: theme tokens, the responsive shell, content-block CSS classes, the highlighter and its fallback contract |
 | [`rules/review.md`](../skills/document-it/rules/review.md) | Judging whether a finished guide, in either format, communicates its architecture |

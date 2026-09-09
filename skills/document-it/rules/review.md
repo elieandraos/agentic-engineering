@@ -13,8 +13,9 @@ Markdown, Artifact, or both — with a small set of items conditional on which f
   architecturally misleading — independent of whether this skill also just wrote it.
 
 **Not** while a guide is still being drafted — this is a review of a finished guide, not a
-drafting aid. Drafting uses `rules/doc-style.md`; switch to this file once there's a document to
-hold up to the light.
+drafting aid. Drafting uses `rules/authoring.md` for the writing/update procedure and
+`rules/doc-style.md` for the grammar; switch to this file once there's a document to hold up to
+the light.
 
 ## Philosophy
 
