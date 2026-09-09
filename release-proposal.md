@@ -3,14 +3,14 @@
 **Status:** candidate patch; measurement-tool corrections approved at `4e7b247` after source review and focused executed checks.
 The `document-it` authoring extraction is approved at `8ceb238` after source review and independent character-count verification.
 The `implement-it` activation-ordering extraction is approved at `6454751` after source review and independent measurement.
-The `ship-it` milestone-guidance split below is **pending Control Room review** — not yet approved.
+The `ship-it` milestone-guidance split is approved at `b44b09c` after source comparison and independent character-count verification.
 The release target, final notes, and publication are not approved.
 
 Compared with [v2.0.1](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.1)
 through [4e7b247](https://github.com/elieandraos/agentic-engineering/commit/4e7b2477cf2d26d5c411227cb33cf994c2d10ca1),
 plus the `document-it` authoring extraction reviewed at [8ceb238](https://github.com/elieandraos/agentic-engineering/commit/8ceb238178d3a5979cea371f6a7aba1d2f97b868),
 plus the `implement-it` activation-ordering extraction reviewed at [6454751](https://github.com/elieandraos/agentic-engineering/commit/64547517d081eed15f286e445a031569d4aced8d),
-plus the `ship-it` milestone-guidance split described below, pending review.
+plus the `ship-it` milestone-guidance split reviewed at [b44b09c](https://github.com/elieandraos/agentic-engineering/commit/b44b09c1bcb677d00dc126ca3d1e24cd58b3998f).
 This is a short working record. Update it in place as work is reviewed; retain detailed history
 in Git rather than appending correction reports.
 
@@ -24,10 +24,12 @@ in Git rather than appending correction reports.
 - Added [test-contracts.md](test-contracts.md): contributor-readable behavior contracts, descriptive
   approval names, concrete examples, and a framework-independent testing strategy alongside
   [scenarios.md](scenarios.md).
+- Separated document-it authoring, implement-it activation ordering, and shared ship-it milestone
+  guidance into routed files while preserving their workflow requirements.
 - Updated skill README links to the context model and reconciled the roadmap's published baseline.
 
-These are documentation and maintainer-tooling changes. No runtime skill behavior has changed in
-the compared range. The proposed v2.0.2 numbering assumes that scope remains a maintenance patch;
+The scope covers documentation, maintainer tooling, and skill-file reorganization with preserved
+workflow requirements. The proposed v2.0.2 numbering assumes that scope remains a maintenance patch;
 reassess if later work changes the release's scope.
 
 ## Reviewed measurement work
@@ -119,74 +121,38 @@ The overhead therefore comes from the combined extraction and routing changes, n
 new file's introductory sections. These are modeled unique-file text totals, not observed session
 consumption or evidence of an overall performance improvement. No live skill invocation was run.
 
-## ship-it milestone-guidance split (pending Control Room review)
+## ship-it milestone-guidance split (approved at b44b09c)
 
-Moved `rules/milestone-completion.md`'s shared delivery-lifecycle entry map, what counts as a
-delivery/phase milestone, the Backlog exemption, the milestone description as scope contract, and
-why closure and release don't gate each other into a new `rules/milestone-lifecycle.md`, per
-`docs/skill-authoring-methodology.md`. `milestone-completion.md` keeps closure eligibility, the
-post-merge-authorization check, the validated closure mutation, interrupted-attempt recovery, and
-reporting; its own condition 1 (delivery/phase milestone, not Backlog) now routes to the new file
-instead of restating the definition. Every condition and approval boundary is preserved: closure
-still requires applicable post-merge authorization plus freshly checked eligibility, and reading the
-shared guidance authorizes no mutation. Reconciled the callers this touches: `milestone-pr-readiness.md`'s
-and `ci-failure-correction.md`'s cross-references into the moved sections, `release.md`'s two
-"Milestone closure and release do not gate each other" citations, the skill `SKILL.md`'s Rules list
-(new bullet, `milestone-completion.md`'s bullet narrowed to the closure gate), the `README.md`'s
-context-consumption note (five rule files instead of four), and `artifacts/ship-it.md`'s §7
-rule-ownership table. `plan-it`'s `rules/issue-conventions.md` and `implement-it`'s
-`rules/issue-closure.md`/`rules/sequencing.md` were inspected; their existing references already
-name whichever file still owns the cited content and needed no change. Updated
-`docs/skill-context-workflows.json`: the PR-readiness "broader estimate" row now adds
-`rules/milestone-lifecycle.md` instead of `rules/milestone-completion.md`; the "post-merge closure
-only" row now adds `rules/milestone-lifecycle.md` too, since closure's own eligibility check depends
-on it; and the "full delivery happy path" row lists both files. The "local files only" PR-readiness
-row and the CI-failure-investigation row are unchanged, since neither ever required the shared
-guidance unconditionally. Updated `docs/skill-context.md`'s `ship-it` note to match, with no new
-historical measurement table added to that guide.
+Moved shared lifecycle orientation, delivery-milestone recognition, Backlog exemption, the
+milestone description's scope contract, and closure/release independence into
+`rules/milestone-lifecycle.md`. `milestone-completion.md` retains closure eligibility,
+authorization checks, the mutation, recovery, validation, and reporting. Shared guidance remains
+freely consultable; reading it grants no authority. Human authorization for CI corrections and the
+independence of closure and release are preserved.
 
-A bounded correction pass fixed several remaining defects and reduced the split's overhead.
-Stale references left pointing at their pre-split location were corrected: `release.md`'s and
-`milestone-lifecycle.md`'s "Milestone closure and release do not gate each other" citations
-(one still said "that rule"/"this rule's closure gate," another still said "below," when the
-target moved to a different file), and two "either gate below"/"Both branches below" phrasings
-whose "below" no longer resolved anywhere in that file. `milestone-lifecycle.md`'s own "What this
-file does not do" was corrected to say `ci-failure-correction.md` secures the human's
-authorization for a correction, not that it authorizes one itself — only the human authorizes.
-The same pass trimmed both files' added ownership/dependency/non-goal prose (the Principle's
-scope statement, Cross-rule dependencies, and What-this-file/rule-does-not-do sections) into
-concise owner references, touching none of the moved substantive guidance, the closure gate's
-three conditions, the mutation/recovery/validation steps, or reporting.
-`docs/skill-context-workflows.json`'s CI-failure-investigation row was reworded from a categorical
-"never needs" claim to a stated modeling assumption (no additional lifecycle guidance consulted on
-that path), with its minimal file list unchanged.
+Control Room compared the correction with `918239d` and the extraction baseline `51589b2`.
+The closure conditions, mutation/recovery steps, and reporting are unchanged by the correction;
+the mutation and reporting sections also match the original baseline. Backlog exemption,
+description-as-scope-contract guidance, and frontmatter are preserved. Moved-section references
+and ownership wording are corrected. The CI row now states its minimal-file assumption explicitly.
 
-Evidence: re-reading both files confirms the closure gate's three conditions, the closing
-procedure's five steps (including interrupted-attempt recovery and re-fetch validation), and
-reporting are unchanged from the prior pass; the Backlog exemption and delivery-milestone
-recognition are unchanged text, only referenced by corrected pointers. All Markdown/backtick file
-references in the four touched files resolve; `git diff --check` is clean.
-`scripts/measure_skill_context.py` runs clean against the updated file lists. Measured
-modeled-workflow character counts (source revision `51589b2` -> after this correction):
+Independent Unicode-character sums from the pinned GitHub files reproduced all five configured
+workflow totals. This correction review used source comparison and arithmetic; it did not rerun
+the Python script or invoke a live skill.
 
-| Modeled path | Before (51589b2) | After | Change |
+| Modeled path | Before (51589b2) | After (b44b09c) | Change |
 |---|---:|---:|---:|
 | PR readiness and authorized creation, local files only | 21,241 | 21,583 | +342 characters |
-| PR readiness, broader estimate (shared guidance consulted) | 42,064 | 34,002 | −8,062 characters |
+| PR readiness, shared guidance consulted | 42,064 | 34,002 | −8,062 characters |
 | CI-failure investigation and correction handoff | 28,947 | 29,237 | +290 characters |
 | Post-merge closure only | 27,670 | 30,827 | +3,157 characters |
 | Full delivery happy path | 59,116 | 62,418 | +3,302 characters |
 
-`milestone-completion.md` and `milestone-lifecycle.md` combined are now 23,742 characters (11,323 +
-12,419), down from the prior pass's 25,908 and up from the original single file's 20,823. The
-post-merge-closure and full-delivery paths still grow, because closure's own eligibility check
-(is this a delivery/phase milestone, not Backlog) genuinely depends on `milestone-lifecycle.md`
-now — real routing overhead, not padding — but by less than before, since the added prose
-carrying that dependency is tighter. The PR-readiness broader-estimate saving is larger than
-before, since the file it now loads instead of the old closure-mechanics-laden
-`milestone-completion.md` is itself smaller. These are modeled workflow totals per
-`docs/skill-context.md`'s three-tier framework, not observed session usage. No live skill
-invocation, browser validation, or runtime context-usage benchmark was performed.
+The two split files total 23,742 characters versus the original file's 20,823. Readiness passes
+needing shared guidance omit closure mechanics; closure and full delivery load both files and
+retain additional routing text. This is the current design's trade-off, not a proven minimum cost
+or an observed overall session saving. No live skill or consumer execution is established by this
+review.
 
 ## Validation to retain
 
