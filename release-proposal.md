@@ -1,12 +1,12 @@
 # v2.0.2 release preparation
 
 **Status:** candidate patch; measurement-tool corrections approved at `4e7b247` after source review and focused executed checks.
-The `document-it` authoring extraction below is **pending Control Room review** — not yet approved.
+The `document-it` authoring extraction is approved at `8ceb238` after source review and independent character-count verification.
 The release target, final notes, and publication are not approved.
 
 Compared with [v2.0.1](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.1)
 through [4e7b247](https://github.com/elieandraos/agentic-engineering/commit/4e7b2477cf2d26d5c411227cb33cf994c2d10ca1),
-plus the `document-it` authoring extraction described below, pending review.
+plus the `document-it` authoring extraction reviewed at [8ceb238](https://github.com/elieandraos/agentic-engineering/commit/8ceb238178d3a5979cea371f6a7aba1d2f97b868).
 This is a short working record. Update it in place as work is reviewed; retain detailed history
 in Git rather than appending correction reports.
 
@@ -43,7 +43,7 @@ Further conditional extractions are candidates only. None is implemented or incl
 release scope yet. Existing deferred ecosystem findings are not resolved by these documentation
 and measurement changes.
 
-## document-it authoring extraction (pending Control Room review)
+## document-it authoring extraction (approved at 8ceb238)
 
 Extracted `document-it`'s format-selection, new-guide-writing, and existing-guide-update
 procedures out of `SKILL.md` into a new `rules/authoring.md`, per
@@ -59,9 +59,9 @@ and rule-ownership table. Updated `docs/skill-context-workflows.json`: added `ru
 to the three existing new-guide/update workflow rows, and added two new rows — a standalone
 single-Markdown-guide review and a standalone paired-guide review — each stating the assumption its
 two-file estimate rests on: current evidence and the checklist answer every question without
-consulting further guidance. A review consulting an owning reference such as
-`rules/maintenance.md` for one specific fact doesn't amount to executing `rules/authoring.md`'s
-writing procedure, and doesn't itself invalidate that estimate. Updated `docs/skill-context.md`'s
+consulting further guidance. Consulting an owning reference such as `rules/maintenance.md` does not execute its procedure.
+Under the whole-file model, however, opening an additional file increases the estimate; the
+two-file figure applies only while its stated assumptions hold. Updated `docs/skill-context.md`'s
 `document-it` note to match, with no new historical measurement table added to that guide.
 
 Evidence: a line-level diff between the original `SKILL.md` sections and the new
@@ -78,7 +78,7 @@ is clean; `SKILL.md`'s frontmatter `description` is unchanged at 553 characters.
 increase from the added `rules/authoring.md` load, now slightly larger than the extraction's
 original +4.5%/+2.8%/+3.3% because this correction's new-guide-trigger rewording added characters
 to `SKILL.md`. The two standalone-review rows' two-file total (`SKILL.md` + `rules/review.md`)
-moved 26,743 -> 20,998 (-22%) under the stated assumption above. These are modeled workflow totals
+moved 26,743 -> 20,998 (-21.5%) under the stated assumption above. These are modeled workflow totals
 per `docs/skill-context.md`'s three-tier framework, not observed session usage. Preservation was
 traced statically across seven scenarios — new Markdown, new Artifact, both formats, existing-path
 update, inaccessible Artifact, an explicitly single-format update, and standalone Markdown/paired
