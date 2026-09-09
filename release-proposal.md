@@ -145,43 +145,48 @@ row and the CI-failure-investigation row are unchanged, since neither ever requi
 guidance unconditionally. Updated `docs/skill-context.md`'s `ship-it` note to match, with no new
 historical measurement table added to that guide.
 
-Evidence: a section-by-section diff between the original `milestone-completion.md` and the new
-`rules/milestone-lifecycle.md` showed the moved sections ("What counts as a delivery/phase
-milestone," "The milestone description, when present, is the scope contract," and "Backlog is
-exempt") are byte-identical to the source; the other three moved sections ("Where this phase
-starts," "Milestone closure and release do not gate each other," and "The milestone stays open
-through discovered work") differ only in cross-references repointed from an internal "below"/"this
-file" to the new file's own name or to `rules/milestone-completion.md` — no other wording changed.
-`milestone-completion.md`'s remaining text keeps the closure gate's three conditions, the closing
-procedure, interrupted-attempt recovery, validation, and reporting verbatim, with the same class of
-cross-reference repointing. All Markdown/backtick file references in the ten touched files resolve;
-`git diff --check` is clean; `SKILL.md`'s frontmatter `description` is unchanged at 923 characters.
-`scripts/measure_skill_context.py` runs clean against the updated file lists. Measured modeled-workflow
-character counts (before this pass, source revision `51589b2` -> after):
+A bounded correction pass fixed several remaining defects and reduced the split's overhead.
+Stale references left pointing at their pre-split location were corrected: `release.md`'s and
+`milestone-lifecycle.md`'s "Milestone closure and release do not gate each other" citations
+(one still said "that rule"/"this rule's closure gate," another still said "below," when the
+target moved to a different file), and two "either gate below"/"Both branches below" phrasings
+whose "below" no longer resolved anywhere in that file. `milestone-lifecycle.md`'s own "What this
+file does not do" was corrected to say `ci-failure-correction.md` secures the human's
+authorization for a correction, not that it authorizes one itself — only the human authorizes.
+The same pass trimmed both files' added ownership/dependency/non-goal prose (the Principle's
+scope statement, Cross-rule dependencies, and What-this-file/rule-does-not-do sections) into
+concise owner references, touching none of the moved substantive guidance, the closure gate's
+three conditions, the mutation/recovery/validation steps, or reporting.
+`docs/skill-context-workflows.json`'s CI-failure-investigation row was reworded from a categorical
+"never needs" claim to a stated modeling assumption (no additional lifecycle guidance consulted on
+that path), with its minimal file list unchanged.
+
+Evidence: re-reading both files confirms the closure gate's three conditions, the closing
+procedure's five steps (including interrupted-attempt recovery and re-fetch validation), and
+reporting are unchanged from the prior pass; the Backlog exemption and delivery-milestone
+recognition are unchanged text, only referenced by corrected pointers. All Markdown/backtick file
+references in the four touched files resolve; `git diff --check` is clean.
+`scripts/measure_skill_context.py` runs clean against the updated file lists. Measured
+modeled-workflow character counts (source revision `51589b2` -> after this correction):
 
 | Modeled path | Before (51589b2) | After | Change |
 |---|---:|---:|---:|
 | PR readiness and authorized creation, local files only | 21,241 | 21,583 | +342 characters |
-| PR readiness, broader estimate (shared guidance consulted) | 42,064 | 35,608 | −6,456 characters |
+| PR readiness, broader estimate (shared guidance consulted) | 42,064 | 34,002 | −8,062 characters |
 | CI-failure investigation and correction handoff | 28,947 | 29,237 | +290 characters |
-| Post-merge closure only | 27,670 | 32,993 | +5,323 characters |
-| Full delivery happy path | 59,116 | 64,563 | +5,447 characters |
+| Post-merge closure only | 27,670 | 30,827 | +3,157 characters |
+| Full delivery happy path | 59,116 | 62,418 | +3,302 characters |
 
-Per-file, `milestone-completion.md` shrank from 20,823 to 11,883 characters; the new
-`milestone-lifecycle.md` is 14,025 characters; `SKILL.md` grew from 6,847 to 7,085 (the new Rules
-bullet); `README.md` grew from 2,682 to 2,787 (the five-rule-file count). The PR-readiness broader
-estimate drops because `milestone-lifecycle.md` is smaller than the old, closure-mechanics-laden
-`milestone-completion.md` it used to load; the post-merge-closure and full-delivery paths grow
-because closure's own eligibility check now genuinely requires loading both files, where before the
-same content was self-contained in one. This is the shared entrypoint growth and routing overhead
-the split trades against no longer forcing a PR-readiness-only pass to load closure mechanics it
-never used. These are modeled workflow totals per `docs/skill-context.md`'s three-tier framework,
-not observed session usage. Preservation was traced statically by reading the moved and reconciled
-text, not by a live skill invocation: Backlog exclusion, the zero-open-issues-versus-blocked-issues
-distinction, a manual-testing finding scoped against a milestone description, authorized PR creation,
-existing-PR/CI-failure investigation on an open PR, and closure gated on post-merge authorization
-plus freshly re-queried eligibility, independent of release timing. No live skill invocation, browser
-validation, or runtime context-usage benchmark was performed.
+`milestone-completion.md` and `milestone-lifecycle.md` combined are now 23,742 characters (11,323 +
+12,419), down from the prior pass's 25,908 and up from the original single file's 20,823. The
+post-merge-closure and full-delivery paths still grow, because closure's own eligibility check
+(is this a delivery/phase milestone, not Backlog) genuinely depends on `milestone-lifecycle.md`
+now — real routing overhead, not padding — but by less than before, since the added prose
+carrying that dependency is tighter. The PR-readiness broader-estimate saving is larger than
+before, since the file it now loads instead of the old closure-mechanics-laden
+`milestone-completion.md` is itself smaller. These are modeled workflow totals per
+`docs/skill-context.md`'s three-tier framework, not observed session usage. No live skill
+invocation, browser validation, or runtime context-usage benchmark was performed.
 
 ## Validation to retain
 

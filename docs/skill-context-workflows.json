@@ -209,7 +209,7 @@
     },
     {
       "name": "ship-it: CI-failure investigation and correction handoff",
-      "notes": "Step 3 of ci-failure-correction.md unconditionally directs consulting implement-it/rules/review-gates.md's 'when to stop and ask' standard, so that file is mandatory for this path, not merely conditional. This path never needs milestone-lifecycle.md or milestone-completion.md: CI-failure investigation is self-contained.",
+      "notes": "Step 3 of ci-failure-correction.md unconditionally directs consulting implement-it/rules/review-gates.md's 'when to stop and ask' standard, so that file is mandatory for this path, not merely conditional. Modeled assuming no additional lifecycle guidance is consulted; a pass that does consult rules/milestone-lifecycle.md or rules/milestone-completion.md would need to add whichever file to this minimal list.",
       "files": [
         "skills/ship-it/SKILL.md",
         "skills/ship-it/rules/ci-failure-correction.md",

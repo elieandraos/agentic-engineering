@@ -27,8 +27,8 @@ PR merged → human confirms it merged → STOP: authorization to begin the post
 
 The same authorization also opens `rules/milestone-completion.md`'s closure gate for a milestone
 issue. The two branches proceed independently from there — neither this rule's publication nor that
-rule's closure is a precondition for the other; see that rule's "Milestone closure and release do not
-gate each other."
+rule's closure is a precondition for the other; see `rules/milestone-lifecycle.md`'s "Milestone
+closure and release do not gate each other."
 
 - This phase starts only once a PR has been **successfully merged** — not when implementation
   finishes, and not when the last commit lands. A merged PR is the trigger; nothing earlier in the

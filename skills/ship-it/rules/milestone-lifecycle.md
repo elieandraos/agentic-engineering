@@ -7,15 +7,12 @@
 > and closure, gated on the human's post-merge authorization already covering it and the milestone
 > having no open issues right now, both verified fresh immediately before the mutation.
 
-This file owns the shared delivery-lifecycle entry map, what counts as a delivery/phase milestone,
-the Backlog exemption, the milestone description as scope contract, and why milestone closure and
-release don't gate each other — guidance freely consultable at any point in the lifecycle, not only
-once a specific gate's own trigger fires. It owns no mutation of its own: closure eligibility, the
-post-merge authorization check, the validated closure mutation, interrupted-attempt recovery, and
-closure reporting are `rules/milestone-completion.md`'s contract. PR readiness and authorized PR
-creation are `rules/milestone-pr-readiness.md`'s; the CI-failure investigation/authorization split
-in between is `rules/ci-failure-correction.md`'s. None of these files owns deciding what belongs in
-the milestone, implementing any of it, or approving/merging the PR — the human retains both.
+This file owns the shared entry map, delivery-milestone recognition, the Backlog exemption,
+description-as-scope-contract, and closure/release independence — freely consultable at any point,
+not gated by any one procedure's trigger. It performs no mutation of its own: closure (eligibility,
+authorization check, mutation, recovery, reporting) is `rules/milestone-completion.md`'s; PR
+readiness and creation are `rules/milestone-pr-readiness.md`'s; the CI-failure split is
+`rules/ci-failure-correction.md`'s.
 
 ## Where this phase starts
 
@@ -81,14 +78,15 @@ later ones:
 - **PR merge** lands code. It doesn't mean a release was cut, or that the merged result has been
   validated yet.
 - **Post-merge authorization** is the human's explicit go-ahead, right after confirming the PR
-  merged, to begin the post-merge progression at all (`rules/release.md`'s step 0). It opens both the
-  closure gate below and `rules/release.md`'s drafting/publication — neither branch is implied to wait
-  for the other to finish.
+  merged, to begin the post-merge progression at all (`rules/release.md`'s step 0). It opens both
+  `rules/milestone-completion.md`'s closure gate and `rules/release.md`'s drafting/publication —
+  neither branch is implied to wait for the other to finish.
 - **Release + release validation** (`rules/release.md`) confirms a specific version actually
   published correctly. It doesn't by itself confirm every issue the milestone needed is closed —
   release validation can pass cleanly while the milestone still has open work (a Backlog issue
-  discovered and filed elsewhere, for instance) — and it is not a precondition this rule's closure
-  gate requires; see "Milestone closure and release do not gate each other" below.
+  discovered and filed elsewhere, for instance) — and it is not a precondition
+  `rules/milestone-completion.md`'s closure gate requires; see "Milestone closure and release do not
+  gate each other" below.
 - **Milestone completion check** is the first point where post-merge authorization and current issue
   state are confirmed together — see `rules/milestone-completion.md`'s "The closure gate."
 - **Milestone closure** (`rules/milestone-completion.md`) is the mutation itself, gated and validated
@@ -110,7 +108,7 @@ below).
 
 A persistent Backlog or other catch-all milestone is not a delivery/phase milestone, regardless of
 what it's named — see "Backlog is exempt" below. Backlog/hotfix issues never go through either gate
-below — no milestone branch, no PR, no PR-readiness check, no closure gate.
+— no milestone branch, no PR, no PR-readiness check, no closure gate.
 
 ## The milestone stays open through discovered work
 
@@ -142,9 +140,8 @@ reinterpret, or second-guess it (see "Cross-rule dependencies" below).
 
 ## Milestone closure and release do not gate each other
 
-> Both branches below start from the same event — the human's explicit post-merge authorization —
-> and each proceeds entirely through its own rule from there. Neither is a precondition for the
-> other.
+> Both branches start from the same event — the human's explicit post-merge authorization — and
+> each proceeds entirely through its own rule from there. Neither is a precondition for the other.
 
 `rules/milestone-completion.md`'s closure gate does not wait for `rules/release.md`'s
 post-publication validation to have passed, and `rules/release.md` does not wait for that closure
@@ -163,36 +160,24 @@ treat a quiet stretch of zero open issues on it as anything worth acting on.
 
 ## Cross-rule dependencies
 
-This file sits alongside, not downstream of, the gates that consult it — it performs no mutation of
+This file sits alongside, not downstream of, the gates that consult it, and performs no mutation of
 its own:
 
-- **`implement-it/rules/issue-closure.md`** closes each issue, intentionally before the milestone's PR
-  merges — the entry map above places that event relative to the rest of the lifecycle; it doesn't
-  redefine that rule's own closure procedure.
-- **`plan-it`'s `rules/issue-conventions.md`** owns milestone classification, naming,
-  descriptions, and issue drafting. This file consumes that classification and description as
-  given; it does not decide what belongs in a milestone, name one, or draft its description.
-- **`rules/milestone-pr-readiness.md`** owns milestone PR readiness and authorized creation, the
-  earlier milestone-level gate the entry map above places before closure. This file states when that
-  gate starts and what it must not assume; it does not redefine the gate's own three conditions.
-- **`rules/ci-failure-correction.md`** owns the CI-failure investigation/authorization split between
-  PR creation and merge, one moment the entry map above places in sequence. Not restated here.
-- **`rules/milestone-completion.md`** owns the closure gate's own eligibility conditions, the human's
-  post-merge authorization check, the validated closure mutation, interrupted-attempt recovery, and
-  closure reporting. This file supplies the classification, scope-contract, and independence
-  guidance that gate consumes; it does not perform the gate itself.
-- **`rules/release.md`** owns release drafting, publication, and post-publication validation, and its
-  step 0 owns asking the post-merge authorization this file's entry map and independence guidance
-  also describe. Neither this file nor `rules/release.md` gates the other.
+- **`implement-it/rules/issue-closure.md`** closes each issue, before the milestone's PR merges.
+- **`plan-it`'s `rules/issue-conventions.md`** owns milestone classification, naming, descriptions,
+  and issue drafting; this file consumes that as given.
+- **`rules/milestone-pr-readiness.md`** owns PR readiness and authorized creation.
+- **`rules/ci-failure-correction.md`** owns the CI-failure investigation/authorization split.
+- **`rules/milestone-completion.md`** owns closure: eligibility, authorization check, the validated
+  mutation, recovery, and reporting.
+- **`rules/release.md`** owns release drafting, publication, and validation.
+
+None of these is restated here; this file supplies only the shared classification and orientation
+each of them consumes.
 
 ## What this file does not do
 
-- It does not decide milestone closure eligibility, request or confirm post-merge authorization, run
-  the closure mutation, recover an interrupted closure attempt, or report a closure result —
-  `rules/milestone-completion.md` owns all of that.
-- It does not check PR readiness or create a PR — `rules/milestone-pr-readiness.md` owns that.
-- It does not investigate a CI failure or authorize a correction — `rules/ci-failure-correction.md`
-  owns that.
-- It does not draft, approve, or publish a release — `rules/release.md` owns that.
-- Consulting it authorizes no mutation by itself: reading the entry map, the milestone definition, or
-  the independence guidance is orientation, not approval for whichever gate's mutation comes next.
+It performs none of the gates above — no closure eligibility, authorization, or mutation; no PR
+readiness or creation; no CI-failure investigation or authorization; no release drafting or
+publication. Consulting it authorizes nothing: reading the entry map or the independence guidance is
+orientation, not approval for whichever gate's mutation comes next.

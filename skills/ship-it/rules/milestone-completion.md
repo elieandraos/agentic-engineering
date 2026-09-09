@@ -11,15 +11,13 @@
 Closure is not an automatic consequence of issue closure, PR merge, or release publication — each of
 those proves something narrower, and none of them individually proves the milestone is ready to
 close. This rule owns the closure mutation itself: eligibility, the post-merge-authorization check,
-the validated mutation, interrupted-attempt recovery, and reporting. The shared delivery-lifecycle
-entry map, what counts as a delivery/phase milestone, the Backlog exemption, the milestone
-description as scope contract, and closure/release independence live in
-`rules/milestone-lifecycle.md` instead — freely consultable at any point in the lifecycle, not only
-once this gate's own trigger fires. PR readiness and authorized PR creation are
-`rules/milestone-pr-readiness.md`'s own contract, and the CI-failure investigation/authorization
-split in between is `rules/ci-failure-correction.md`'s. None of these files owns deciding what
-belongs in the milestone, implementing any of it, or approving/merging the PR — the human retains
-both.
+the validated mutation, interrupted-attempt recovery, and reporting. Shared lifecycle guidance
+(the entry map, delivery-milestone recognition, the Backlog exemption, description-as-scope-contract,
+and closure/release independence) is `rules/milestone-lifecycle.md`'s, freely consultable at any
+point, not gated by this rule's own trigger. PR readiness and authorized PR creation are
+`rules/milestone-pr-readiness.md`'s, and the CI-failure investigation/authorization split in between
+is `rules/ci-failure-correction.md`'s. None of these files owns deciding what belongs in the
+milestone, implementing any of it, or approving/merging the PR — the human retains both.
 
 ## The closure gate
 
@@ -125,10 +123,8 @@ Do not re-print the milestone's issue list or the release notes — the reader c
 
 This rule sits downstream of several other contracts and does not redefine any of them:
 
-- **`rules/milestone-lifecycle.md`** owns the shared delivery-lifecycle entry map, what counts as a
-  delivery/phase milestone, the Backlog exemption, the milestone description as scope contract, and
-  why closure and release don't gate each other. This gate's condition 1 (delivery/phase milestone,
-  not Backlog) consumes that classification directly; this rule does not restate it.
+- **`rules/milestone-lifecycle.md`** owns the shared guidance named in the Principle above —
+  condition 1 consumes its classification directly, without restating it.
 - **`implement-it/rules/issue-closure.md`** closes each issue, intentionally before the milestone's PR
   merges — this rule's closure gate re-verifies zero open issues at the moment of closure, but doesn't
   re-decide whether any individual issue should have been closed.
@@ -148,11 +144,8 @@ This rule sits downstream of several other contracts and does not redefine any o
 
 - It does not decide milestone scope or draft issues.
 - It does not run closure at issue closure or at PR merge.
-- It does not touch Backlog or any other persistent catch-all milestone, and does not define what
-  counts as one — see `rules/milestone-lifecycle.md`'s "Backlog is exempt."
-- It does not require release publication to have completed before closing the milestone, and
-  closing the milestone is not itself a precondition for release publication — the two proceed
-  independently once the human gives post-merge authorization (see `rules/milestone-lifecycle.md`'s
+- It does not touch Backlog or define what counts as one (`rules/milestone-lifecycle.md` does).
+- It does not require release publication first, or vice versa (`rules/milestone-lifecycle.md`'s
   "Milestone closure and release do not gate each other").
 - It does not ask for a second, separate human approval before closing. The post-merge authorization
   already covers it; this rule only re-verifies that authorization and eligibility are both actually
