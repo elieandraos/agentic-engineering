@@ -159,12 +159,13 @@ the user.
 - Milestone creation requires the metadata approval in §5, same as any other field.
 
 Milestone lifecycle beyond this point is not this rule's job. This rule's responsibility stops at
-classifying and defining a milestone's scope during planning — milestone PR-readiness and closure
-belong entirely to `ship-it`'s `rules/milestone-completion.md`, whose current contract governs
-when a milestone is ready for a PR and when it's eligible to close, independently of when its release
-publishes. A scoped delivery milestone and a persistent catch-all milestone stay structurally distinct
-through that downstream lifecycle too, since it treats them differently. Always consult that rule's
-current contract directly rather than restating it here.
+classifying and defining a milestone's scope during planning — milestone PR-readiness belongs to
+`ship-it`'s `rules/milestone-pr-readiness.md`, and closure belongs to its
+`rules/milestone-completion.md`, whose current contracts govern when a milestone is ready for a PR
+and when it's eligible to close, independently of when its release publishes. A scoped delivery
+milestone and a persistent catch-all milestone stay structurally distinct through that downstream
+lifecycle too, since it treats them differently. Always consult those rules' current contracts
+directly rather than restating them here.
 
 ### Milestone descriptions
 
@@ -282,7 +283,7 @@ it can actually be satisfied at the point this issue is expected to close under 
 project's own delivery workflow.
 
 `plan-it` does not own that delivery workflow, and this section does not redesign it — see
-`SKILL.md`'s "Handoff" and `ship-it/rules/milestone-completion.md`'s current contract for how
+`SKILL.md`'s "Handoff" and `ship-it/rules/milestone-pr-readiness.md`'s current contract for how
 and when a milestone issue actually closes relative to its milestone's PR. What this section owns is
 narrower: an issue's own stated completion bar must not describe proof that structurally cannot exist
 yet at that issue's own closure boundary.

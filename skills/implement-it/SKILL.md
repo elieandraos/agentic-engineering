@@ -87,7 +87,7 @@ milestone (zero open issues) hands off to `ship-it`'s milestone PR-readiness ass
 
 When `ship-it` investigates a CI failure on an open milestone PR, determines a correction stays
 within already-approved scope, and the human explicitly authorizes it
-(`ship-it/rules/milestone-completion.md`'s "CI failure on an open milestone PR"), it hands the
+(`ship-it/rules/ci-failure-correction.md`'s "CI failure on an open milestone PR"), it hands the
 authorized fix to this skill. Accept this entry only once that human authorization actually
 accompanies the handoff — `ship-it`'s own determination that a fix stays in scope is necessary but
 never sufficient by itself; without the human's explicit authorization there is nothing yet for this
@@ -159,7 +159,7 @@ Trigger on requests shaped like:
 - `sequencing.md` — branch readiness before starting an issue (Backlog/hotfix on the trunk branch vs.
   a shared milestone branch, inspected/recommended/created only with human approval), and, after a
   validated closure, recomputing the milestone's dependency-ready set and reporting/recommending the
-  next issue — or handing off to `ship-it/rules/milestone-completion.md` when zero open issues
+  next issue — or handing off to `ship-it/rules/milestone-pr-readiness.md` when zero open issues
   remain, as distinct from an empty ready set with blocked issues still open.
 
 > Detailed operational behavior lives in `rules/*.md`.

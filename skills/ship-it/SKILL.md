@@ -76,15 +76,21 @@ Trigger on requests shaped like:
 
 ## Rules
 
-- `milestone-completion.md` — three milestone-level surfaces: PR readiness (all issues closed +
-  confirmed manual testing + no follow-up found), consulted once the milestone genuinely has zero
-  open issues remaining (the same condition `implement-it/rules/sequencing.md`'s recompute reports,
-  checked directly against current GitHub state); authorized PR creation once readiness passes; and
-  the three-part closure gate plus the Backlog exemption and validated closure mutation, consulted
-  once the human gives the post-merge authorization — that authorization is the approval for
-  closure, so no second approval is asked, and closure is not gated on release publication itself.
-  Also owns investigating and explaining a CI failure on an open milestone PR, requesting the
-  human's authorization for a correction, and handing it to `implement-it` once given.
+- `milestone-pr-readiness.md` — the three-condition PR-readiness gate (all issues closed + confirmed
+  manual testing + no follow-up found), consulted once the milestone genuinely has zero open issues
+  remaining (the same condition `implement-it/rules/sequencing.md`'s recompute reports, checked
+  directly against current GitHub state); and authorized PR creation once readiness passes —
+  convention discovery, existing-PR/interrupted-creation detection, the exact-content approval gate,
+  and post-creation validation.
+- `ci-failure-correction.md` — investigating and explaining a CI failure on an already-open milestone
+  PR, determining whether a correction stays within already-approved scope, requesting the human's
+  explicit authorization for it, and handing it to `implement-it` once given; consult once real CI
+  fails against an open, not-yet-merged milestone PR.
+- `milestone-completion.md` — the shared delivery-lifecycle entry map (which of the three files
+  applies at each point), what counts as a delivery/phase milestone, the Backlog exemption, and the
+  three-part closure gate plus the validated closure mutation, consulted once the human gives the
+  post-merge authorization — that authorization is the approval for closure, so no second approval is
+  asked, and closure is not gated on release publication itself.
 - `release.md` — the release phase: a post-merge authorization gate right after the human confirms a
   PR merged (the same gate that also opens `milestone-completion.md`'s closure gate — neither branch
   waits on the other), then discovering the project's real release policy, understanding the release,

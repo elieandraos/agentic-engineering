@@ -42,10 +42,12 @@ Does not implement code. Deciding what work should exist belongs to
 
 ## Context consumption
 
-Activation loads only `SKILL.md`. `rules/milestone-completion.md` (the largest rule file in this
-ecosystem, covering PR readiness, CI-failure investigation, and the closure gate) and `rules/release.md`
-each load only when their own phase is reached — a PR-readiness check alone does not reach
-`release.md`. See [dated measurements and representative-workflow
+Activation loads only `SKILL.md`. Each of its four rule files loads only for its own phase:
+`rules/milestone-pr-readiness.md` for the PR-readiness check and authorized creation;
+`rules/ci-failure-correction.md` only if real CI actually fails on the open PR;
+`rules/milestone-completion.md` for the shared delivery-lifecycle map and the closure gate; and
+`rules/release.md` only once a PR has merged — a PR-readiness check alone reaches none of the other
+three. See [dated measurements and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#ship-it).
 
 ## Install

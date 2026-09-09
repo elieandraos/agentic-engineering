@@ -15,7 +15,7 @@ milestone issue, even before that PR exists.** Closure marks that this issue's i
 verification are done, not that its commits have reached the trunk branch. For a Backlog/hotfix issue
 worked directly on the trunk branch, that gap is usually momentary or nonexistent; for a milestone
 issue on a shared branch, several issues can close this way before the branch is ever proposed as a
-PR — `ship-it/rules/milestone-completion.md`'s "Milestone PR readiness" gate is what checks the
+PR — `ship-it/rules/milestone-pr-readiness.md`'s "Milestone PR readiness" gate is what checks the
 aggregate state of all that already-closed work before it moves toward a PR.
 
 Closing before a PR exists never means closing before the commits themselves exist remotely, though:
@@ -217,8 +217,9 @@ a link. Don't re-print the full issue body or the closing comment — the reader
 - **It does not reopen issues.** This rule owns closing a committed, verified issue — not reopening
   one. The observed default, when a later finding (e.g. milestone manual testing) concerns work this
   rule already closed, is a *new* issue referencing the original — not reopening it — per
-  `ship-it/rules/milestone-completion.md`'s "When manual testing finds something." That default doesn't make
-  reopening this rule's job; it just means reopening isn't the path a normal finding takes.
+  `ship-it/rules/milestone-pr-readiness.md`'s "When manual testing finds something." That default
+  doesn't make reopening this rule's job; it just means reopening isn't the path a normal finding
+  takes.
 
 ## Do / Don't
 

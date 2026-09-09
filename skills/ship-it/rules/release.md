@@ -39,7 +39,7 @@ gate each other."
 - **PR creation and merge strategy are not owned by this rule.** However a PR came to be merged is
   out of scope here — this rule picks up from "a PR merged," full stop. For a milestone issue, the
   observed convention is that its PR references the milestone it integrates — see
-  `rules/milestone-completion.md`'s "The milestone-PR reference convention"; this rule has no PR-
+  `rules/milestone-pr-readiness.md`'s "The milestone-PR reference convention"; this rule has no PR-
   content requirements of its own.
 - **The human's explicit confirmation that the PR merged is the integration gate.** Before that
   confirmation, the human is expected to have already waited on CI/CD checks, confirmed there's no

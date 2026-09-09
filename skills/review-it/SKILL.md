@@ -25,7 +25,7 @@ The same capability, reached from three different places — not three procedure
   are complete, before stopping at Gate 1 (`implement-it/rules/review-gates.md`).
 - **During an authorized delivery correction.** `implement-it` invokes this skill the same
   standalone way before that correction's own Gate 1/Gate 2 pass, when performing a correction
-  `ship-it` has handed it (`ship-it/rules/milestone-completion.md`'s "CI failure on an open
+  `ship-it` has handed it (`ship-it/rules/ci-failure-correction.md`'s "CI failure on an open
   milestone PR").
 
 No entry point requires another skill's context. A standalone invocation proceeds with whatever

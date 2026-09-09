@@ -102,7 +102,7 @@ Distinguish two different reasons before doing anything else, since only one of 
 milestone delivery:
 
 - **Zero open issues remain.** The milestone genuinely has nothing left — no open issue, ready or
-  blocked. Report the empty set and hand off to `ship-it/rules/milestone-completion.md`'s "Milestone
+  blocked. Report the empty set and hand off to `ship-it/rules/milestone-pr-readiness.md`'s "Milestone
   PR readiness" gate rather than recommending a next issue that doesn't exist. This rule does not
   check that gate's conditions itself (final manual testing, whether it found anything) — it only
   recognizes this state and points to where that question actually gets answered.
@@ -134,7 +134,7 @@ authorization.
 - Explain newly ready, already ready, and blocked work — not just a flat ready list.
 - Recommend when the evidence supports one, with a concise rationale.
 - Let the human make the sequencing decision.
-- Hand off to `ship-it/rules/milestone-completion.md`'s PR-readiness gate only when zero open issues
+- Hand off to `ship-it/rules/milestone-pr-readiness.md`'s PR-readiness gate only when zero open issues
   remain, rather than treating "no next issue" as nothing to report.
 - Report blocked issues, rather than handing off to PR readiness, when open issues remain but none is
   currently dependency-ready.
@@ -148,6 +148,7 @@ authorization.
 - Treat a recommendation, or an immediate human answer, as authorization to start implementing.
 - Chain straight into the next issue within the same pass.
 - Check milestone PR-readiness or closure conditions from this rule — that's
-  `ship-it/rules/milestone-completion.md`'s job.
+  `ship-it/rules/milestone-pr-readiness.md`'s and `ship-it/rules/milestone-completion.md`'s job,
+  respectively.
 - Hand off to milestone PR readiness merely because nothing is dependency-ready right now, when open,
   blocked issues remain.

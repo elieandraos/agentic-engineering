@@ -63,7 +63,7 @@ scope this invocation is actually working from:
 - **An authorized delivery correction.** No approved issue is required to reach this gate at all
   (`SKILL.md`'s "Delivery corrections"); supply the explicitly authorized correction scope and its
   supporting evidence instead — the investigated failure, the scope determination, and the human's
-  authorization (`ship-it/rules/milestone-completion.md`'s "CI failure on an open milestone PR").
+  authorization (`ship-it/rules/ci-failure-correction.md`'s "CI failure on an open milestone PR").
 
 Either way, this gate always supplies whatever intended-scope evidence it actually has to
 `review-it` — it never invokes `review-it` with no scope evidence at all, unlike a standalone caller
