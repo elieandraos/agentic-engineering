@@ -6,7 +6,7 @@ later, explicitly authorized action.
 
 ## Proposed tag and title
 
-Tag `v2.0.1`; release title **"Agentic Engineering v2.0.1."**
+Tag `v2.0.1`; release title **"Agentic Engineering v2.0.1"**
 
 ## Release candidate — exact target SHA
 
@@ -56,12 +56,14 @@ skill's own routing — no explicit "add these additional skill names" step, unl
 >   reach the commit a correction actually belonged to when more than one commit separated it from
 >   `HEAD`. The isolation-verification technique's own preservation step could similarly collapse a
 >   file's staged/unstaged split during restoration. The reconstruction procedure now captures every
->   touched path's committed/staged/working content before mutating anything, isolates a correction
->   positively (never by subtracting a known piece from the combined content), verifies a split by
->   round-trip before trusting it, and stops — leaving the repository untouched — on any capture-time
->   or restoration-time ambiguity it can't safely resolve. Worktree preservation now tracks a stash
->   entry by its commit SHA rather than its position or message, so an older, unrelated stash is never
->   mistaken for the one this procedure created.
+>   touched path's committed/staged/working content before mutating anything and isolates a correction
+>   positively (never by subtracting a known piece from the combined content), verified by round-trip
+>   before it's trusted. A capture-time ambiguity it can't safely resolve now stops the procedure
+>   before any real mutation, leaving the repository untouched; a restoration-time failure — which can
+>   only surface after history has already been rewound and rebuilt — instead stops with the captured
+>   recovery data preserved, rather than guessing or discarding anything. Worktree preservation now
+>   tracks a stash entry by its commit SHA rather than its position or message, so an older, unrelated
+>   stash is never mistaken for the one this procedure created.
 > - **`document-it`: Artifact-template syntax highlighting and mobile navigation.** The template's
 >   syntax highlighter could corrupt rendered code containing a `//`-style URL (PHP/TypeScript) by
 >   stranding internal placeholder characters in the output, and a data-lang value naming an inherited
@@ -91,6 +93,9 @@ skill's own routing — no explicit "add these additional skill names" step, unl
 >
 > ### Added
 >
+> - `scenarios.md`: the audit evidence record grounding every fix above, with each fix's own
+>   before/after behavior traced against a concrete fixture; the affected skills' architecture
+>   dossiers (`artifacts/`) reconciled to reflect the fixes and reorganization.
 > - `docs/skill-context.md`: dated, reproducible file-size measurements and modeled (not measured)
 >   representative-workflow loading estimates for every skill, linked from each skill's own README.
 > - Several principles added to `docs/skill-authoring-methodology.md`, distilled from this release's
@@ -108,17 +113,33 @@ skill's own routing — no explicit "add these additional skill names" step, unl
 > npx skills update <your already-installed skill names> -p -y
 > ```
 >
-> No new skill names are introduced in this release, so a plain refresh of whatever skills your
-> project already has installed is sufficient — unlike `v2.0.0`, this release needs no "add these
-> additional names" step. A GitHub-source update tracks this repository's default branch at the
-> moment the update command runs, not a pinned tag — running it well after this release publishes,
-> once `main` has advanced further, will pick up whatever is on `main` at that later moment, not
-> necessarily `v2.0.1` specifically. After updating, confirm your installed `implement-it` and
-> `ship-it` copies actually include the new supporting files this release adds
-> (`rules/commit-reconstruction.md`, `rules/isolation-verification.md`, `rules/worktree-preservation.md`
-> under `implement-it`; `rules/milestone-pr-readiness.md`, `rules/ci-failure-correction.md` under
-> `ship-it`) — a successful update command is not proof every new file actually landed; read the
-> installed directory back to confirm it.
+> No new skill names are introduced in this release. If your project's `v2.0.0` migration is already
+> complete — all six portable skills, plus any applicable stack companion, already installed — this
+> refresh is sufficient, unlike `v2.0.0` itself, which needed an explicit "add these additional
+> names" step. Refreshing never adds a skill your project didn't already have installed, though: if a
+> project is still missing one of the six from an incomplete `v2.0.0` migration, this update won't add
+> it — install the missing skill(s) explicitly first.
+>
+> An ordinary refresh follows whichever source and ref your project's existing install already used.
+> For the common case — an unqualified `owner/repo` source, with no explicit ref — that means
+> tracking this repository's default branch at the moment the update command runs: running it once
+> `main` has advanced past this release will pick up whatever `main` is at that later moment, not
+> necessarily `v2.0.1` specifically. To install or refresh from the exact `v2.0.1` tag once it
+> publishes, use an explicit ref instead:
+>
+> ```shell
+> npx skills add elieandraos/agentic-engineering#v2.0.1
+> ```
+>
+> A later `skills update` against a project installed this way continues to track that same recorded
+> ref, not the default branch.
+>
+> After updating, confirm your installed `implement-it` and `ship-it` copies actually include the new
+> supporting files this release adds (`rules/commit-reconstruction.md`,
+> `rules/isolation-verification.md`, `rules/worktree-preservation.md` under `implement-it`;
+> `rules/milestone-pr-readiness.md`, `rules/ci-failure-correction.md` under `ship-it`) — a successful
+> update command is not proof every new file actually landed; read the installed directory back to
+> confirm it.
 >
 > ### Validation
 >
@@ -128,10 +149,11 @@ skill's own routing — no explicit "add these additional skill names" step, unl
 > real commands, real repositories created and discarded outside this project, results inspected via
 > `git log`/`git show`/`git diff`/`git stash list`. The `document-it` template fixes were validated by
 > executing the shipped highlighter script against a minimal DOM stub in Node and by source/cascade
-> inspection for the mobile-navigation CSS fix. **No skill was invoked end to end as a live session,
-> and no consuming project's installation, refresh, or pipeline run was performed.** Real-browser
-> rendering of the Artifact template was not exercised — the highlighter fixes are confirmed by script
-> execution, not a rendered page.
+> inspection for the mobile-navigation CSS fix. **This validation record does not include a live
+> skill session or a consuming project's installation, refresh, or pipeline run** — whether either has
+> happened outside this record is not something it establishes either way. Real-browser rendering of
+> the Artifact template was not exercised — the highlighter fixes are confirmed by script execution,
+> not a rendered page.
 >
 > ### Known deferred items (not in this release)
 >
@@ -160,16 +182,23 @@ skill's own routing — no explicit "add these additional skill names" step, unl
   `npx skills add`/`update` against this repository's current default branch, independent of whether
   `v2.0.1` is ever tagged.
 - §7: "a GitHub source tracks the source repository's default branch at install/update time, not a
-  pinned ref" — this is the basis for the release-note text's own distinction above between running
-  an update *now* (while `main`'s tip equals the proposed target SHA) versus running it *later* (once
-  `main` has advanced past `v2.0.1`). This guidance uses only the ordinary, unqualified
-  `owner/repo` source `docs/skill-consumption.md` itself documents, for which that statement holds;
-  `scenarios.md`'s CONS-03 finding flags the statement as too broad for a source URL that already
-  carries an explicit ref (which the installer actually honors), but that capability isn't documented
-  in `docs/skill-consumption.md` and isn't asserted here — see "Known deferred items" above. A
-  consumer who needs the exact tagged `v2.0.1` correspondence and wants to rely only on what this
-  repository's own documentation currently states should confirm `main`'s tip against the `v2.0.1`
-  tag's SHA before updating, rather than assuming the update command provides that guarantee.
+  pinned ref" — accurate specifically for the ordinary, unqualified `owner/repo` source
+  `docs/skill-consumption.md` itself documents; the release-note text's own default-branch caveat
+  above is scoped to that same case, not to every install. `main`'s own tip is not a usable reference
+  point for "the exact `v2.0.1` contents" by the time anyone reads this proposal — this document's
+  own commit, and any later correction to it, already land on `main` after the proposed target SHA,
+  so `main` moves past that target the moment this proposal itself is pushed. The release-note text's
+  explicit-ref example above is the way to obtain the exact tagged contents instead, once the tag
+  exists.
+- Confirmed independently, beyond `scenarios.md`'s CONS-03 finding: reading the `skills` CLI's own
+  source (`vercel-labs/skills` at commit `80feb48868972d518436f26711509bc78595b5cb`,
+  `src/source-parser.ts`'s `parseFragmentRef` and GitHub-tree-URL matchers, and `src/update.ts`'s
+  `firstEntry.ref` handling) confirms an `owner/repo#<ref>` or `.../tree/<ref>` source records that
+  ref in `skills-lock.json`, and a later `skills update` re-clones using that same recorded ref, not
+  the default branch — the basis for the release-note's explicit-tag example. **This is source-verified
+  installer behavior, not an executed installation** — no `skills add`/`update` command was actually
+  run against this proposal, and `docs/skill-consumption.md` itself is not updated with this finding
+  in this pass (see "Known deferred items" above, and CONS-03/CONS-04 there specifically).
 - §9: "diff the update before committing it, and validate only the skills whose files actually
   changed" — for this release, that's `document-it`, `implement-it`, `plan-it` (reference-only),
   `review-it`, and `ship-it`; `lab-it` and `laravel-inertia-stack` have no behavioral change in this
@@ -223,8 +252,10 @@ note above:
    `docs/skill-authoring-methodology.md` additions and `docs/skill-context.md`/README wording
    corrections listed in the release note's "Added" section.
 
-Every commit in this range individually passed Control Room review before the next began — this
-proposal introduces no new, unreviewed runtime change of its own.
+Each numbered group above corresponds to one task's preparation; that task's own final commit was
+confirmed as the approved starting point before the next task began — batch-level review of each
+task's resulting state, not necessarily a separate review of every individual commit inside a batch.
+This proposal introduces no new, unreviewed runtime change of its own.
 
 ## Validation performed for this proposal (accurate, not end-to-end)
 
@@ -241,16 +272,17 @@ proposal.**
 ## Concrete gap found while checking summaries against these notes (reported, not silently repaired)
 
 `artifacts/ship-it.md` §8's confidence section states "no skill in this ecosystem has been invoked
-end to end since `implement-it` and `review-it` were extracted from what this skill used to be" —
-correct as a general claim, but it names only that earlier, pre-`v2.0.0` split. It does not
-explicitly name the newer `milestone-completion.md` three-way split this release also makes (§7's
-rule-ownership table was updated for that split; §8's confidence prose was not). The underlying fact
-this sentence states — no live consumer run has exercised any of this skill's file splits — still
-covers the newer split correctly by implication, so this is not a contradiction with the release note
-above, which already states the same "no live skill execution" limitation independent of which split
-it applies to. It is a completeness gap in that dossier's own wording, left for a future documentation
-pass rather than fixed here, since this task's scope is the release proposal and a minimal roadmap
-note, not further dossier edits.
+end to end since `implement-it` and `review-it` were extracted from what this skill used to be" — a
+claim about that dossier's own recorded evidence, not something this proposal independently verifies
+beyond it. It names only that earlier, pre-`v2.0.0` split, not the newer `milestone-completion.md`
+three-way split this release also makes (§7's rule-ownership table was updated for that split; §8's
+confidence prose was not). Scoped the same way this proposal's own validation claims are scoped
+above — to what a specific record actually establishes, not to every user anywhere — that dossier's
+evidence-gap statement would cover the newer split too by the same reasoning, so this is not a
+contradiction with the release note above, which states the same recorded-evidence limitation the
+same way. It is a completeness gap in that dossier's own wording (naming only the older split), left
+for a future documentation pass rather than fixed here, since this task's scope is the release
+proposal and a minimal roadmap note, not further dossier edits.
 
 No other contradiction was found between this proposal's claims and the current dossier/`scenarios.md`
 text.
