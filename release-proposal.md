@@ -1,10 +1,10 @@
 # v2.0.2 release preparation
 
-**Status:** candidate patch; measurement-tool corrections and Control Room review are pending.
+**Status:** candidate patch; measurement-tool corrections approved at `4e7b247` after source review and focused executed checks.
 The release target, final notes, and publication are not approved.
 
 Compared with [v2.0.1](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.1)
-through [e98bb1f](https://github.com/elieandraos/agentic-engineering/commit/e98bb1f81b611884bfc95b0d78d7df83300b90ac).
+through [4e7b247](https://github.com/elieandraos/agentic-engineering/commit/4e7b2477cf2d26d5c411227cb33cf994c2d10ca1).
 This is a short working record. Update it in place as work is reviewed; retain detailed history
 in Git rather than appending correction reports.
 
@@ -24,17 +24,18 @@ These are documentation and maintainer-tooling changes. No runtime skill behavio
 the compared range. The proposed v2.0.2 numbering assumes that scope remains a maintenance patch;
 reassess if later work changes the release's scope.
 
-## Work still pending review
+## Reviewed measurement work
 
-The measurement script is committed, but its first version is not yet approved:
+The script now counts actual files, deduplicates resolved file paths, reads descriptions only
+from frontmatter, and decodes its supported quoted-scalar escapes. Unsupported description forms
+fail explicitly. Git-ignored files are excluded when their status is known; unavailable ignore
+or revision checks are reported honestly.
 
-- Correct actual-file counts, path-identity deduplication, and frontmatter description parsing.
-- Make revision-consistency claims match the measured file inventory; unavailable Git status must
-  remain unknown rather than being reported clean.
-- State loading and README exclusions as model assumptions, remove claims of detecting stale
-  committed workflow definitions, and correct the planning-entry routing explanation.
-- Re-run the focused fixtures and reconcile the extraction shortlist's callers and conditional
-  savings before treating it as an implementation proposal.
+The guide and workflow config distinguish file measurements from modeled loading and observed
+session consumption. The revision check detects uncommitted input changes only; it does not
+validate workflow definitions after committed routing changes. Planning origins feed into
+classification. Extraction candidates still need their callers and shared requirements checked
+before implementation.
 
 Further conditional extractions are candidates only. None is implemented or included in this
 release scope yet. Existing deferred ecosystem findings are not resolved by these documentation
@@ -42,10 +43,15 @@ and measurement changes.
 
 ## Validation to retain
 
-The initial script was executed against f9462dd. All 17 configured workflow totals matched
-independent arithmetic, and repeated output was identical. Focused fixtures also reproduced the
-accounting, description-parsing, and revision-reporting defects listed above; these checks do not
-validate corrections that have not yet landed.
+Control Room executed 23 focused checks against the corrected script at `4e7b247`, using
+disposable Git fixtures and a source snapshot. They covered optional README counts, path aliases,
+Unicode and escaped descriptions, unsupported forms and body lookalikes, missing/ignored files,
+revision reporting, and command output. All passed.
+
+All 17 configured workflow totals matched independent arithmetic; repeated reports were
+byte-identical. The unchanged skill snapshot totals 479,415 Unicode characters across 62 files.
+These checks establish accounting and reporting behavior, not that every modeled file list
+matches an agent's actual loading.
 
 The test-contract catalogue covers all 47 original scenarios plus additional lifecycle and repair
 contracts. Its links, identifiers, scenario coverage, and descriptive approval wording were
@@ -57,6 +63,6 @@ was performed by this work. These are evidence limits, not new publication requi
 
 ## Finalization
 
-After the pending corrections are reviewed, reconcile the final diff against v2.0.1, select the
+After any separately approved extraction work is complete, reconcile the final diff against v2.0.1, select the
 exact release target, and prepare short technical notes stating what changed and what was verified.
 Publication remains a separate explicit decision.
