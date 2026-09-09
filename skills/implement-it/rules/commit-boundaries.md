@@ -166,42 +166,94 @@ rewrite. This maintenance boundary applies generally, not only to this skill's o
    (`rules/issue-closure.md`'s "Push readiness": `git fetch origin <branch>`, then
    `git log origin/<branch>..HEAD --oneline` — every commit this reconstruction touches must appear
    in that list). If O predates the unpublished range, this recipe does not apply.
-2. **Capture the correction itself as a patch, separately from any unrelated content.** The
-   uncommitted correction and unrelated worktree content (a stray staged change, other unstaged
-   edits, untracked files) must not be protected by the same, indiscriminate step — doing so hides
-   the correction along with everything else, and makes it unavailable exactly when O needs to be
-   rebuilt. Instead:
-   - Stage exactly the correction's own changes: `git add <path>` for a file the correction owns
-     outright, or `git add -p` (selecting only the correction's hunks) when a file also carries
-     unrelated content — the same patch-level staging step 7 below uses for splitting O from a later
-     commit applies here too, one file can carry both a correction and something unrelated.
-   - Export that staged content to a patch file with zero context, so it stays applicable regardless
-     of what else is nearby in the same file: `git diff -U0 --staged -- <path(s)> >
-     <correction.patch>`.
-   - Unstage again — `git restore --staged <path(s)>` — returning the working tree to exactly its
-     starting combined state. Nothing durable has changed yet; this is a capture step only, and the
-     correction's content now exists as a file, never only as something to be retyped from memory.
-3. **Remove the correction from the working tree**, leaving only unrelated content behind:
-   `git apply --unidiff-zero -R <correction.patch>`. If this reversal fails — a genuine conflict
-   between the correction and adjacent unrelated content, not merely mismatched context — stop. Do
-   not guess which lines belong to which. Report the conflict; the captured patch file and the
-   untouched working tree are the recovery data, and neither is discarded by this step failing.
-4. **Protect whatever unrelated content remains** using the qualified procedure in
-   `rules/verification.md`'s "Preserving unrelated worktree content during a Git rewrite," unmodified
-   — the working tree at this point carries nothing but unrelated content, so that procedure needs no
-   special handling for the correction. When step 3 left a clean tree (no unrelated content existed),
-   that procedure's own clean-tree check means it protects nothing, correctly.
-5. **Rewind to the owning commit's parent, keeping everything from O through `HEAD` staged**:
+2. **Establish a scratch location for this reconstruction's own recovery artifacts, outside the
+   repository working tree** — an explicit, uniquely-named directory (for example, one made with
+   `mktemp -d`), never a path inside the worktree. Every file this procedure captures for its own
+   bookkeeping — a correction's isolated content, a private index, an extracted or merged result —
+   lives there. A recovery artifact placed inside the worktree instead is exactly the kind of
+   untracked content `git stash -u` (used below) would sweep away. Preserve everything in this
+   location until reconstruction is verified complete; remove it only then, never on a failure.
+3. **For each path the correction touches, establish what's already staged for it, cleanly — without
+   ever mutating the real index to find out.** Compare the path's current real-index content
+   (`git show :<path>`) against its committed content (`git show HEAD:<path>`, or nothing for a new
+   path):
+   - **If they're identical** — nothing is staged for this path, so the correction and any unrelated
+     content sharing the file are both still unstaged and undifferentiated. Isolate the correction
+     without touching the real index at all: seed a private index copy from `HEAD`
+     (`GIT_INDEX_FILE=<scratch>/index git read-tree HEAD`), then interactively stage only the
+     correction's own hunk(s) into that private copy
+     (`GIT_INDEX_FILE=<scratch>/index git add -p -- <path>`). If the correction and unrelated content
+     can't be cleanly separated this way — presented as one hunk with no way to select one without
+     the other — stop; this is a capture-time ambiguity, not something to guess past. Otherwise,
+     materialize the private index's blob as the correction's known content
+     (`GIT_INDEX_FILE=<scratch>/index git show :<path> > <scratch>/known--<path>`), then discard the
+     private index file. The real index and working tree are untouched throughout — this is what
+     keeps any already-staged content elsewhere, and its staged/unstaged arrangement, exactly as
+     found; a whole-path `git restore --staged <path>` after ordinary `git add -p` cannot make this
+     guarantee once other content in the same path was already staged.
+   - **If they differ, and the difference is recognized as exactly the correction, nothing else** —
+     the correction is already staged, cleanly. Use the real index's blob directly as the
+     correction's known content: `git show :<path> > <scratch>/known--<path>`.
+   - **If they differ, and the difference is recognized as unrelated content, not the correction** —
+     the same real-index blob is the *unrelated* content's known state instead:
+     `git show :<path> > <scratch>/known--<path>`, understood as unrelated-only rather than as the
+     correction.
+   Also save the path's committed content (`git show HEAD:<path> > <scratch>/head--<path>`, empty for
+   a new path) and its actual current combined content (`cp <path> <scratch>/combined--<path>`).
+4. **Extract whichever piece step 3 didn't already establish, and verify the split before trusting
+   it.** A successful command is not, by itself, proof of correct attribution — a context-matched or
+   zero-context patch can silently apply against the wrong occurrence of identical-looking content
+   without ever reporting a conflict (reproduced concretely; see `scenarios.md`). Use a real
+   three-way merge instead, which fails honestly on a genuine ambiguity rather than guessing:
+   ```
+   cp <scratch>/head--<path> <scratch>/other--<path>
+   git merge-file -p <scratch>/other--<path> <scratch>/known--<path> <scratch>/combined--<path> \
+     > <scratch>/extracted--<path>
+   ```
+   This replays whatever changed between `known` and `combined` — exactly the piece not yet known —
+   onto `head`. **A nonzero exit code is a conflict: stop.** Do not resolve it by guessing which
+   occurrence is which. Report the conflict; every file step 3 captured remains in the scratch
+   location as recovery data, and nothing about the real repository has been touched yet. On a zero
+   exit code, **verify by round-trip before trusting the result** — reconstruct the original combined
+   content independently and require an exact match:
+   ```
+   cp <scratch>/known--<path> <scratch>/roundtrip--<path>
+   git merge-file -p <scratch>/roundtrip--<path> <scratch>/head--<path> <scratch>/extracted--<path> \
+     > <scratch>/roundtrip-result--<path>
+   diff <scratch>/roundtrip-result--<path> <scratch>/combined--<path>
+   ```
+   Anything but an exact match means the split is not trusted, exactly as if the merge had
+   conflicted — stop and report; do not proceed with reconstruction on an unverified split. This
+   establishes both the correction's content and the unrelated-only content for this path, verified,
+   whichever direction step 3 produced which.
+5. **Exclude a correction-touched shared path from the general protection step below; protect
+   everything else there instead.** For a path where step 4 shows no genuine unrelated content
+   (unrelated-only is byte-identical to `head`), there's nothing to protect for that path at all. For
+   a path with genuine unrelated content sharing the file with the correction, set its working tree
+   content to `head` directly (`cp <scratch>/head--<path> <path>`, unstaging first if needed) — its
+   unrelated content stays safe in the scratch location, to be reapplied in step 10 against the
+   *reconstructed* content, not restored through git's stash. Git stash's own restoration depends on
+   the commit its entry was taken against still matching history; a shared path's committed content
+   changes by the very act of reconstruction, which can make an ordinary `git stash apply` conflict
+   against content a direct merge handles cleanly (verified in practice; see `scenarios.md`).
+6. **Protect whatever unrelated content remains** — every path the correction never touched, plus any
+   correction-touched path step 5 didn't already clear — using the qualified procedure in
+   `rules/verification.md`'s "Preserving unrelated worktree content during a Git rewrite," unmodified.
+   When nothing remains (every touched path was cleared in step 5, and nothing else was ever
+   uncommitted), that procedure's own clean-tree check means it protects nothing, correctly.
+7. **Rewind to the owning commit's parent, keeping everything from O through `HEAD` staged**:
    `git reset --soft O~1` (or the equivalent parent reference) — not a hard-coded `HEAD~1`, which
    only reaches the single most recent commit and cannot fold a correction into an earlier one. This
    stages the combined diff of every commit from O through `HEAD` in one index; it does not, on its
    own, separate that index back into O's corrected content and whatever later commits actually
    contain.
-6. **Reapply the correction, now that the tree reflects O through `HEAD`'s original combined
-   content**: `git apply --unidiff-zero --index <correction.patch>`. This folds the correction into
-   the staged content precisely where O's own changes live, making it available at exactly the
-   reconstruction step that needs it, rather than only after reconstruction is already finished.
-7. **Rebuild each semantic commit from that combined index, in order, staging only that commit's own
+8. **Reapply the correction directly from its captured content — never by pattern-matching a patch,
+   and never by retyping it from memory.** For each path the correction touches, the working tree is,
+   at this point, exactly `head` (nothing else is present, per steps 5–6): `cp <scratch>/known--<path>
+   <path>` when step 3 captured the correction directly as `known`, or `cp <scratch>/extracted--<path>
+   <path>` when step 4 extracted it — then `git add <path>`. This is a direct, exact, byte-for-byte
+   write of already-verified content, with no patch-matching ambiguity possible.
+9. **Rebuild each semantic commit from that combined index, in order, staging only that commit's own
    content each time.** A single reconstructed commit is not the same thing as "one whole file" —
    use `git restore --staged <path>` to unstage what a later commit owns, and `git add -p` (or an
    equivalent patch-level staging tool) to stage only part of a file when O's correction and a later
@@ -218,10 +270,29 @@ rewrite. This maintenance boundary applies generally, not only to this skill's o
      the correction folded in, then each subsequent original commit rebuilt intact from the
      remaining staged content — unless the correction itself changes what a later commit should
      contain.
-8. **Restore the protected content** from step 4, using that same procedure's restoration steps,
-   once every reconstructed commit exists.
-9. **Confirm nothing unrelated leaked in.** After the last commit, `git status` and `git diff` should
-   show exactly the restored unrelated content and nothing else outstanding from this reconstruction.
+10. **Restore the protected content.** For an ordinary path, restore from step 6's stash entry using
+    that procedure's own restoration steps, once every reconstructed commit exists. **For a
+    correction-touched path step 5 set aside separately, restore by the same merge technique as
+    step 4 — against the path's *new*, reconstructed content, not the pre-reconstruction committed
+    state.** Use whichever of step 3/4's captured files actually holds the unrelated-only
+    content — `<scratch>/known--<path>` if step 3 captured the unrelated content directly, or
+    `<scratch>/extracted--<path>` if step 4 extracted it (the mirror image of step 8's choice for the
+    correction):
+    ```
+    cp <path> <scratch>/final--<path>
+    git merge-file -p <scratch>/final--<path> <scratch>/head--<path> <scratch>/<unrelated-only file> \
+      > <scratch>/final-result--<path>
+    ```
+    A nonzero exit code, or a result missing either the correction's own content or the unrelated
+    content, is a restoration failure — stop, report it, and drop or discard nothing; the scratch
+    location still holds every piece needed to retry or hand off. On success, write the result back
+    (`cp <scratch>/final-result--<path> <path>`) and stage it only if step 3 found the unrelated
+    content already staged in the real index — otherwise leave it unstaged, matching its original
+    state.
+11. **Confirm nothing unrelated leaked in.** After the last commit, `git status` and `git diff`
+    should show exactly the restored unrelated content and nothing else outstanding from this
+    reconstruction. Only once this holds, remove the scratch location from step 2 — not before, and
+    never on a failure.
 
 The result reads as if it had been built that way from the start — there's no trace in the history
 that it was originally committed differently, and every intermediate commit still satisfies "What

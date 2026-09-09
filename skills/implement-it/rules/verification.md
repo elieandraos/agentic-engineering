@@ -302,10 +302,15 @@ checkpoint.
 
 Any procedure in this skill that needs to temporarily clear the working tree or index around content
 that is not part of what it's isolating or reconstructing — the isolation technique below, or
-`rules/commit-boundaries.md`'s reconstruction of an unpublished commit — uses this same qualified
-procedure. Never substitute an unqualified `git stash push` / `git stash pop` pair for it: an
-unqualified pop restores whatever is topmost on the stash, which is not necessarily the entry this
-step created, and can silently apply or drop an unrelated, older stash instead.
+whatever `rules/commit-boundaries.md`'s reconstruction of an unpublished commit protects this
+way — uses this same qualified procedure. Never substitute an unqualified `git stash push` /
+`git stash pop` pair for it: an unqualified pop restores whatever is topmost on the stash, which is
+not necessarily the entry this step created, and can silently apply or drop an unrelated, older stash
+instead. That reconstruction procedure protects most unrelated content this way, but excludes a
+correction-touched path that shares unrelated content with the correction itself — a stash entry's
+own restoration depends on the commit it was taken against still matching history, which reconstruction
+changes by design; that specific case is handled by a direct merge against the reconstructed content
+instead (`rules/commit-boundaries.md`'s "Review corrections fold into their semantic commit").
 
 1. **Check whether there's anything to set aside.** `git status --porcelain`. If the working tree and
    index are already clean, skip stashing entirely — do not run `git stash push` against a clean

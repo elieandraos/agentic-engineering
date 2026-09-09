@@ -1108,3 +1108,151 @@ separately exercised, and would likely surface as the same genuine-conflict path
 above rather than a silent misattribution, but that specific adjacency was not tested. `implement-it`
 itself was not invoked in a live agent session for this pass either — only the underlying Git
 mechanics were exercised, the same distinction the first follow-up record draws.
+
+**Correction to the above limitation, superseded by the next section:** the claim that an untested
+adjacent change "would likely surface as the same genuine-conflict path... rather than a silent
+misattribution" was wrong, and is corrected, not merely extended, by the third follow-up below. Built
+and executed against the exact adjacent, identical-text case that assumption described, the
+zero-context reverse-apply this section validated did not conflict — it succeeded, silently, against
+the wrong occurrence. The assumption was untested speculation about behavior this pass had not
+actually run; the third follow-up runs it and reports what actually happened, per this document's own
+"Turning these cases into future tests" guidance not to let a historical trace be quietly
+reinterpreted as still-current fact.
+
+## Follow-up correction: patch-capture attribution, index preservation, scratch-artifact location (2026-09-09c)
+
+This section records a third, bounded correction against commit
+[`caad9d3f89f273403b67b619dee4ab922c4a4a6b`](https://github.com/elieandraos/agentic-engineering/commit/caad9d3f89f273403b67b619dee4ab922c4a4a6b)
+— the second IMP-05–08 follow-up above. Control Room accepted that pass's stable stash-SHA handling
+and restored mandatory isolation verification for reconstruction (both preserved, unchanged, by this
+pass). It found the patch-capture/removal sequence itself still unsound: three further reproduced
+failures, all within the same two rule files. This section supplements, and does not replace, the
+2026-09-08 audit or either earlier follow-up; their pinned source, observations, counts, and results
+are unchanged except for the one correction stated immediately above.
+
+**What each defect was, and what changed:**
+
+1. **`git add -p` followed by a whole-path `git restore --staged <path>` cannot isolate a task
+   correction from an unrelated hunk already staged in the same file** — `add -p` only ever shows the
+   *unstaged* remainder, so if the correction is unstaged and unrelated content is already staged,
+   selecting the correction's hunk leaves both staged together, and unstaging the whole path
+   afterward discards the fact that the unrelated hunk had been staged at all. `commit-boundaries.md`
+   replaces this with a capture procedure that never mutates the real index to find out what's
+   already staged: it compares the real index's current blob for the path against `HEAD` and, when
+   that blob cleanly represents either the correction or the unrelated content on its own, uses it
+   directly (`git show :<path>`) — no staging or unstaging touches the real repository at all. Only
+   when *nothing* is staged for that path does it interactively isolate the correction, and even then
+   it does so against a private index copy (`GIT_INDEX_FILE=<scratch>/index git read-tree HEAD`,
+   then `git add -p` against that copy), never the real one.
+2. **A blanket zero-context patch reversal can silently apply against the wrong occurrence of
+   identical-looking content, without ever reporting a conflict.** Reproduced with the exact fixture
+   given: committed `"start\nsame\nmarker\nsame\nend\n"`, a staged correction turning line 4 into
+   `"fixed"`, and an unstaged, adjacent insertion of a second, identical `"fixed"` line. The prior
+   pass's `git apply --unidiff-zero -R` reverted line 4 (matched by raw line-number proximity, since
+   zero context gives it nothing else to go on) instead of line 5, where the correction had actually
+   ended up once the unrelated insertion shifted it down — producing
+   `"start\nsame\nmarker\nsame\nfixed\nend\n"` with no error, no conflict, and no indication anything
+   was wrong. `commit-boundaries.md` replaces zero-context patch application entirely with a real
+   three-way merge (`git merge-file`), which is structurally aware of *which* content came from
+   *which* side rather than pattern-matching lines, and — on this exact fixture — reports a genuine
+   conflict (exit 1, `<<<<<<<`/`=======`/`>>>>>>>` markers) instead of guessing. The rule additionally
+   requires a round-trip verification independent of the merge's own exit code: replaying the split
+   pieces back together must reconstruct the original combined content exactly, or the split is not
+   trusted regardless of what the merge command reported.
+3. **A correction patch or any other capture artifact placed inside the repository worktree is
+   exactly the kind of untracked content `git stash -u` removes** — the prior passes' patch files
+   were written with no stated location, leaving this open. `commit-boundaries.md` now opens the
+   reconstruction procedure by requiring an explicit, uniquely-named scratch directory *outside* the
+   worktree (e.g. `mktemp -d`) for every recovery artifact the procedure creates, preserved until
+   reconstruction is verified complete and removed only then — never on a failure.
+
+A further defect, found only while executing the *combined* fixture rather than the capture step in
+isolation, is also fixed here: restoring unrelated content that shares a file with the correction
+cannot rely on `git stash apply`'s own restoration once the correction has been folded into a
+reconstructed commit, because the file's committed content — the base the stash's own three-way merge
+was taken against — has changed. `commit-boundaries.md` excludes such a path from the general
+stash-based protection step and instead restores it with the same `git merge-file` technique, applied
+against the path's new, reconstructed content rather than its old committed state.
+
+**Tested state:** the corrected rule text as it exists in this working tree, built on top of
+`caad9d3f89f273403b67b619dee4ab922c4a4a6b` on `main` (this pass's own changes land as ordinary new
+commits after it, under the same non-rewrite boundary as the earlier passes).
+
+**Method:** executed Git-mechanics verification only, in disposable repositories created and
+discarded under a session scratch directory, never inside this project. `implement-it` itself was not
+invoked in a live agent session for this follow-up — the same limitation the earlier follow-up records
+state applies here too; nothing below should be read as a claim that the skill's own reporting, gates,
+or human-facing behavior around this procedure were exercised.
+
+**Fixtures, steps, and results:**
+
+- **Defect 1 — full reconstruction and restoration, not just capture.** `base → A (f.txt) → B
+  (b.txt)`, all unpublished; `f.txt` carries an already-staged unrelated hunk (`beta` →
+  `UNRELATED-beta`) and a separate, unstaged correction hunk (`gamma` → `CORRECTION-gamma`), belonging
+  to `A`. Capture: the real index's blob for `f.txt` was recognized as the unrelated hunk (not the
+  correction), used directly (`git show :f.txt`); the correction was extracted via `git merge-file`
+  (exit 0) and round-trip-verified (exact match) without ever staging, unstaging, or otherwise
+  touching the real index. `f.txt` was reset to `head` content (excluding it from the general stash
+  step); reconstruction produced `A` (`git show HEAD~1:f.txt`) containing the correction with the
+  unrelated hunk absent, and `B` (`git show HEAD:b.txt`) unchanged. Restoration:
+  a first attempt using the prior pass's ordinary `git stash apply --index` against `f.txt`'s
+  protected content **failed outright** (`error: patch failed`, `error: conflicts in index`) because
+  `f.txt`'s committed content had changed since the stash was taken — this is the further defect
+  described above, caught only by running restoration all the way through rather than stopping at
+  capture. The corrected procedure — `git merge-file` against the *new* reconstructed content, then
+  staging the result because the unrelated content had originally been staged — produced
+  `"alpha\nUNRELATED-beta\nmiddle1\nmiddle2\nCORRECTION-gamma\n"`, staged (`M  f.txt`), exactly
+  matching both the correction and the unrelated content's original staged state.
+- **Defect 2 — the exact adversarial fixture, old vs. new, with real commit history.** `base → A
+  (f.txt) → B (b.txt)`; `f.txt`'s index held exactly the intended correction
+  (`"start\nsame\nmarker\nfixed\nend\n"`); the working tree additionally carried the unrelated,
+  adjacent, identical-text insertion (`"start\nsame\nmarker\nfixed\nfixed\nend\n"`). The prior pass's
+  procedure, run faithfully against this fixture (correction already fully staged, so no `add -p`
+  step applies), reproduced the reported silent corruption exactly:
+  `"start\nsame\nmarker\nsame\nfixed\nend\n"`, with `git apply` reporting success. The corrected
+  procedure's `git merge-file` extraction attempt on the same fixture returned exit 1 with explicit
+  conflict markers; per the rule, this halts the procedure entirely — confirmed nothing in the real
+  repository was touched (working tree still showed the original mixed state, no commits, no reset,
+  no stash created) and all four captured artifacts (`head`, `known`, `combined`, the conflicted
+  `other`) remained present in the scratch directory.
+- **Defect 2 — non-adjacent case still succeeds cleanly (no regression).** The same `git merge-file`
+  extraction, run against a variant with the correction and unrelated hunk separated by two unchanged
+  lines, returned exit 0 with the exact expected content, and the round-trip check matched exactly —
+  confirming the honest-conflict behavior is specific to genuine ambiguity, not a blanket refusal to
+  merge adjacent-but-independent changes.
+- **Defect 2 — round-trip check has real teeth.** A deliberately wrong "extracted" piece was fed
+  through the round-trip reconstruction; it did not match the saved original combined content (and,
+  separately, `git merge-file` itself flagged it as conflicting when the wrong piece was structurally
+  incompatible) — confirming the verification step would catch a bad split rather than rubber-stamping
+  whatever the merge command returned.
+- **Defect 3 — scratch location survives `git stash -u`.** A file written to a `mktemp -d` directory
+  outside a test repository's worktree was confirmed unaffected by `git stash push -u` run inside that
+  repository — content and location unchanged — and was removed only after this was confirmed, not
+  before.
+- **Regression check — prior passes' combined and shared-file cases re-run under the new procedure.**
+  The second follow-up's `base → A (shared.txt) → B (b.txt)` fixture — correction and unrelated
+  content on non-adjacent lines of the same file, neither originally staged, plus a wholly separate
+  staged unrelated file `u2.txt` — was rebuilt and run end to end under this pass's corrected
+  procedure: private-index `add -p` isolated the correction without touching the real index;
+  `git merge-file` extraction and round-trip verification both succeeded; the shared file was excluded
+  from the general stash and restored via the new merge-based technique (unstaged, matching its
+  original state); `u2.txt` was protected and restored via the unchanged, SHA-tracked qualified-stash
+  procedure. Final state: reconstructed `A` held the correction alone
+  (`git show HEAD~1:shared.txt` → `"CORRECTION-l1\nl2\nl3\n"`), `B` was unchanged, `shared.txt`'s
+  working tree showed the correction committed plus the unrelated hunk restored unstaged, and `u2.txt`
+  was restored staged — the same correct outcome the second follow-up validated, now produced by a
+  mechanism proven not to fail on the case that mechanism previously could not have handled (a
+  shared-file unrelated hunk surviving history rewriting).
+
+**Limitations:** the same file-scale, submodule, LFS, and binary-content limitations as the earlier
+follow-ups apply. The private-index capture path (nothing staged for the touched path at all) was
+exercised only for a non-adjacent hunk pair, reusing the second follow-up's fixture; it was not
+separately run against an adjacent or identical-text pair the way Defect 2's fixture exercises the
+already-staged case — based on `git add -p`'s own hunk-splitting behavior this would likely surface as
+an unsplittable-hunk stop rather than a silent misattribution, but, per the correction recorded above,
+that expectation is now explicitly flagged as untested rather than asserted as established. A
+correction spanning more than one file, with different capture branches applying to different files
+in the same reconstruction, was not exercised — each branch was validated individually and in the
+combined fixtures, but not in combination with a second, differently-shaped file in the same pass.
+`implement-it` itself was not invoked in a live agent session for this pass either — only the
+underlying Git mechanics were exercised, the same distinction the earlier follow-up records draw.
