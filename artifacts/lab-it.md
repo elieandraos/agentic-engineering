@@ -26,7 +26,8 @@ each sits behind its own human checkpoint:
 | Workflow | Terminal output | What gates that output |
 |---|---|---|
 | Standalone investigation | A verified answer, given as chat output | Nothing further required — the recap itself is the result |
-| Plan feature architecture | An approved `plan.md`, handed to `plan-it` | Explicit decisions approved, then the document itself approved |
+| Plan feature architecture, no material decision remaining | A verified answer recommending `plan-it` directly | Nothing further required — investigation alone establishes the recommendation |
+| Plan feature architecture, Plan Synthesis requested and run | An approved `plan.md`, handed to `plan-it` | Explicit decisions approved, then the document itself approved |
 
 Investigation and a recap of it can be the complete, standalone result of a session. A `plan.md` is
 something a request specifically asks for, never an automatic next step after investigation.
@@ -115,10 +116,14 @@ conceptually distinct stages, and no stage silently produces the next:
    an already-investigated current state and already-approved decisions; it does not investigate or
    decide anything itself, and its own preconditions (§3) enforce that.
 4. **Downstream feature planning** — `plan-it`'s classification, scope, design
-   reconciliation, issue decomposition, sequencing, review, and GitHub issue creation — begins only
-   once the user has given a second, separate approval: of the synthesized *document itself*, not
-   merely of the decisions that went into it before synthesis. This skill's involvement ends at that
-   approved `plan.md`; everything from there is `plan-it`'s job (§6).
+   reconciliation, issue decomposition, sequencing, review, and GitHub issue creation — is
+   `plan-it`'s job regardless of which terminal output it starts from (§6). When Plan Synthesis
+   produced a `plan.md`, that downstream planning begins only once the user has given a second,
+   separate approval: of the synthesized *document itself*, not merely of the decisions that went
+   into it before synthesis. That second approval gates the `plan.md` path specifically — it is not
+   a universal prerequisite for entering `plan-it`, which starts just as validly from a verified
+   answer recommending it directly, with no document and no additional approval gate. This skill's
+   involvement ends at whichever terminal output applies.
 
 Two of these four look similar and are not: a decision the user approved *before* Plan Synthesis
 establishes what the plan is allowed to say; the user approving the *synthesized document itself*
@@ -161,14 +166,16 @@ its workflow actually needs it:
 
 | File | Owns |
 |---|---|
-| [`rules/plan-synthesis.md`](../skills/lab-it/rules/plan-synthesis.md) | The full Plan Synthesis contract: preconditions, the four-category claim model, evidence rules, the internal review, and the approval/handoff gate |
+| [`rules/plan-synthesis.md`](../skills/lab-it/rules/plan-synthesis.md) | The full Plan Synthesis contract: the materiality test consulted throughout the decision conversation as well as at drafting time, preconditions, the four-category claim model, evidence rules, the internal review, and the approval/handoff gate |
 
 Guide-writing, guide-scaffold, guide-review, and guide-maintenance rules — formerly this skill's
 own — now live entirely under `document-it` and are not duplicated here; §7 states the boundary.
 
-Outside this skill, two things ever cross to another skill: an approved `plan.md`, handed to
-`plan-it`, and a guide-shaped request, routed to `document-it` (§7) — a standalone investigation's
-recap, by contrast, is a complete result on its own and implies no downstream handoff at all. Once
+Outside this skill, two things ever cross to another skill as a governed artifact handoff: an
+approved `plan.md`, handed to `plan-it`, and a guide-shaped request, routed to `document-it` (§7). A
+verified answer — from a standalone investigation, or from "Plan feature architecture" finding no
+material decision — may recommend the user proceed to `plan-it` directly; that recommendation
+carries no locked decisions, no artifact, and no approval gate, unlike the `plan.md` path. Once
 approved, `plan-it` treats the plan as canonical: it can still validate a
 current-state fact against current evidence when drafting issues, and can flag a derived constraint
 whose stated premise no longer holds, but it does not re-open a locked decision or re-derive

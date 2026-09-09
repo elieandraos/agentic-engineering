@@ -10,11 +10,12 @@ description: "Investigates and validates how an existing system or capability ac
 This skill investigates a real system and turns the resulting understanding into one of the
 following:
 
-| User intention                                    | Result                                                          |
-| -------------------------------------------------- | ----------------------------------------------------------------|
-| Understand how a system actually works             | A verified answer — investigation and recap, no guide required  |
-| Design feature architecture through conversation    | Approved `plan.md` handed to `plan-it`                          |
-| Create, update, or review an architecture guide     | Routed to `document-it`                                         |
+| User intention                                                        | Result                                                                    |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Understand how a system actually works                                | A verified answer — investigation and recap, no guide required           |
+| Prepare a feature for implementation, no material decision remaining  | A verified answer recommending `plan-it` directly, no `plan.md` required |
+| Design feature architecture through conversation, decisions material  | Approved `plan.md` handed to `plan-it`                                   |
+| Create, update, or review an architecture guide                       | Routed to `document-it`                                                  |
 
 Investigation comes first in every workflow — whether user confirmation follows, and when, is
 conditional; see "Shared investigation and decision discipline" below. Investigation and recap
@@ -122,8 +123,11 @@ by itself prove approval. `plan-it` treats a plan as canonical only once the ini
 matches and the user's explicit approval is established; see
 `plan-it/rules/plan-md-input.md` for the full recognition procedure.
 
-**Skill boundary.** This workflow stops at an approved `plan.md` — see "Ownership and handoff" for
-what belongs to `plan-it` instead.
+**Skill boundary.** This workflow ends at one of two points: a verified answer recommending
+`plan-it` directly, when no material decision remains, or an approved `plan.md` handed to `plan-it`,
+when Plan Synthesis ran. Document approval gates only the second — it is not a universal
+prerequisite for entering `plan-it`. See "Ownership and handoff" for what belongs to `plan-it`
+instead.
 
 ## Ownership and handoff
 
@@ -151,7 +155,8 @@ This skill does not own:
 
 ## Rule and supporting-file routing
 
-- plan writing → `rules/plan-synthesis.md`, loaded only when "Plan feature architecture" needs it.
+- the materiality test consulted throughout the decision conversation, and plan writing →
+  `rules/plan-synthesis.md`, loaded only when "Plan feature architecture" needs it.
 
 Guide-writing, guide-scaffold, guide-review, and guide-maintenance rules live under `document-it`
 and are not duplicated here.
