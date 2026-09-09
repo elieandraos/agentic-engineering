@@ -2,13 +2,13 @@
 
 **Status:** candidate patch; measurement-tool corrections approved at `4e7b247` after source review and focused executed checks.
 The `document-it` authoring extraction is approved at `8ceb238` after source review and independent character-count verification.
-The `implement-it` activation-ordering extraction below is **pending Control Room review** — not yet approved.
+The `implement-it` activation-ordering extraction is approved at `6454751` after source review and independent measurement.
 The release target, final notes, and publication are not approved.
 
 Compared with [v2.0.1](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.1)
 through [4e7b247](https://github.com/elieandraos/agentic-engineering/commit/4e7b2477cf2d26d5c411227cb33cf994c2d10ca1),
 plus the `document-it` authoring extraction reviewed at [8ceb238](https://github.com/elieandraos/agentic-engineering/commit/8ceb238178d3a5979cea371f6a7aba1d2f97b868),
-plus the `implement-it` activation-ordering extraction described below, pending review.
+plus the `implement-it` activation-ordering extraction reviewed at [6454751](https://github.com/elieandraos/agentic-engineering/commit/64547517d081eed15f286e445a031569d4aced8d).
 This is a short working record. Update it in place as work is reviewed; retain detailed history
 in Git rather than appending correction reports.
 
@@ -89,62 +89,32 @@ review — by reading the moved and reconciled text; no live skill invocation wa
 correction pass specifically re-verified the new-guide-despite-existing-guide request, an ordinary
 existing-guide update, and the assumption stated by both review rows.
 
-## implement-it activation-ordering extraction (pending Control Room review)
+## implement-it activation-ordering extraction (approved at 6454751)
 
-Extracted `implement-it`'s "Ordering commits to keep intermediate states valid" section, including
-its "Relationship to dependency ordering" subsection, out of `rules/verification.md` into a new
-`rules/activation-ordering.md`, per `docs/skill-authoring-methodology.md`, then tightened the
-extraction: shortened the new file's "When this applies" and "Relationship to isolation
-verification" prose, and reconciled every caller onto one trigger phrasing — inspect whether a
-change is to configuration, a feature flag, environment-conditioned behavior, or otherwise could
-affect runtime activation, and never assume no effect without that check. Scope is unchanged: those
-gates generally, not only explicit feature flags. Ordinary structural dependency ordering
-(`rules/commit-boundaries.md`'s step 6) remains universal and required regardless of the check's
-result. `verification.md` keeps that check stated in place and hands off to the extracted file, and
-retains sole authority over *when* isolation verification is warranted (`rules/verification.md`'s
-"Isolation verification" section) — activation-ordering.md names the relationship but does not
-itself decide it. Testing policy, approvals, reconstruction, and preservation mechanics are
-unchanged; the reproducible-install section was not touched.
+Moved the activation-ordering procedure from `rules/verification.md` into
+`rules/activation-ordering.md`. Callers retain the runtime-activation check and conditionally
+route to the procedure. Structural dependency ordering remains universal; `verification.md`
+continues to own isolation-verification eligibility. Callers, summaries, the dossier, and workflow
+definitions are reconciled.
 
-Reconciled the callers this touches: `rules/commit-boundaries.md`'s step 6 (now states the check
-explicitly, before treating dependency order as final), `rules/review-gates.md`'s Gate 2
-plan-description bullet (now makes consulting `activation-ordering.md` explicitly conditional on
-the check finding an effect, replacing the earlier general "dependency order, or activation order"
-pointer), `SKILL.md`'s Rules list (both the `verification.md` and `activation-ordering.md` bullets
-shortened to the check-and-handoff framing, dropping restated scope/rationale), the skill
-`README.md`'s context-consumption note, and `artifacts/implement-it.md`'s §6 verification-model
-summary and §11 rule-ownership table (both shortened to name ownership and the conditional handoff
-without restating the procedure's steps). Updated `docs/skill-context-workflows.json`'s three
-implement-it workflow rows' notes to the same phrasing, and `docs/skill-context.md`'s `implement-it`
-note to match, with no new historical measurement table added to that guide. File lists and routing
-are unchanged from the original extraction — only prose length and wording moved.
+Control Room confirmed the original 2,067-character section is preserved exactly against
+`7ead845`, including existing-test inspection and the unresolved-ordering-conflict stop.
+Frontmatter, reproducible-install guidance, pre-implementation-approval verification,
+completed-issue reuse, and the isolation/reconstruction/preservation mechanics are unchanged.
+Routing was reviewed in source; the measurement script and independent arithmetic reproduced
+these equivalent workflow totals:
 
-Evidence: the extracted body (the watch-for paragraph, the four-step procedure, the
-underlying-principle quote, the worked example, and the "Relationship to dependency ordering"
-subsection) was re-diffed directly against source revision `7ead845`'s `rules/verification.md` and
-remains byte-identical — this tightening pass touched only the new file's surrounding "When this
-applies" and "Relationship to isolation verification" prose, not the preserved procedure. All
-Markdown/backtick file references in the nine touched files resolve; `git diff --check` is clean;
-`SKILL.md`'s frontmatter `description` is unchanged at 839 characters.
-`scripts/measure_skill_context.py` runs clean against the updated file lists. Measured
-modeled-workflow character counts (source revision `7ead845` -> current): "ordinary issue, no
-activation changes" 119,958 -> 119,300 (-0.5%, `verification.md` and its callers net shorter, no
-new file loaded on this path); "activation-dependent ordering with its required isolation
-verification" 126,589 -> 128,779 (+1.7%, down from the untightened pass's +2.2%, since
-`activation-ordering.md` itself is now shorter — remaining overhead is the routed file's own
-"When this applies"/relationship sections, not duplicated procedure); "unpublished-history
-reconstruction, no activation changes" 141,406 -> 140,748 (-0.5%, same net reduction as the
-ordinary path, no new file loaded). These are modeled workflow totals per `docs/skill-context.md`'s
-three-tier framework, not observed session usage. Behavior was verified statically by reading the
-moved and reconciled text, not by a live skill invocation, across three scenarios: ordinary work
-with no activation-affecting change (never reaches the extracted file, per its own "When this
-applies" entry condition, while `rules/commit-boundaries.md`'s step 6 still requires the check);
-configuration-driven activation (the extracted procedure's existing-test inspection, step 2, and
-its worked example, both preserved verbatim); and activation-dependent ordering requiring isolation
-verification (the extracted file's "Relationship to isolation verification" section correctly
-names `verification.md`, not itself, as the file owning that decision). The preserved "Relationship
-to dependency ordering" subsection's routing to `rules/review-gates.md`'s "when to stop and ask" for
-an unresolved dependency-vs-activation conflict is unchanged by this pass.
+| Modeled path | Before (7ead845) | After (6454751) | Change |
+|---|---:|---:|---:|
+| Ordinary work, no activation changes | 119,958 | 119,300 | −658 characters |
+| Activation-dependent ordering with required isolation | 126,589 | 128,779 | +2,190 characters |
+| Reconstruction, no activation changes | 141,406 | 140,748 | −658 characters |
+
+The ordinary-path reduction is modest. On the activation path, the new file adds 2,848 characters
+while the shared files are 658 characters smaller in total, producing the 2,190-character increase.
+The overhead therefore comes from the combined extraction and routing changes, not solely the
+new file's introductory sections. These are modeled unique-file text totals, not observed session
+consumption or evidence of an overall performance improvement. No live skill invocation was run.
 
 ## Validation to retain
 
