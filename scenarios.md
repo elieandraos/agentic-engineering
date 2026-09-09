@@ -1256,3 +1256,122 @@ in the same reconstruction, was not exercised — each branch was validated indi
 combined fixtures, but not in combination with a second, differently-shaped file in the same pass.
 `implement-it` itself was not invoked in a live agent session for this pass either — only the
 underlying Git mechanics were exercised, the same distinction the earlier follow-up records draw.
+
+**Confirmation of the above limitation, by the next section:** the fourth follow-up below did exercise
+the private-index capture path against the exact adjacent, identical-text pair this limitation flagged
+as untested — and it surfaced exactly the predicted unsplittable-hunk stop (`git add -p` itself
+reported "Sorry, cannot split this hunk"), not a silent misattribution. Unlike the correction recorded
+after the second follow-up, this expectation held up under test.
+
+## Follow-up correction: correction-vs-unrelated attribution in a three-way split (2026-09-09d)
+
+This section records a fourth, bounded correction against commit
+[`8ff0bd8e84bb3dfdb6f3aa29b2c1287b7002913d`](https://github.com/elieandraos/agentic-engineering/commit/8ff0bd8e84bb3dfdb6f3aa29b2c1287b7002913d)
+— the third IMP-05–08 follow-up above. Control Room accepted that pass's SHA-based stash identity,
+external scratch location, conflict handling, mandatory per-reconstructed-commit isolation
+verification, and preserved Gate 1/2 and semantic-ownership rules (all unchanged, still, by this
+pass). It found the third pass's own patch-capture replacement still unsound in one further way. This
+section supplements, and does not replace, the 2026-09-08 audit or the three earlier follow-ups; their
+pinned source, observations, counts, and results are unchanged except for the one confirmation stated
+immediately above.
+
+**What the defect was, and what changed:** the third pass's capture procedure recognized the real
+index's current blob for a path as *either* "the correction" *or* "unrelated content," then extracted
+whichever piece it didn't already have by subtracting the known piece from the combined working tree
+and treating the remainder as automatically homogeneous. When a path carries *three* separately
+changed regions — an unrelated hunk already staged, a second unrelated hunk still unstaged, and the
+correction itself also unstaged — the real index correctly reads as "unrelated" (it holds only the
+first hunk), but the remainder (combined minus that known unrelated hunk) is *not* homogeneous: it
+contains the correction *and* the second, unstaged unrelated hunk together. The prior procedure
+extracted that whole remainder and labeled it "the correction." The round-trip check the third pass
+added still passed, because round-trip only confirms that the two pieces recombine to reproduce the
+original content exactly — it says nothing about whether the pieces are correctly attributed, and a
+mislabeled-but-complete piece round-trips exactly as cleanly as a correctly-labeled one.
+`commit-boundaries.md`'s capture procedure is restructured so the correction is never derived by
+subtraction: step 4 now interactively isolates the correction's own hunk(s) via `git add -p` against a
+`HEAD`-seeded private index — the same technique the third pass already used only when nothing was
+staged — applied uniformly regardless of what the real index already holds, so every hunk that differs
+from `HEAD` for that path is individually reviewed and selected, never lumped into "whatever's left."
+Step 5 then extracts only the unrelated-only complement (never the correction) via the same
+`git merge-file` mechanism, and step 6 adds an explicit classification check — comparing the extracted
+unrelated content against `HEAD` and the real index — that stops before any mutation whenever the
+staged/unstaged shape of the unrelated content can't be represented by the single stage-or-unstage
+restoration this recipe supports, rather than silently picking one. The round-trip check's own
+description is corrected to state plainly what it proves — content recombination — and what it does
+not — semantic ownership.
+
+**Tested state:** the corrected rule text as it exists in this working tree, built on top of
+`8ff0bd8e84bb3dfdb6f3aa29b2c1287b7002913d` on `main` (this pass's own changes land as ordinary new
+commits after it, under the same non-rewrite boundary as the earlier passes).
+
+**Method:** executed Git-mechanics verification only, in disposable repositories created and
+discarded under a session scratch directory, never inside this project. `implement-it` itself was not
+invoked in a live agent session for this follow-up — the same limitation every earlier follow-up
+record states applies here too.
+
+**Fixtures, steps, and results:**
+
+- **The reported three-hunk defect, reproduced against the prior (third-pass) procedure.** One file,
+  one commit history (`base → A → B`): an unrelated hunk already staged, a second unrelated hunk
+  unstaged, and the correction (belonging to `A`) also unstaged. The prior procedure's real-index
+  recognition correctly read the staged content as unrelated, then extracted "the rest" via
+  `git merge-file` — exit 0, and the round-trip check passed exactly, while the extracted "correction"
+  visibly contained the second, unstaged unrelated hunk's own marker text alongside the actual
+  correction. This reproduces the report precisely: a passing round-trip on a wrongly-attributed
+  split.
+- **The same fixture under the corrected procedure.** Step 4's interactive selection, run against the
+  full diff between a `HEAD`-seeded private index and the real combined working tree, presented all
+  three changed regions as separate, individually selectable hunks (confirmed via `git add -p`'s own
+  hunk count and content); selecting only the correction's hunk produced a private-index blob
+  identical to `HEAD` except for that one change — no trace of either unrelated hunk. Step 5's
+  extraction and round-trip both passed, correctly, against this now-accurate correction. Step 6's
+  classification then compared the extracted unrelated content (both hunks combined) against the real
+  index (holding only the first) and against `HEAD` — matching neither — and **stopped**, before
+  clearing the path, creating any stash, or resetting anything. `git status`, `git log`, and
+  `git stash list` afterward were unchanged from the fixture's starting state.
+- **The mixed-index case: both the correction and unrelated content staged together, nothing further
+  unstaged.** One file, correction and unrelated changes on different lines, both already staged in
+  the same real-index blob. Step 4's interactive selection against the `HEAD`-seeded private index
+  presented both regions as separate hunks despite both being staged together in the real index;
+  selecting only the correction's hunk produced a clean, correction-only blob, confirming the
+  technique isolates correctly even when the ambiguity originates in the real index rather than the
+  working tree. Step 5 extracted the unrelated content cleanly (exit 0, round-trip exact). Step 6's
+  classification compared it against the real index (which holds *both* changes) and against `HEAD`
+  (which holds neither) — matching neither — and **stopped**, correctly identifying "an index
+  containing both correction and unrelated changes" as an unsupported split, with the repository
+  state unchanged.
+- **Retained: successful end-to-end non-adjacent shared-file case.** The second follow-up's
+  `base → A (shared.txt) → B (b.txt)` fixture — correction and unrelated content on non-adjacent
+  lines of the same file, neither originally staged, plus a wholly separate staged unrelated file
+  — was rebuilt and run completely under the corrected procedure: interactive selection isolated the
+  correction cleanly; extraction and round-trip both passed; step 6's classification correctly
+  resolved to "nothing was ever staged, restore unstaged" (not a stop, since this fixture has no
+  staged/unstaged split to fail on); the shared file was excluded from the general stash and restored
+  via the merge technique against the reconstructed content; the separate file was protected and
+  restored via the unchanged, SHA-tracked qualified-stash procedure. Final state matched the second
+  and third follow-ups' validated outcome exactly: `git show HEAD~1:shared.txt` held the correction
+  alone, `B` was unchanged, the shared file's unrelated hunk was restored unstaged, and the separate
+  file was restored staged.
+- **Retained: the exact repeated-text fixture stops safely.** The second follow-up's adversarial
+  fixture (`"start\nsame\nmarker\nsame\nend\n"` committed; the correction changing line 4 to `"fixed"`
+  staged; an unstaged, adjacent insertion of a second, identical `"fixed"` line) was run against the
+  corrected procedure's step 4. `git add -p` against the `HEAD`-seeded private index reported, on its
+  own, "Sorry, cannot split this hunk" for the combined `-same`/`+fixed`/`+fixed` change — a stop
+  intrinsic to the tooling, not merely asserted by this rule's own language, though the rule's
+  language independently covers the case (identical candidate edits with no content-based way to
+  choose between them) in case a future git version's splitter behaves differently. Declining the
+  hunk and confirming repository state afterward showed no commits, no reset, and no stash — the same
+  clean, unchanged state as the third follow-up's finding for this fixture, now reached through the
+  new capture mechanism rather than the retired patch-based one.
+
+**Limitations:** the same file-scale, submodule, LFS, and binary-content limitations as the earlier
+follow-ups apply. The three-hunk and mixed-index fixtures used non-adjacent, non-identical hunks
+(separated by enough unchanged context for `git merge-file` to extract cleanly once the correction was
+known); a three-way split where the *unrelated* portions are themselves adjacent to, or textually
+identical with, each other or the correction was not separately exercised — step 4's stop conditions
+are expected to cover it on the same grounds validated for the two-way adversarial case, but that
+specific three-way overlap was not run. A path where the correction spans more than one file, with a
+mix of the four classification outcomes (no unrelated content, staged-only, unstaged-only, unsupported
+mix) occurring simultaneously across those files in one reconstruction, was not exercised.
+`implement-it` itself was not invoked in a live agent session for this pass either — only the
+underlying Git mechanics were exercised, the same distinction every earlier follow-up record draws.
