@@ -499,11 +499,13 @@ the full comparison; this document reports only the resulting sizes.
 
 Pinned to commit
 [`eb64ec9`](https://github.com/elieandraos/agentic-engineering/commit/eb64ec9fd156407b14119fa39db5902ae2346308)
-on `main`, one commit after the `9b77d00` snapshot the previous update section describes, and three
-commits after the `667fab15` snapshot the rest of this document describes. This records the effect
-of applying the `implement-it/verification.md` half of reduction proposal 3 above — routing
-`verification.md`'s "Preserving unrelated worktree content during a Git rewrite" and "Isolation
-verification" technique out into their own files, `rules/worktree-preservation.md` and
+on `main`, two commits after the `9b77d00` snapshot the previous update section describes (via
+`a85c956`, that section's own measurement-update commit), and four commits after the `667fab15`
+snapshot the rest of this document describes (`667fab15` → `3269c8f` → `9b77d00` → `a85c956` →
+`eb64ec9`). This records the effect of applying the `implement-it/verification.md` half of
+reduction proposal 3 above — routing `verification.md`'s "Preserving unrelated worktree content
+during a Git rewrite" and "Isolation verification" technique out into their own files,
+`rules/worktree-preservation.md` and
 `rules/isolation-verification.md`, while keeping the decision for *when* isolation verification is
 warranted visible in `verification.md` itself. It does not re-measure anything else in this
 document; every figure outside this section and the previous "Update" section still describes
@@ -551,8 +553,11 @@ distinguishes for `implement-it`, where the previous update distinguished only t
 - Reconstruction path: 139,776 → 141,327 characters (34,944 → 35,332 tokens) — a modeled increase of
   1,551 characters (388 tokens): the reconstruction path now separately pays for
   `isolation-verification.md` and `worktree-preservation.md`, which were previously folded into the
-  single `verification.md` it already loaded, and that increase is larger than what
-  `commit-boundaries.md`/`commit-reconstruction.md`'s own prior split saved this specific path.
+  single `verification.md` it already loaded. This is the same direction the first pass moved this
+  path in, not an offsetting saving: extracting `commit-reconstruction.md` in the first pass also
+  increased the reconstruction path's total (137,969 → 139,776, +1,807 characters) rather than saving
+  anything on it — see the previous update section's own figures. Both extractions have added to this
+  path's modeled cost so far; neither has reduced it.
 
 **Cumulative change (both passes combined, against the original `667fab15` snapshot before either
 extraction):**
@@ -560,9 +565,15 @@ extraction):**
 - Ordinary path: 137,969 → 119,879 characters (34,492 → 29,970 tokens) — a modeled reduction of
   18,090 characters (4,522 tokens, ~13.1%) for the path that needs neither escalation.
 - Reconstruction path: 137,969 → 141,327 characters (34,492 → 35,332 tokens) — a modeled increase of
-  3,358 characters (840 tokens, ~2.4%) for the path that needs both. This is the same pattern the
-  first update observed at smaller scale: routing overhead added twice now concentrates entirely on
-  the rarest, most complex path, while the common ordinary path gets smaller both times.
+  3,358 characters (840 tokens, ~2.4%) for the path that needs both conditional procedures in full,
+  accumulated across both passes (+1,807 in the first pass, +1,551 in this one). Routing/entry-
+  condition text is not confined to this path — `SKILL.md`, which loads on every pass regardless of
+  which path it takes, grew in both passes too (+342, then +712; see the file-size tables above). The
+  ordinary path's net reduction comes from excluding the conditional procedure bodies themselves — a
+  far larger removal from `commit-boundaries.md` and `verification.md`, files the ordinary path
+  already loaded in full — not from routing overhead landing exclusively on the reconstruction path;
+  the reconstruction path pays that same shared `SKILL.md` growth on top of loading the full
+  conditional content the ordinary path now skips.
 - The Laravel-composed ordinary row (`implement-it` + `laravel-inertia-stack` for one filtered-index
   task) moves the same way as the base ordinary row: 169,245 → 151,155 characters (42,311 → 37,789
   tokens), the same 18,090-character/4,522-token cumulative reduction, since the Laravel-specific
