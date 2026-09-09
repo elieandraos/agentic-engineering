@@ -176,7 +176,7 @@ rewrite. This maintenance boundary applies generally, not only to this skill's o
 3. **For each path the correction touches, capture its committed, staged, and actual current
    content — nothing is categorized yet.** Save the path's committed content
    (`git show HEAD:<path> > <scratch>/head--<path>`, empty for a new path), its real-index content
-   (`git show :<path> > <scratch>/indexblob--<path>`, empty if nothing is staged for it), and its
+   (`git show :<path> > <scratch>/indexblob--<path>`, empty only if the path has no index entry), and its
    actual current combined content (`cp <path> <scratch>/combined--<path>`). Nothing here mutates the
    real index or working tree.
 4. **Isolate the correction's own hunk(s) explicitly, from every difference the path shows against
