@@ -637,45 +637,62 @@ minus the shared entry map, closure gate, and the short routing text that replac
 (+472); `README.md`'s "Context consumption" section now names four conditional files instead of two
 (+154).
 
-**Workflow estimates, four paths counted separately — each file counted once, `SKILL.md` shared
-across all of them:**
+**Workflow estimates.** Each row's *local-file subtotal* is `SKILL.md` plus only the rule file(s)
+that surface's own procedure lives in — the minimal case, when no cross-reference into a different
+file is actually followed. Where a row's own procedure carries an explicit instruction to consult
+another file's content (not merely an orientation citation), a separate *broader estimate* adds that
+file's full size too, under this document's whole-file loading model (a followed reference loads the
+complete file, not only the cited section). Whether the broader estimate applies on a given pass is a
+conditional exclusion, not a default — stated per row below.
 
-| Path | Files counted | Characters | Rough tokens |
-| --- | --- | ---: | ---: |
-| **PR readiness and authorized creation** | `SKILL.md` (6,391) + `rules/milestone-pr-readiness.md` (14,394) | 20,785 | 5,196 |
-| **CI-failure investigation and correction handoff** | `SKILL.md` (6,391) + `rules/ci-failure-correction.md` (8,937) | 15,328 | 3,832 |
-| **Post-merge closure only** | `SKILL.md` (6,391) + `rules/milestone-completion.md` (20,823) | 27,214 | 6,804 |
-| **Full delivery, happy path** (readiness → creation → closure → release, no CI failure) | `SKILL.md` (6,391) + `rules/milestone-pr-readiness.md` (14,394) + `rules/milestone-completion.md` (20,823) + `rules/release.md` (17,052) | 58,660 | 14,665 |
+| Path | Local-file subtotal | Broader estimate (if applicable) |
+| --- | --- | --- |
+| **PR readiness and authorized creation** | `SKILL.md` (6,391) + `rules/milestone-pr-readiness.md` (14,394) = 20,785 chars, 5,196 tokens | + `rules/milestone-completion.md` (20,823) = 41,608 chars, 10,402 tokens — only when the pass actually follows `milestone-pr-readiness.md`'s own citation into `milestone-completion.md`'s shared guidance (scoping a manual-testing finding against the milestone description, or confirming Backlog eligibility); an ordinary pass that needs neither stays at the local-file subtotal |
+| **CI-failure investigation and correction handoff** | `SKILL.md` (6,391) + `rules/ci-failure-correction.md` (8,937) = 15,328 chars, 3,832 tokens | Not applicable — this file's own references to `milestone-completion.md` are orientation citations (naming what it is, where it starts), not an instruction to consult its content to complete the procedure |
+| **Post-merge closure only** | `SKILL.md` (6,391) + `rules/milestone-completion.md` (20,823) = 27,214 chars, 6,804 tokens | Not applicable — closure is self-contained in this file |
+| **Full delivery, happy path** (readiness → creation → closure → release, no CI failure) | `SKILL.md` (6,391) + `rules/milestone-pr-readiness.md` (14,394) + `rules/milestone-completion.md` (20,823) + `rules/release.md` (17,052) = 58,660 chars, 14,665 tokens | Already includes `milestone-completion.md`, so the PR-readiness row's own broader-estimate distinction does not add anything further here |
 
-These assume a path loads only the file(s) its own trigger needs — a plain PR-readiness check does
-not open `rules/ci-failure-correction.md` or `rules/milestone-completion.md`'s closure content, and a
-CI-investigation-only pass does not open either PR-readiness or closure content. A full-delivery pass
-that also hits a CI failure would additionally load `rules/ci-failure-correction.md` (8,937
-characters, ~2,234 tokens on top of the happy-path row).
+A full-delivery pass that also hits a CI failure would additionally load
+`rules/ci-failure-correction.md` (8,937 characters, ~2,234 tokens on top of the happy-path row).
 
 **Change against the `667fab15` snapshot the rest of this document describes:**
 
 - The old, single "ship-it, PR-readiness check only" row (`SKILL.md` + the whole
-  `milestone-completion.md`) was 44,418 characters (11,105 tokens). The new PR-readiness-only row is
-  20,785 characters (5,196 tokens) — a modeled reduction of 23,633 characters (5,909 tokens, ~53%),
-  since that path no longer loads the CI-failure and closure content it never needed.
+  `milestone-completion.md`) was 44,418 characters (11,105 tokens). Compared against the **local-file
+  subtotal** (20,785 characters, 5,196 tokens), that is a modeled reduction of 23,633 characters
+  (5,909 tokens, ~53%) — but this is the reduction for the minimal case only, when the pass never
+  needs `milestone-completion.md`'s shared guidance, not a general PR-readiness saving. Compared
+  against the **broader estimate** (41,608 characters, 10,402 tokens, when that guidance actually is
+  needed), the reduction is only 2,810 characters (703 tokens, ~6%) — most of the old file's content
+  is still reached, just through a followed cross-reference rather than a single bundled file.
 - The old "ship-it, full PR-readiness → post-merge closure and release" row was 61,468 characters
   (15,367 tokens). The new happy-path equivalent is 58,660 characters (14,665 tokens) — a modeled
-  reduction of 2,808 characters (702 tokens, ~5%), smaller than the PR-readiness-only path's
-  reduction because this row still loads all the content it always needed; the saving here comes
-  entirely from `milestone-completion.md` no longer carrying PR-readiness/creation content this row
-  gets from the separate `milestone-pr-readiness.md` file instead, net of the added routing overhead
-  in `SKILL.md`.
+  reduction of 2,808 characters (702 tokens, ~5%). This saving is not from moving PR-readiness/
+  creation content into a separate file — this path loads both `milestone-pr-readiness.md` and
+  `milestone-completion.md` regardless of which file holds that content, so relocating it saves
+  nothing here. The saving instead comes from excluding `rules/ci-failure-correction.md`'s content
+  (5,375 characters, the exact size of the old file's former CI-failure section, measured the same
+  Unicode-character way as every other figure in this document), which the old single file bundled
+  into every load unconditionally, even for a pass with no CI failure. That exclusion is partially
+  offset by routing/structural overhead added across the split — 2,093 characters split between
+  `milestone-pr-readiness.md` and `milestone-completion.md` (each file's own entry-condition text and
+  duplicated Cross-rule-dependencies/Reporting/Do-Don't sections), plus `SKILL.md`'s +472 and
+  `release.md`'s +2 — reconciling exactly: 5,375 − 2,093 − 472 − 2 = 2,808.
 - CI-failure investigation has no prior comparable row in this document — the earlier snapshot never
   modeled it as distinguishable from the bundled `milestone-completion.md` load.
 
 **These are the same kind of modeled text-volume estimates this document uses throughout, not a
 measured runtime benefit.** No agent session was run to confirm a real PR-readiness check actually
 avoids opening `rules/ci-failure-correction.md`, or that these four paths occur in any particular
-real-world proportion. The repository-wide `skills/` total moves from 471,818 to 478,686 characters
-(62 files, up from 60 — two new files added) at `a432509`, consistent with the pattern the two
-`implement-it` updates above already established: routing overhead is added across several
-always-loaded files each time, while the extracted content itself is relocated, not shortened.
+real-world proportion. The repository-wide `skills/` total moves from 472,276 to 478,686 characters
+(62 files, up from 60 — two new files added) at `a432509`. 472,276 is the immediate `7b0dcea`
+predecessor's own total, not the earlier `eb64ec9` figure (471,818) the previous update section
+reports — two intervening commits (`27486d8`, `7b0dcea`) made small unrelated wording corrections
+between those two snapshots, so `eb64ec9`'s own 471,818 remains that commit's correct total, but is
+not the right baseline for measuring this pass's own change. The 6,410-character difference here is
+consistent with the pattern the two `implement-it` updates above already established: routing
+overhead is added across several always-loaded files each time, while the extracted content itself
+is relocated, not shortened.
 
 **Behavior preservation.** Every substantive line moved from `milestone-completion.md` into the two
 new files was compared against the pinned source with a line-by-line diff; every difference found is

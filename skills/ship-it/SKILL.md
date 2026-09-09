@@ -88,9 +88,14 @@ Trigger on requests shaped like:
   fails against an open, not-yet-merged milestone PR.
 - `milestone-completion.md` — the shared delivery-lifecycle entry map (which of the three files
   applies at each point), what counts as a delivery/phase milestone, the Backlog exemption, and the
-  three-part closure gate plus the validated closure mutation, consulted once the human gives the
-  post-merge authorization — that authorization is the approval for closure, so no second approval is
-  asked, and closure is not gated on release publication itself.
+  milestone description as scope contract. This shared guidance is consulted whenever milestone
+  classification, scope interpretation, or lifecycle orientation is actually needed — including
+  before merge, e.g. from `milestone-pr-readiness.md`'s own "Do" list when a manual-testing finding
+  needs scoping, or to confirm Backlog eligibility. Separately, this file also owns the three-part
+  closure gate plus the validated closure mutation, consulted once the human gives the post-merge
+  authorization — that authorization is the approval for closure, so no second approval is asked, and
+  closure is not gated on release publication itself. Only the closure procedure is gated this way;
+  the shared guidance is not.
 - `release.md` — the release phase: a post-merge authorization gate right after the human confirms a
   PR merged (the same gate that also opens `milestone-completion.md`'s closure gate — neither branch
   waits on the other), then discovering the project's real release policy, understanding the release,
