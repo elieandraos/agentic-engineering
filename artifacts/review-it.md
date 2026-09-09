@@ -120,6 +120,16 @@ A finding must materially affect one of those concerns; a stylistic preference t
 conventions don't already support is not a finding, and neither is a speculative concern with no
 traced code path or reproducible evidence behind it.
 
+Maintainability and test adequacy use concrete consequences rather than superficial signals.
+An abstraction is unnecessary only when its continued existence has a demonstrated cost; removing
+it and spreading important responsibilities across callers supports retaining it. A single caller
+or thin wrapper alone establishes no defect. Test expectations must independently check the
+behavior their test layer owns, match the intended requirement, and use assertions that would
+catch a regression in that behavior. Legitimate integration assertions remain valid where separate
+tests own the underlying value's correctness. The optional Laravel companion illustrates that
+ownership distinction; the portable check does not require it. The owning checklist contains the
+inspection procedure for both concerns.
+
 **The authorized-scope-change exemption is deliberately narrow.** An explicitly authorized scope
 change is exempt from exactly one category — Accidental scope expansion — because it is not
 accidental. It is not exempt from anything else: every other applicable category runs against it
@@ -172,8 +182,9 @@ surface it actually checked this time, alongside the same state/comparison ident
 by omission, that it independently rechecked the entire target.
 
 **Report shape.** Every result states the reviewed target and its precise identity; confirmed
-findings ordered by consequence, each with location, evidence, and consequence; which checks this
-skill actually ran or traced itself, distinguished from evidence supplied by others; material
+findings ordered by consequence, each with location, evidence, consequence, and the requirement or
+project-convention source when the finding depends on one; which checks this skill actually ran or
+traced itself, distinguished from evidence supplied by others; material
 limitations and unresolved questions; and a scoped clean result when warranted, naming which
 categories applied and passed rather than a bare "looks good." An unchecked category is a limitation
 to state, never a pass to imply. **A `review-it` result never grants authorization by itself** — it
@@ -242,14 +253,16 @@ mechanism of its own to detect that a caller relied on a stale result without as
   diffed against two different bases producing two different diffs, and a material worktree edit
   with no new commit leaving `HEAD` unchanged while the reviewed content changed. That experiment
   tested Git comparison and state-identity behavior specifically — it did not exercise this skill's
-  stack-aware convention discovery (§3) or run the checklist itself; no consuming project's review
-  has yet exercised either.
+  stack-aware convention discovery (§3) or run the checklist itself; it provides no live consumer
+  evidence for either.
 - The no-companion convention-discovery behavior (§3) — running the full checklist and skipping only
   a genuinely companion-dependent sub-check — is stated precisely in `rules/scope.md` and
   `rules/checklist.md` and has been source-reviewed against that precise wording, but has not yet
   been exercised against a real non-Laravel project with no stack companion installed; this dossier
   does not claim that exercise has happened.
 - This skill's three entry points (§1) have each been source-reviewed and static-walkthrough-
-  validated against the actual owning files, but no skill in this ecosystem has actually invoked
-  `review-it` end to end against a real worktree, branch, or PR since it was introduced — this
-  dossier does not claim runtime or consumer proof.
+  validated against the actual owning files. That recorded validation does not include an end-to-end
+  skill invocation against a real worktree, branch, or PR.
+- The finding-traceability, abstraction-usefulness, and independent-test-expectation refinements
+  have been checked through source review and focused scenario walkthroughs. Their recorded
+  validation does not include a live review session or executed test fixtures.
