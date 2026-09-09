@@ -174,8 +174,10 @@ own — now live entirely under `document-it` and are not duplicated here; §7 s
 Outside this skill, two things ever cross to another skill as a governed artifact handoff: an
 approved `plan.md`, handed to `plan-it`, and a guide-shaped request, routed to `document-it` (§7). A
 verified answer — from a standalone investigation, or from "Plan feature architecture" finding no
-material decision — may recommend the user proceed to `plan-it` directly; that recommendation
-carries no locked decisions, no artifact, and no approval gate, unlike the `plan.md` path. Once
+material decision, or resolving one without a `plan.md` being requested — may recommend the user
+proceed to `plan-it` directly. That recommendation itself grants no approval and does not erase a
+decision the user explicitly approved during the conversation; it carries no artifact and no
+additional approval gate, unlike the `plan.md` path. Once
 approved, `plan-it` treats the plan as canonical: it can still validate a
 current-state fact against current evidence when drafting issues, and can flag a derived constraint
 whose stated premise no longer holds, but it does not re-open a locked decision or re-derive

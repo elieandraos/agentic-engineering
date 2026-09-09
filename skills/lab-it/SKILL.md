@@ -10,12 +10,12 @@ description: "Investigates and validates how an existing system or capability ac
 This skill investigates a real system and turns the resulting understanding into one of the
 following:
 
-| User intention                                                        | Result                                                                    |
-| ----------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Understand how a system actually works                                | A verified answer — investigation and recap, no guide required           |
-| Prepare a feature for implementation, no material decision remaining  | A verified answer recommending `plan-it` directly, no `plan.md` required |
-| Design feature architecture through conversation, decisions material  | Approved `plan.md` handed to `plan-it`                                   |
-| Create, update, or review an architecture guide                       | Routed to `document-it`                                                  |
+| User intention                                                                | Result                                                                                     |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Understand how a system actually works                                        | A verified answer — investigation and recap, no guide required                            |
+| Resolve a feature's architecture through conversation, no `plan.md` requested  | A verified answer or resolved architecture discussion — no document produced              |
+| Explicitly request `plan.md` synthesis                                        | Approved `plan.md` handed to `plan-it`, via the existing synthesis and approval procedure  |
+| Create, update, or review an architecture guide                               | Routed to `document-it`                                                                    |
 
 Investigation comes first in every workflow — whether user confirmation follows, and when, is
 conditional; see "Shared investigation and decision discipline" below. Investigation and recap
