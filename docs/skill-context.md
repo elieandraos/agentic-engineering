@@ -389,21 +389,26 @@ implemented or benchmarked.
    general Do/Don't summary's place in the remaining file — none of that changes, only which file
    owns the reconstruction recipe specifically.
 
-3. **A large file covering several distinct conditional surfaces.**
+3. **A large file covering several distinct conditional surfaces.** *The `implement-it/verification.md`
+   half of this proposal was applied in commit `eb64ec9`, after the `667fab15` snapshot this section
+   otherwise describes — see "Update: isolation-verification and worktree-preservation extraction"
+   below for the measured before/after. The `ship-it/milestone-completion.md` half remains unapplied,
+   left for its own future pass; the text below describes both exactly as originally proposed.*
    `skills/ship-it/rules/milestone-completion.md` (38,499 characters, the largest file in this skill
    set) covers three surfaces its own `SKILL.md` already names as distinct — PR readiness (~lines
    124–192), PR creation (~194–252), CI-failure investigation and correction handoff (~253–338), and
    the closure gate (~348–437) — each with its own trigger condition. A ship-it session asked only
    "is this milestone ready for a PR" currently loads the closure-gate and CI-investigation mechanics
-   it will not use this pass. Similarly, `skills/implement-it/rules/verification.md` (35,260
-   characters) bundles "Preserving unrelated worktree content during a Git rewrite" (4,326
+   it will not use this pass. Similarly, `skills/implement-it/rules/verification.md` was 35,260
+   characters, bundling "Preserving unrelated worktree content during a Git rewrite" (4,326
    characters) and "Isolation verification" (3,080 characters) — together ~21% of the file — into a
-   file consulted on every ordinary verification pass, even though both sections are explicitly "a
-   deliberate escalation, not the default." **What could change:** split each file along its own
-   already-named conditional surfaces into separately routed files, cross-referenced from the owning
-   `SKILL.md`'s "Rules" list exactly as it already distinguishes them in prose. **What must be
-   preserved:** every gate, condition, and cross-reference currently stated — a split changes which
-   file a reader opens, not what the rule says or when it applies.
+   file consulted on every ordinary verification pass, even though both sections were explicitly "a
+   deliberate escalation, not the default." **What could change (ship-it, still unapplied):** split
+   `milestone-completion.md` along its own already-named conditional surfaces into separately routed
+   files, cross-referenced from the owning `SKILL.md`'s "Rules" list exactly as it already
+   distinguishes them in prose. **What must be preserved:** every gate, condition, and cross-reference
+   currently stated — a split changes which file a reader opens, not what the rule says or when it
+   applies.
 
 4. **Duplicated explanation: checked in one reading pass, none found — not a claim that none
    exists.** README.md and SKILL.md pairs were compared across all seven skills for restated content
@@ -422,8 +427,9 @@ implemented or benchmarked.
 
 Pinned to commit
 [`9b77d00`](https://github.com/elieandraos/agentic-engineering/commit/9b77d0003d463fece6f96a301640becedd36ca36)
-on `main`, one commit after the `667fab15` snapshot the rest of this document describes. This
-records the effect of applying reduction proposal 2 above — routing the unpublished-history
+on `main`, two commits after the `667fab15` snapshot the rest of this document describes (via
+`3269c8f`, the documentation-correction commit that landed between them). This records the effect
+of applying reduction proposal 2 above — routing the unpublished-history
 reconstruction recipe out of `commit-boundaries.md` into its own file — on the file sizes and
 workflow estimates that proposal named. It does not re-measure anything else in this document; every
 figure outside this section still describes `667fab15`, per this document's own "later passes append
@@ -488,6 +494,105 @@ commit coherent" pointer, now naming `commit-boundaries.md` explicitly since tha
 different file than the sentence citing it). No gate, stop condition, classification rule, or
 verification requirement changed. See this pass's own commit message and the Control Room report for
 the full comparison; this document reports only the resulting sizes.
+
+## Update: isolation-verification and worktree-preservation extraction (2026-09-09j)
+
+Pinned to commit
+[`eb64ec9`](https://github.com/elieandraos/agentic-engineering/commit/eb64ec9fd156407b14119fa39db5902ae2346308)
+on `main`, one commit after the `9b77d00` snapshot the previous update section describes, and three
+commits after the `667fab15` snapshot the rest of this document describes. This records the effect
+of applying the `implement-it/verification.md` half of reduction proposal 3 above — routing
+`verification.md`'s "Preserving unrelated worktree content during a Git rewrite" and "Isolation
+verification" technique out into their own files, `rules/worktree-preservation.md` and
+`rules/isolation-verification.md`, while keeping the decision for *when* isolation verification is
+warranted visible in `verification.md` itself. It does not re-measure anything else in this
+document; every figure outside this section and the previous "Update" section still describes
+`667fab15`, per this document's own "later passes append a new dated section rather than silently
+overwriting this one's figures." Same Unicode-character method as the rest of this document.
+
+**Correction to the previous update section's own history claim:** that section stated `9b77d00` was
+"one commit after the `667fab15` snapshot." It is two commits after (`667fab15` → `3269c8f` →
+`9b77d00`) — corrected in place above, not restated as a new finding here, since it describes that
+section's own pinned commit, not this one's.
+
+**Changed file sizes (relative to `9b77d00`, the previous pinned revision):**
+
+| File | `9b77d00` | `eb64ec9` | Change |
+| --- | ---: | ---: | ---: |
+| `rules/verification.md` | 35,230 | 29,387 | −5,843 |
+| `rules/isolation-verification.md` (new) | — | 2,358 | +2,358 |
+| `rules/worktree-preservation.md` (new) | — | 4,273 | +4,273 |
+| `rules/commit-reconstruction.md` | 14,766 | 14,817 | +51 |
+| `SKILL.md` | 10,384 | 11,096 | +712 |
+| `README.md` | 3,417 | 3,755 | +338 |
+
+`verification.md` shrank by 5,843 characters — the two extracted sections' full content, minus the
+short routing pointer and ownership-statement text that replaced them. `commit-reconstruction.md`
+grew by 51 characters (its two cross-references to the moved preservation procedure and isolation
+technique, repointed to their new files). `SKILL.md` gained two routing entries (+712); `README.md`'s
+"Context consumption" section was rewritten to describe three conditional files instead of one
+(+338). As in the previous update, these routing/shared-dependency changes are not skippable
+overhead — `SKILL.md` and `verification.md` load on every ordinary pass regardless of which
+escalation, if any, a given issue needs.
+
+**Workflow estimates, counting shared dependencies once — three paths this document now
+distinguishes for `implement-it`, where the previous update distinguished only two:**
+
+| Path | Files counted (delta from the ordinary "implement-it, one ordinary issue" row) | Characters | Rough tokens |
+| --- | --- | ---: | ---: |
+| **Ordinary** (no isolation, no reconstruction) | `SKILL.md` (11,096) + `sequencing.md` (8,862, unchanged) + `verification.md` (29,387) + `review-it`'s four files (33,037, unchanged) + `review-gates.md` (13,015, unchanged) + `commit-boundaries.md` (10,239, unchanged) + `issue-closure.md` (14,243, unchanged); `isolation-verification.md`, `worktree-preservation.md`, and `commit-reconstruction.md` **not loaded** | 119,879 | 29,970 |
+| **Isolation-triggered** (an intermediate commit's correctness needs proving, no reconstruction) | everything in the row above, plus `isolation-verification.md` (2,358) and `worktree-preservation.md` (4,273); `commit-reconstruction.md` still not loaded | 126,510 | 31,628 |
+| **Reconstruction** (a correction folds into an already-committed, unpublished commit — mandates isolation verification for every rebuilt commit, per `commit-reconstruction.md` step 11) | the ordinary row, plus `commit-reconstruction.md` (14,817), `isolation-verification.md` (2,358), and `worktree-preservation.md` (4,273) | 141,327 | 35,332 |
+
+**Incremental change (this pass, against the `9b77d00` snapshot the previous update measured):**
+
+- Ordinary path: 125,010 → 119,879 characters (31,252 → 29,970 tokens) — a further modeled
+  reduction of 5,131 characters (1,282 tokens), on top of the previous pass's own reduction.
+- Reconstruction path: 139,776 → 141,327 characters (34,944 → 35,332 tokens) — a modeled increase of
+  1,551 characters (388 tokens): the reconstruction path now separately pays for
+  `isolation-verification.md` and `worktree-preservation.md`, which were previously folded into the
+  single `verification.md` it already loaded, and that increase is larger than what
+  `commit-boundaries.md`/`commit-reconstruction.md`'s own prior split saved this specific path.
+
+**Cumulative change (both passes combined, against the original `667fab15` snapshot before either
+extraction):**
+
+- Ordinary path: 137,969 → 119,879 characters (34,492 → 29,970 tokens) — a modeled reduction of
+  18,090 characters (4,522 tokens, ~13.1%) for the path that needs neither escalation.
+- Reconstruction path: 137,969 → 141,327 characters (34,492 → 35,332 tokens) — a modeled increase of
+  3,358 characters (840 tokens, ~2.4%) for the path that needs both. This is the same pattern the
+  first update observed at smaller scale: routing overhead added twice now concentrates entirely on
+  the rarest, most complex path, while the common ordinary path gets smaller both times.
+- The Laravel-composed ordinary row (`implement-it` + `laravel-inertia-stack` for one filtered-index
+  task) moves the same way as the base ordinary row: 169,245 → 151,155 characters (42,311 → 37,789
+  tokens), the same 18,090-character/4,522-token cumulative reduction, since the Laravel-specific
+  additions are unchanged by either extraction.
+
+**These remain the same kind of modeled text-volume estimates this document uses throughout, not a
+measured runtime benefit.** No agent session was run to confirm an ordinary or isolation-triggered
+pass actually avoids opening `commit-reconstruction.md`, or that the three paths occur in any
+particular real-world proportion — this document has no data on how often implement-it work needs
+isolation verification without full reconstruction, isolation verification is a stated design
+observation from `rules/verification.md` itself ("a deliberate escalation, not the default"), not a
+frequency this document measured. The repository-wide `skills/` total moves from 469,929 to 471,818
+characters (60 files, up from 58) at `eb64ec9` — a net increase, consistent with both passes: routing
+overhead is added across several files each time, while the extracted content itself is relocated,
+not shortened.
+
+**Behavior preservation.** Comparing both extracted files against their `9b77d00` source
+line-by-line: in `worktree-preservation.md`, all nine numbered steps are untouched — the only
+difference is the heading conversion and one cross-file reference fix (`the isolation technique
+below` → `` `rules/isolation-verification.md`'s technique ``). In `isolation-verification.md`, the
+technique's six numbered steps are untouched except for three necessary cross-file reference fixes
+(pointing at `rules/worktree-preservation.md` and two named sections of `rules/verification.md`
+instead of same-file `above`/`below` references that no longer resolve once split across files); the
+trigger blockquote, the "reach for this when" criteria, and the escalation-cost rationale paragraph
+were deliberately *not* moved — they remain byte-identical in `verification.md`, confirmed by exact
+substring match against the pinned source, satisfying this task's requirement that the decision for
+when isolation is required stay visible in the file an agent needs it to discover. No gate, command,
+stop condition, reuse condition, or stash-identity/restoration mechanic changed. See this pass's own
+commit message and the Control Room report for the full comparison; this document reports only the
+resulting sizes.
 
 ## Metadata correction
 
