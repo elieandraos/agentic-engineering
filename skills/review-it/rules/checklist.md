@@ -112,14 +112,16 @@ concrete thought experiment: if this layer were removed or inlined at its call s
 actually eliminate unnecessary complexity — or would it instead spread important knowledge and
 responsibilities (a validation rule, a derivation, an invariant that has to hold everywhere it's
 used) back out across every caller, making each one responsible for reproducing it correctly? A
-layer that fails this test is doing real work, not indirection for its own sake. A single current
-caller or a thin wrapper is a fact about the code, not by itself proof of a problem — some
-single-caller abstractions exist deliberately, to isolate a boundary the project has already
-established (a repository pattern, a framework seam, a documented architectural layer, per
-"Architectural fit" above) even though only one call site happens to use it today. Report a finding
-here only once removing or inlining the layer has a stated, concrete consequence — the actual
-complexity it would remove, or the actual foreseeable change it would make harder — never merely
-because the abstraction currently has one caller.
+layer whose removal would spread that knowledge or responsibility across callers is doing real work
+— that result supports retaining it, not reporting it. A single current caller or a thin wrapper is
+a fact about the code, not by itself proof of a problem — some single-caller abstractions exist
+deliberately, to isolate a boundary the project has already established (a repository pattern, a
+framework seam, a documented architectural layer, per "Architectural fit" above) even though only
+one call site happens to use it today. Report a finding here only once the layer's own continued
+existence has a concrete, demonstrated cost — actual duplication it introduces, actual navigation or
+maintenance overhead it imposes, or an actual adjacent change it makes harder today — attributable to
+the layer itself, never merely because it currently has one caller or because fewer layers would be
+preferable in the abstract.
 
 ### Project and stack convention compliance
 
@@ -147,13 +149,18 @@ passing test suite is not by itself evidence of adequate coverage — inspect wh
 assert, not only whether they pass.
 
 Also check whether an assertion's expected side independently proves the behavior under test, or
-merely repeats the implementation back at itself. An expected value that's literal, or derived by
-reasoning about the requirement, independently proves the outcome; an expected value built by
-exercising the same logic, class, or transformation the test exists to prove cannot catch a
-regression that stays internally self-consistent, because the "expected" side moves in lockstep with
-the code under test — that self-referential comparison is a finding when the test is the one
-specifically responsible for proving that value or transformation is correct. It is not a finding
-when what the test is actually responsible for proving is integration — that the right object
+merely repeats the implementation back at itself. An expected value built by exercising the same
+logic, class, or transformation the test exists to prove cannot catch a regression that stays
+internally self-consistent, because the "expected" side moves in lockstep with the code under test —
+that self-referential comparison is a finding when the test is the one specifically responsible for
+proving that value or transformation is correct. Independence from the implementation is necessary
+but not sufficient: an expected value that's literal, or derived by reasoning about the requirement
+rather than by exercising the code under test, still has to actually match the behavior the change is
+supposed to produce, and still has to be checked by an assertion that would actually fail if that
+behavior regressed — a literal value that's simply wrong, or an assertion too weak to catch the case
+it's supposed to prove, is its own finding, not a pass merely because it was derived independently.
+It is not a finding when what the test is actually responsible for proving is integration — that
+the right object
 reached the right collaborator, or the right model reached the right endpoint — and a separate,
 lower-level test already owns that value's own correctness; a legitimate integration assertion and
 established test-layer ownership are not defects. Where the Laravel companion is installed, its
