@@ -389,22 +389,23 @@ implemented or benchmarked.
    general Do/Don't summary's place in the remaining file — none of that changes, only which file
    owns the reconstruction recipe specifically.
 
-3. **A large file covering several distinct conditional surfaces.** *The `implement-it/verification.md`
-   half of this proposal was applied in commit `eb64ec9`, after the `667fab15` snapshot this section
-   otherwise describes — see "Update: isolation-verification and worktree-preservation extraction"
-   below for the measured before/after. The `ship-it/milestone-completion.md` half remains unapplied,
-   left for its own future pass; the text below describes both exactly as originally proposed.*
-   `skills/ship-it/rules/milestone-completion.md` (38,499 characters, the largest file in this skill
-   set) covers three surfaces its own `SKILL.md` already names as distinct — PR readiness (~lines
-   124–192), PR creation (~194–252), CI-failure investigation and correction handoff (~253–338), and
-   the closure gate (~348–437) — each with its own trigger condition. A ship-it session asked only
-   "is this milestone ready for a PR" currently loads the closure-gate and CI-investigation mechanics
-   it will not use this pass. Similarly, `skills/implement-it/rules/verification.md` was 35,260
-   characters, bundling "Preserving unrelated worktree content during a Git rewrite" (4,326
+3. **A large file covering several distinct conditional surfaces.** *Both halves of this proposal are
+   now applied. The `implement-it/verification.md` half was applied in commit `eb64ec9` — see
+   "Update: isolation-verification and worktree-preservation extraction" above for the measured
+   before/after. The `ship-it/milestone-completion.md` half was applied in commit `a432509` — see
+   "Update: ship-it milestone-completion.md split" below. The text immediately below describes both
+   exactly as originally proposed, against the `667fab15` snapshot; it is not restated as current.*
+   `skills/ship-it/rules/milestone-completion.md` was 38,499 characters, the largest file in this
+   skill set, covering three surfaces its own `SKILL.md` already named as distinct — PR readiness
+   (~lines 124–192), PR creation (~194–252), CI-failure investigation and correction handoff
+   (~253–338), and the closure gate (~348–437) — each with its own trigger condition. A ship-it
+   session asked only "is this milestone ready for a PR" loaded the closure-gate and CI-investigation
+   mechanics it would not use that pass. Similarly, `skills/implement-it/rules/verification.md` was
+   35,260 characters, bundling "Preserving unrelated worktree content during a Git rewrite" (4,326
    characters) and "Isolation verification" (3,080 characters) — together ~21% of the file — into a
    file consulted on every ordinary verification pass, even though both sections were explicitly "a
-   deliberate escalation, not the default." **What could change (ship-it, still unapplied):** split
-   `milestone-completion.md` along its own already-named conditional surfaces into separately routed
+   deliberate escalation, not the default." **What changed (ship-it):** split `milestone-completion.md`
+   along its own already-named conditional surfaces into separately routed
    files, cross-referenced from the owning `SKILL.md`'s "Rules" list exactly as it already
    distinguishes them in prose. **What must be preserved:** every gate, condition, and cross-reference
    currently stated — a split changes which file a reader opens, not what the rule says or when it
@@ -604,6 +605,92 @@ when isolation is required stay visible in the file an agent needs it to discove
 stop condition, reuse condition, or stash-identity/restoration mechanic changed. See this pass's own
 commit message and the Control Room report for the full comparison; this document reports only the
 resulting sizes.
+
+## Update: ship-it milestone-completion.md split (2026-09-09k)
+
+Pinned to commit
+[`a432509`](https://github.com/elieandraos/agentic-engineering/commit/a4325097aeb1daff619ec37a4993ad23144235c3)
+on `main`. This records the effect of applying the `ship-it/milestone-completion.md` half of
+reduction proposal 3 above — splitting that file's three conditional surfaces (PR readiness and
+creation, CI-failure investigation and correction handoff, and the closure gate) into
+`rules/milestone-pr-readiness.md`, `rules/ci-failure-correction.md`, and a narrowed
+`rules/milestone-completion.md` that now owns closure and the shared delivery-lifecycle entry map. It
+does not re-measure anything else in this document; every figure outside this section and the two
+"Update" sections above it still describes `667fab15`. Same Unicode-character method as the rest of
+this document.
+
+**Changed file sizes:**
+
+| File | Before | After | Change |
+| --- | ---: | ---: | ---: |
+| `rules/milestone-completion.md` | 38,499 | 20,823 | −17,676 |
+| `rules/milestone-pr-readiness.md` (new) | — | 14,394 | +14,394 |
+| `rules/ci-failure-correction.md` (new) | — | 8,937 | +8,937 |
+| `rules/release.md` | 17,050 | 17,052 | +2 |
+| `SKILL.md` | 5,919 | 6,391 | +472 |
+| `README.md` | 2,386 | 2,540 | +154 |
+
+`milestone-completion.md` shrank by 17,676 characters — the two extracted surfaces' full content,
+minus the shared entry map, closure gate, and the short routing text that replaced them.
+`release.md` gained 2 characters (one cross-reference repointed from `milestone-completion.md` to
+`milestone-pr-readiness.md`, net of wording adjustment). `SKILL.md` gained two routing entries
+(+472); `README.md`'s "Context consumption" section now names four conditional files instead of two
+(+154).
+
+**Workflow estimates, four paths counted separately — each file counted once, `SKILL.md` shared
+across all of them:**
+
+| Path | Files counted | Characters | Rough tokens |
+| --- | --- | ---: | ---: |
+| **PR readiness and authorized creation** | `SKILL.md` (6,391) + `rules/milestone-pr-readiness.md` (14,394) | 20,785 | 5,196 |
+| **CI-failure investigation and correction handoff** | `SKILL.md` (6,391) + `rules/ci-failure-correction.md` (8,937) | 15,328 | 3,832 |
+| **Post-merge closure only** | `SKILL.md` (6,391) + `rules/milestone-completion.md` (20,823) | 27,214 | 6,804 |
+| **Full delivery, happy path** (readiness → creation → closure → release, no CI failure) | `SKILL.md` (6,391) + `rules/milestone-pr-readiness.md` (14,394) + `rules/milestone-completion.md` (20,823) + `rules/release.md` (17,052) | 58,660 | 14,665 |
+
+These assume a path loads only the file(s) its own trigger needs — a plain PR-readiness check does
+not open `rules/ci-failure-correction.md` or `rules/milestone-completion.md`'s closure content, and a
+CI-investigation-only pass does not open either PR-readiness or closure content. A full-delivery pass
+that also hits a CI failure would additionally load `rules/ci-failure-correction.md` (8,937
+characters, ~2,234 tokens on top of the happy-path row).
+
+**Change against the `667fab15` snapshot the rest of this document describes:**
+
+- The old, single "ship-it, PR-readiness check only" row (`SKILL.md` + the whole
+  `milestone-completion.md`) was 44,418 characters (11,105 tokens). The new PR-readiness-only row is
+  20,785 characters (5,196 tokens) — a modeled reduction of 23,633 characters (5,909 tokens, ~53%),
+  since that path no longer loads the CI-failure and closure content it never needed.
+- The old "ship-it, full PR-readiness → post-merge closure and release" row was 61,468 characters
+  (15,367 tokens). The new happy-path equivalent is 58,660 characters (14,665 tokens) — a modeled
+  reduction of 2,808 characters (702 tokens, ~5%), smaller than the PR-readiness-only path's
+  reduction because this row still loads all the content it always needed; the saving here comes
+  entirely from `milestone-completion.md` no longer carrying PR-readiness/creation content this row
+  gets from the separate `milestone-pr-readiness.md` file instead, net of the added routing overhead
+  in `SKILL.md`.
+- CI-failure investigation has no prior comparable row in this document — the earlier snapshot never
+  modeled it as distinguishable from the bundled `milestone-completion.md` load.
+
+**These are the same kind of modeled text-volume estimates this document uses throughout, not a
+measured runtime benefit.** No agent session was run to confirm a real PR-readiness check actually
+avoids opening `rules/ci-failure-correction.md`, or that these four paths occur in any particular
+real-world proportion. The repository-wide `skills/` total moves from 471,818 to 478,686 characters
+(62 files, up from 60 — two new files added) at `a432509`, consistent with the pattern the two
+`implement-it` updates above already established: routing overhead is added across several
+always-loaded files each time, while the extracted content itself is relocated, not shortened.
+
+**Behavior preservation.** Every substantive line moved from `milestone-completion.md` into the two
+new files was compared against the pinned source with a line-by-line diff; every difference found is
+one of the identified necessary cross-file reference fixes (a same-file `above`/`below` pointer,
+inline diagram annotation, or named-section citation that no longer resolved once split across
+files) — no Git command, numbered step, gate, approval requirement, or condition was reworded or
+reordered. `rules/release.md` required exactly one such fix (its "milestone-PR reference convention"
+citation, now pointing at `rules/milestone-pr-readiness.md`). A repository-wide search found seven
+caller files outside `ship-it` citing the moved sections by name (`implement-it`'s `SKILL.md`,
+`sequencing.md`, `review-gates.md`, `issue-closure.md`; `plan-it`'s `issue-conventions.md`;
+`review-it`'s `SKILL.md`; and `artifacts/ship-it.md`); each was repointed to whichever of the three
+files now owns the section it actually cited, and two prose references that genuinely spanned both
+the PR-readiness and closure surfaces were reworded to name both files rather than one. See this
+pass's own commit message and the Control Room report for the full comparison; this document reports
+only the resulting sizes.
 
 ## Metadata correction
 
