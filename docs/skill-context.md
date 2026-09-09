@@ -368,8 +368,10 @@ implemented or benchmarked.
    this is a proposal to make the file's own examples self-sufficient, not to remove the teaching
    content the three compact examples currently carry.
 
-2. **A large file bundling a common path with a rare, conditional sub-procedure.**
-   `skills/implement-it/rules/commit-boundaries.md` is 23,510 characters, in three parts. Lines
+2. **A large file bundling a common path with a rare, conditional sub-procedure.** *Applied in
+   commit `9b77d00`, after the `667fab15` snapshot this section otherwise describes — see "Update:
+   commit-reconstruction extraction" below for the measured before/after.*
+   `skills/implement-it/rules/commit-boundaries.md` was 23,510 characters, in three parts. Lines
    1–157 (8,798 characters) cover ordinary commit-boundary derivation plus the common "nothing
    committed yet" review-correction case — both consulted on every issue. Lines 158–326 (14,144
    characters, roughly 60% of the file) are the history-reconstruction recipe itself ("Something
@@ -415,6 +417,77 @@ implemented or benchmarked.
    these fourteen files" — a future pass with different scrutiny, or a change to either file, could
    still find something this one missed. Recorded so a future pass starts from what was actually
    checked, not to foreclose checking again.
+
+## Update: commit-reconstruction extraction (2026-09-09i)
+
+Pinned to commit
+[`9b77d00`](https://github.com/elieandraos/agentic-engineering/commit/9b77d0003d463fece6f96a301640becedd36ca36)
+on `main`, one commit after the `667fab15` snapshot the rest of this document describes. This
+records the effect of applying reduction proposal 2 above — routing the unpublished-history
+reconstruction recipe out of `commit-boundaries.md` into its own file — on the file sizes and
+workflow estimates that proposal named. It does not re-measure anything else in this document; every
+figure outside this section still describes `667fab15`, per this document's own "later passes append
+a new dated section rather than silently overwriting this one's figures." Same Unicode-character
+method as the rest of this document (Python `len()` on UTF-8-decoded content).
+
+**Changed file sizes:**
+
+| File | `667fab15` | `9b77d00` | Change |
+| --- | ---: | ---: | ---: |
+| `rules/commit-boundaries.md` | 23,510 | 10,239 | −13,271 |
+| `rules/commit-reconstruction.md` (new) | — | 14,766 | +14,766 |
+| `rules/verification.md` | 35,260 | 35,230 | −30 |
+| `SKILL.md` | 10,042 | 10,384 | +342 |
+| `README.md` | 3,156 | 3,417 | +261 |
+
+`commit-boundaries.md` and `commit-reconstruction.md` combined now total 25,005 characters, 1,495
+more than the single 23,510-character file they replace — the entry-condition statement the new
+file needed to work when loaded on its own, the three citation examples rewritten to stand alone
+without `scenarios.md`, and `commit-boundaries.md`'s own shortened handoff paragraph together add
+slightly more than they removed from the five citation-wrapper trims. `verification.md`'s two
+cross-references were repointed at the new file (−30 characters net). `SKILL.md` gained one routing
+entry for the conditional file (+342); `README.md`'s "Context consumption" section was expanded to
+distinguish the five ordinary rule files from the one conditional one (+261). These four routing/
+shared-dependency changes are not optional overhead an ordinary pass can skip — `SKILL.md` and (when
+referenced) `README.md` always load, and `verification.md` loads on every ordinary pass regardless
+of which path a correction takes.
+
+**Workflow estimates, ordinary vs. reconstruction path — same "implement-it, one ordinary issue"
+shape this document already models, recomputed:**
+
+| Path | Files counted (delta from the file-size table) | Characters | Rough tokens |
+| --- | --- | ---: | ---: |
+| **Ordinary** (no reconstruction needed) | `SKILL.md` (10,384) + `sequencing.md` (8,862, unchanged) + `verification.md` (35,230) + `review-it`'s four files (33,037, unchanged) + `review-gates.md` (13,015, unchanged) + `commit-boundaries.md` (10,239) + `issue-closure.md` (14,243, unchanged); `commit-reconstruction.md` **not loaded** | 125,010 | 31,252 |
+| **Reconstruction** (a correction folds into an already-committed, unpublished commit) | everything in the row above, plus `commit-reconstruction.md` (14,766) | 139,776 | 34,944 |
+
+Against the `667fab15` snapshot's single "implement-it, one ordinary issue" row (137,969 characters,
+34,492 tokens, which bundled the reconstruction recipe into every pass regardless of whether it was
+needed): the now-more-common **ordinary** path drops to 125,010 characters (31,252 tokens) — a
+modeled reduction of 12,959 characters (3,240 tokens, ~9.4%) for the path that doesn't need
+reconstruction. The **reconstruction** path itself, which always needed this content, now costs
+139,776 characters (34,944 tokens) — 1,807 characters (452 tokens) *more* than the old bundled
+figure, the routing/self-sufficiency overhead described above landing on the rarer path instead of
+every pass. The Laravel-composed row (`implement-it` + `laravel-inertia-stack` for one filtered-index
+task) moves the same way on its ordinary path: 169,245 → 156,286 characters (42,311 → 39,072 tokens,
+the same 12,959-character/3,239-token reduction, since the Laravel-specific additions are unchanged).
+
+**These are the same kind of modeled text-volume estimates the rest of this document uses, not a
+measured runtime benefit.** No agent session was run to confirm an ordinary implement-it pass
+actually avoids opening `commit-reconstruction.md`, or that ordinary and reconstruction requests
+occur in any particular proportion in real use — the "more common" framing above is the proposal's
+own stated rationale (a review correction needing history reconstruction is rarer than one that
+isn't), not a frequency this document measured. The repository-wide `skills/` total moves from
+467,861 to 469,929 characters (58 files, up from 57) at `9b77d00` — a net increase, since routing
+overhead was added across five files while only one recipe was relocated, not shortened.
+
+**Behavior preservation.** Comparing the extracted procedure against its `667fab15` source
+line-by-line: every Git command block (three `git merge-file` invocations) is byte-identical; the
+only prose changes are the five `scenarios.md` citation edits (two pure citations removed, three
+rewritten as self-contained examples) and one necessary cross-reference fix (the "What makes a
+commit coherent" pointer, now naming `commit-boundaries.md` explicitly since that section lives in a
+different file than the sentence citing it). No gate, stop condition, classification rule, or
+verification requirement changed. See this pass's own commit message and the Control Room report for
+the full comparison; this document reports only the resulting sizes.
 
 ## Metadata correction
 
