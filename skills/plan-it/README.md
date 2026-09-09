@@ -44,11 +44,13 @@ GitHub issue creation after approval. Implementation belongs to
 
 ## Context consumption
 
-Activation loads only `SKILL.md`. Its nine rule files load individually as the pipeline reaches
-each step — several are mutually exclusive alternates for the same request, never loaded together:
-`resource-feature-checklist.md` or `capability-checklist.md` (never both), and `plan-md-input.md` or
-`discovered-work.md` depending on the work's origin. See [dated measurements and
-representative-workflow
+Activation loads only `SKILL.md`, whose own opening text also points a reader to this `README.md`
+for the plain-English walkthrough. Its nine rule files load individually as the pipeline reaches
+each step. `resource-feature-checklist.md` and `capability-checklist.md` are chosen primarily by
+`feature-classification.md`'s shape, but a mixed-characteristic feature can pull secondary questions
+from the other checklist too — they are not always mutually exclusive. `plan-md-input.md` and
+`discovered-work.md` are alternate entry routes for the same request, depending on the work's
+origin. See [dated measurements and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#plan-it).
 
 ## Install

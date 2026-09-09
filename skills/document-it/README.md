@@ -45,9 +45,11 @@ issues belongs to [`plan-it`](../plan-it/).
 ## Context consumption
 
 Activation loads only `SKILL.md`. `rules/doc-style.md`, `rules/review.md`, `rules/maintenance.md`,
-and `rules/template.html` each load individually, only when the current workflow needs them — never
-all four for one request. A request routed to `lab-it` for missing or stale evidence additionally
-loads `lab-it`'s entrypoint. See [dated measurements and representative-workflow
+and `rules/template.html` each load individually as the current workflow needs them — a connected
+architectural-change update to an Artifact guide can reach all four, since `rules/maintenance.md`
+and `rules/review.md` both route back to `rules/doc-style.md` for how a change gets written. A
+request routed to `lab-it` for missing or stale evidence additionally loads `lab-it`'s entrypoint.
+See [dated measurements and representative-workflow
 estimates](https://github.com/elieandraos/agentic-engineering/blob/main/docs/skill-context.md#document-it).
 
 ## Install
