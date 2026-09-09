@@ -4,6 +4,7 @@
 The `document-it` authoring extraction is approved at `8ceb238` after source review and independent character-count verification.
 The `implement-it` activation-ordering extraction is approved at `6454751` after source review and independent measurement.
 The `ship-it` milestone-guidance split is approved at `b44b09c` after source comparison and independent character-count verification.
+The `plan-it` verification-checkpoints extraction (below) is drafted and self-validated, pending review.
 The release target, final notes, and publication are not approved.
 
 Compared with [v2.0.1](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.1)
@@ -26,6 +27,8 @@ in Git rather than appending correction reports.
   [scenarios.md](scenarios.md).
 - Separated document-it authoring, implement-it activation ordering, and shared ship-it milestone
   guidance into routed files while preserving their workflow requirements.
+- Drafted (pending review) a plan-it verification-checkpoints extraction, routing former
+  `issue-conventions.md` §10 to a new conditionally-loaded `rules/verification-checkpoints.md`.
 - Updated skill README links to the context model and reconciled the roadmap's published baseline.
 
 The scope covers documentation, maintainer tooling, and skill-file reorganization with preserved
@@ -46,9 +49,10 @@ classification. Extraction candidates still need their callers and shared requir
 before implementation.
 
 The `document-it` authoring extraction, the `implement-it` activation-ordering extraction, and the
-`ship-it` milestone-guidance split below are the only extractions implemented so far. Further
-conditional extractions remain candidates only, not implemented or included in this release scope.
-Existing deferred ecosystem findings are not resolved by these documentation and measurement
+`ship-it` milestone-guidance split below are the only extractions approved so far. The `plan-it`
+verification-checkpoints extraction below is drafted and self-validated but not yet approved.
+Further conditional extractions remain candidates only, not implemented or included in this release
+scope. Existing deferred ecosystem findings are not resolved by these documentation and measurement
 changes.
 
 ## document-it authoring extraction (approved at 8ceb238)
@@ -153,6 +157,45 @@ needing shared guidance omit closure mechanics; closure and full delivery load b
 retain additional routing text. This is the current design's trade-off, not a proven minimum cost
 or an observed overall session saving. No live skill or consumer execution is established by this
 review.
+
+## plan-it verification-checkpoints extraction (drafted, pending review)
+
+Extracted `issue-conventions.md`'s former §10 ("Verification checkpoints inside a multi-group
+issue") into a new `rules/verification-checkpoints.md`, per
+`docs/skill-authoring-methodology.md`. §10 keeps the multi-group trigger sentence and hands off;
+§11 and its numbering are unchanged. `rules/review.md`'s citation, `SKILL.md`'s rule index,
+`README.md`'s context-consumption note, and `artifacts/plan-it.md`'s rule-ownership table are
+reconciled — each names the new file's trigger and routes to it rather than restating its content.
+`implement-it/rules/verification.md`'s own execution ownership is unchanged. This extraction was
+assessed, not assumed: only `rules/review.md` cites §10, and no other file duplicates its
+guidance, so the benefit rests entirely on conditional loading rather than shared-caller
+deduplication.
+
+Two new paired workflow rows (single- and multiple-implementation-group, same shape) were added to
+`docs/skill-context-workflows.json`, since classification and implementation grouping are separate
+dimensions; the existing rows' notes now state the single-group assumption explicitly.
+`scripts/measure_skill_context.py` reproduces:
+
+| Modeled path | Before (a4c13a5) | After | Change |
+|---|---:|---:|---:|
+| Single-group issue draft (resource/CRUD, UI in scope) | 73,181 | 70,947 | −2,234 characters |
+| Multiple-implementation-group draft, same shape | 73,181 | 74,301 | +1,120 characters |
+| Mixed-characteristics single-group draft | 78,111 | 75,877 | −2,234 characters |
+
+The two split files total 20,677 characters versus the original file's 19,849. The single-group
+path (the common case) is smaller than the original single file by 2,526 characters; the
+multi-group path costs 1,120 characters over the single-group baseline — a smaller relative
+overhead than the `implement-it` activation-ordering split above, where the ordinary-path saving
+(−658) was small next to the activation-path cost (+2,190).
+
+Preservation was checked by a bullet-level comparison against `a4c13a5`: all five checkpoint
+bullets are verbatim-identical between the original §10 and the new file. A forked cold-read
+validation pass worked four scenarios against the current file text — a single-group issue, a
+multi-group issue with differing affected surfaces, a justified broader checkpoint, and a project
+exposing only an aggregate command — all four resolved correctly against the extracted guidance.
+`git diff --check` is clean, Markdown links in the touched files resolve, and `SKILL.md`'s
+frontmatter `description` is unchanged in form. This is same-session self-validation, not an
+independent second review — that remains outstanding before approval.
 
 ## Validation to retain
 
