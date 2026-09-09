@@ -84,14 +84,28 @@
       ]
     },
     {
-      "name": "plan-it: one resource/CRUD feature, UI in scope, single shape",
-      "notes": "rules/capability-checklist.md, rules/plan-md-input.md, and rules/discovered-work.md are the unused alternates for this shape.",
+      "name": "plan-it: one resource/CRUD feature, UI in scope, single shape, single implementation group",
+      "notes": "rules/capability-checklist.md, rules/plan-md-input.md, and rules/discovered-work.md are the unused alternates for this shape. Assumes this issue's Tasks form one coherent implementation group, so rules/verification-checkpoints.md is not loaded — classification (shape) and implementation grouping are separate dimensions; see the multi-implementation-group row below for the alternative.",
       "files": [
         "skills/plan-it/SKILL.md",
         "skills/plan-it/rules/feature-classification.md",
         "skills/plan-it/rules/resource-feature-checklist.md",
         "skills/plan-it/rules/design-reconciliation.md",
         "skills/plan-it/rules/issue-conventions.md",
+        "skills/plan-it/rules/sequencing.md",
+        "skills/plan-it/rules/review.md"
+      ]
+    },
+    {
+      "name": "plan-it: one resource/CRUD feature, UI in scope, single shape, multiple implementation groups (verification checkpoints)",
+      "notes": "Same shape and file set as the single-implementation-group row, except this issue's Tasks span multiple implementation groups or checkpoints, so drafting reaches rules/verification-checkpoints.md for what each intermediate checkpoint should ask for.",
+      "files": [
+        "skills/plan-it/SKILL.md",
+        "skills/plan-it/rules/feature-classification.md",
+        "skills/plan-it/rules/resource-feature-checklist.md",
+        "skills/plan-it/rules/design-reconciliation.md",
+        "skills/plan-it/rules/issue-conventions.md",
+        "skills/plan-it/rules/verification-checkpoints.md",
         "skills/plan-it/rules/sequencing.md",
         "skills/plan-it/rules/review.md"
       ]

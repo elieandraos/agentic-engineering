@@ -82,6 +82,9 @@ structure/messages, fixing a defect it discovers, and deciding when a milestone 
 - `rules/design-reconciliation.md` — reconciling design artifacts against the shipped app when UI is
   in scope.
 - `rules/issue-conventions.md` — issue format, and milestone/label/assignee proposal-and-approval.
+- `rules/verification-checkpoints.md` — what a verification checkpoint should ask for inside a
+  multi-group issue's Tasks; consult only once an issue's Tasks actually span multiple
+  implementation groups — an ordinary single-group issue never needs it.
 - `rules/sequencing.md` — coherent-outcome decomposition, the real dependency graph, parallel-ready
   planning waves, and dependency-safe creation order.
 - `rules/review.md` — issue quality, structural/rendered/content integrity, and post-mutation

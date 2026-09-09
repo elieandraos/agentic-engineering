@@ -372,6 +372,7 @@ territory:
 | [`capability-checklist.md`](../skills/plan-it/rules/capability-checklist.md) | Shape-B/capability-shaped-C/D scope discovery across its thirteen questions |
 | [`design-reconciliation.md`](../skills/plan-it/rules/design-reconciliation.md) | Comparing design-artifact, shipped, and approved-decision authority when UI is in scope |
 | [`issue-conventions.md`](../skills/plan-it/rules/issue-conventions.md) | Title/body format, reference-category discipline, and the metadata proposal-and-approval workflow |
+| [`verification-checkpoints.md`](../skills/plan-it/rules/verification-checkpoints.md) | What a verification checkpoint should ask for inside a multi-group issue's Tasks — consulted only once Tasks actually span multiple implementation groups |
 | [`sequencing.md`](../skills/plan-it/rules/sequencing.md) | Decomposition into coherent issues and building the dependency graph/waves |
 | [`review.md`](../skills/plan-it/rules/review.md) | All five review surfaces and their validation timing |
 

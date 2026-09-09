@@ -181,7 +181,14 @@ numbered pipeline, both origins still reach `rules/feature-classification.md` an
 canonical-issue pipeline from there. A request with neither origin (a feature ask stated directly
 in conversation) enters straight at classification, which is what the modeled `plan-it` rows in
 `skill-context-workflows.json` assume; no workflow row there models the plan-md-input or
-discovered-work paths.
+discovered-work paths. `rules/verification-checkpoints.md` was extracted from
+`rules/issue-conventions.md`'s former §10; `issue-conventions.md` keeps the multi-group trigger
+condition in place and hands off to the extracted file only once an issue's Tasks actually span
+multiple implementation groups — an ordinary single-group issue never loads it. Classification
+(which shape a feature is) and implementation grouping (how many checkpoints its Tasks span) are
+separate dimensions, so this file's load is independent of shape; see the two paired
+single-/multiple-implementation-group `plan-it` workflow rows in `skill-context-workflows.json` for
+what it adds.
 
 ### review-it
 
