@@ -26,7 +26,10 @@ happened.
 Every workflow below starts with the same evidence discipline — including an investigation
 `document-it` routes here when its own available evidence is missing or stale:
 
-1. Inspect the real current system and relevant evidence — not conventions or assumptions.
+1. Inspect the real current system and relevant evidence, proportionally to the request — not
+   conventions or assumptions, and not past what establishing the answer or the architectural fit
+   actually requires. Reuse reliable findings and already-approved decisions already established in
+   this conversation or another identifiable prior context instead of re-investigating them.
 2. Reconcile implementation, configuration, schema, tests, runtime evidence, and reliable history.
 3. Explain the current architecture and identify uncertainty.
 
@@ -59,6 +62,38 @@ The workflow may need to:
 - distinguish current facts from proposed choices;
 - obtain explicit decisions for material product/architecture questions;
 - leave implementation details open when every viable option preserves the approved guarantees.
+
+A request resembling an established pattern does not automatically need a design interview or a
+`plan.md`. When comparable features already establish the applicable conventions and investigation
+finds no genuine architectural difference or material product decision, a short verified answer with
+a recommendation to proceed to `plan-it` completes the request. Existing instances establish
+conventions, not automatic approval of new product behavior — investigate only enough to confirm
+architectural fit and surface a real difference before deciding whether a decision conversation is
+even needed.
+
+When a material decision conversation is needed, scale it to what's actually unresolved:
+
+- **Question only unresolved material choices**, applying the materiality test in
+  `rules/plan-synthesis.md` during the conversation itself, not only while drafting the plan — an
+  ordinary implementation detail stays open under that same rule. Order questions by dependency:
+  settle a foundational choice before asking one that depends on its answer, and raise independent
+  questions alongside it when doing so helps.
+- **Keep exchanges understandable**: a small, coherent group of related questions, or one question
+  when the topic needs focused discussion. Explain the meaningful consequences of a choice and give a
+  reasoned recommendation when evidence supports one — a recommendation is guidance, never an approved
+  decision.
+- **Clarify ambiguous language with concrete scenarios.** When a term could be read more than one
+  way and the readings would change behavior, ownership, lifecycle, or guarantees, work through a
+  concrete example rather than asking the user to define the term abstractly, and separate what the
+  system currently does from what the user wants.
+- **Name evidence-dependent uncertainty instead of guessing.** When discussion alone cannot resolve a
+  choice, say so and name what would help — closer inspection, an experiment, or a prototype. Stay
+  inside existing authorization boundaries: don't silently start implementing to find out, and don't
+  treat "I don't know" as approval of a default.
+- **Finish proportionally.** Stop once the material decisions are resolved; don't keep exploring
+  design branches nobody raised. This doesn't relax Plan Synthesis's own preconditions or approval
+  gate below — a narrow initiative can still warrant a short `plan.md` when the user explicitly asks
+  for one.
 
 Only after the architecture is sufficiently investigated and the material decisions are approved
 does this workflow perform its final writing step, **Plan Synthesis** — consolidating an

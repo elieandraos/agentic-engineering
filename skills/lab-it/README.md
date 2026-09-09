@@ -26,7 +26,11 @@ stale.
 
 Every request starts with the same investigation: inspect the real system, reconcile
 implementation, config, schema, tests, and history, and explain what's there — including
-what's still uncertain. From there, one of two outcomes follows:
+what's still uncertain. Investigation and any decision conversation scale to the request: a
+feature that closely follows established, already-approved conventions may need only enough
+inspection to confirm architectural fit, with no design interview or `plan.md` required — existing
+instances establish conventions, not automatic approval of new product behavior. From there, one of
+two outcomes follows:
 
 1. Investigation and a direct answer — the complete result on its own.
 2. An approved `plan.md`, handed off as canonical input for planning.

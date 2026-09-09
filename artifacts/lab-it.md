@@ -34,9 +34,11 @@ something a request specifically asks for, never an automatic next step after in
 ## 2. The evidence discipline every workflow shares
 
 Before any workflow diverges, both run the same discipline: inspect the real, current system
-and its relevant evidence — never conventions or assumptions — then reconcile implementation,
-configuration, schema, tests, runtime evidence, and reliable history into an explanation that names
-its own uncertainty rather than smoothing it over.
+and its relevant evidence — never conventions or assumptions, and scaled proportionally to the
+request rather than exhaustively by default — then reconcile implementation, configuration, schema,
+tests, runtime evidence, and reliable history into an explanation that names its own uncertainty
+rather than smoothing it over. Reliable findings and already-approved decisions are reused rather
+than re-investigated once established.
 
 Authority isn't collapsed into "the code is truth for everything." Implementation is authoritative
 for implementation facts; configuration, schema, runtime observations, and external-system state
@@ -75,6 +77,17 @@ supports or constrains the proposed feature, discusses viable target approaches 
 distinguishes current fact from proposed choice, obtains explicit decisions for the questions that
 are genuinely material, and leaves an implementation detail open wherever every viable option
 preserves the approved guarantees.
+
+A feature that closely follows established, already-approved conventions does not automatically earn
+a design interview or a `plan.md`: existing instances establish conventions, not automatic approval
+of new product behavior, so investigation goes only as far as confirming architectural fit and
+surfacing a genuine difference before any decision conversation opens. When a decision conversation
+is warranted, it scales to what is actually unresolved — the materiality test governs which
+questions get asked at all, questions with dependencies are sequenced so foundational choices settle
+first, exchanges stay small and coherent with consequences and a recommendation attached, genuinely
+ambiguous terms are explored through concrete scenarios rather than abstract definition, and a choice
+discussion alone cannot resolve is named as needing further inspection, an experiment, or a
+prototype rather than guessed at or silently implemented.
 
 **Plan Synthesis** is this workflow's final writing step, not the whole workflow, and runs only
 when the user actually asks for it — never as an automatic next step after investigation, and never
