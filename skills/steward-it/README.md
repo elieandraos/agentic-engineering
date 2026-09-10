@@ -10,42 +10,36 @@ without automatically changing canonical guidance.
 - A session took substantially longer than expected and you want to know why.
 - Agent behavior appeared to ignore or overreach a skill boundary.
 - The same workflow problem has appeared more than once and may be systemic.
-- You want to compare a skill trace with what actually happened.
+- You want to compare a skill trace or context report with what actually happened.
 
 It is human-invoked and retrospective. It is not part of the normal `Lab -> Plan -> Implement -> Review -> Ship`
 lifecycle and does not silently monitor ordinary sessions.
-
-## Boring prompts
-
-```shell
-"Steward this session. I expected this to be much faster."
-"What happened here?"
-"Steward this failure and tell me where the problem belongs."
-"We've seen this twice now. Is there a pattern?"
-```
 
 ## What normally happens
 
 1. Reconstruct the relevant session from available evidence.
 2. Separate observations from inference.
 3. Compare intended guidance with observed behavior.
-4. Classify the likely cause and check for recurrence.
-5. Recommend the smallest justified improvement.
-6. Record only a compact durable observation when a project evidence file is maintained.
+4. When relevant, compare static context estimates with what the session reports as loaded or consumed.
+5. Classify the likely cause and check for recurrence.
+6. Recommend the smallest justified improvement.
+7. Record only a compact durable observation when a project evidence file is maintained.
 
-Skill traces are optional diagnostics, not a requirement of normal skill execution.
+Skill traces and context reports are optional diagnostics, not requirements of normal skill execution.
 
 ## Evidence convention
 
 Keep stewardship evidence small. A durable observation should normally be one or two sentences and
 include a commit, PR, issue, or other concrete reference when available. The evidence file is not a
-diary; it exists so later stewardship can detect repeated failure modes from real work.
+diary; it exists so later stewardship can detect repeated failure modes or useful cost patterns from
+real work.
 
 ## Context consumption
 
-Activation should remain lightweight. The session being reviewed already contains most of the useful
-material; load only supporting rules or evidence needed for the specific retrospective. Do not require
-verbose traces or continuous logging for ordinary work.
+Treat context cost as a diagnostic signal, not a quality verdict. Keep static file measurements,
+modeled workflow estimates, and observed session consumption separate. Do not promote rough
+characters-to-token estimates into measured runtime usage, and do not recommend splitting a rule file
+from a single large number alone.
 
 ## Install
 
