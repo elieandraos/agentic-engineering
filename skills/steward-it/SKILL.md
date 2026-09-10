@@ -1,6 +1,6 @@
 ---
 name: steward-it
-description: "Retrospectively investigates an engineering session when work was unexpectedly slow, difficult, repeatedly off course, or exposed a recurring agent-workflow problem. Reconstruct the session from available conversation, tool, repository, skill-trace, and outcome evidence; distinguish observed facts from inference; classify the likely cause across methodology, skill, project, stack, prompt, execution, or external limitation; detect repeated patterns; and recommend deliberate improvements without changing canonical guidance automatically. Invoke explicitly for requests such as 'steward this session', 'what happened here?', 'why did this take so long?', or 'is this a recurring problem?'. Not part of the normal lifecycle and not an automatic reviewer of ordinary work."
+description: "Retrospectively investigates an engineering session when work was unexpectedly slow, difficult, repeatedly off course, or exposed a recurring agent-workflow problem. Reconstruct the session from available conversation, tool, repository, skill-trace, context-cost, and outcome evidence; distinguish observed facts from inference; classify the likely cause across methodology, skill, project, stack, prompt, execution, or external limitation; detect repeated patterns; and recommend deliberate improvements without changing canonical guidance automatically. Invoke explicitly for requests such as 'steward this session', 'what happened here?', 'why did this take so long?', or 'is this a recurring problem?'. Not part of the normal lifecycle and not an automatic reviewer of ordinary work."
 ---
 
 # steward-it
@@ -42,22 +42,27 @@ Good prompts include:
    routing, user approvals, delegated work, repository mutations, tests, recovery actions, and
    final outcomes. Use an explicit skill trace when one was produced in the session, but do not
    require a trace to perform stewardship.
-3. **Separate evidence from interpretation.** Mark claims as observed, supplied by the user,
+3. **Assess context consumption when relevant.** When the user asks whether skills or rules were
+   expensive, distinguish static estimates from observed session usage. Use `docs/skill-context.md`
+   for the repository's modeled loading assumptions and any available session report for what was
+   actually loaded. Do not treat character/4 estimates, line counts, or an agent's rough estimate as
+   measured tokenizer usage.
+4. **Separate evidence from interpretation.** Mark claims as observed, supplied by the user,
    inferred, or unresolved. Do not turn an agent's own explanation into canonical fact without
    supporting evidence.
-4. **Compare expected and observed behavior.** Identify where the session followed the intended
+5. **Compare expected and observed behavior.** Identify where the session followed the intended
    workflow and where it diverged. Check the relevant skill contract, project instructions, and
    actual repository state when accessible.
-5. **Classify the cause.** Prefer the smallest evidence-backed category that explains the problem:
+6. **Classify the cause.** Prefer the smallest evidence-backed category that explains the problem:
    methodology gap, skill guidance gap, missing project knowledge or instruction, stack knowledge
    gap, ambiguous human prompt/decision, execution mistake, or external limitation. Multiple causes
    are allowed when the evidence supports them.
-6. **Check for recurrence.** Search retained stewardship evidence or prior identifiable session
+7. **Check for recurrence.** Search retained stewardship evidence or prior identifiable session
    findings when available. Treat a single observation as a hypothesis, not a canonical pattern.
-7. **Recommend, do not mutate.** Recommend the smallest justified improvement and identify where it
+8. **Recommend, do not mutate.** Recommend the smallest justified improvement and identify where it
    belongs. Do not edit canonical skills, rules, project instructions, or methodology automatically.
    Ask the human to retain or reject a steward-worthy finding before it becomes durable guidance.
-8. **Record only durable evidence.** When the project keeps a stewardship evidence file, add a
+9. **Record only durable evidence.** When the project keeps a stewardship evidence file, add a
    compact observation of no more than two sentences, with a commit, PR, issue, or other concrete
    reference when one exists. Do not create a diary or copy the full retrospective into the file.
 
@@ -71,6 +76,20 @@ When available, use it to reconstruct operational behavior such as:
 
 A trace should describe what the agent did or what it can directly observe. It should distinguish
 inference from observation and should never be treated as proof merely because the agent reported it.
+
+## Context consumption
+
+Treat context cost as a diagnostic signal, not a quality verdict.
+
+When reviewing consumption, keep three figures separate:
+
+- **Static file measurement:** current characters or lines in a file.
+- **Modeled workflow estimate:** a repository-defined estimate based on configured loading assumptions.
+- **Observed session consumption:** actual context usage or a session-specific report.
+
+Prefer comparing these across real sessions before recommending a split or rewrite. A large file,
+modeled workflow total, or repeated load is evidence for investigation, not proof of waste. When an
+agent report only provides rough token estimates, preserve that uncertainty.
 
 ## Finding quality
 
