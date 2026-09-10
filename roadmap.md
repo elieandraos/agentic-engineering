@@ -28,11 +28,16 @@ The v2.0.0 migration is complete. Its [migration plan is preserved at v2.0.0](ht
 
 These are possibilities, not commitments or a prescribed order:
 
-- consider an optional `steward-it` companion once real use clarifies the need: collect skill observations, retain approved findings, and propose deliberate canonical updates; define its scope from that evidence before choosing an implementation or packaging approach;
 - develop lightweight consumption and refresh tooling for projects that are not ready to adopt a repository-managed `npx skills` setup, building on the consumption modes documented in [`docs/skill-consumption.md`](docs/skill-consumption.md);
 - use Project B as a possible later cross-stack proving ground;
 - compare behavior across multiple consuming projects to refine the portable / stack / project knowledge boundary;
 - add stack or platform companions only when repeated real needs justify them.
+
+### Steward-it
+
+Explore an explicitly human-invoked `steward-it` companion for retrospective investigation when an engineering session is unexpectedly slow, difficult, or repeatedly goes off course. It would reconstruct the session from available evidence and optional skill traces, compare intended guidance with observed behavior, classify the cause across methodology, skill, project, stack, prompt, execution, or external limitations, detect repeated patterns, and recommend deliberate improvements without changing canonical guidance automatically.
+
+Scope, trace format, pattern detection, retention, and implementation remain future decisions. Validate the usefulness of retrospective stewardship against real sessions before making it part of the normal lifecycle.
 
 ### Skill testing
 
