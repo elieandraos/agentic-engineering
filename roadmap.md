@@ -10,11 +10,13 @@ This roadmap records the next practical steps and longer-term possibilities. Fur
 
 ## Current baseline
 
-[v2.0.3](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.3) is published from [`db68fe7`](https://github.com/elieandraos/agentic-engineering/commit/db68fe72903060c7afc7ed87e28fccbdbc7dd9c8): more focused architecture discussions and more precise implementation reviews.
+[v2.0.4](https://github.com/elieandraos/agentic-engineering/releases/tag/v2.0.4) is the next patch after v2.0.3, incorporating live useOrbit Policies implementation evidence from issues #312 and #313: a human-controlled full-suite choice at the issue boundary in `implement-it`, targeted verification retained as mandatory before Gate 1, and a portable Laravel factory rule for avoiding recursive parent factory states when `afterCreating()` creates a required child/detail record. The `implement-it` architecture dossier is reconciled with the same lifecycle.
 
-This patch scales `lab-it`'s investigation and decision discussions to what the request actually needs, reusing reliable findings and reserving `plan.md` for an explicit request. `review-it` now names the requirement or convention behind a finding when one actually exists, judges an abstraction by a concrete removal/inlining cost rather than caller count alone, and checks that a test's expected value independently and correctly proves the behavior under test — while preserving legitimate integration assertions and established test-layer ownership. Skill READMEs and architecture dossiers are reconciled, the completed adjacent-skill comparison item is removed from Future directions below, and context monitoring during real useOrbit work is retained.
+This patch turns repeated real-work observations into focused guidance without changing the broader Agentic Engineering lifecycle. Backlog/trunk work recommends full regression verification; active phase-milestone issues may intentionally defer it after targeted verification when the human chooses. The distinction between fresh execution, TIA/impact selection, and cache/replay remains explicit, and the useOrbit-specific `--no-tia` command remains project knowledge rather than portable methodology.
 
-Recorded validation for v2.0.3 is source review and scenario walkthroughs. These release checks do not include live skill, consumer, or browser execution, or observed session token usage.
+The live Policies work also validated the new `review-it` Gate 1 integration and exposed reusable evidence for future stewardship: repeated verification cost on small milestone issues, a concrete factory-recursion trap, and a project-specific TIA footgun. These observations remain evidence unless and until further recurrence justifies additional canonical changes.
+
+Recorded validation for v2.0.4 includes source review plus live useOrbit implementation/review sessions for Policies issues #312 and #313. Session-level token usage remains estimated rather than directly instrumented.
 
 The v2.0.0 migration is complete. Its [migration plan is preserved at v2.0.0](https://github.com/elieandraos/agentic-engineering/blob/v2.0.0/plan.md) and in Git history.
 
