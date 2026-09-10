@@ -69,8 +69,21 @@ modeled-workflow total, tells you which skill or rule file is worth investigatin
 split — it is not, by itself, evidence that the skill performs poorly, that an agent struggled with
 it, or that the split is worth making once routing overhead and cross-references are accounted for
 (see `docs/skill-authoring-methodology.md` Section 4's evidence-to-rule bar, which applies equally
-to evidence for *removing* content). Treat these figures as a prioritization signal for where a
+ to evidence for *removing* content). Treat these figures as a prioritization signal for where a
 future authoring pass should look first, not as a defect report.
+
+## Using this document with steward-it
+
+`skill-context.md` is the repository's static context-cost reference, while `steward-it` performs
+retrospective interpretation of real sessions. When a session includes a compact skill/context
+report, stewardship can compare:
+
+`static file measurement -> modeled workflow estimate -> observed session report`
+
+Keep those evidence types separate. A discrepancy is a reason to investigate, not proof that the
+model or skill is wrong. `steward-it` should use this document to understand what the repository's
+script actually measures and assumes, while any canonical change to skills remains an explicit
+separate authoring decision.
 
 ## Generating current figures
 
@@ -92,70 +105,68 @@ python3 scripts/measure_skill_context.py --workflow "<name>"     # one workflow'
 The script fails clearly, with a non-zero exit, if a workflow's configured file list names a path
 that doesn't exist. It never writes or modifies a file.
 
-`docs/skill-context-workflows.json` is a hand-maintained, explicit list of representative
-workflows, seeded from this document's own prior workflow modeling and checked against each
-skill's `SKILL.md` routing at the time it was last edited. It is not derived by recursively
-following Markdown links or crawling directories — an actual `SKILL.md` can route conditionally,
-compose across skills, or follow a further cross-reference inside a supporting file, none of which
-a link crawl would resolve correctly.
+`docs/skill-context-workflows.json` is a hand-maintained, explicit list of representative workflows,
+seeded from this document's own prior workflow modeling and checked against each skill's `SKILL.md`
+routing at the time it was last edited. It is not derived by recursively following Markdown links or
+crawling directories — an actual `SKILL.md` can route conditionally, compose across skills, or
+follow a further cross-reference inside a supporting file, none of which a link crawl would resolve
+correctly.
 
 **What the script's revision check does and does not establish.** It reports whether the working
 tree's `skills/` content and the workflow config differ from `git HEAD` right now — an uncommitted-
-change check, nothing more. It does not know when the config file was last reconciled against
-routing, and it cannot tell you whether a routing change that was already committed and merged
-cleanly has since made a listed workflow stale — a fully committed, clean working tree will still
-report "measured inputs match this revision" even if a skill's routing changed three commits ago
-and nobody updated the config to match. Detecting that kind of staleness is not something this
-script does; it would require tracking which commit last reconciled the config against routing, and
-no such mechanism exists here. Update the config file directly whenever you change a skill's
-routing, and treat "measured inputs match this revision" as "the working tree is clean," not as "the
-workflow definitions are still accurate."
+change check, nothing more. It does not know when the config file was last reconciled against routing,
+and it cannot tell you whether a routing change that was already committed and merged cleanly has
+since made a listed workflow stale — a fully committed, clean working tree will still report "measured
+inputs match this revision" even if a skill's routing changed three commits ago and nobody updated
+the config to match. Detecting that kind of staleness is not something this script does; it would
+require tracking which commit last reconciled the config against routing, and no such mechanism
+exists here. Update the config file directly whenever you change a skill's routing, and treat
+"measured inputs match this revision" as "the working tree is clean," not as "the workflow definitions
+are still accurate."
 
-The config also records, per workflow, the assumptions behind it (e.g. which citation is
-conditional versus mandatory) and excludes content this repository cannot measure: external
-companion skills (Laravel Boost's `laravel-best-practices`, `testing-best-practices`, and
-`inertia-vue-development`; the `artifact-design` skill `document-it` requires before writing an
-Artifact page), and `docs/skill-authoring-methodology.md`/`docs/skill-consumption.md` themselves,
-which no `SKILL.md` or rule file references.
+The config also records, per workflow, the assumptions behind it (e.g. which citation is conditional
+versus mandatory) and excludes content this repository cannot measure: external companion skills
+(Laravel Boost's `laravel-best-practices`, `testing-best-practices`, and `inertia-vue-development`;
+the `artifact-design` skill `document-it` requires before writing an Artifact page), and
+`docs/skill-authoring-methodology.md`/`docs/skill-consumption.md` themselves, which no `SKILL.md` or
+rule file references.
 
 ## Per-skill notes
 
 The sections below exist to anchor stable links from each skill's own `README.md`
-("Context consumption"). Run the script for current numbers; each note below states only what
-isn't already obvious from the size table — a routing detail that changes what a workflow's total
-actually includes.
+("Context consumption"). Run the script for current numbers; each note below states only what isn't
+already obvious from the size table — a routing detail that changes what a workflow's total actually
+includes.
 
 ### document-it
 
 `rules/authoring.md` owns format selection and the new-guide/existing-guide-update procedures;
 `SKILL.md` states only each workflow's trigger condition and hands off to it. `rules/template.html`
-(the Artifact scaffold) is the largest supporting file and loads only for Artifact output, never
-for a Markdown guide. `rules/maintenance.md` and `rules/review.md` both route back to
-`rules/doc-style.md` for how a change gets written, so a guide update can load more than its own
-primary rule file. A standalone review's modeled baseline is just `rules/review.md`, on top of
-activation — that two-file estimate holds when current evidence and the checklist answer every
-question on their own, without consulting further guidance; it does not depend on `rules/review.md`
-never citing an owning reference, since a review can consult a reference such as
-`rules/maintenance.md` for one specific fact without that amounting to executing
-`rules/authoring.md`'s writing procedure. See the `document-it` rows in
+(the Artifact scaffold) is the largest supporting file and loads only for Artifact output, never for
+a Markdown guide. `rules/maintenance.md` and `rules/review.md` both route back to `rules/doc-style.md`
+for how a change gets written, so a guide update can load more than its own primary rule file. A
+standalone review's modeled baseline is just `rules/review.md`, on top of activation — that two-file
+estimate holds when current evidence and the checklist answer every question on their own, without
+consulting further guidance; it does not depend on `rules/review.md` never citing an owning reference,
+since a review can consult a reference such as `rules/maintenance.md` for one specific fact without
+that amounting to executing `rules/authoring.md`'s writing procedure. See the `document-it` rows in
 `skill-context-workflows.json`, including the two standalone-review rows and the assumption each
 states.
 
 ### implement-it
 
-`rules/verification.md` is the largest single file in the skill set and loads on every ordinary
-pass. `rules/isolation-verification.md`, `rules/worktree-preservation.md`,
-`rules/commit-reconstruction.md`, and `rules/activation-ordering.md` are conditional escalations
-layered on top of it — see the three `implement-it` workflow variants (ordinary with no activation
-changes, activation-dependent ordering with its required isolation verification, and reconstruction
-with no activation changes) in `skill-context-workflows.json` for what each actually adds.
-`rules/activation-ordering.md` was extracted from `rules/verification.md`'s former "Ordering commits
-to keep intermediate states valid" section; `verification.md` keeps the runtime-activation check in
-place and hands off to the extracted file only once that check finds an effect.
-`implement-it/SKILL.md`'s "Entry contract" names
-`plan-it/rules/issue-conventions.md` and `rules/review.md` to describe the quality bar an approved
-issue already meets; the ordinary path does not re-open either file, so they are not counted in the
-modeled `implement-it` workflows.
+`rules/verification.md` is the largest single file in the skill set and loads on every ordinary pass.
+`rules/isolation-verification.md`, `rules/worktree-preservation.md`, `rules/commit-reconstruction.md`,
+and `rules/activation-ordering.md` are conditional escalations layered on top of it — see the three
+`implement-it` workflow variants (ordinary with no activation changes, activation-dependent ordering
+with its required isolation verification, and reconstruction with no activation changes) in
+`skill-context-workflows.json` for what each actually adds. `rules/activation-ordering.md` was
+extracted from `rules/verification.md`'s former "Ordering commits to keep intermediate states valid"
+section; `verification.md` keeps the runtime-activation check in place and hands off to the extracted
+file only once that check finds an effect. `implement-it/SKILL.md`'s "Entry contract" names
+`plan-it/rules/issue-conventions.md` and `rules/review.md` to describe the quality bar an approved issue
+already meets; the ordinary path does not re-open either file, so they are not counted in the modeled
+`implement-it` workflows.
 
 ### lab-it
 
@@ -164,29 +175,28 @@ architecture" workflow — a plain investigation-and-answer request never reache
 
 ### laravel-inertia-stack
 
-`blueprints/filters-and-sorting.md`'s own "Testing" section routes further to
-`rules/test-ownership.md` and `blueprints/pest-testing.md`; its "Naming and location" section
-separately cites `rules/php-conventions.md`. A filtered-index task composed with `implement-it`
-therefore reaches more files than the routing table's own single row names — see the composed
-`implement-it` + `laravel-inertia-stack` workflow in `skill-context-workflows.json`.
+`blueprints/filters-and-sorting.md`'s own "Testing" section routes further to `rules/test-ownership.md`
+and `blueprints/pest-testing.md`; its "Naming and location" section separately cites
+`rules/php-conventions.md`. A filtered-index task composed with `implement-it` therefore reaches more
+files than the routing table's own single row names — see the composed `implement-it` +
+`laravel-inertia-stack` workflow in `skill-context-workflows.json`.
 
 ### plan-it
 
 `rules/resource-feature-checklist.md` and `rules/capability-checklist.md` are chosen by
-`rules/feature-classification.md`'s shape classification, but a mixed-characteristic feature can
-load both, per that file's own secondary-questions allowance. `rules/plan-md-input.md` (an approved
-`plan.md` origin) and `rules/discovered-work.md` (an unexpected-finding origin) are earlier pipeline
-steps that feed into classification, not routes that replace or skip it — per `SKILL.md`'s own
-numbered pipeline, both origins still reach `rules/feature-classification.md` and the same
-canonical-issue pipeline from there. A request with neither origin (a feature ask stated directly
-in conversation) enters straight at classification, which is what the modeled `plan-it` rows in
-`skill-context-workflows.json` assume; no workflow row there models the plan-md-input or
-discovered-work paths. `rules/verification-checkpoints.md` was extracted from
-`rules/issue-conventions.md`'s former §10; `issue-conventions.md` keeps the multi-group trigger
-condition in place and hands off to the extracted file only once an issue's Tasks actually span
-multiple implementation groups — an ordinary single-group issue never loads it. Classification
-(which shape a feature is) and implementation grouping (how many checkpoints its Tasks span) are
-separate dimensions, so this file's load is independent of shape; see the two paired
+`rules/feature-classification.md`'s shape classification, but a mixed-characteristic feature can load
+both, per that file's own secondary-questions allowance. `rules/plan-md-input.md` (an approved `plan.md`
+origin) and `rules/discovered-work.md` (an unexpected-finding origin) are earlier pipeline steps that
+feed into classification, not routes that replace or skip it — per `SKILL.md`'s own numbered pipeline,
+both origins still reach `rules/feature-classification.md` and the same canonical-issue pipeline from
+there. A request with neither origin (a feature ask stated directly in conversation) enters straight at
+classification, which is what the modeled `plan-it` rows in `skill-context-workflows.json` assume; no
+workflow row there models the plan-md-input or discovered-work paths. `rules/verification-checkpoints.md`
+was extracted from `rules/issue-conventions.md`'s former §10; `issue-conventions.md` keeps the
+multi-group trigger condition in place and hands off to the extracted file only once an issue's Tasks
+actually span multiple implementation groups — an ordinary single-group issue never loads it.
+Classification (which shape a feature is) and implementation grouping (how many checkpoints its Tasks
+span) are separate dimensions, so this file's load is independent of shape; see the two paired
 single-/multiple-implementation-group `plan-it` workflow rows in `skill-context-workflows.json` for
 what it adds.
 
@@ -198,19 +208,27 @@ conditional file a typical review skips.
 
 ### ship-it
 
-`rules/milestone-lifecycle.md` owns the shared delivery-lifecycle entry map, delivery/phase-
-milestone recognition, the Backlog exemption, the milestone description as scope contract, and why
-closure and release don't gate each other — freely consultable guidance with no mutation of its own.
-`rules/milestone-completion.md` owns only the closure gate: eligibility, authorization, the
-validated mutation, interrupted-attempt recovery, and reporting; its own eligibility check for "is
-this a delivery/phase milestone" now itself depends on `rules/milestone-lifecycle.md`, so a real
-closure pass loads both files, not `rules/milestone-completion.md` alone.
-`rules/milestone-pr-readiness.md` and `rules/ci-failure-correction.md` own the two earlier, narrower
-surfaces and each cite `rules/milestone-lifecycle.md`'s shared guidance conditionally rather than
-restating it — the split lets a PR-readiness pass that needs that guidance load it without also
-loading the closure mechanics `rules/milestone-completion.md` carries. `rules/ci-failure-correction.md`'s
-own step 3 unconditionally directs consulting `implement-it/rules/review-gates.md`, which the
-CI-failure-investigation workflow row therefore counts as mandatory, not merely conditional.
+`rules/milestone-lifecycle.md` owns the shared delivery-lifecycle entry map, delivery/phase-milestone
+recognition, the Backlog exemption, the milestone description as scope contract, and why closure and
+release don't gate each other — freely consultable guidance with no mutation of its own.
+`rules/milestone-completion.md` owns only the closure gate: eligibility, authorization, the validated
+mutation, interrupted-attempt recovery, and reporting; its own eligibility check for "is this a
+delivery/phase milestone" now itself depends on `rules/milestone-lifecycle.md`, so a real closure pass
+loads both files, not `rules/milestone-completion.md` alone. `rules/milestone-pr-readiness.md` and
+`rules/ci-failure-correction.md` own the two earlier, narrower surfaces and each cite
+`rules/milestone-lifecycle.md`'s shared guidance conditionally rather than restating it — the split
+lets a PR-readiness pass that needs that guidance load it without also loading the closure mechanics
+`rules/milestone-completion.md` carries. `rules/ci-failure-correction.md`'s own step 3 unconditionally
+directs consulting `implement-it/rules/review-gates.md`, which the CI-failure-investigation workflow
+row therefore counts as mandatory, not merely conditional.
+
+### steward-it
+
+`steward-it` is deliberately retrospective and human-invoked. Its normal activation assumes the
+session under review already contains most evidence. A stewardship pass may consult `skill-context.md`
+when context cost is relevant, but this document is a model/reference, not an automatic rule for
+loading every skill-context file. Keep any session-specific context report separate from these static
+measurements and treat observed usage as a different evidence class.
 
 ## Frontmatter validation
 
