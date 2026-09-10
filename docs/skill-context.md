@@ -40,9 +40,9 @@ three different times:
 
 **Unit: Unicode characters, not bytes.** Every count is `len()` on a file's content after UTF-8
 decoding — the same unit the Agent Skills specification's 1,024-character `description` limit
-uses. This repository's prose uses multi-byte UTF-8 punctuation (em dashes, curly quotes) heavily
-enough that a raw byte count (`wc -c`) is consistently larger and not interchangeable with the
-character counts this document and its script report.
+uses. This repository's prose uses multi-byte UTF-8 punctuation heavily enough that a raw byte
+count (`wc -c`) is consistently larger and not interchangeable with the character counts this
+document and its script report.
 
 **Rough tokens = characters ÷ 4, always.** A coarse, checkable approximation, not a Claude
 tokenizer count and not an observed session's actual usage — real tokenization varies with content.
@@ -101,22 +101,21 @@ a link crawl would resolve correctly.
 
 **What the script's revision check does and does not establish.** It reports whether the working
 tree's `skills/` content and the workflow config differ from `git HEAD` right now — an uncommitted-
-change check, nothing more. It does not know when the config file was last reconciled against
-routing, and it cannot tell you whether a routing change that was already committed and merged
-cleanly has since made a listed workflow stale — a fully committed, clean working tree will still
-report "measured inputs match this revision" even if a skill's routing changed three commits ago
-and nobody updated the config to match. Detecting that kind of staleness is not something this
-script does; it would require tracking which commit last reconciled the config against routing, and
-no such mechanism exists here. Update the config file directly whenever you change a skill's
-routing, and treat "measured inputs match this revision" as "the working tree is clean," not as "the
-workflow definitions are still accurate."
+change check, nothing more. It does not know when the config file was last reconciled against routing,
+and it cannot tell you whether a routing change that was already committed and merged cleanly has since
+made a listed workflow stale — a fully committed, clean working tree will still report "measured inputs
+match this revision" even if a skill's routing changed three commits ago and nobody updated the config
+to match. Detecting that kind of staleness is not something this script does; it would require tracking
+which commit last reconciled the config against routing, and no such mechanism exists here. Update the
+config file directly whenever you change a skill's routing, and treat "measured inputs match this revision"
+as "the working tree is clean," not as "the workflow definitions are still accurate."
 
-The config also records, per workflow, the assumptions behind it (e.g. which citation is
-conditional versus mandatory) and excludes content this repository cannot measure: external
-companion skills (Laravel Boost's `laravel-best-practices`, `testing-best-practices`, and
-`inertia-vue-development`; the `artifact-design` skill `document-it` requires before writing an
-Artifact page), and `docs/skill-authoring-methodology.md`/`docs/skill-consumption.md` themselves,
-which no `SKILL.md` or rule file references.
+The config also records, per workflow, the assumptions behind it (e.g. which citation is conditional
+versus mandatory) and excludes content this repository cannot measure: external companion skills (Laravel
+Boost's `laravel-best-practices`, `testing-best-practices`, and `inertia-vue-development`; the
+`artifact-design` skill `document-it` requires before writing an Artifact page), and
+`docs/skill-authoring-methodology.md`/`docs/skill-consumption.md` themselves, which no `SKILL.md` or
+rule file references.
 
 ## Per-skill notes
 
@@ -156,6 +155,13 @@ place and hands off to the extracted file only once that check finds an effect.
 `plan-it/rules/issue-conventions.md` and `rules/review.md` to describe the quality bar an approved
 issue already meets; the ordinary path does not re-open either file, so they are not counted in the
 modeled `implement-it` workflows.
+
+**Verification workflow change.** Targeted verification remains required before Gate 1. The full
+regression suite is no longer an automatic requirement at every issue boundary; the human chooses
+whether to run it for the issue. Standalone Backlog/trunk work normally warrants recommending the
+full suite, while an active phase milestone may deliberately defer it when targeted verification is
+strong. This changes the workflow's verification decision, not the modeled file-loading list, so the
+`implement-it` rows in `skill-context-workflows.json` do not require a different file set.
 
 ### lab-it
 
