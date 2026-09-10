@@ -13,9 +13,9 @@ inert until a separate authoring pass implements it under
 ## Three loading tiers (a model, not an observed runtime guarantee)
 
 Nothing here has been confirmed against a real agent session's actual context. What follows is the
-working model this document and its script use to reason about cost — installing a skill is
-assumed not to load its whole directory, with three distinct tiers assumed to enter context at
-three different times:
+working model this document and its script use to reason about cost — installing a skill is assumed
+not to load its whole directory, with three distinct tiers assumed to enter context at three
+ different times:
 
 1. **Discovery metadata** — each installed skill's frontmatter `description` (and `name`), assumed
    read by the agent to decide which skill, if any, applies to the current request. Modeled as the
@@ -25,24 +25,24 @@ three different times:
    body) is assumed to load as one unit: the operational routing entrypoint stating activation
    vocabulary, ownership, and the routing table to supporting files. This document assumes nothing
    in a `SKILL.md` loads partially, so a large entrypoint is modeled as costing its full size on
-   every activation of that skill, regardless of which workflow the request turns out to need —
-   that assumption is not independently verified here.
+   every activation, regardless of which workflow the request turns out to need — that assumption
+   is not independently verified here.
 3. **Supporting files, on demand** — a `rules/`, `blueprints/`, or `templates/` file is assumed to
-   load only when the activated `SKILL.md`'s own routing, or a supporting file's own further
-   routing, sends the current workflow to it. Under this assumption, a skill with many rule files
-   does not load all of them for every request; it loads the ones the request's own shape requires.
-   That set is not always one file per concern — a mixed-characteristic feature or a blueprint with
-   its own internal routing can pull in more than the primary table entry alone, and a followed
-   cross-reference into another file's shared guidance is modeled as adding that file's full size,
-   not just the cited section.
+   load only when the activated `SKILL.md`'s own routing, or a supporting file's own further routing,
+   sends the current workflow to it. Under this assumption, a skill with many rule files does not
+   load all of them for every request; it loads the ones the request's own shape requires. That set
+   is not always one file per concern — a mixed-characteristic feature or a blueprint with its own
+   internal routing can pull in more than the primary table entry alone, and a followed cross-reference
+   into another file's shared guidance is modeled as adding that file's full size, not just the cited
+   section.
 
 ## How to read the figures
 
 **Unit: Unicode characters, not bytes.** Every count is `len()` on a file's content after UTF-8
-decoding — the same unit the Agent Skills specification's 1,024-character `description` limit
-uses. This repository's prose uses multi-byte UTF-8 punctuation (em dashes, curly quotes) heavily
-enough that a raw byte count (`wc -c`) is consistently larger and not interchangeable with the
-character counts this document and its script report.
+decoding — the same unit the Agent Skills specification's 1,024-character `description` limit uses.
+This repository's prose uses multi-byte UTF-8 punctuation (em dashes, curly quotes) heavily enough
+that a raw byte count (`wc -c`) is consistently larger and not interchangeable with the character
+counts this document and its script report.
 
 **Rough tokens = characters ÷ 4, always.** A coarse, checkable approximation, not a Claude
 tokenizer count and not an observed session's actual usage — real tokenization varies with content.
@@ -69,8 +69,8 @@ modeled-workflow total, tells you which skill or rule file is worth investigatin
 split — it is not, by itself, evidence that the skill performs poorly, that an agent struggled with
 it, or that the split is worth making once routing overhead and cross-references are accounted for
 (see `docs/skill-authoring-methodology.md` Section 4's evidence-to-rule bar, which applies equally
- to evidence for *removing* content). Treat these figures as a prioritization signal for where a
-future authoring pass should look first, not as a defect report.
+to evidence for removing content). Treat these figures as a prioritization signal for where a future
+authoring pass should look first, not as a defect report.
 
 ## Using this document with steward-it
 
@@ -93,8 +93,8 @@ python3 scripts/measure_skill_context.py
 
 Prints, read-only: the source revision and whether the `skills/` tree or the workflow config has
 uncommitted changes since it; discovery-metadata totals; a compact per-skill table separating
-entrypoint size from supporting-file size; the repository-wide total; and every modeled workflow
-total from `docs/skill-context-workflows.json`.
+entrypoint size from supporting-file size; the repository-wide total; and every modeled workflow total
+from `docs/skill-context-workflows.json`.
 
 ```bash
 python3 scripts/measure_skill_context.py --detail <skill-name>   # full file-by-file breakdown
@@ -108,21 +108,19 @@ that doesn't exist. It never writes or modifies a file.
 `docs/skill-context-workflows.json` is a hand-maintained, explicit list of representative workflows,
 seeded from this document's own prior workflow modeling and checked against each skill's `SKILL.md`
 routing at the time it was last edited. It is not derived by recursively following Markdown links or
-crawling directories — an actual `SKILL.md` can route conditionally, compose across skills, or
-follow a further cross-reference inside a supporting file, none of which a link crawl would resolve
-correctly.
+crawling directories — an actual `SKILL.md` can route conditionally, compose across skills, or follow
+a further cross-reference inside a supporting file, none of which a link crawl would resolve correctly.
 
-**What the script's revision check does and does not establish.** It reports whether the working
-tree's `skills/` content and the workflow config differ from `git HEAD` right now — an uncommitted-
-change check, nothing more. It does not know when the config file was last reconciled against routing,
-and it cannot tell you whether a routing change that was already committed and merged cleanly has
-since made a listed workflow stale — a fully committed, clean working tree will still report "measured
-inputs match this revision" even if a skill's routing changed three commits ago and nobody updated
-the config to match. Detecting that kind of staleness is not something this script does; it would
-require tracking which commit last reconciled the config against routing, and no such mechanism
-exists here. Update the config file directly whenever you change a skill's routing, and treat
-"measured inputs match this revision" as "the working tree is clean," not as "the workflow definitions
-are still accurate."
+**What the script's revision check does and does not establish.** It reports whether the working tree's
+`skills/` content and the workflow config differ from `git HEAD` right now — an uncommitted-change
+check, nothing more. It does not know when the config file was last reconciled against routing, and it
+cannot tell you whether a routing change that was already committed and merged cleanly has since made
+a listed workflow stale — a fully committed, clean working tree will still report "measured inputs
+match this revision" even if a skill's routing changed three commits ago and nobody updated the config
+to match. Detecting that kind of staleness is not something this script does; it would require tracking
+which commit last reconciled the config against routing, and no such mechanism exists here. Update the
+config file directly whenever you change a skill's routing, and treat "measured inputs match this
+revision" as "the working tree is clean," not as "the workflow definitions are still accurate."
 
 The config also records, per workflow, the assumptions behind it (e.g. which citation is conditional
 versus mandatory) and excludes content this repository cannot measure: external companion skills
@@ -150,8 +148,7 @@ estimate holds when current evidence and the checklist answer every question on 
 consulting further guidance; it does not depend on `rules/review.md` never citing an owning reference,
 since a review can consult a reference such as `rules/maintenance.md` for one specific fact without
 that amounting to executing `rules/authoring.md`'s writing procedure. See the `document-it` rows in
-`skill-context-workflows.json`, including the two standalone-review rows and the assumption each
-states.
+`skill-context-workflows.json`, including the two standalone-review rows and the assumption each states.
 
 ### implement-it
 
@@ -175,11 +172,11 @@ architecture" workflow — a plain investigation-and-answer request never reache
 
 ### laravel-inertia-stack
 
-`blueprints/filters-and-sorting.md`'s own "Testing" section routes further to `rules/test-ownership.md`
-and `blueprints/pest-testing.md`; its "Naming and location" section separately cites
-`rules/php-conventions.md`. A filtered-index task composed with `implement-it` therefore reaches more
-files than the routing table's own single row names — see the composed `implement-it` +
-`laravel-inertia-stack` workflow in `skill-context-workflows.json`.
+`blueprints/filters-and-sorting.md`'s own "Testing" section routes further to
+`rules/test-ownership.md` and `blueprints/pest-testing.md`; its "Naming and location" section
+separately cites `rules/php-conventions.md`. A filtered-index task composed with `implement-it`
+therefore reaches more files than the routing table's own single row names — see the composed
+`implement-it` + `laravel-inertia-stack` workflow in `skill-context-workflows.json`.
 
 ### plan-it
 
@@ -192,13 +189,12 @@ both origins still reach `rules/feature-classification.md` and the same canonica
 there. A request with neither origin (a feature ask stated directly in conversation) enters straight at
 classification, which is what the modeled `plan-it` rows in `skill-context-workflows.json` assume; no
 workflow row there models the plan-md-input or discovered-work paths. `rules/verification-checkpoints.md`
-was extracted from `rules/issue-conventions.md`'s former §10; `issue-conventions.md` keeps the
-multi-group trigger condition in place and hands off to the extracted file only once an issue's Tasks
-actually span multiple implementation groups — an ordinary single-group issue never loads it.
-Classification (which shape a feature is) and implementation grouping (how many checkpoints its Tasks
-span) are separate dimensions, so this file's load is independent of shape; see the two paired
-single-/multiple-implementation-group `plan-it` workflow rows in `skill-context-workflows.json` for
-what it adds.
+was extracted from `rules/issue-conventions.md`'s former §10; `issue-conventions.md` keeps the multi-group
+trigger condition in place and hands off to the extracted file only once an issue's Tasks actually span
+multiple implementation groups — an ordinary single-group issue never loads it. Classification (which
+shape a feature is) and implementation grouping (how many checkpoints its Tasks span) are separate
+dimensions, so this file's load is independent of shape; see the two paired single-/multiple-
+implementation-group `plan-it` workflow rows in `skill-context-workflows.json` for what it adds.
 
 ### review-it
 
@@ -206,29 +202,30 @@ All three rule files (`scope.md`, `checklist.md`, `verification.md`) are consult
 every invocation, in the order `SKILL.md`'s own "Rules" list states — this skill has no large
 conditional file a typical review skips.
 
+### steward-it
+
+`steward-it` is a retrospective diagnostic, so its current skill contract intentionally keeps the
+activation surface small and does not prescribe a large mandatory rule tree. Its useful context is
+usually the session itself, plus only the supporting evidence or repository guidance needed for the
+specific retrospective. Do not add a modeled workflow merely to create a number; wait until real
+steward-it use demonstrates a repeatable loading path worth modeling. Context-cost reports produced
+by real sessions can remain evidence for stewardship without becoming a static workflow definition.
+
 ### ship-it
 
 `rules/milestone-lifecycle.md` owns the shared delivery-lifecycle entry map, delivery/phase-milestone
 recognition, the Backlog exemption, the milestone description as scope contract, and why closure and
-release don't gate each other — freely consultable guidance with no mutation of its own.
-`rules/milestone-completion.md` owns only the closure gate: eligibility, authorization, the validated
+release don't gate each other — freely consultable guidance with no mutation of its own. `rules/
+milestone-completion.md` owns only the closure gate: eligibility, authorization, the validated
 mutation, interrupted-attempt recovery, and reporting; its own eligibility check for "is this a
 delivery/phase milestone" now itself depends on `rules/milestone-lifecycle.md`, so a real closure pass
 loads both files, not `rules/milestone-completion.md` alone. `rules/milestone-pr-readiness.md` and
 `rules/ci-failure-correction.md` own the two earlier, narrower surfaces and each cite
-`rules/milestone-lifecycle.md`'s shared guidance conditionally rather than restating it — the split
-lets a PR-readiness pass that needs that guidance load it without also loading the closure mechanics
+`rules/milestone-lifecycle.md`'s shared guidance conditionally rather than restating it — the split lets
+a PR-readiness pass that needs that guidance load it without also loading the closure mechanics
 `rules/milestone-completion.md` carries. `rules/ci-failure-correction.md`'s own step 3 unconditionally
-directs consulting `implement-it/rules/review-gates.md`, which the CI-failure-investigation workflow
-row therefore counts as mandatory, not merely conditional.
-
-### steward-it
-
-`steward-it` is deliberately retrospective and human-invoked. Its normal activation assumes the
-session under review already contains most evidence. A stewardship pass may consult `skill-context.md`
-when context cost is relevant, but this document is a model/reference, not an automatic rule for
-loading every skill-context file. Keep any session-specific context report separate from these static
-measurements and treat observed usage as a different evidence class.
+directs consulting `implement-it/rules/review-gates.md`, which the CI-failure-investigation workflow row
+therefore counts as mandatory, not merely conditional.
 
 ## Frontmatter validation
 
