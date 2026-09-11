@@ -272,14 +272,29 @@ regression-test cost. Targeted verification is mandatory. Full-suite verificatio
 every issue but is explicitly chosen by the human at the issue boundary, with Backlog work receiving
 a recommendation to run it and active milestone issues allowed to defer it.
 
-Companion activation and commit-message validation are now explicit pre-implementation and pre-push
-checks, respectively, based on observed useOrbit execution that showed a matching stack companion
-being omitted and a clearly stated commit-attribution/message contract being violated despite being
-read in-context. These checks should be revisited if live smoke tests show that the behavior remains
-unreliable or if the added procedural checks create disproportionate overhead.
+Companion activation and commit-message validation were first made explicit pre-implementation and
+pre-push checks based on observed useOrbit execution (through issue #316) that showed a matching stack
+companion being omitted and a clearly stated commit-attribution/message contract being violated despite
+being read in-context. useOrbit issues #316 and #317 then showed both checks still insufficient in
+practice: #317 activated `companion-activation.md` itself yet still read stack rule files directly
+without invoking the skill mechanism, and #317's commit `573a0cd` carried the banned `Co-Authored-By`
+trailer even though the steward report claimed the message had been rechecked against
+`commit-boundaries.md`. In both cases the prior mechanism was a narrative "inspect and verify" pass —
+sound advice, but not falsifiable, and not resistant to a harness-level instruction (a session
+attribution reminder) that frames itself as overriding project rules. The mechanism was hardened
+accordingly, not merely re-stated: activation now has a concrete trigger (reading a not-yet-activated
+skill's rules file requires activating it through the mechanism first) and a Gate 1 evidence line
+(`Activated skills:`); commit-message compliance now requires a literal command run against the actual
+committed object, run immediately after every commit/amend and again across the whole unpushed range
+before push, with its output quoted as evidence rather than asserted. That check pipes each message
+through `git interpret-trailers --parse` before grepping — grepping the raw message directly was tried
+first, while building this same v2.1.2 change, and immediately false-flagged its own commit message for
+legitimately discussing the banned trailer by name; parsing only the actual trailer block avoids that.
+These checks should be revisited again if live smoke tests (#317 forward) show the behavior remains
+unreliable, or if the added procedural checks create disproportionate overhead.
 
-This change is grounded in observed useOrbit Policies sessions from issues #312 through #316 and
-v2.0.4/v2.1.0 follow-up stewardship observations. These session-level observations live primarily
+This change is grounded in observed useOrbit Policies sessions from issues #312 through #317 and
+v2.0.4/v2.1.0/v2.1.1 follow-up stewardship observations. These session-level observations live primarily
 in the consuming project's execution records rather than this repository's durable evidence, so this
 dossier records the concrete issue range without implying that the underlying session transcripts are
 stored here. Revisit this statement if durable stewardship evidence is later retained here.
