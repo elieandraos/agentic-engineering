@@ -23,8 +23,8 @@ repository mutations, recovery actions, and final outcome. It can then compare w
 with the owning skill's contract and look for repeated failure patterns.
 
 Every non-trivial stewardship pass starts with the same compact baseline: execution timing, context /
-usage, skill activation, and workflow verification, followed by findings and causal analysis. The
-baseline stays compact; deeper telemetry or phase reconstruction is added when the evidence supports it.
+usage, skill activation, and workflow verification, followed by findings and causal analysis. Detailed
+telemetry and analysis are loaded through the relevant conditional rules under [`rules/`](rules/).
 
 The useful diagnostic path is:
 
@@ -32,6 +32,16 @@ The useful diagnostic path is:
 
 The exact evidence available depends on the runtime and session log. Do not expect every session to
 provide every measurement.
+
+## Rules
+
+- [`session-reconstruction.md`](rules/session-reconstruction.md) — always loaded.
+- [`telemetry.md`](rules/telemetry.md) — loaded for non-trivial sessions when runtime telemetry is available.
+- [`findings.md`](rules/findings.md) — loaded when there is a material deviation, suspicious behavior, or recurrence question.
+- [`evidence.md`](rules/evidence.md) — loaded only when durable project evidence applies.
+- [`report.md`](rules/report.md) — loaded for every non-trivial stewardship pass.
+
+The split keeps the base skill small while allowing detailed diagnostics to load only when useful.
 
 ## Example prompts
 
@@ -62,15 +72,11 @@ owns the smallest justified fix.
 ## What normally happens
 
 1. Reconstruct the relevant session from available evidence.
-2. Separate observations from inference.
-3. Discover available execution telemetry and report the standard timing/usage baseline when the session is non-trivial.
-4. Compare intended guidance with observed behavior, including expected versus observed skill activation.
-5. Classify the likely cause and check for recurrence.
-6. Recommend the smallest justified improvement.
-7. Record only a compact durable observation when a project evidence file is maintained.
-
-Skill traces and context reports are optional diagnostics, not requirements of normal skill execution.
-Observed session telemetry is preferred whenever the runtime exposes it.
+2. Load the conditional rules required by the session and requested analysis.
+3. Separate observations from inference and compare intended guidance with observed behavior.
+4. Report the standard timing/context/activation baseline for non-trivial sessions.
+5. Classify the likely cause, check recurrence, and recommend the smallest justified improvement.
+6. Record only a compact durable observation when a project evidence file is maintained.
 
 ## Evidence convention
 
