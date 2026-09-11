@@ -53,26 +53,34 @@ owns the smallest justified fix."
    routing, user approvals, delegated work, repository mutations, tests, recovery actions, and
    final outcomes. Use an explicit skill trace when one was produced in the session, but do not
    require a trace to perform stewardship.
-3. **Assess context and execution cost when relevant.** Prefer observed session telemetry over static
-   estimates. When available, use request-level token usage, cache-read/cache-creation usage,
-   thinking-token usage, skill attribution, timestamps, tool execution timing, and explicit human
-   approval intervals. Separate active execution time from human wait time when the evidence permits.
-4. **Separate evidence from interpretation.** Mark claims as observed, supplied by the user,
+3. **Discover and report execution telemetry by default.** Prefer observed session telemetry over
+   static estimates. When available, locate the session log and use request-level token usage,
+   cache-read/cache-creation usage, thinking-token usage, skill attribution, timestamps, tool
+   execution timing, and explicit human approval intervals. Report the standard compact execution
+   snapshot in every non-trivial stewardship pass: total elapsed time, active execution time,
+   human wait time, and a phase breakdown when the evidence permits. Separate human wait from active
+   execution rather than folding it into agent work. If telemetry is unavailable, say so explicitly.
+4. **Report context and usage by skill when attribution permits.** When request-level attribution is
+   available, group token and cache usage by `attributionSkill` and include the meaningful buckets in
+   the compact report (for example `implement-it`, `review-it`, stack companions, and unattributed
+   requests). Distinguish direct usage fields from inferred percentages or aggregates. Do not invent
+   attribution when the runtime does not expose it.
+5. **Separate evidence from interpretation.** Mark claims as observed, supplied by the user,
    inferred, or unresolved. Do not turn an agent's own explanation into canonical fact without
    supporting evidence.
-5. **Compare expected and observed behavior.** Identify where the session followed the intended
+6. **Compare expected and observed behavior.** Identify where the session followed the intended
    workflow and where it diverged. Check the relevant skill contract, project instructions, and
    actual repository state when accessible.
-6. **Classify the cause.** Prefer the smallest evidence-backed category that explains the problem:
+7. **Classify the cause.** Prefer the smallest evidence-backed category that explains the problem:
    methodology gap, skill guidance gap, missing project knowledge or instruction, stack knowledge
    gap, ambiguous human prompt/decision, execution mistake, or external limitation. Multiple causes
    are allowed when the evidence supports them.
-7. **Check for recurrence.** Search retained stewardship evidence or prior identifiable session
+8. **Check for recurrence.** Search retained stewardship evidence or prior identifiable session
    findings when available. Treat a single observation as a hypothesis, not a canonical pattern.
-8. **Recommend, do not mutate.** Recommend the smallest justified improvement and identify where it
+9. **Recommend, do not mutate.** Recommend the smallest justified improvement and identify where it
    belongs. Do not edit canonical skills, rules, project instructions, or methodology automatically.
    Ask the human to retain or reject a steward-worthy finding before it becomes durable guidance.
-9. **Record only durable evidence.** When the project keeps a stewardship evidence file, add a
+10. **Record only durable evidence.** When the project keeps a stewardship evidence file, add a
    compact observation of no more than two sentences, with a commit, PR, issue, or other concrete
    reference when one exists. Do not create a diary or copy the full retrospective into the file.
 
@@ -132,7 +140,8 @@ knowledge, stack companion, prompt, methodology, or external system.
 
 ## Output
 
-Use a compact retrospective suited to the materiality of the session:
+Use this compact baseline for every non-trivial stewardship pass, even when no material problem is
+found. Detailed analysis can follow the baseline when findings warrant it:
 
 ```text
 ## Steward review
@@ -140,11 +149,34 @@ Use a compact retrospective suited to the materiality of the session:
 Expected
 [What the user expected and why the session was reviewed.]
 
-Observed
-[What actually happened, with concrete evidence.]
+Execution
+- Total: [measured elapsed time]
+- Active: [measured active execution time]
+- Human wait: [measured approval/answer wait]
+- Phase breakdown:
+  [phase] [duration]
+  [phase] [duration]
 
-Finding
-[Confirmed problem, or no material finding.]
+Context / usage
+- Output: [observed output tokens]
+- Thinking: [observed thinking tokens, when available]
+- Cache creation: [observed cache creation]
+- Cache read: [observed cache read]
+- By skill:
+  [skill] [usage]
+  [skill] [usage]
+  [unattributed] [usage]
+
+Skill activation
+- Expected: [applicable skills/rules from available evidence]
+- Observed: [actually activated/loaded skills]
+- Mismatch: [only when a supported mismatch exists]
+
+Verification / workflow
+[What happened across verification, approvals, review, commits, closure, and other material workflow steps.]
+
+Findings
+[Confirmed problems, or no material finding.]
 
 Cause
 [Evidence-backed classification; separate inference from observation.]
@@ -159,7 +191,10 @@ Evidence record
 [At most two compact sentences for the durable project evidence file, when appropriate.]
 ```
 
-When the user asks specifically for a performance/debug trace, include the measured timing and
-telemetry breakdown before the causal analysis. Do not force every section when the session is trivial.
+When telemetry is only partially available, retain the section and mark unavailable fields rather than
+silently omitting the baseline. Phase timing is measured from identifiable session events when the
+session log permits it; human wait is excluded from active execution time. If skill attribution is
+not available, report that limitation rather than fabricating a breakdown.
+
 Do not expand a retrospective into a full architectural or implementation review unless the user
 separately asks for that work.
