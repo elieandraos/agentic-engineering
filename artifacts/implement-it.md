@@ -2,12 +2,7 @@
 
 Status: Current
 Scope: `implement-it` as it stands in this repository
-Purpose: A compact lifecycle architecture guide — what enters and exits the workflow, its two
-delivery paths, branch readiness, its two review gates including `review-it`'s role at Gate 1, its
-commit architecture, its verification model including human-controlled full-suite verification and
-completed-issue verification, issue closure and approval-validity, sequencing and the ready-set recompute,
-authorized delivery corrections, which decisions require human authority, where each rule owns a
-distinct part of the lifecycle, and current boundaries and confidence.
+Purpose: A compact lifecycle architecture guide — what enters and exits the workflow, its two delivery paths, branch readiness, its two review gates including `review-it`'s role at Gate 1, its commit architecture, its verification model including human-controlled full-suite verification, issue closure and approval-validity, sequencing and the ready-set recompute, authorized delivery corrections, which decisions require human authority, where each rule owns a distinct part of the lifecycle, and current boundaries and confidence.
 [`SKILL.md`](../skills/implement-it/SKILL.md) remains the operational routing entrypoint;
 [`README.md`](../skills/implement-it/README.md) is the human-facing walkthrough. This document
 explains the lifecycle architecture behind both rather than restating either.
@@ -57,12 +52,12 @@ owned by `ship-it`. The lifecycle, end to end:
 pick a dependency-ready, approved issue
   → BRANCH READINESS (§3)                      [diverges by path]
   → implement → targeted verification
-  → FULL-SUITE DECISION: recommend full suite; human chooses run or skip
+  → FULL-SUITE DECISION: run or intentionally skip
   → GATE 1: implementation review, review-it invoked (§4)
   → derive commit plan
   → GATE 2: commit-plan review (§4)
   → build semantic commits, narrowest-reliable verification per commit (§5, §6)
-  → completed-issue full-suite checkpoint when chosen/required by the human or applicable workflow (§6)
+  → completed-issue full-suite checkpoint when chosen/required (§6)
   → confirm commits reachable on the correct remote branch, push with authorization if not (§7)
   → ask: close the issue? → closure procedure + validation (§7)
   → recompute the milestone's dependency-ready set (§8)         [Backlog: path ends here]
@@ -119,13 +114,12 @@ other:
   never treated as approval of the rest of it.
 
 Gate 2 can never substitute for Gate 1, because they prove genuinely different things: the same
-finished diff can be split into commits several defensible ways, and approving that the
-*implementation* is correct says nothing about which of those splits should become permanent
-history. An agent may investigate and recommend at either gate, but never converts a genuinely
-unresolved product/architecture decision, a contradiction between evidence and approved
-assumptions, a `review-it` finding revealing such a decision, or a commit decomposition with no
-clearly better answer into a silently-chosen fact — each of those is its own stop, reported with
-evidence and a recommendation, not an unexplained question.
+finished diff can be split into several defensible ways, and approving that the *implementation* is
+correct says nothing about which split should become permanent history. An agent may investigate and
+recommend at either gate, but never converts a genuinely unresolved product/architecture decision,
+a contradiction between evidence and approved assumptions, a `review-it` finding revealing such a
+decision, or a commit decomposition with no clearly better answer into a silently-chosen fact — each
+of those is its own stop, reported with evidence and a recommendation, not an unexplained question.
 
 **Approval validity before Gate 2 and before push.** An approval is scoped to what it actually
 reviewed — work, scope, or a proposed action moving on afterward doesn't automatically carry the
@@ -135,11 +129,7 @@ covered: a material change (a scope change since Gate 1, a diff that no longer m
 approved, an issue body edited since its own approval) invalidates the approval that covered the
 prior state and requires renewal, routing to `review-it`'s own staleness contract where the change
 affects a surface it already reviewed. This check exists to catch a real divergence, not to
-manufacture one: ordinary staging and assembling of unchanged, already-approved content into its
-already-approved commits must not automatically invalidate Gate 1 merely because `HEAD` moved or the
-remaining diff changed shape. Remote commit reachability proves presence, not verification or
-authorization — finding a commit already on the remote branch is not evidence Gate 1, Gate 2, or
-push authorization ever actually happened for it.
+manufacture one. Remote commit reachability proves presence, not verification or authorization.
 
 Both gates apply at the same cadence sequencing establishes for everything else in this lifecycle
 (§8): one Gate 1 and one Gate 2 per issue, by default. A milestone having broad, already-approved
@@ -150,132 +140,65 @@ should be read more loosely going forward.
 ## 5. Commit architecture
 
 A commit is not a mechanical split of an issue. An issue describes an outcome; a commit describes
-one coherent, independently-true implementation decision — and nothing forces those two counts to
-match. Neither "one commit per issue" nor "many small commits" is a default: commit count is
-discovered from the actual, finished, reviewed diff every time, never decided in advance from issue
-size, file count, how many directories or file types are touched, or how an earlier change happened
-to split. A large diff can be one commit if it's one decision applied consistently everywhere it
-reaches; a small diff can be several commits if it genuinely contains several decisions.
+one coherent, independently-true implementation decision. Neither "one commit per issue" nor "many
+small commits" is a default: commit count is discovered from the actual, finished, reviewed diff.
 
-**Coherence is the actual test**, and it is narrower than "deployable" or "user-visible": every
-semantic commit must leave a structurally valid state that does not depend on a later commit to
-become structurally valid. A commit can be inert — dead code today, live once something later
-activates it — and still be coherent, as long as it is structurally complete and correct on its own
-terms; a commit that references a definition only a later commit introduces is never coherent, no
-matter how small it is.
+**Coherence is the actual test.** Every semantic commit leaves a structurally valid state that does
+not depend on a later commit to become structurally valid. A commit may be inert today and still be
+coherent if it is structurally complete and correct on its own terms.
 
-**Ordering is dependency-sensitive on two independent axes.** Commits are first ordered by
-structural dependency — the order one decision must exist before another can build on it. A second,
-narrower concern layers on top: a commit that flips a runtime activation gate (a feature flag,
-environment-conditioned behavior) can retroactively make previously dormant tests and code paths
-active the instant it lands, so an activating commit must land only after everything it activates —
-including a pre-existing test unrelated to the current issue — is already present in an earlier
-commit (`rules/activation-ordering.md`, summarized at §6). These two orderings have not been observed
-to conflict; no precedence rule exists for the case where they might (§11).
+**Ordering is dependency-sensitive on two independent axes.** Commits are ordered by structural
+dependency, then checked for runtime activation effects that can require a narrower ordering rule via
+`rules/activation-ordering.md`.
 
 **Deriving the plan requires inspecting the completed, approved implementation diff and the intended
-commit scope it actually contains** — the real diff, file by file, not necessarily an already-staged
-scope — never planning boundaries speculatively while still writing code, and never copying how a
-superficially similar earlier change happened to split.
+commit scope it actually contains** — never planning boundaries speculatively while still writing
+code, and never copying how a superficially similar earlier change happened to split.
 
-**An unpushed commit and already-pushed history are corrected differently.** A review correction
-found before anything is committed simply becomes part of whichever semantic commit it belongs to —
-there is never a separate "fix review comments" commit. A correction needed after something is
-already committed, but before that commit has been pushed, is folded in by rebuilding local history
-so the correction lands inside the commit it actually belongs to, rather than bolting a fixup commit
-on top — the result reads as if it had been built correctly from the start. The current rules
-describe this reconstruction only for commits that haven't been pushed yet; they don't define a
-technique for rewriting history that has already been shared, consistent with commit history being
-treated as effectively immutable once it leaves the local, unpushed state.
-
-**Reconstruction preserves unrelated content and its staged/unstaged shape, and is bounded to what
-it can safely classify.** Every path the correction touches is captured before anything is mutated,
-and the correction itself is isolated positively — never derived by subtracting a known piece from
-the combined content — so unrelated content sharing the same file is never folded into the
-correction or silently lost. This recipe supports a path only when its unrelated content, if any,
-resolves cleanly to one of a small number of classifications relative to `HEAD` (none, fully staged,
-or fully unstaged); a path where the correction can't be cleanly separated from every other
-difference, or where the unrelated content's staged/unstaged shape can't be established that way,
-falls outside what this recipe supports.
-
-Two different failure points call for two different responses, not one. A **preflight separation or
-classification failure** — the correction can't be cleanly isolated from every other difference, or
-the unrelated content's staged/unstaged shape can't be established — is detected before any real
-mutation: nothing has yet been cleared, staged, or reset, so the procedure stops and reports the
-specific obstacle, leaving the repository exactly as found. A **restoration failure**, by contrast,
-can only surface after reconstruction has already happened — once the owning commit has been rewound
-and the semantic commits already rebuilt — when reapplying a correction-touched path's set-aside
-unrelated content back against its new, reconstructed content fails to merge cleanly. At that point
-the real repository already carries the reconstructed commits; the procedure stops and preserves the
-captured recovery data (the scratch location's contents) for a retry or a hand-off, rather than
-guessing at a resolution or discarding anything — it does not, and cannot, undo the reconstruction
-that already happened. `rules/commit-boundaries.md`'s "Review corrections fold into their semantic
-commit" classifies which of the two cases applies and hands the reconstruction case to
-`rules/commit-reconstruction.md`, which owns the full mechanics; this dossier does not restate
-those mechanics.
+**An unpushed correction is reconstructed into its semantic commit.** A correction found before
+anything is committed simply belongs in its semantic commit; a correction needed after an unpushed
+commit exists uses `rules/commit-reconstruction.md`. Rewriting already-pushed history requires
+specific human authorization and a different path.
 
 ## 6. Verification model
 
-Verification proves different things at different boundaries, and one never substitutes for
-another: targeted verification proves the changed behavior relevant to the issue; a human-controlled
-full regression can provide broader system confidence before Gate 1 or at the issue boundary when
-selected; and commit-specific verification proves the semantic decision represented by each commit.
+Verification proves different things at different boundaries: targeted verification proves the
+changed behavior; a human-controlled full regression provides broader system confidence when chosen;
+and commit-specific checks prove the semantic decision represented by each commit.
 
 **Tooling is discovered per repository, never assumed.** This skill prescribes no test runner,
-formatter, linter, or static analyzer, and no fixed command for any of them — what each tool is,
-what it can and can't scope to a narrower subset, and what the project's full regression command
-actually is are all read from the repository's own instructions, configuration, and established
-usage. The same discovery discipline extends to whether the current checkout's starting state
-actually matches what the real delivery boundary (CI, a fresh clone) would start from — a
-proportional, risk-based check, not a blanket requirement to reset the environment before every
-ordinary change.
+formatter, linter, or static analyzer. Discover the project's actual commands and their reliable
+scoping from project instructions, stack skills, configuration, scripts, CI, or established usage.
 
-**Preserve pre-existing worktree changes.** A starting or resumed session can encounter a worktree
-that already carries content this session didn't create. Recency, being uncommitted, or resembling
-the approved issue's scope does not by itself prove a change belongs to this session — appearance is
-not provenance. This skill uses whatever reliable provenance is actually available — `git reflog`
-(which establishes commit/ref history, not authorship of an uncommitted edit), the session's own
-recorded start point, or an explicit statement from the human — and asks only when unresolved
-provenance would materially affect whether it's safe to continue, never discarding work merely to
-obtain a clean checkout.
+**Preserve pre-existing worktree changes.** Use reliable provenance to distinguish this task's work
+from prior or human work, and ask only when unresolved provenance materially affects safe continuation.
 
-**Targeted verification is required before Gate 1.** Once implementation is complete, run the
-narrowest reliable tests needed to prove the issue's changed behavior. Run the project's applicable
-formatting/lint/static checks at the narrowest reliable scope during implementation and commit
-construction, unless the repository's tooling requires broader verification.
+**Targeted verification is required before Gate 1.** Run the narrowest reliable tests for the changed
+behavior and the applicable formatting/lint/static checks. Then ask the human whether to run the full
+regression suite or intentionally skip it for this issue.
 
-**Full regression is a human decision at the issue boundary.** After targeted verification is green,
-report the verification result and ask the human whether to run the full regression suite or skip it.
-The default recommendation depends on the delivery path: for standalone Backlog/hotfix work,
-recommend running the full suite because the issue is not protected by a bounded milestone-level
-integration checkpoint; for an active delivery/phase milestone, recommend the full suite when useful
-but allow the human to intentionally skip it when targeted verification and review provide enough
-confidence for that issue. A human choosing to run the full suite makes the run part of that issue's
-verification evidence. A human choosing to skip it is recorded honestly and does not imply that the
-full suite passed.
+**Full regression is human-controlled.** Recommend running it for standalone Backlog/trunk work and
+for materially broad or risky changes. For suitable issues inside an active phase milestone, the
+human may intentionally skip it when targeted verification is strong. A skip is recorded honestly
+and never represented as full-suite proof.
 
-**Completed-issue checkpoint.** If the human chooses to run the full suite, use its result at the issue
-boundary as the broad regression evidence. After commits are assembled, determine whether the selected
-full-suite result still applies to the final committed content. If it does, reuse it; if it does not,
-run the full suite again only when the human has chosen full-suite verification for that boundary. If
-the human chose to skip the full suite, targeted verification remains the issue's required test proof
-and no completed-issue full-suite claim is made.
+**Completed-issue verification follows the human's choice.** When the human chooses full-suite
+verification, use or reuse qualifying broad evidence according to `rules/verification.md`. When the
+human chooses to skip, targeted verification remains the issue's required proof unless a later rule,
+risk escalation, or milestone-level decision requires broader regression evidence.
 
-The project's own cache/TIA/replay behavior still matters: when a full regression is chosen, distinguish
-fresh execution from impact-analysis selection or cached/replayed output, and use the project's
-uncached/full mode when a genuinely complete regression is required for the chosen verification path.
-Portable guidance does not name a project-specific command; consuming project instructions own the
-exact full-suite invocation.
+Cache, replay, and impact-analysis results are distinguished from fresh execution whenever a full
+regression is chosen. Project-specific commands, such as useOrbit's `php artisan test --compact
+--no-tia`, remain project knowledge rather than hardcoded methodology requirements.
 
-**Isolation verification remains a deliberate escalation.** Do not use isolation verification merely
-because an issue has multiple commits. Use it when an intermediate committed state itself needs proof,
-such as history reconstruction, activation-ordering risk, or another case where standalone correctness
-cannot safely be inferred from the ordinary targeted verification.
+Isolation verification remains a deliberate escalation only when an intermediate committed state
+itself needs proof.
 
 ## 7. Issue closure and mutation boundaries
 
 The issue lifecycle has separate approval boundaries for implementation, commit construction, push,
-and closure. Implementing or verifying an issue never authorizes its commit, push, or closure by itself.
+and closure. Implementing or verifying an issue never authorizes its commit, push, or closure by
+itself.
 
 The human approvals and choices are:
 
@@ -288,9 +211,9 @@ The human approvals and choices are:
 | Push authorization | Before push |
 | Issue-closure approval | Before closure |
 
-The full-suite decision is deliberately separate from Gate 1: Gate 1 still requires targeted verification
-and a clean/resolved `review-it` result, while the human's full-suite choice determines whether broader
-regression evidence is also present at that point.
+The full-suite decision is deliberately separate from Gate 1. Gate 1 requires targeted verification,
+applicable code-quality checks, and a clean/resolved `review-it` result; the human's full-suite choice
+determines whether broader regression evidence is also present.
 
 ## 8. Sequencing
 
@@ -300,33 +223,27 @@ to continue — wait for the human's selection before implementing another issue
 is empty because every open issue remains blocked, report the blockers; only a genuinely empty
 milestone (zero open issues) hands off to `ship-it`'s milestone PR-readiness assessment.
 
-Within a milestone, multiple dependency-ready issues may be similar enough that repeating the same
-implementation and verification flow is expected. The full-suite decision remains per issue unless
-the human explicitly chooses a different milestone-level verification arrangement later.
-
 ## 9. Authorized delivery corrections
 
 When `ship-it` investigates a CI failure on an open milestone PR, determines a correction stays
-within already-approved scope, and the human explicitly authorizes it (`ship-it/rules/ci-failure-correction.md`'s
-"CI failure on an open milestone PR"), it hands the authorized fix to this skill. Accept this entry only
-once that human authorization actually accompanies the handoff — `ship-it`'s own determination that a fix
-stays in scope is necessary but never sufficient by itself; without the human's explicit authorization there
-is nothing yet for this skill to perform. Once accepted, perform the correction through this same lifecycle
-— Gate 1 and Gate 2 as applicable, invoking `review-it` before Gate 1, targeted verification, and the
-human-controlled full-suite choice, then commit construction and authorized push — whether or not the
-original issue is still open. This route stays available without requiring an open issue to exist;
-it does not require reopening a closed issue, and it is separate from genuinely new scope, which still
-goes through `plan-it`'s discovered-work intake. Once the correction is verified and pushed, `ship-it`
-resumes the delivery workflow.
+within already-approved scope, and the human explicitly authorizes it, it hands the authorized fix
+to this skill. Perform the correction through the same lifecycle — Gate 1 and Gate 2 as applicable,
+`review-it` before Gate 1, targeted verification, and the human-controlled full-suite choice, then
+commit construction and authorized push — whether or not the original issue is still open.
 
 ## 10. Open decisions, current boundaries, and confidence
 
 Current implementation-stage behavior is deliberately conservative about scope but flexible about
-regression-test cost. Targeted verification remains mandatory because it directly proves the changed
-behavior. Full-suite verification is available to every issue, but its use is explicitly chosen by the
-human at the issue boundary, with Backlog work receiving a recommendation to run it and active milestone
-issues allowed to defer it.
+regression-test cost. Targeted verification is mandatory. Full-suite verification is available to
+every issue but is explicitly chosen by the human at the issue boundary, with Backlog work receiving
+a recommendation to run it and active milestone issues allowed to defer it.
 
-This change is grounded in repeated useOrbit Policies observations from issues #312 and #313. It should
-be revisited if broader evidence shows that milestone-level deferral hides regressions, or that the
-per-issue choice creates ambiguity about what has actually been verified.
+This change is grounded in repeated useOrbit Policies observations from issues #312 and #313 and the
+v2.0.4 follow-up observation in #314. It should be revisited if broader evidence shows that milestone-
+level deferral hides regressions, or that the per-issue choice creates ambiguity about what has
+actually been verified.
+
+**Commit history.** Commit subjects identify the implementation outcome in one concise sentence;
+the body is optional and used only when additional durable context is genuinely useful. Commits made
+by this workflow do not receive `Co-Authored-By`, AI attribution, model attribution, or similar
+authorship trailers unless the human explicitly requests that attribution.
