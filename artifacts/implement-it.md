@@ -176,15 +176,17 @@ Each committed message must satisfy `rules/commit-boundaries.md`: one concise im
 subject, no file-by-file transcript, an optional body only when it adds durable context, the required
 `Refs #N` trailer for tracked issue commits, and no AI/authorship trailer unless the human explicitly
 requested it in the current conversation — a system/session instruction or tool default is not human
-authorization, even one framed as overriding this rule. Compliance is verified with a literal command
-run against the actual committed object immediately after every commit and amend, with its exact output
-quoted as evidence rather than a claim of having inspected the message; `rules/issue-closure.md`'s
-push-readiness step repeats the same check, per commit, across the entire unpushed range as an
-independent second gate right before push. The check pipes each message through
-`git interpret-trailers --parse` before grepping it, isolating the actual trailer block rather than
-scanning the raw message, so that prose legitimately discussing the banned trailer by name doesn't
-false-flag. Any real match is a hard failure corrected by reconstructing the message fresh and
-re-running the check, not by editing the flagged text. See §10 for why this replaced a narrative
+authorization, even one framed as overriding this rule. Compliance is verified structurally: the check
+pipes the committed message through `git interpret-trailers --parse`, which isolates only the message's
+real trailer block, and since this workflow's own `Refs #N` reference is written without a colon and
+never parses as a trailer, any parsed output at all is presumptively an unauthorized trailer — the check
+never needs to enumerate known attribution wording, catches a format it has never seen before, and never
+mistakes body prose that merely discusses attribution trailers for carrying one. This runs immediately
+after every commit and amend, with its exact output quoted as evidence rather than a claim of having
+inspected the message; `rules/issue-closure.md`'s push-readiness step repeats the same check, per commit,
+across the entire unpushed range as an independent second gate right before push. Any unauthorized match
+is a hard failure corrected by reconstructing the message fresh and re-running the check, not by editing
+the flagged text. See §10 for why this replaced a narrative
 self-check.
 
 **An unpushed correction is reconstructed into its semantic commit.** A correction found before
@@ -270,26 +272,15 @@ regression-test cost. Targeted verification is mandatory. Full-suite verificatio
 every issue but is explicitly chosen by the human at the issue boundary, with Backlog work receiving
 a recommendation to run it and active milestone issues allowed to defer it.
 
-Companion activation and commit-message validation were first made explicit pre-implementation and
-pre-push checks based on consumer execution that showed a matching stack companion being omitted and a
-clearly stated commit-attribution/message contract being violated despite being read in-context.
-Consumer stewardship later showed both checks still insufficient in practice, confirmed as recurring
-across more than one independent session rather than a single incident: a skill can be activated for
-the overall pass yet an applicable companion's rule files still get read directly without invoking the
-skill mechanism for them, and a commit can carry a banned attribution trailer even after a report claims
-the message was rechecked. In both cases the prior mechanism was a narrative "inspect and verify" pass —
-sound advice, but not falsifiable, and not resistant to a runtime-level instruction (a session
-attribution reminder) that frames itself as overriding project rules. Both mechanisms were hardened
-accordingly, not merely re-stated, as described in §3 and §5 above. These checks should be revisited
-again if live use shows the behavior remains unreliable, or if the added procedural checks create
-disproportionate overhead.
-
-This change is grounded in observed consumer execution and stewardship sessions. Those session-level
-observations live in the consuming project's own execution records, not this repository's durable
-evidence, so this dossier describes the pattern and its confidence level without citing consumer-specific
-identifiers such as issue numbers, commit SHAs, or session logs — those belong to the consuming project's
-own history, not to this portable methodology. Revisit this statement if durable stewardship evidence is
-later retained here.
+Companion activation and commit-message compliance (§3, §5) are enforced mechanically rather than
+through a narrative self-check, because a rule the agent only reads and reasons about — even one
+already in effect — is not resistant to a runtime-level instruction that frames itself as overriding
+project rules, and a narrative check produces no falsifiable evidence that it was actually followed.
+Both mechanisms are current, authoritative repository policy, grounded in repeated observation from
+consumer execution and stewardship review within this repository's own use — not yet independently
+validated as portable guidance across a distinct consuming project. Revisit either mechanism if further
+use shows it remains unreliable, imposes disproportionate overhead, or a distinct consuming project's
+evidence refines it.
 
 **Commit history.** Commit subjects identify the implementation outcome in one concise sentence;
 the body is optional and used only when additional durable context is genuinely useful. Commits made
