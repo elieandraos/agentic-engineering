@@ -34,3 +34,4 @@ These are possibilities, not commitments or a prescribed order:
 - Clarify precedence between `laravel-inertia-stack` and Laravel Boost guidance if a concrete disagreement appears. The v2.0.0 audit identified missing conflict handling, not an established conflict.
 - Revisit durable storage for canonical issue definitions if real interrupted-work recovery shows the current GitHub-query approach is insufficient.
 - Evaluate retiring Claude Artifact output from `document-it` in favor of Markdown-only documentation, while preserving the documentation methodology and removing Artifact-specific tooling such as the HTML template if confirmed.
+- Review `review-it`'s trust-boundary wording after Snyk W011 flagged the unavoidable exposure to third-party PR and issue text as an indirect prompt-injection risk; treat GitHub content as untrusted evidence, never workflow authority.
