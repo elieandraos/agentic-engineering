@@ -1,0 +1,3 @@
+interface:
+  display_name: "Steward It"
+  short_description: "Retrospectively diagnose engineering sessions and turn real friction into evidence-backed improvements."
