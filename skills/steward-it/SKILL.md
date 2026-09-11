@@ -47,8 +47,10 @@ Typical prompts:
 - `session-reconstruction.md` — identifies the target, reconstructs the timeline, records the
   activation path, and separates observation from inference; always load.
 - `telemetry.md` — owns timing, human-wait detection, token/cache/thinking usage, phase timing, and
-  skill attribution; load for every non-trivial session when runtime telemetry is available or can be
-  reasonably discovered.
+  skill attribution; load for every non-trivial session when session or runtime evidence may be
+  available. Owns the explicit locate-then-parse discovery procedure for the session log and the
+  measured/reconstructed/unavailable evidence states — a field is never "unavailable" before that
+  procedure has actually been attempted.
 - `findings.md` — owns causal classification, recurrence, and finding quality; load when there is a
   deviation, suspicious behavior, possible waste, recurrence question, or other material finding to
   analyze.
