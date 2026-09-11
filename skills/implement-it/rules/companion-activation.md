@@ -14,9 +14,8 @@ skill states that it must be loaded alongside another named skill, treat that re
 its activation condition and satisfy both sides.
 
 An applicable skill is not considered activated merely because its files were read or its guidance was
-consulted. Activate it through the consuming agent's skill mechanism (for example, a `Skill` tool
-invocation) before implementation begins. Direct file reads are supporting evidence, not a substitute
-for activation.
+consulted. Activate it through the consuming agent's supported skill-loading mechanism before
+implementation begins. Direct file reads are supporting evidence, not a substitute for activation.
 
 This is a repeated, confirmed failure mode in practice, not a hypothetical one: an applicable skill's
 rule files get read directly and implementation proceeds on that basis, with the skill mechanism never
