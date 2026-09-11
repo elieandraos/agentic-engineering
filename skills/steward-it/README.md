@@ -74,9 +74,10 @@ owns the smallest justified fix.
 1. Reconstruct the relevant session from available evidence.
 2. Load the conditional rules required by the session and requested analysis.
 3. Separate observations from inference and compare intended guidance with observed behavior.
-4. Report the standard timing/context/activation baseline for non-trivial sessions.
-5. Classify the likely cause, check recurrence, and recommend the smallest justified improvement.
-6. Record only a compact durable observation when a project evidence file is maintained.
+4. Classify the likely cause and check for recurrence.
+5. Produce the standard compact stewardship report — timing/context/activation baseline, findings,
+   cause, pattern, and recommendation, plus a durable evidence record only when a project evidence
+   file is maintained.
 
 ## Evidence convention
 

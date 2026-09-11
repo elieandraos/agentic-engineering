@@ -15,6 +15,10 @@ Prefer observed runtime telemetry over static estimates. When available, inspect
 - timestamps and tool execution timing;
 - human approval or answer intervals.
 
+Older file-size or workflow models may still appear in historical evidence such as prior scenario
+records. Treat those as historical intent only — they are not runtime measurements and must not be
+cited as current consumption proof.
+
 ## Timing
 
 Report:

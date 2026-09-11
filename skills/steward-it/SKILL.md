@@ -10,8 +10,10 @@ description: "Retrospectively investigates an engineering session when work was 
 `steward-it` is the retrospective diagnostic companion for Agentic Engineering work that was unexpectedly
 slow, confusing, wasteful, repeatedly off course, or useful as evidence for improving the system.
 
-It investigates the session after the work happened. It is human-invoked only, does not silently monitor
-ordinary sessions, and does not automatically modify skills, project instructions, or methodology.
+It investigates the session after the work happened. It is human-invoked only — do not activate it
+merely because a session is long, a tool failed, or an implementation needed recovery — does not
+silently monitor ordinary sessions, and does not automatically modify skills, project instructions, or
+methodology.
 
 The goal is:
 
@@ -37,26 +39,30 @@ Typical prompts:
 2. Load the conditional rule(s) required by the available evidence and requested analysis.
 3. Compare expected and observed behavior against the owning skill contract and project state.
 4. Classify supported findings and check for recurrence.
-5. Recommend the smallest justified improvement without mutating canonical guidance.
-6. Produce the standard compact stewardship report.
+5. Produce the standard compact stewardship report, including the recommendation and, when applicable,
+   a durable evidence record.
 
 ## Rules
 
-- `session-reconstruction.md` — **always load**. Identifies the target, reconstructs the timeline,
-  records the activation path, and separates observation from inference.
-- `telemetry.md` — **load for every non-trivial session when runtime telemetry is available or can be
-  reasonably discovered**. Owns timing, human-wait detection, token/cache/thinking usage, phase timing,
-  and skill attribution.
-- `findings.md` — **load when there is a deviation, suspicious behavior, possible waste, recurrence
-  question, or other material finding to analyze**. Owns causal classification, recurrence, and finding
-  quality.
-- `evidence.md` — **load only when the consuming project maintains a stewardship evidence file and the
-  current review produces durable evidence worth retaining**.
-- `report.md` — **load for every non-trivial stewardship pass**. Owns the compact baseline report and
-  presentation of measured versus unavailable evidence.
+- `session-reconstruction.md` — identifies the target, reconstructs the timeline, records the
+  activation path, and separates observation from inference; always load.
+- `telemetry.md` — owns timing, human-wait detection, token/cache/thinking usage, phase timing, and
+  skill attribution; load for every non-trivial session when runtime telemetry is available or can be
+  reasonably discovered.
+- `findings.md` — owns causal classification, recurrence, and finding quality; load when there is a
+  deviation, suspicious behavior, possible waste, recurrence question, or other material finding to
+  analyze.
+- `evidence.md` — owns the durable-evidence recording convention; load only when the consuming project
+  maintains a stewardship evidence file and the current review produces durable evidence worth
+  retaining.
+- `report.md` — owns the compact baseline report and presentation of measured versus unavailable
+  evidence; load for every non-trivial stewardship pass.
 
-Do not load rules merely to satisfy a fixed checklist. The point of the split is conditional detail: the
-base skill routes the retrospective, while each rule owns one diagnostic concern.
+`session-reconstruction.md`, `telemetry.md`, and `report.md` form the standard baseline and load by
+default for any non-trivial pass. `findings.md` and `evidence.md` are the genuinely conditional rules —
+do not load either merely to satisfy a fixed checklist; load them only once their own trigger actually
+applies. The point of the split is conditional detail beyond the baseline: the base skill routes the
+retrospective, while each rule owns one diagnostic concern.
 
 ## Ownership boundaries
 
