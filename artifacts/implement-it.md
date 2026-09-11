@@ -127,7 +127,7 @@ finished diff can be split into several defensible ways, and approving that the 
 correct says nothing about which split should become permanent history. An agent may investigate and
 recommend at either gate, but never converts a genuinely unresolved product/architecture decision,
 a contradiction between evidence and approved assumptions, a `review-it` finding revealing such a
-decision, or a commit decomposition with no clearly better answer into a silently-chosen fact — each
+ decision, or a commit decomposition with no clearly better answer into a silently-chosen fact — each
 of those is its own stop, reported with evidence and a recommendation, not an unexplained question.
 
 **Approval validity before Gate 2 and before push.** An approval is scoped to what it actually
@@ -261,10 +261,11 @@ being omitted and a clearly stated commit-attribution/message contract being vio
 read in-context. These checks should be revisited if live smoke tests show that the behavior remains
 unreliable or if the added procedural checks create disproportionate overhead.
 
-This change is grounded in repeated useOrbit Policies observations from issues #312 through #316 and
-v2.0.4/v2.1.0 follow-up stewardship observations. It should be revisited if broader evidence shows
-that activation remains incomplete or commit construction still drifts from the explicit history
-contract.
+This change is grounded in observed useOrbit Policies sessions from issues #312 through #316 and
+v2.0.4/v2.1.0 follow-up stewardship observations. These session-level observations live primarily
+in the consuming project's execution records rather than this repository's durable evidence, so this
+dossier records the concrete issue range without implying that the underlying session transcripts are
+stored here. Revisit this statement if durable stewardship evidence is later retained here.
 
 **Commit history.** Commit subjects identify the implementation outcome in one concise sentence;
 the body is optional and used only when additional durable context is genuinely useful. Commits made
