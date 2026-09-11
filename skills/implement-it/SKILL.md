@@ -139,10 +139,11 @@ Trigger on requests shaped like:
   against the completed working tree only after required targeted verification and the full-suite
   run/skip decision are complete, before reporting at Gate 1 (`review-gates.md`'s "Consuming review-it's result").
 - `commit-boundaries.md` — how to turn an approved diff into semantic commits: boundary reasoning,
-  message content, the `Refs #N` trailer, and where a review correction lands; consult while inspecting
-  the diff and building the commit plan, after Gate 1. Includes the mechanical, command-based check
-  required immediately after every commit (and amend) — not a self-reported "inspect and verify" pass —
-  to confirm no attribution trailer landed in the actual committed message.
+  message content, the `Refs #N` reference line, and where a review correction lands; consult while
+  inspecting the diff and building the commit plan, after Gate 1. Includes the no-Git-trailers-by-default
+  policy and the mechanical, command-based check required immediately after every commit (and amend) —
+  not a self-reported "inspect and verify" pass — to confirm no unauthorized trailer landed in the
+  actual committed message.
 - `commit-reconstruction.md` — the unpublished-history reconstruction procedure
   `commit-boundaries.md` hands off to; consult only for its one specific trigger — a review
   correction belongs to a commit already committed locally but not yet pushed. Ordinary commit
@@ -167,7 +168,7 @@ Trigger on requests shaped like:
 - `issue-closure.md` — whether and how to close an issue: asking first, the closing recipe, and
   post-mutation validation; consult after the verification choice has been recorded, once commits
   exist. Closure is intentional before a milestone's PR merges. "Push readiness" re-runs
-  `commit-boundaries.md`'s mechanical attribution check across the whole unpushed range as a second,
+  `commit-boundaries.md`'s mechanical trailer check across the whole unpushed range as a second,
   independent gate immediately before push.
 - `sequencing.md` — branch readiness before starting an issue (Backlog/hotfix on the trunk branch vs.
   a shared milestone branch, inspected/recommended/created only with human approval), and, after a

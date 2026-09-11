@@ -45,7 +45,7 @@ first" below, confirm the issue's commits are reachable on the correct remote br
 
    An empty result means every local commit, including the issue's, is already on the remote
    branch. A non-empty result means the issue's commits still need to be pushed.
-3. **Re-run the mechanical attribution check across the whole unpushed range, not just the last
+3. **Re-run the mechanical trailer check across the whole unpushed range, not just the last
    commit.** `rules/commit-boundaries.md`'s mechanical post-commit verification already checks each
    commit individually at creation time; this is a deliberate second, independent pass over every
    commit about to leave the local repository — the last line of defense before a violation added after
@@ -61,9 +61,9 @@ first" below, confirm the issue's commits are reachable on the correct remote br
    Check each commit's message through `git interpret-trailers --parse` individually — concatenating
    the whole range's raw messages before parsing would blur trailer blocks across commits and can
    both miss and misattribute a violation; parsing one commit at a time is what keeps the result
-   attributable to a specific SHA. As in `rules/commit-boundaries.md`'s own check, any parsed trailer
-   output is presumptively unauthorized (the workflow's own `Refs #N` reference never parses as one),
-   except a trailer the human explicitly authorized in the current conversation. No `violation:` line
+   attributable to a specific SHA. Per `rules/commit-boundaries.md`'s "Trailer policy," any parsed
+   trailer output is presumptively unauthorized (the workflow's own `Refs #N` reference never parses as
+   one), except a trailer the human explicitly authorized in the current conversation. No `violation:` line
    printed for the whole range is the only passing result; quote the literal command and its (absence
    of) output as evidence. Any `violation: <sha>` line is a hard failure while that commit is still
    unpushed — correct it via `rules/commit-boundaries.md`'s amend-and-reverify procedure before
@@ -253,7 +253,7 @@ a link. Don't re-print the full issue body or the closing comment — the reader
 **Do**
 - Confirm the issue's commits are reachable on the correct remote branch before asking to close,
   requesting explicit authorization to push when they aren't.
-- Re-run the mechanical attribution check across the entire unpushed range before requesting push
+- Re-run the mechanical trailer check across the entire unpushed range before requesting push
   authorization, quoting its literal result as evidence.
 - Push with a plain, non-force push once authorized, and verify the remote ref afterward instead of
   trusting the exit code.
@@ -266,7 +266,7 @@ a link. Don't re-print the full issue body or the closing comment — the reader
 
 **Don't**
 - Ask to close before the issue's commits are reachable on the correct remote branch.
-- Push a range that hasn't passed the mechanical attribution re-check, or rely on the creation-time
+- Push a range that hasn't passed the mechanical trailer re-check, or rely on the creation-time
   check alone.
 - Force-push, or treat a push's exit code as proof it reached the remote.
 - Close automatically because commits landed or verification passed.

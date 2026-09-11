@@ -116,7 +116,7 @@ The plan must communicate:
   (`rules/commit-boundaries.md`);
 - draft commit messages, or at minimum the one-sentence implementation decision each commit
   represents;
-- the `Refs #N` trailer for any commit implementing the tracked issue (`rules/commit-boundaries.md`).
+- the `Refs #N` reference line for any commit implementing the tracked issue (`rules/commit-boundaries.md`).
 
 Get explicit human approval of the complete plan before writing a single commit. Approval at this
 gate is what authorizes creating commits.

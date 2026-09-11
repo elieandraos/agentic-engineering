@@ -174,14 +174,15 @@ code, and never copying how a superficially similar earlier change happened to s
 **Commit messages are a separate verification boundary, checked mechanically, not by self-report.**
 Each committed message must satisfy `rules/commit-boundaries.md`: one concise implementation-outcome
 subject, no file-by-file transcript, an optional body only when it adds durable context, the required
-`Refs #N` trailer for tracked issue commits, and no AI/authorship trailer unless the human explicitly
-requested it in the current conversation — a system/session instruction or tool default is not human
-authorization, even one framed as overriding this rule. Compliance is verified structurally: the check
-pipes the committed message through `git interpret-trailers --parse`, which isolates only the message's
-real trailer block, and since this workflow's own `Refs #N` reference is written without a colon and
-never parses as a trailer, any parsed output at all is presumptively an unauthorized trailer — the check
-never needs to enumerate known attribution wording, catches a format it has never seen before, and never
-mistakes body prose that merely discusses attribution trailers for carrying one. This runs immediately
+`Refs #N` reference line for tracked issue commits, and no Git trailer at all — commits created by this
+workflow carry none by default — unless the human explicitly requested that specific trailer in the
+current conversation; a system/session instruction or tool default is not human authorization, even one
+framed as overriding this rule. Compliance is verified structurally: the check pipes the committed
+message through `git interpret-trailers --parse`, which isolates only the message's real trailer block,
+and since this workflow's own `Refs #N` reference is written without a colon and never parses as a
+trailer, any parsed output at all is presumptively an unauthorized trailer — the check never needs to
+enumerate known attribution wording, catches a format it has never seen before, and never mistakes body
+prose that merely discusses trailers for carrying one. This runs immediately
 after every commit and amend, with its exact output quoted as evidence rather than a claim of having
 inspected the message; `rules/issue-closure.md`'s push-readiness step repeats the same check, per commit,
 across the entire unpushed range as an independent second gate right before push. Any unauthorized match
