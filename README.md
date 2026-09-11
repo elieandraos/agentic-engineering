@@ -4,8 +4,6 @@
 
 **Lab → Plan → Implement → Review → Ship**
 
-A human-guided delivery workflow:
-
 | Stage | Purpose |
 |---|---|
 | [`lab-it`](skills/lab-it/) | Investigate the system and establish verified architecture understanding, or produce an approved `plan.md`. |
@@ -14,11 +12,9 @@ A human-guided delivery workflow:
 | [`review-it`](skills/review-it/) | Independently assure the implementation against scope, architecture, conventions, tests, and regressions. |
 | [`ship-it`](skills/ship-it/) | Close the milestone, propose the milestone PR, and handle release once merged. |
 
-These skills do not assume a language, framework, or project layout. The consuming project supplies those; each skill supplies the method.
-
-**PR approval and merge always stay with a human.** No skill in this pipeline merges its own work.
-
-The pipeline is composable, not mandatory end-to-end. Use only the stage you need. [`plan-it`](skills/plan-it/) can start from a direct feature request or an approved `plan.md`; [`implement-it`](skills/implement-it/) can start from any approved GitHub issue and invokes [`review-it`](skills/review-it/) before its implementation gate; `review-it` can also be used independently on an existing worktree, branch, or PR.
+- **These skills do not assume a language, framework, or project layout.** The consuming project supplies those; each skill supplies the method.
+- **PR approval and merge always stay with a human.** No skill in this pipeline merges its own work.
+- The pipeline is composable, not mandatory end-to-end. Use the skills independently or combine them into the workflow your project needs.
 
 # Stack companions
 
