@@ -6,21 +6,23 @@ Investigate in the Lab. Plan the work. Implement the change. Review it. Ship it.
 
 ## The pipeline
 
-| Stage | Skill and context | Result |
-|---|---|---|
-| Lab | [`lab-it`](skills/lab-it/) | Verified architecture understanding, or an approved `plan.md` |
-| Plan | [`plan-it`](skills/plan-it/) | Implementation-ready GitHub issues |
-| Implement | [`implement-it`](skills/implement-it/) + project context + applicable stack companion | Verified, reviewed implementation, committed |
-| Review | [`review-it`](skills/review-it/) | Implementation assurance — findings, or a clean result |
-| Ship | [`ship-it`](skills/ship-it/) | Milestone PR proposed, then release once merged |
+**Lab → Plan → Implement → Review → Ship**
 
-These skills do not assume a language, framework, or project layout. The consuming project supplies those; each skill supplies the method. **PR approval and merge always stay with a human** — no skill in this pipeline merges its own work.
+A human-guided delivery workflow:
 
-Use only the stage you need.
+| Stage | Purpose |
+|---|---|
+| **Lab** · [`lab-it`](skills/lab-it/) | Investigate the system and establish verified architecture understanding, or produce an approved `plan.md`. |
+| **Plan** · [`plan-it`](skills/plan-it/) | Turn approved intent into implementation-ready GitHub issues. |
+| **Implement** · [`implement-it`](skills/implement-it/) | Implement an approved issue using project context and the applicable stack companion. |
+| **Review** · [`review-it`](skills/review-it/) | Independently assure the implementation against scope, architecture, conventions, tests, and regressions. |
+| **Ship** · [`ship-it`](skills/ship-it/) | Close the milestone, propose the milestone PR, and handle release once merged. |
 
-- [`plan-it`](skills/plan-it/) can start from a direct feature request or an approved `plan.md`.
-- [`implement-it`](skills/implement-it/) can start from any approved GitHub issue, whether or not [`plan-it`](skills/plan-it/) created it, and invokes [`review-it`](skills/review-it/) before its own implementation gate.
-- `review-it` is also independently callable on its own, reviewing any worktree, branch, or PR standalone, with no prior session in this ecosystem required.
+These skills do not assume a language, framework, or project layout. The consuming project supplies those; each skill supplies the method.
+
+**PR approval and merge always stay with a human.** No skill in this pipeline merges its own work.
+
+The pipeline is composable, not mandatory end-to-end. Use only the stage you need. [`plan-it`](skills/plan-it/) can start from a direct feature request or an approved `plan.md`; [`implement-it`](skills/implement-it/) can start from any approved GitHub issue and invokes [`review-it`](skills/review-it/) before its implementation gate; `review-it` can also be used independently on an existing worktree, branch, or PR.
 
 ## Stack companions
 
