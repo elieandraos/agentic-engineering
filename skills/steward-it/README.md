@@ -34,13 +34,6 @@ include a commit, PR, issue, or other concrete reference when available. The evi
 diary; it exists so later stewardship can detect repeated failure modes or useful cost patterns from
 real work.
 
-## Context consumption
-
-Treat context cost as a diagnostic signal, not a quality verdict. Keep static file measurements,
-modeled workflow estimates, and observed session consumption separate. Do not promote rough
-characters-to-token estimates into measured runtime usage, and do not recommend splitting a rule file
-from a single large number alone.
-
 ## Install
 
 ```shell
