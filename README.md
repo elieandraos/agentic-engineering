@@ -22,20 +22,19 @@ Use only the stage you need.
 - [`implement-it`](skills/implement-it/) can start from any approved GitHub issue, whether or not [`plan-it`](skills/plan-it/) created it, and invokes [`review-it`](skills/review-it/) before its own implementation gate.
 - `review-it` is also independently callable on its own, reviewing any worktree, branch, or PR standalone, with no prior session in this ecosystem required.
 
-## Implement with the right stack
+## Stack companions
 
 Stack companions carry technology-specific implementation knowledge without becoming another pipeline stage.
 
 * [`laravel-inertia-stack`](skills/laravel-inertia-stack/) — Laravel, InertiaJS, Vue 3, and Pest. It works alongside relevant Laravel Boost skills.
 * A different stack can get its own companion when real use justifies it.
 
-## Document as you go
+## Tools
 
-[`document-it`](skills/document-it/) creates, updates, and reviews explanatory architecture guides — in Markdown, a Claude Artifact, or both. It's an independently available companion, not a mandatory pipeline stage: call it whenever a guide needs writing or reconciling.
+Independent capabilities that support the workflow without becoming lifecycle stages.
 
-## Steward as you go
-
-[`steward-it`](skills/steward-it/) retrospectively investigates real engineering sessions when something was unexpectedly slow, difficult, wasteful, repeatedly off course, or exposed a recurring workflow problem. It reconstructs timing, human waits, skill/rule usage, token and cache telemetry, verification, outcomes, and recurrence evidence, then recommends the smallest justified improvement. It is human-invoked and sits beside the lifecycle rather than inside it.
+* [`document-it`](skills/document-it/) — creates, updates, and reviews durable engineering documentation in the supported output format(s).
+* [`steward-it`](skills/steward-it/) — retrospectively investigates real engineering sessions when something was unexpectedly slow, difficult, wasteful, repeatedly off course, or exposed a recurring workflow problem. It reconstructs timing, human waits, skill/rule usage, token and cache telemetry, verification, outcomes, and recurrence evidence, then recommends the smallest justified improvement.
 
 ## Install
 
@@ -44,15 +43,6 @@ npx skills add elieandraos/agentic-engineering
 ```
 
 Choose the skills you need, and the coding agent(s) to install them for (`-a/--agent`, e.g. `claude-code`) — that selects which agent reads the installed skills, not a set of subagent definitions this repository supplies. Install a stack companion only where it applies.
-
-## Knowledge boundaries
-
-The ecosystem keeps four kinds of knowledge separate:
-
-* **Portable methodology** — [`lab-it`](skills/lab-it/), [`document-it`](skills/document-it/), [`plan-it`](skills/plan-it/), [`implement-it`](skills/implement-it/), [`review-it`](skills/review-it/), and [`ship-it`](skills/ship-it/); independent of language and framework.
-* **Stack knowledge** — implementation conventions for one compatible stack.
-* **Project knowledge** — domain rules and repository conventions owned by the consuming project.
-* **First-party capabilities** — external skills such as Laravel Boost, composed with rather than copied or renamed.
 
 ## Boring prompts
 
