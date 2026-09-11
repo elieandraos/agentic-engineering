@@ -45,7 +45,32 @@ first" below, confirm the issue's commits are reachable on the correct remote br
 
    An empty result means every local commit, including the issue's, is already on the remote
    branch. A non-empty result means the issue's commits still need to be pushed.
-3. **Either way, confirm the approval this step relies on is still valid** — per
+3. **Re-run the mechanical attribution check across the whole unpushed range, not just the last
+   commit.** `rules/commit-boundaries.md`'s mechanical post-commit verification already checks each
+   commit individually at creation time; this is a deliberate second, independent pass over every
+   commit about to leave the local repository — the last line of defense before a violation like
+   `573a0cd` (added after its own creation-time check had already run) reaches the remote:
+
+   ```
+   for sha in $(git log origin/<branch>..HEAD --format=%H); do
+     git log -1 --format=%B "$sha" | git interpret-trailers --parse \
+       | grep -niE 'co-authored-by|generated (with|by)|noreply@anthropic|anthropic\.com|claude (code|sonnet|opus|haiku)' \
+       && echo "violation: $sha"
+   done
+   ```
+
+   Check each commit's message through `git interpret-trailers --parse` individually — concatenating
+   the whole range's raw messages before parsing would blur trailer blocks across commits and can
+   both miss and misattribute a violation; parsing one commit at a time is what keeps the result
+   attributable to a specific SHA. No `violation:` line printed for the whole range is the only
+   passing result; quote the literal command and its (absence of) output as evidence. Any
+   `violation: <sha>` line is a hard failure while that commit is still unpushed — correct it via
+   `rules/commit-boundaries.md`'s amend-and-reverify procedure before proceeding to step 5 below. If
+   step 2 was already empty (the commits are already remote) and this check still prints a violation,
+   the violation is already published: report it plainly rather than silently amending — rewriting
+   already-pushed history is a separate, explicitly authorized path (`rules/commit-boundaries.md`'s
+   "Review corrections fold into their semantic commit"), not something this step does on its own.
+4. **Either way, confirm the approval this step relies on is still valid** — per
    `rules/review-gates.md`'s "Approval validity before Gate 2 and before push," which owns the
    substantive check; this rule only routes to it. Run it on both paths, not only the one that
    pushes — resumed work with nothing left to push still needs its Gate 1/Gate 2 approval confirmed
@@ -57,14 +82,14 @@ first" below, confirm the issue's commits are reachable on the correct remote br
      "Ask first" below.
    - **Not remote yet.** Once approval validity is confirmed, ask for explicit authorization to
      push — unless push authorization for this exact content was already granted earlier in this
-     same session and remains applicable, in which case proceed to step 4 without asking a second,
+     same session and remains applicable, in which case proceed to step 5 without asking a second,
      redundant time. Re-check applicability again immediately before the actual push mutation, even
      when authorization was granted earlier: preserve it if it still demonstrably applies; if it no
      longer does, that's a stop, not a silent reuse.
-4. **Push normally once authorized.** A plain push to the branch identified in step 1 — never
+5. **Push normally once authorized.** A plain push to the branch identified in step 1 — never
    `--force` or an equivalent override. A push rejected because the remote has diverged is a genuine
    problem to surface to the human, not something to force past.
-5. **Verify the result; don't trust the exit code.**
+6. **Verify the result; don't trust the exit code.**
 
    ```
    git fetch origin <branch>
@@ -75,7 +100,7 @@ first" below, confirm the issue's commits are reachable on the correct remote br
    Both must hold: nothing local remains unpushed, and every commit that implements the issue is
    specifically an ancestor of the remote branch.
 
-Only once step 2 or step 5 confirms remote reachability does "Ask first," below, begin.
+Only once step 2 or step 6 confirms remote reachability does "Ask first," below, begin.
 
 **This is a reachability check, not a milestone or release event.**
 
@@ -226,6 +251,8 @@ a link. Don't re-print the full issue body or the closing comment — the reader
 **Do**
 - Confirm the issue's commits are reachable on the correct remote branch before asking to close,
   requesting explicit authorization to push when they aren't.
+- Re-run the mechanical attribution check across the entire unpushed range before requesting push
+  authorization, quoting its literal result as evidence.
 - Push with a plain, non-force push once authorized, and verify the remote ref afterward instead of
   trusting the exit code.
 - Ask before closing, once work is committed, verified, and reachable on the correct remote branch.
@@ -237,6 +264,8 @@ a link. Don't re-print the full issue body or the closing comment — the reader
 
 **Don't**
 - Ask to close before the issue's commits are reachable on the correct remote branch.
+- Push a range that hasn't passed the mechanical attribution re-check, or rely on the creation-time
+  check alone.
 - Force-push, or treat a push's exit code as proof it reached the remote.
 - Close automatically because commits landed or verification passed.
 - Check off deferred or out-of-scope work to make the issue look complete.

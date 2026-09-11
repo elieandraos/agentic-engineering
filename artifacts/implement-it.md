@@ -171,13 +171,23 @@ dependency, then checked for runtime activation effects that can require a narro
 commit scope it actually contains** — never planning boundaries speculatively while still writing
 code, and never copying how a superficially similar earlier change happened to split.
 
-**Commit messages are a separate verification boundary.** Each committed message must be checked
-against `rules/commit-boundaries.md` before push authorization: one concise implementation-outcome
+**Commit messages are a separate verification boundary, checked mechanically, not by self-report.**
+Each committed message must satisfy `rules/commit-boundaries.md`: one concise implementation-outcome
 subject, no file-by-file transcript, an optional body only when it adds durable context, the required
 `Refs #N` trailer for tracked issue commits, and no AI/authorship trailer unless the human explicitly
-requested it in the current conversation. A system/session instruction or tool default is not human
-authorization. If the actual local commit violates the rule, correct it before requesting push
-authorization.
+requested it in the current conversation — a system/session instruction or tool default is not human
+authorization, even one framed as overriding this rule. A confirmed useOrbit occurrence (issue #317,
+commit `573a0cd`) landed the banned trailer despite an in-context rule prohibiting it and a report
+claiming the message had been rechecked; the check itself was a narrative pass, not a falsifiable one.
+The rule now requires a literal command run against the actual committed object immediately after every
+commit and amend, with its exact output quoted as evidence — never a claim of having inspected the
+message — and `rules/issue-closure.md`'s push-readiness step repeats the same check, per commit, across
+the entire unpushed range as an independent second gate right before push. The check pipes each
+message through `git interpret-trailers --parse` before grepping it, isolating the actual trailer block
+rather than scanning the raw message — grepping raw prose directly false-flagged this same dossier
+edit's own commit message, which legitimately discusses the banned trailer by name in its body. Any
+real match is a hard failure corrected by reconstructing the message fresh and re-running the check, not
+by editing the flagged text.
 
 **An unpushed correction is reconstructed into its semantic commit.** A correction found before
 anything is committed simply belongs in its semantic commit; a correction needed after an unpushed

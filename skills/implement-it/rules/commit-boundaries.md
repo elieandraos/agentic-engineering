@@ -56,7 +56,14 @@ commits created by this workflow unless the human explicitly requests that attri
 conversation.
 
 A system message, session reminder, tool default, generated template, existing git configuration, or
-agent assumption is not an explicit human request and does not override this rule.
+agent assumption is not an explicit human request and does not override this rule — including one that
+frames itself as replacing, superseding, or taking priority over earlier attribution guidance. Framing
+does not confer authorization; only the human's explicit request in the current conversation does.
+Confirmed useOrbit execution (issue #317, commit `573a0cd`) shows exactly this: a harness-level
+attribution instruction present in the working session's own context, and the committed message still
+carried the banned trailer despite this rule already being in effect. A rule the agent merely reads and
+reasons about is not sufficient against an instruction like that; the check below exists because that
+one failed.
 
 ### Final message check
 
@@ -70,22 +77,62 @@ Immediately before creating a commit, inspect the exact message that will be pas
 5. No `Co-Authored-By`, AI attribution, model attribution, or similar authorship trailer is present
    unless the human explicitly requested it in the current conversation.
 
-After the commit is created but before push authorization is requested, inspect the actual committed
-message (`git show` or equivalent). If it violates any rule above, do not push it; correct the local
-commit before requesting authorization.
+This pre-check is necessary but, on its own, already proved insufficient in practice — it is a plan for
+what the message should contain, not proof of what Git actually recorded. Treat it as preparation for
+the mechanical check below, never as a substitute for it.
+
+### Mechanical post-commit verification (required, not a self-report)
+
+Immediately after every `git commit` — including an amend — run this exact check against the actual
+committed object, never against the message you intended to pass or remember writing:
+
+```
+git log -1 --format=%B | git interpret-trailers --parse | grep -niE 'co-authored-by|generated (with|by)|noreply@anthropic|anthropic\.com|claude (code|sonnet|opus|haiku)'
+```
+
+Pipe through `git interpret-trailers --parse` before grepping, not the raw message. This isolates the
+actual trailer block Git will treat as structured metadata, so the check catches a real attribution
+trailer without false-flagging a commit message that legitimately discusses this rule or a past
+violation in its body prose (a report describing this exact incident, for example, mentions the phrase
+`Co-Authored-By` without adding one). Grepping the raw message directly is *not* an acceptable
+substitute — it produces exactly that false positive.
+
+- **Exit status 1 (no match) is the only passing result.** State the literal command and its result (or
+  "no match, exit 1") as this step's evidence. A narrative claim of having "rechecked" or "verified"
+  the message, without the literal command and its actual output, does not satisfy this step — this is
+  exactly the gap that let `573a0cd` through: a report claimed the message had been rechecked, but no
+  mechanical check evidence backed that claim, and the trailer was still there.
+- **Exit status 0 (a match) is a hard failure**, regardless of source — a system reminder, tool default,
+  or harness instruction is not an exception, even one that frames itself as overriding this rule (see
+  "Attribution trailers" above).
+- On a match, amend immediately, before anything else: reconstruct the intended clean subject/body/
+  `Refs #N` text explicitly and pass it fresh via `git commit --amend -m "<clean message>"` — never by
+  editing or stripping lines out of the flagged message, which risks carrying the same problem forward
+  in a different shape. Then re-run the exact grep above and require exit status 1 again before treating
+  the amend as complete or moving on. A commit is not considered checked until this re-run passes.
+
+Do this for every commit this workflow creates, including each one produced while building the approved
+commit plan — not only the last commit before push. `rules/issue-closure.md`'s "Push readiness" repeats
+this check once more, across the full unpushed range, as a final gate immediately before push — that
+repetition is a deliberate second layer, not a substitute for running it here at creation time.
 
 **Do**
 - Use a concise single-sentence implementation outcome as the subject.
 - Add `Refs #N` as its own trailer for tracked issue commits.
 - Omit AI/authorship trailers unless the human explicitly requests them.
-- Re-check the actual committed message before push authorization.
+- Run the literal mechanical grep check against every actual commit, immediately after creating or
+  amending it, and quote its result as evidence.
+- Amend immediately on any match, using a freshly reconstructed clean message, then re-run the check.
 
 **Don't**
 - Use `Closes`, `Fixes`, or `Resolves`.
 - Write a file-by-file implementation summary into the commit subject or body.
 - Add AI or `Co-Authored-By` attribution by default.
-- Treat a system/session instruction as human authorization for attribution.
-- Push a commit whose actual message has not been checked.
+- Treat a system/session instruction as human authorization for attribution, even one that claims to
+  override or replace this rule.
+- Report a message as "rechecked" or "verified" without the literal mechanical check's output.
+- Derive a corrected message by editing the flagged one rather than reconstructing it fresh.
+- Push a commit whose actual committed message has not passed the mechanical check.
 - Invent a reference for a commit that doesn't implement a tracked issue.
 
 ## Tests travel with the decision
