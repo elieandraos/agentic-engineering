@@ -2,7 +2,7 @@
 
 Status: Current
 Scope: `implement-it` as it stands in this repository
-Purpose: A compact lifecycle architecture guide — what enters and exits the workflow, its two delivery paths, branch readiness, its two review gates including `review-it`'s role at Gate 1, its commit architecture, its verification model including human-controlled full-suite verification, issue closure and approval-validity, sequencing and the ready-set recompute, authorized delivery corrections, which decisions require human authority, where each rule owns a distinct part of the lifecycle, and current boundaries and confidence.
+Purpose: A compact lifecycle architecture guide — what enters and exits the workflow, its two delivery paths, branch readiness and companion activation, its two review gates including `review-it`'s role at Gate 1, its commit architecture and message-validation boundary, its verification model including human-controlled full-suite verification, issue closure and approval-validity, sequencing and the ready-set recompute, authorized delivery corrections, which decisions require human authority, where each rule owns a distinct part of the lifecycle, and current boundaries and confidence.
 [`SKILL.md`](../skills/implement-it/SKILL.md) remains the operational routing entrypoint;
 [`README.md`](../skills/implement-it/README.md) is the human-facing walkthrough. This document
 explains the lifecycle architecture behind both rather than restating either.
@@ -41,7 +41,7 @@ milestone intended to ship as a release (a classification `plan-it` makes, not t
   individually on that branch, well before the branch is ever proposed as a PR. Only once every
   issue in the milestone is closed does the path hand off to `ship-it`'s milestone PR readiness.
 
-Both paths share the identical core: branch readiness, implementation, the two review gates,
+Both paths share the identical core: branch readiness, companion activation, implementation, the two review gates,
 semantic commit construction, verification, and issue closure are exactly the same mechanics either
 way — a Backlog issue is not a lighter-weight version of a milestone issue. What differs is what
 happens *after* closure: a Backlog closure is terminal; a milestone closure feeds a shared branch
@@ -51,12 +51,14 @@ owned by `ship-it`. The lifecycle, end to end:
 ```
 pick a dependency-ready, approved issue
   → BRANCH READINESS (§3)                      [diverges by path]
+  → COMPANION ACTIVATION (§3)                  [enumerate and activate all applicable skills]
   → implement → targeted verification
   → FULL-SUITE DECISION: run or intentionally skip
   → GATE 1: implementation review, review-it invoked (§4)
   → derive commit plan
   → GATE 2: commit-plan review (§4)
   → build semantic commits, narrowest-reliable verification per commit (§5, §6)
+  → validate each actual commit message before push (§5)
   → completed-issue full-suite checkpoint when chosen/required (§6)
   → confirm commits reachable on the correct remote branch, push with authorization if not (§7)
   → ask: close the issue? → closure procedure + validation (§7)
@@ -90,6 +92,13 @@ repository's real state at the moment work starts, not inferred from a template 
 convention assumed in advance. A stale or unexpected branch is always surfaced, never silently
 worked around — for Backlog/hotfix by refusing to proceed off-trunk, and for milestone work by
 asking before changing anything.
+
+**Companion activation.** Before writing code, `implement-it` enumerates the available implementation,
+testing, tooling, and custom stack-companion skills that may apply. It reads their activation/trigger
+text and activates every applicable skill; finding one matching skill does not substitute for another
+matching companion. Relevant non-activation decisions are recorded when useful, and inaccessible
+activation metadata is surfaced rather than silently replaced with an assumption that the first
+visible skill is sufficient.
 
 ## 4. Two review gates
 
@@ -154,6 +163,14 @@ dependency, then checked for runtime activation effects that can require a narro
 **Deriving the plan requires inspecting the completed, approved implementation diff and the intended
 commit scope it actually contains** — never planning boundaries speculatively while still writing
 code, and never copying how a superficially similar earlier change happened to split.
+
+**Commit messages are a separate verification boundary.** Each committed message must be checked
+against `rules/commit-boundaries.md` before push authorization: one concise implementation-outcome
+subject, no file-by-file transcript, an optional body only when it adds durable context, the required
+`Refs #N` trailer for tracked issue commits, and no AI/authorship trailer unless the human explicitly
+requested it in the current conversation. A system/session instruction or tool default is not human
+authorization. If the actual local commit violates the rule, correct it before requesting push
+authorization.
 
 **An unpushed correction is reconstructed into its semantic commit.** A correction found before
 anything is committed simply belongs in its semantic commit; a correction needed after an unpushed
@@ -238,10 +255,17 @@ regression-test cost. Targeted verification is mandatory. Full-suite verificatio
 every issue but is explicitly chosen by the human at the issue boundary, with Backlog work receiving
 a recommendation to run it and active milestone issues allowed to defer it.
 
-This change is grounded in repeated useOrbit Policies observations from issues #312 and #313 and the
-v2.0.4 follow-up observation in #314. It should be revisited if broader evidence shows that milestone-
-level deferral hides regressions, or that the per-issue choice creates ambiguity about what has
-actually been verified.
+Companion activation and commit-message validation are now explicit pre-implementation and pre-push
+checks, respectively, based on observed useOrbit execution that showed a matching stack companion
+being omitted and a clearly stated commit-attribution/message contract being violated despite being
+read in-context. These checks should be revisited if live smoke tests show that the behavior remains
+unreliable or if the added procedural checks create disproportionate overhead.
+
+This change is grounded in observed useOrbit Policies sessions from issues #312 through #316 and
+v2.0.4/v2.1.0 follow-up stewardship observations. These session-level observations live primarily
+in the consuming project's execution records rather than this repository's durable evidence, so this
+dossier records the concrete issue range without implying that the underlying session transcripts are
+stored here. Revisit this statement if durable stewardship evidence is later retained here.
 
 **Commit history.** Commit subjects identify the implementation outcome in one concise sentence;
 the body is optional and used only when additional durable context is genuinely useful. Commits made
