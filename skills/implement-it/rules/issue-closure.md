@@ -53,8 +53,7 @@ first" below, confirm the issue's commits are reachable on the correct remote br
 
    ```
    for sha in $(git log origin/<branch>..HEAD --format=%H); do
-     git log -1 --format=%B "$sha" | git interpret-trailers --parse \
-       | grep -niE 'co-authored-by|generated (with|by)|noreply@anthropic|anthropic\.com|claude (code|sonnet|opus|haiku)' \
+     git log -1 --format=%B "$sha" | git interpret-trailers --parse | grep -q . \
        && echo "violation: $sha"
    done
    ```
@@ -62,14 +61,17 @@ first" below, confirm the issue's commits are reachable on the correct remote br
    Check each commit's message through `git interpret-trailers --parse` individually — concatenating
    the whole range's raw messages before parsing would blur trailer blocks across commits and can
    both miss and misattribute a violation; parsing one commit at a time is what keeps the result
-   attributable to a specific SHA. No `violation:` line printed for the whole range is the only
-   passing result; quote the literal command and its (absence of) output as evidence. Any
-   `violation: <sha>` line is a hard failure while that commit is still unpushed — correct it via
-   `rules/commit-boundaries.md`'s amend-and-reverify procedure before proceeding to step 5 below. If
-   step 2 was already empty (the commits are already remote) and this check still prints a violation,
-   the violation is already published: report it plainly rather than silently amending — rewriting
-   already-pushed history is a separate, explicitly authorized path (`rules/commit-boundaries.md`'s
-   "Review corrections fold into their semantic commit"), not something this step does on its own.
+   attributable to a specific SHA. As in `rules/commit-boundaries.md`'s own check, any parsed trailer
+   output is presumptively unauthorized (the workflow's own `Refs #N` reference never parses as one),
+   except a trailer the human explicitly authorized in the current conversation. No `violation:` line
+   printed for the whole range is the only passing result; quote the literal command and its (absence
+   of) output as evidence. Any `violation: <sha>` line is a hard failure while that commit is still
+   unpushed — correct it via `rules/commit-boundaries.md`'s amend-and-reverify procedure before
+   proceeding to step 5 below. If step 2 was already empty (the commits are already remote) and this
+   check still prints a violation, the violation is already published: report it plainly rather than
+   silently amending — rewriting already-pushed history is a separate, explicitly authorized path
+   (`rules/commit-boundaries.md`'s "Review corrections fold into their semantic commit"), not something
+   this step does on its own.
 4. **Either way, confirm the approval this step relies on is still valid** — per
    `rules/review-gates.md`'s "Approval validity before Gate 2 and before push," which owns the
    substantive check; this rule only routes to it. Run it on both paths, not only the one that

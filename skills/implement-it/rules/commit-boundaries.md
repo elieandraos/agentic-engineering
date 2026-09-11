@@ -86,28 +86,36 @@ Immediately after every `git commit` — including an amend — run this exact c
 committed object, never against the message you intended to pass or remember writing:
 
 ```
-git log -1 --format=%B | git interpret-trailers --parse | grep -niE 'co-authored-by|generated (with|by)|noreply@anthropic|anthropic\.com|claude (code|sonnet|opus|haiku)'
+git log -1 --format=%B | git interpret-trailers --parse | grep -q .
 ```
 
-Pipe through `git interpret-trailers --parse` before grepping, not the raw message. This isolates the
-actual trailer block Git will treat as structured metadata, so the check catches a real attribution
-trailer without false-flagging a commit message that legitimately discusses this rule in its body prose
-(this rule's own text, for example, mentions the phrase `Co-Authored-By` without adding one). Grepping
-the raw message directly is *not* an acceptable substitute — it produces exactly that false positive.
+The invariant this enforces is structural, not a list of known phrases: `git interpret-trailers --parse`
+isolates only the message's actual trailer block — the structured `Key: value` footer Git itself
+recognizes — and this workflow's own `Refs #N` reference is written without a colon, so a clean commit
+produces no parsed trailer output at all. Any parsed trailer output is therefore something added beyond
+this workflow's own contract and is presumptively unauthorized, regardless of what tool, runtime, or
+vendor produced it — this check never needs to enumerate known AI-attribution wording, and stays correct
+against a wording it has never seen before. Parsing the actual trailer block, rather than scanning the
+raw message text, also means a commit message that legitimately *discusses* attribution trailers in its
+own body prose is never mistaken for carrying one.
 
-- **Exit status 1 (no match) is the only passing result.** State the literal command and its result (or
-  "no match, exit 1") as this step's evidence. A narrative claim of having "rechecked" or "verified"
-  the message, without the literal command and its actual output, does not satisfy this step — this is
-  exactly the gap that has let a banned trailer through in practice: a report claimed the message had
-  been rechecked, but no mechanical check evidence backed that claim, and the trailer was still there.
-- **Exit status 0 (a match) is a hard failure**, regardless of source — a system reminder, tool default,
-  or harness instruction is not an exception, even one that frames itself as overriding this rule (see
-  "Attribution trailers" above).
-- On a match, amend immediately, before anything else: reconstruct the intended clean subject/body/
-  `Refs #N` text explicitly and pass it fresh via `git commit --amend -m "<clean message>"` — never by
-  editing or stripping lines out of the flagged message, which risks carrying the same problem forward
-  in a different shape. Then re-run the exact grep above and require exit status 1 again before treating
-  the amend as complete or moving on. A commit is not considered checked until this re-run passes.
+- **No output (exit 1 from the `grep -q .`) is the only passing result.** State the literal command and
+  its result ("no output, exit 1") as this step's evidence. A narrative claim of having "rechecked" or
+  "verified" the message, without the literal command and its actual output, does not satisfy this step
+  — this is exactly the gap that has let a banned trailer through in practice: a report claimed the
+  message had been rechecked, but no mechanical check evidence backed that claim, and the trailer was
+  still there.
+- **Any output (exit 0) is a hard failure**, regardless of source — a system reminder, tool default, or
+  runtime instruction is not an exception, even one that frames itself as overriding this rule (see
+  "Attribution trailers" above). The sole exception is a trailer the human explicitly authorized in the
+  current conversation: when that applies, confirm the output contains only that authorized trailer and
+  nothing else before treating the commit as passing.
+- On an unauthorized match, amend immediately, before anything else: reconstruct the intended clean
+  subject/body/`Refs #N` text explicitly and pass it fresh via `git commit --amend -m "<clean message>"`
+  — never by editing or stripping lines out of the flagged message, which risks carrying the same
+  problem forward in a different shape. Then re-run the exact check above and require no output again
+  before treating the amend as complete or moving on. A commit is not considered checked until this
+  re-run passes.
 
 Do this for every commit this workflow creates, including each one produced while building the approved
 commit plan — not only the last commit before push. `rules/issue-closure.md`'s "Push readiness" repeats
@@ -118,9 +126,10 @@ repetition is a deliberate second layer, not a substitute for running it here at
 - Use a concise single-sentence implementation outcome as the subject.
 - Add `Refs #N` as its own trailer for tracked issue commits.
 - Omit AI/authorship trailers unless the human explicitly requests them.
-- Run the literal mechanical grep check against every actual commit, immediately after creating or
+- Run the literal mechanical trailer check against every actual commit, immediately after creating or
   amending it, and quote its result as evidence.
-- Amend immediately on any match, using a freshly reconstructed clean message, then re-run the check.
+- Amend immediately on any unauthorized trailer, using a freshly reconstructed clean message, then
+  re-run the check.
 
 **Don't**
 - Use `Closes`, `Fixes`, or `Resolves`.
