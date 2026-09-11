@@ -33,6 +33,10 @@ Stack companions carry technology-specific implementation knowledge without beco
 
 [`document-it`](skills/document-it/) creates, updates, and reviews explanatory architecture guides — in Markdown, a Claude Artifact, or both. It's an independently available companion, not a mandatory pipeline stage: call it whenever a guide needs writing or reconciling.
 
+## Steward as you go
+
+[`steward-it`](skills/steward-it/) retrospectively investigates real engineering sessions when something was unexpectedly slow, difficult, wasteful, repeatedly off course, or exposed a recurring workflow problem. It reconstructs timing, human waits, skill/rule usage, token and cache telemetry, verification, outcomes, and recurrence evidence, then recommends the smallest justified improvement. It is human-invoked and sits beside the lifecycle rather than inside it.
+
 ## Install
 
 ```shell
@@ -63,6 +67,7 @@ State the goal, not the choreography. Investigation methods, planning checks, re
 "Implement issue #42."                                               # implement-it + stack companion when relevant
 "Review this branch before I open a PR."                             # review-it
 "Create the milestone PR."                                           # ship-it
+"Steward this session. Tell me where the time, tokens, and workflow friction went."  # steward-it
 ```
 
 The stages compose into a human workflow, but each prompt also works on its own.
