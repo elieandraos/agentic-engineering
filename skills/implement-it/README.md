@@ -21,10 +21,10 @@ issue at a time.
 
 ## What normally happens
 
-1. Establish the correct branch for the work and activate every applicable implementation, testing, tooling, and stack-companion skill.
+1. Establish the correct branch, enumerate applicable skills, activate every applicable skill through the consuming agent's skill mechanism, and report the activation checkpoint before writing code.
 2. Implement and verify the issue's scope.
 3. Invoke [`review-it`](../review-it/) against the completed work, fixing and re-reviewing any finding within scope.
-4. Stop for human review at Gate 1, then derive and present the semantic commit plan at Gate 2.
+4. Stop for human review at Gate 1, including an `Activated skills:` line, then derive and present the semantic commit plan at Gate 2.
 5. Build coherent commits, validate each actual commit message against the commit-history rules, and push them once authorized.
 6. Close the issue only once its commits are reachable on the remote.
 7. Recompute the milestone's dependency-ready set and recommend the next issue — or, once zero open issues
