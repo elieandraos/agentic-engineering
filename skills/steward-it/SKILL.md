@@ -33,6 +33,17 @@ Good prompts include:
 "We've seen this twice now. Is there a pattern?"
 ```
 
+Useful diagnostic requests can be specific about the evidence wanted:
+
+```text
+"Report total elapsed time, human wait time, token/context consumption, cache and thinking usage
+when available, which skills/rules were loaded, and where the time and context went."
+"Trace how implement-it and review-it were actually used, compare the execution with their rules,
+and tell me what deviated or caused wasted work."
+"Compare these stewardship findings and tell me whether this is a recurring failure and which layer
+owns the smallest justified fix."
+```
+
 ## Retrospective workflow
 
 1. **Establish the target session and complaint.** Identify what the user expected, what actually
@@ -42,11 +53,10 @@ Good prompts include:
    routing, user approvals, delegated work, repository mutations, tests, recovery actions, and
    final outcomes. Use an explicit skill trace when one was produced in the session, but do not
    require a trace to perform stewardship.
-3. **Assess context consumption when relevant.** When the user asks whether skills or rules were
-   expensive, use available session telemetry or a session-specific report for what was actually
-   loaded and consumed. Prefer real request-level usage, timing, cache, thinking, and skill-attribution
-   evidence when available. Do not treat character/4 estimates, line counts, or an agent's rough token
-   estimate as measured session consumption.
+3. **Assess context and execution cost when relevant.** Prefer observed session telemetry over static
+   estimates. When available, use request-level token usage, cache-read/cache-creation usage,
+   thinking-token usage, skill attribution, timestamps, tool execution timing, and explicit human
+   approval intervals. Separate active execution time from human wait time when the evidence permits.
 4. **Separate evidence from interpretation.** Mark claims as observed, supplied by the user,
    inferred, or unresolved. Do not turn an agent's own explanation into canonical fact without
    supporting evidence.
@@ -77,19 +87,20 @@ When available, use it to reconstruct operational behavior such as:
 A trace should describe what the agent did or what it can directly observe. It should distinguish
 inference from observation and should never be treated as proof merely because the agent reported it.
 
-## Context consumption
+## Context and execution evidence
 
-Treat context cost as a diagnostic signal, not a quality verdict.
+Treat context and execution cost as diagnostic signals, not quality verdicts.
 
-When reviewing consumption, keep three figures separate:
+When reviewing consumption or time, keep these evidence types separate:
 
-- **Observed session consumption:** actual request-level token/context usage and related telemetry when available.
-- **Observed execution time:** elapsed session/tool time, with human approval waits separated from active execution when the evidence permits.
+- **Observed session telemetry:** request-level input/output tokens, cache reads/creation, thinking tokens, skill attribution, and related runtime metadata when available.
+- **Observed execution time:** elapsed session/tool time, with human approval or answer waits separated from active execution when the evidence permits.
 - **Static or modeled estimates:** older file-size or workflow models may appear in historical evidence, but they are not runtime measurements and should not be used as current consumption proof.
 
-Prefer comparing real sessions before recommending a split or rewrite. A large prompt, repeated load,
-cache footprint, or long elapsed phase is evidence for investigation, not proof of waste. Preserve
-uncertainty where telemetry is unavailable or depends on undocumented runtime formats.
+Use observed telemetry to explain where time and context went, and compare real sessions before
+recommending a split or rewrite. Large prompts, repeated loads, cache footprints, or long phases are
+evidence for investigation, not proof of waste. Preserve uncertainty where telemetry is unavailable
+or depends on undocumented runtime formats.
 
 ## Finding quality
 
@@ -148,5 +159,7 @@ Evidence record
 [At most two compact sentences for the durable project evidence file, when appropriate.]
 ```
 
-Do not force every section when the session is trivial. Do not expand a retrospective into a full
-architectural or implementation review unless the user separately asks for that work.
+When the user asks specifically for a performance/debug trace, include the measured timing and
+telemetry breakdown before the causal analysis. Do not force every section when the session is trivial.
+Do not expand a retrospective into a full architectural or implementation review unless the user
+separately asks for that work.
