@@ -4,13 +4,11 @@
 
 **Lab → Plan → Implement → Review → Ship**
 
-A human-guided delivery workflow:
-
 | Stage | Purpose |
 |---|---|
 | [`lab-it`](skills/lab-it/) | Investigate the system and establish verified architecture understanding, or produce an approved `plan.md`. |
 | [`plan-it`](skills/plan-it/) | Turn approved intent into implementation-ready GitHub issues. |
-| [`implement-it`](skills/implement-it/) | Implement an approved issue using project context and the applicable stack companion. |
+| [`implement‑it`](skills/implement-it/) | Implement an approved issue using project context and the applicable stack companion. |
 | [`review-it`](skills/review-it/) | Independently assure the implementation against scope, architecture, conventions, tests, and regressions. |
 | [`ship-it`](skills/ship-it/) | Close the milestone, propose the milestone PR, and handle release once merged. |
 
