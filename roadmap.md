@@ -28,6 +28,8 @@ These are possibilities, not commitments or a prescribed order:
 - use Project B as another cross-stack proving ground when a concrete candidate appears;
 - explore a public landing page that tells the ecosystem's story through concise copy, interactive examples, and visual progression.
 
+- **Future decision:** evaluate retiring Claude Artifact output from `document-it` in favor of Markdown-only documentation, while preserving the underlying documentation methodology and removing Artifact-specific tooling such as the HTML template if the decision is confirmed.
+
 ## Deferred questions
 
 - Clarify precedence between `laravel-inertia-stack` and Laravel Boost guidance if a concrete disagreement appears. The v2.0.0 audit identified missing conflict handling, not an established conflict.
