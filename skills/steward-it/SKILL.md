@@ -43,10 +43,10 @@ Good prompts include:
    final outcomes. Use an explicit skill trace when one was produced in the session, but do not
    require a trace to perform stewardship.
 3. **Assess context consumption when relevant.** When the user asks whether skills or rules were
-   expensive, distinguish static estimates from observed session usage. Use `docs/skill-context.md`
-   for the repository's modeled loading assumptions and any available session report for what was
-   actually loaded. Do not treat character/4 estimates, line counts, or an agent's rough estimate as
-   measured tokenizer usage.
+   expensive, use available session telemetry or a session-specific report for what was actually
+   loaded and consumed. Prefer real request-level usage, timing, cache, thinking, and skill-attribution
+   evidence when available. Do not treat character/4 estimates, line counts, or an agent's rough token
+   estimate as measured session consumption.
 4. **Separate evidence from interpretation.** Mark claims as observed, supplied by the user,
    inferred, or unresolved. Do not turn an agent's own explanation into canonical fact without
    supporting evidence.
@@ -83,13 +83,13 @@ Treat context cost as a diagnostic signal, not a quality verdict.
 
 When reviewing consumption, keep three figures separate:
 
-- **Static file measurement:** current characters or lines in a file.
-- **Modeled workflow estimate:** a repository-defined estimate based on configured loading assumptions.
-- **Observed session consumption:** actual context usage or a session-specific report.
+- **Observed session consumption:** actual request-level token/context usage and related telemetry when available.
+- **Observed execution time:** elapsed session/tool time, with human approval waits separated from active execution when the evidence permits.
+- **Static or modeled estimates:** older file-size or workflow models may appear in historical evidence, but they are not runtime measurements and should not be used as current consumption proof.
 
-Prefer comparing these across real sessions before recommending a split or rewrite. A large file,
-modeled workflow total, or repeated load is evidence for investigation, not proof of waste. When an
-agent report only provides rough token estimates, preserve that uncertainty.
+Prefer comparing real sessions before recommending a split or rewrite. A large prompt, repeated load,
+cache footprint, or long elapsed phase is evidence for investigation, not proof of waste. Preserve
+uncertainty where telemetry is unavailable or depends on undocumented runtime formats.
 
 ## Finding quality
 
