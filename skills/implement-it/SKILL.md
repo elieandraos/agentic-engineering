@@ -66,12 +66,12 @@ idioms — belongs entirely to that companion or to project instructions, never 
 For ordinary implementation work, accept any GitHub issue that meets the structural and content
 quality bar `plan-it`'s `rules/issue-conventions.md` and `rules/review.md` define, and that carries
 the human's approval to implement it — regardless of whether `plan-it` drafted it or it was authored
-some other way. What matters is that it meets that bar and is approved, not who wrote it; do not
-recreate or replan an issue that already meets it merely because `plan-it` didn't produce it. For a
-single named issue, complete only that issue's authorized lifecycle (implementation through closure
-and the next-issue recommendation); this does not by itself authorize continuing into another issue,
-or into milestone delivery. For a milestone request, manage progress issue by issue, per "Milestone
-progression" below.
+some other way. What matters for entry is that it meets that bar and is approved, not who wrote it;
+do not recreate or replan an issue that already meets it merely because `plan-it` didn't produce it.
+For a single named issue, complete only that issue's authorized lifecycle (implementation through
+closure and the next-issue recommendation); this does not by itself authorize continuing into another
+issue, or into milestone delivery. For a milestone request, manage progress issue by issue, per
+"Milestone progression" below.
 
 An authorized delivery correction (see "Delivery corrections" below) is a separate entry route with
 a different prerequisite: it requires the human's explicit authorization, not an approved issue, and
@@ -126,8 +126,10 @@ Trigger on requests shaped like:
 ## Rules
 
 - `companion-activation.md` — before writing code, enumerate available implementation, testing,
-  tooling, and stack-companion skills; inspect their trigger descriptions and activate every applicable
-  one. Do not treat the first matching skill as sufficient, and record relevant non-activation decisions.
+  tooling, and stack-companion skills; inspect their trigger descriptions; activate every applicable
+  skill through the consuming agent's skill mechanism; complete and report the activation checkpoint;
+  and do not begin implementation until that checkpoint is complete. Do not treat the first matching
+  skill or a direct file read as sufficient.
 - `review-gates.md` — the two pre-merge human approval gates (implementation review, then
   commit-plan review), how Gate 1 consumes `review-it`'s result, the approval-validity check before
   Gate 2 and before push, and the conditions that always warrant a stop; consult once implementation
