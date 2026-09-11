@@ -105,7 +105,7 @@ deliberately not activated with why) and restated as a one-line `Activated skill
 so the decision stays visible at the implementation boundary rather than only living in an earlier
 step. Relevant non-activation decisions are recorded when useful, and inaccessible activation
 metadata is surfaced rather than silently replaced with an assumption that the first visible skill is
-sufficient.
+sufficient. See §10 for why this replaced a reminder-only version of the same requirement.
 
 ## 4. Two review gates
 
@@ -176,18 +176,16 @@ Each committed message must satisfy `rules/commit-boundaries.md`: one concise im
 subject, no file-by-file transcript, an optional body only when it adds durable context, the required
 `Refs #N` trailer for tracked issue commits, and no AI/authorship trailer unless the human explicitly
 requested it in the current conversation — a system/session instruction or tool default is not human
-authorization, even one framed as overriding this rule. A confirmed useOrbit occurrence (issue #317,
-commit `573a0cd`) landed the banned trailer despite an in-context rule prohibiting it and a report
-claiming the message had been rechecked; the check itself was a narrative pass, not a falsifiable one.
-The rule now requires a literal command run against the actual committed object immediately after every
-commit and amend, with its exact output quoted as evidence — never a claim of having inspected the
-message — and `rules/issue-closure.md`'s push-readiness step repeats the same check, per commit, across
-the entire unpushed range as an independent second gate right before push. The check pipes each
-message through `git interpret-trailers --parse` before grepping it, isolating the actual trailer block
-rather than scanning the raw message — grepping raw prose directly false-flagged this same dossier
-edit's own commit message, which legitimately discusses the banned trailer by name in its body. Any
-real match is a hard failure corrected by reconstructing the message fresh and re-running the check, not
-by editing the flagged text.
+authorization, even one framed as overriding this rule. Compliance is verified with a literal command
+run against the actual committed object immediately after every commit and amend, with its exact output
+quoted as evidence rather than a claim of having inspected the message; `rules/issue-closure.md`'s
+push-readiness step repeats the same check, per commit, across the entire unpushed range as an
+independent second gate right before push. The check pipes each message through
+`git interpret-trailers --parse` before grepping it, isolating the actual trailer block rather than
+scanning the raw message, so that prose legitimately discussing the banned trailer by name doesn't
+false-flag. Any real match is a hard failure corrected by reconstructing the message fresh and
+re-running the check, not by editing the flagged text. See §10 for why this replaced a narrative
+self-check.
 
 **An unpushed correction is reconstructed into its semantic commit.** A correction found before
 anything is committed simply belongs in its semantic commit; a correction needed after an unpushed
@@ -273,31 +271,25 @@ every issue but is explicitly chosen by the human at the issue boundary, with Ba
 a recommendation to run it and active milestone issues allowed to defer it.
 
 Companion activation and commit-message validation were first made explicit pre-implementation and
-pre-push checks based on observed useOrbit execution (through issue #316) that showed a matching stack
-companion being omitted and a clearly stated commit-attribution/message contract being violated despite
-being read in-context. useOrbit issues #316 and #317 then showed both checks still insufficient in
-practice: #317 activated `companion-activation.md` itself yet still read stack rule files directly
-without invoking the skill mechanism, and #317's commit `573a0cd` carried the banned `Co-Authored-By`
-trailer even though the steward report claimed the message had been rechecked against
-`commit-boundaries.md`. In both cases the prior mechanism was a narrative "inspect and verify" pass —
-sound advice, but not falsifiable, and not resistant to a harness-level instruction (a session
-attribution reminder) that frames itself as overriding project rules. The mechanism was hardened
-accordingly, not merely re-stated: activation now has a concrete trigger (reading a not-yet-activated
-skill's rules file requires activating it through the mechanism first) and a Gate 1 evidence line
-(`Activated skills:`); commit-message compliance now requires a literal command run against the actual
-committed object, run immediately after every commit/amend and again across the whole unpushed range
-before push, with its output quoted as evidence rather than asserted. That check pipes each message
-through `git interpret-trailers --parse` before grepping — grepping the raw message directly was tried
-first, while building this same v2.1.2 change, and immediately false-flagged its own commit message for
-legitimately discussing the banned trailer by name; parsing only the actual trailer block avoids that.
-These checks should be revisited again if live smoke tests (#317 forward) show the behavior remains
-unreliable, or if the added procedural checks create disproportionate overhead.
+pre-push checks based on consumer execution that showed a matching stack companion being omitted and a
+clearly stated commit-attribution/message contract being violated despite being read in-context.
+Consumer stewardship later showed both checks still insufficient in practice, confirmed as recurring
+across more than one independent session rather than a single incident: a skill can be activated for
+the overall pass yet an applicable companion's rule files still get read directly without invoking the
+skill mechanism for them, and a commit can carry a banned attribution trailer even after a report claims
+the message was rechecked. In both cases the prior mechanism was a narrative "inspect and verify" pass —
+sound advice, but not falsifiable, and not resistant to a runtime-level instruction (a session
+attribution reminder) that frames itself as overriding project rules. Both mechanisms were hardened
+accordingly, not merely re-stated, as described in §3 and §5 above. These checks should be revisited
+again if live use shows the behavior remains unreliable, or if the added procedural checks create
+disproportionate overhead.
 
-This change is grounded in observed useOrbit Policies sessions from issues #312 through #317 and
-v2.0.4/v2.1.0/v2.1.1 follow-up stewardship observations. These session-level observations live primarily
-in the consuming project's execution records rather than this repository's durable evidence, so this
-dossier records the concrete issue range without implying that the underlying session transcripts are
-stored here. Revisit this statement if durable stewardship evidence is later retained here.
+This change is grounded in observed consumer execution and stewardship sessions. Those session-level
+observations live in the consuming project's own execution records, not this repository's durable
+evidence, so this dossier describes the pattern and its confidence level without citing consumer-specific
+identifiers such as issue numbers, commit SHAs, or session logs — those belong to the consuming project's
+own history, not to this portable methodology. Revisit this statement if durable stewardship evidence is
+later retained here.
 
 **Commit history.** Commit subjects identify the implementation outcome in one concise sentence;
 the body is optional and used only when additional durable context is genuinely useful. Commits made

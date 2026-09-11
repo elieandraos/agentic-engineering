@@ -48,8 +48,8 @@ first" below, confirm the issue's commits are reachable on the correct remote br
 3. **Re-run the mechanical attribution check across the whole unpushed range, not just the last
    commit.** `rules/commit-boundaries.md`'s mechanical post-commit verification already checks each
    commit individually at creation time; this is a deliberate second, independent pass over every
-   commit about to leave the local repository — the last line of defense before a violation like
-   `573a0cd` (added after its own creation-time check had already run) reaches the remote:
+   commit about to leave the local repository — the last line of defense before a violation added after
+   its own creation-time check had already run reaches the remote:
 
    ```
    for sha in $(git log origin/<branch>..HEAD --format=%H); do

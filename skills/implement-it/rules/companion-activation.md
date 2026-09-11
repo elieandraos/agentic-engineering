@@ -18,11 +18,11 @@ consulted. Activate it through the consuming agent's skill mechanism (for exampl
 invocation) before implementation begins. Direct file reads are supporting evidence, not a substitute
 for activation.
 
-This is a repeated, confirmed failure mode, not a hypothetical one: useOrbit issues #316 and #317 both
-show an applicable skill's rule files being read directly and implementation proceeding on that basis,
-with the skill mechanism never actually invoked for it. Restating the requirement again did not prevent
-the second occurrence — the fix below makes activation an explicit precondition with a concrete,
-checkable trigger, rather than a reminder to keep in mind while working.
+This is a repeated, confirmed failure mode in practice, not a hypothetical one: an applicable skill's
+rule files get read directly and implementation proceeds on that basis, with the skill mechanism never
+actually invoked for it. Restating the requirement again did not prevent recurrence — the fix below
+makes activation an explicit precondition with a concrete, checkable trigger, rather than a reminder to
+keep in mind while working.
 
 ### Activation is a precondition, not a step to remember mid-task
 

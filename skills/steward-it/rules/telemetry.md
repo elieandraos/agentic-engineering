@@ -8,10 +8,10 @@ decide telemetry is unavailable before attempting it.
 
 ## Discovery (locate, then parse)
 
-This is a repeated, confirmed failure mode, not a hypothetical one: useOrbit stewardship sessions for
-issues #316 and #317 both reported timing and token/context telemetry as "unavailable" without ever
-attempting to locate or open the session's own log. In both cases the log existed, was well-formed, and
-contained everything the contract below asks for — the miss was that discovery was never tried.
+This is a repeated, confirmed failure mode in practice, not a hypothetical one: a stewardship pass
+reports timing and token/context telemetry as "unavailable" without ever attempting to locate or open
+the session's own log — even when that log exists, is well-formed, and contains everything the contract
+below asks for. The miss is that discovery is never tried.
 
 Before marking any field in this rule unavailable, actually attempt to locate and parse the underlying
 session log:

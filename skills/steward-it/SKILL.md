@@ -57,8 +57,8 @@ Typical prompts:
 - `evidence.md` — owns the durable-evidence recording convention; load only when the consuming project
   maintains a stewardship evidence file and the current review produces durable evidence worth
   retaining.
-- `report.md` — owns the compact baseline report and presentation of measured versus unavailable
-  evidence; load for every non-trivial stewardship pass.
+- `report.md` — owns the compact baseline report and presentation of measured, reconstructed, and
+  unavailable evidence; load for every non-trivial stewardship pass.
 
 `session-reconstruction.md`, `telemetry.md`, and `report.md` form the standard baseline and load by
 default for any non-trivial pass. `findings.md` and `evidence.md` are the genuinely conditional rules —
