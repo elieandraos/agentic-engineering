@@ -60,6 +60,10 @@ owns the smallest justified fix."
    snapshot in every non-trivial stewardship pass: total elapsed time, active execution time,
    human wait time, and a phase breakdown when the evidence permits. Separate human wait from active
    execution rather than folding it into agent work. If telemetry is unavailable, say so explicitly.
+   For Claude Code sessions, treat an `AskUserQuestion` tool-use interval as a human-wait interval
+   when the matching tool result closes that interaction; do not require the enclosing user turn to
+   carry `origin.kind == human`, because observed sessions may represent genuine human waits with no
+   human origin marker.
 4. **Report context and usage by skill when attribution permits.** When request-level attribution is
    available, group token and cache usage by `attributionSkill` and include the meaningful buckets in
    the compact report (for example `implement-it`, `review-it`, stack companions, and unattributed
@@ -193,8 +197,10 @@ Evidence record
 
 When telemetry is only partially available, retain the section and mark unavailable fields rather than
 silently omitting the baseline. Phase timing is measured from identifiable session events when the
-session log permits it; human wait is excluded from active execution time. If skill attribution is
-not available, report that limitation rather than fabricating a breakdown.
+session log permits it; human wait is excluded from active execution time. For Claude Code sessions,
+include the measured duration of confirmed `AskUserQuestion` interactions in human wait even when the
+corresponding user turn has no `origin.kind == human` marker. If skill attribution is not available,
+report that limitation rather than fabricating a breakdown.
 
 Do not expand a retrospective into a full architectural or implementation review unless the user
 separately asks for that work.
