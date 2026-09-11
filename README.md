@@ -1,8 +1,10 @@
-> A portable, evidence-driven methodology for understanding, planning, implementing, reviewing, and shipping software—with stack-specific companions where needed. Not a prompt collection for one repository or framework.
+> A portable, evidence-driven methodology for understanding, planning, implementing, reviewing, and shipping software—with stack-specific companions and tools where needed. Not a prompt collection for one repository or framework.
 
 # The pipeline
 
 **Lab → Plan → Implement → Review → Ship**
+
+A human-guided delivery workflow:
 
 | Stage | Purpose |
 |---|---|
