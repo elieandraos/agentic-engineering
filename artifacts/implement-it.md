@@ -127,7 +127,7 @@ finished diff can be split into several defensible ways, and approving that the 
 correct says nothing about which split should become permanent history. An agent may investigate and
 recommend at either gate, but never converts a genuinely unresolved product/architecture decision,
 a contradiction between evidence and approved assumptions, a `review-it` finding revealing such a
- decision, or a commit decomposition with no clearly better answer into a silently-chosen fact — each
+decision, or a commit decomposition with no clearly better answer into a silently-chosen fact — each
 of those is its own stop, reported with evidence and a recommendation, not an unexplained question.
 
 **Approval validity before Gate 2 and before push.** An approval is scoped to what it actually
