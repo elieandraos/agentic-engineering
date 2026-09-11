@@ -18,6 +18,26 @@ consulted. Activate it through the consuming agent's skill mechanism (for exampl
 invocation) before implementation begins. Direct file reads are supporting evidence, not a substitute
 for activation.
 
+This is a repeated, confirmed failure mode, not a hypothetical one: useOrbit issues #316 and #317 both
+show an applicable skill's rule files being read directly and implementation proceeding on that basis,
+with the skill mechanism never actually invoked for it. Restating the requirement again did not prevent
+the second occurrence — the fix below makes activation an explicit precondition with a concrete,
+checkable trigger, rather than a reminder to keep in mind while working.
+
+### Activation is a precondition, not a step to remember mid-task
+
+Enumerate candidates and decide applicability *before* touching any implementation surface — before the
+first file edit, file creation, or other implementation-directed tool use for this issue. If a candidate
+skill's applicability is genuinely unclear before implementation starts, resolve that uncertainty (read
+its trigger description, ask if still unclear) before proceeding — never resolve it implicitly by
+reading its rule files and continuing.
+
+Apply this concrete trigger throughout implementation, not only at the start: **if you are about to
+read a rules file, doc, or guidance belonging to a skill that has not yet appeared as activated (through
+the skill mechanism) in this session's activation checkpoint, stop before reading it and activate that
+skill through the mechanism first.** A direct file read is never how a skill's applicability question
+gets resolved mid-task; it is only ever how an already-activated skill's guidance gets consulted.
+
 ### Activation checkpoint
 
 Before writing code, produce a concise activation checkpoint in the working session that records:

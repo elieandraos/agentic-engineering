@@ -39,6 +39,9 @@ mechanics — the report below, then explicit human approval — stay exactly as
 
 Report concisely:
 
+- `Activated skills:` — the activation checkpoint's result (`rules/companion-activation.md`), restated
+  in one line: which candidates were activated through the skill mechanism, and any applicable
+  candidate that wasn't, with why;
 - what changed;
 - the implementation approach;
 - files or surface area touched, where useful;
@@ -188,6 +191,7 @@ neither is clearly better. Both call for a stop built the way above, not a silen
 **Do**
 - Stop at Gate 1 once implementation, verification, and a clean-or-resolved `review-it` pass are
   complete.
+- Include the `Activated skills:` line in the Gate 1 report, restating the activation checkpoint.
 - Invoke `review-it` before reporting at Gate 1, and again, scoped to the affected surface, after
   fixing any finding it raises.
 - Derive the commit plan only after Gate 1 is approved.

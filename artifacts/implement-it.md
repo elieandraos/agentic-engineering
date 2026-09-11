@@ -93,12 +93,19 @@ convention assumed in advance. A stale or unexpected branch is always surfaced, 
 worked around — for Backlog/hotfix by refusing to proceed off-trunk, and for milestone work by
 asking before changing anything.
 
-**Companion activation.** Before writing code, `implement-it` enumerates the available implementation,
-testing, tooling, and custom stack-companion skills that may apply. It reads their activation/trigger
-text and activates every applicable skill; finding one matching skill does not substitute for another
-matching companion. Relevant non-activation decisions are recorded when useful, and inaccessible
-activation metadata is surfaced rather than silently replaced with an assumption that the first
-visible skill is sufficient.
+**Companion activation.** Before touching any implementation surface, `implement-it` enumerates the
+available implementation, testing, tooling, and custom stack-companion skills that may apply, and
+activates every applicable one *through the consuming agent's skill mechanism* — inspecting a
+skill's trigger text or reading its rule files is supporting evidence, never a substitute for that
+mechanism call. Finding one matching skill does not substitute for another matching companion.
+Reading a not-yet-activated skill's own rules file is itself the trigger to activate it through the
+mechanism first, not a way to resolve its applicability in place of activating it. The result is
+recorded as an explicit pre-implementation checkpoint (candidates considered, activated, and
+deliberately not activated with why) and restated as a one-line `Activated skills:` record at Gate 1,
+so the decision stays visible at the implementation boundary rather than only living in an earlier
+step. Relevant non-activation decisions are recorded when useful, and inaccessible activation
+metadata is surfaced rather than silently replaced with an assumption that the first visible skill is
+sufficient.
 
 ## 4. Two review gates
 

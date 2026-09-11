@@ -125,11 +125,12 @@ Trigger on requests shaped like:
 
 ## Rules
 
-- `companion-activation.md` — before writing code, enumerate available implementation, testing,
-  tooling, and stack-companion skills; inspect their trigger descriptions; activate every applicable
-  skill through the consuming agent's skill mechanism; complete and report the activation checkpoint;
-  and do not begin implementation until that checkpoint is complete. Do not treat the first matching
-  skill or a direct file read as sufficient.
+- `companion-activation.md` — before touching any implementation surface, enumerate available
+  implementation, testing, tooling, and stack-companion skills; inspect their trigger descriptions;
+  activate every applicable skill through the consuming agent's skill mechanism; complete and report
+  the activation checkpoint; and do not begin implementation until that checkpoint is complete. Reading
+  a not-yet-activated skill's rules file is itself the trigger to activate it through the mechanism
+  first. Do not treat the first matching skill or a direct file read as sufficient.
 - `review-gates.md` — the two pre-merge human approval gates (implementation review, then
   commit-plan review), how Gate 1 consumes `review-it`'s result, the approval-validity check before
   Gate 2 and before push, and the conditions that always warrant a stop; consult once implementation
