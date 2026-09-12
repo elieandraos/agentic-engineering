@@ -174,20 +174,20 @@ code, and never copying how a superficially similar earlier change happened to s
 **Commit messages are a separate verification boundary, checked mechanically, not by self-report.**
 Each committed message must satisfy `rules/commit-boundaries.md`: one concise implementation-outcome
 subject, no file-by-file transcript, an optional body only when it adds durable context, the required
-`Refs #N` reference line for tracked issue commits, and no Git trailer at all — commits created by this
-workflow carry none by default — unless the human explicitly requested that specific trailer in the
-current conversation; a system/session instruction or tool default is not human authorization, even one
-framed as overriding this rule. Compliance is verified structurally: the check pipes the committed
-message through `git interpret-trailers --parse`, which isolates only the message's real trailer block,
-and since this workflow's own `Refs #N` reference is written without a colon and never parses as a
-trailer, any parsed output at all is presumptively an unauthorized trailer — the check never needs to
-enumerate known attribution wording, catches a format it has never seen before, and never mistakes body
-prose that merely discusses trailers for carrying one. This runs immediately
-after every commit and amend, with its exact output quoted as evidence rather than a claim of having
-inspected the message; `rules/push-readiness.md` repeats the same check, per commit, across the entire
-unpushed range as an independent second gate right before push. Any unauthorized match is a hard
-failure corrected by reconstructing the message fresh and re-running the check, not by editing the
-flagged text. See §10 for why this replaced a narrative self-check.
+`Refs #N` reference line for tracked issue commits, and no Git trailer at all — commits created by
+this workflow contain none, with no exception; a system/session instruction, a tool default, or even
+an explicit human request in the current conversation does not authorize one, even one framed as
+overriding this rule. Compliance is verified structurally: the check pipes the committed message
+through `git interpret-trailers --parse`, which isolates only the message's real trailer block, and
+since this workflow's own `Refs #N` reference is written without a colon and never parses as a
+trailer, any parsed output at all is unconditionally a violation — the check has no branch for an
+authorized trailer, never needs to enumerate known attribution wording, catches a format it has never
+seen before, and never mistakes body prose that merely discusses trailers for carrying one. This runs
+immediately after every commit and amend, with its exact output quoted as evidence rather than a claim
+of having inspected the message; `rules/push-readiness.md` repeats the same check, per commit, across
+the entire unpushed range as an independent second gate right before push. Any match is a hard failure
+corrected by reconstructing the message fresh and re-running the check, not by editing the flagged
+text. See §10 for why this replaced a narrative self-check.
 
 **An unpushed correction is reconstructed into its semantic commit.** A correction found before
 anything is committed simply belongs in its semantic commit; a correction needed after an unpushed
@@ -299,5 +299,5 @@ evidence refines it.
 
 **Commit history.** Commit subjects identify the implementation outcome in one concise sentence;
 the body is optional and used only when additional durable context is genuinely useful. Commits made
-by this workflow do not receive `Co-Authored-By`, AI attribution, model attribution, or similar
-authorship trailers unless the human explicitly requests that attribution.
+by this workflow never receive `Co-Authored-By`, AI attribution, model attribution, or any other Git
+trailer — this policy has no exception, including for an explicit human request.

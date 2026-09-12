@@ -141,9 +141,9 @@ Trigger on requests shaped like:
   run/skip decision are complete, before reporting at Gate 1 (`review-gates.md`'s "Consuming review-it's result").
 - `commit-boundaries.md` — how to turn an approved diff into semantic commits: boundary reasoning,
   message content, the `Refs #N` reference line, and where a review correction lands; consult while
-  inspecting the diff and building the commit plan, after Gate 1. Includes the no-Git-trailers-by-default
-  policy and the mechanical, command-based check required immediately after every commit (and amend) —
-  not a self-reported "inspect and verify" pass — to confirm no unauthorized trailer landed in the
+  inspecting the diff and building the commit plan, after Gate 1. Includes the no-Git-trailers policy
+  (no exception) and the mechanical, command-based check required immediately after every commit (and
+  amend) — not a self-reported "inspect and verify" pass — to confirm no Git trailer landed in the
   actual committed message.
 - `commit-reconstruction.md` — the unpublished-history reconstruction procedure
   `commit-boundaries.md` hands off to; consult only for its one specific trigger — a review
