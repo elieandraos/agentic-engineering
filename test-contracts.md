@@ -250,7 +250,8 @@ procedure. Successfully running a hand-written command sequence proves mechanics
 
 ### Push, issue closure, and milestone progression
 
-Sources: [issue closure](skills/implement-it/rules/issue-closure.md),
+Sources: [push readiness](skills/implement-it/rules/push-readiness.md),
+[issue closure](skills/implement-it/rules/issue-closure.md),
 [sequencing](skills/implement-it/rules/sequencing.md).
 
 | ID | Test name | Minimum observable check | Origin |

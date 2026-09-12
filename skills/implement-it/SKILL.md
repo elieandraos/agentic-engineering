@@ -96,7 +96,8 @@ never sufficient by itself; without the human's explicit authorization there is 
 skill to perform. Once accepted, perform the correction through this same lifecycle — targeted
 verification, the required full-suite decision, then Gate 1 and Gate 2 as applicable (invoking
 `review-it` only after verification is complete and the full-suite decision has been answered), commit
-construction, and authorized push — whether or not the original issue is still open. This route stays
+construction, and authorized push (`rules/push-readiness.md`) — whether or not the original issue is
+still open. This route stays
 available without requiring an open issue to exist; it does not require reopening a closed issue, and
 it is separate from genuinely new scope, which still goes through `plan-it`'s discovered-work intake.
 Once the correction is verified and pushed, `ship-it` resumes the delivery workflow.
@@ -165,11 +166,17 @@ Trigger on requests shaped like:
   unrelated worktree content during a Git rewrite, shared by `isolation-verification.md` and
   `commit-reconstruction.md`; consult only from within one of those two procedures, never directly
   for ordinary work.
+- `push-readiness.md` — confirming a set of local commits is reachable on the correct remote branch,
+  and pushing them when it isn't: remote-branch identification, the unpushed-range determination, the
+  mechanical trailer re-check across the whole unpushed range as a second, independent gate, push
+  authorization, the push itself, and post-push reachability verification. Consult once commits exist
+  and the applicable verification has passed — before asking to close an issue
+  (`issue-closure.md`'s "Ask first"), before pushing an authorized delivery correction (no issue
+  closure involved), from `commit-reconstruction.md` to confirm a range is still unpublished, and from
+  `review-gates.md`'s approval-validity check.
 - `issue-closure.md` — whether and how to close an issue: asking first, the closing recipe, and
-  post-mutation validation; consult after the verification choice has been recorded, once commits
-  exist. Closure is intentional before a milestone's PR merges. "Push readiness" re-runs
-  `commit-boundaries.md`'s mechanical trailer check across the whole unpushed range as a second,
-  independent gate immediately before push.
+  post-mutation validation; consult once `push-readiness.md` confirms the issue's commits are
+  reachable on the correct remote branch. Closure is intentional before a milestone's PR merges.
 - `sequencing.md` — branch readiness before starting an issue (Backlog/hotfix on the trunk branch vs.
   a shared milestone branch, inspected/recommended/created only with human approval), and, after a
   validated closure, recomputing the milestone's dependency-ready set and reporting/recommending the

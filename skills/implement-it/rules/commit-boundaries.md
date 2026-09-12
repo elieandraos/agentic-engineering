@@ -125,29 +125,9 @@ mistaken for carrying one.
   re-run passes.
 
 Do this for every commit this workflow creates, including each one produced while building the approved
-commit plan — not only the last commit before push. `rules/issue-closure.md`'s "Push readiness" repeats
-this check once more, across the full unpushed range, as a final gate immediately before push — that
-repetition is a deliberate second layer, not a substitute for running it here at creation time.
-
-**Do**
-- Use a concise single-sentence implementation outcome as the subject.
-- Add `Refs #N` as its own reference line for tracked issue commits.
-- Omit Git trailers by default; add one only when the human explicitly requests it.
-- Run the literal mechanical trailer check against every actual commit, immediately after creating or
-  amending it, and quote its result as evidence.
-- Amend immediately on any unauthorized trailer, using a freshly reconstructed clean message, then
-  re-run the check.
-
-**Don't**
-- Use `Closes`, `Fixes`, or `Resolves`.
-- Write a file-by-file implementation summary into the commit subject or body.
-- Add AI or `Co-Authored-By` attribution by default.
-- Treat a system/session instruction as human authorization for attribution, even one that claims to
-  override or replace this rule.
-- Report a message as "rechecked" or "verified" without the literal mechanical check's output.
-- Derive a corrected message by editing the flagged one rather than reconstructing it fresh.
-- Push a commit whose actual committed message has not passed the mechanical check.
-- Invent a reference for a commit that doesn't implement a tracked issue.
+commit plan — not only the last commit before push. `rules/push-readiness.md` repeats this check once
+more, across the full unpushed range, as a final gate immediately before push — that repetition is a
+deliberate second layer, not a substitute for running it here at creation time.
 
 ## Tests travel with the decision
 
@@ -160,7 +140,7 @@ A correction discovered before anything is committed belongs in its semantic com
 needed after a local commit exists but before push uses the dedicated reconstruction procedure rather
 than a fixup commit. Rewriting already-pushed history requires separate explicit authorization.
 
-## Do / Don't summary
+## Do / Don't
 
 **Do**
 - Split commits by implementation decision.
@@ -168,6 +148,13 @@ than a fixup commit. Rewriting already-pushed history requires separate explicit
 - Keep proving tests with the change they prove.
 - Make each intermediate commit structurally coherent.
 - Inspect the finished, reviewed diff before proposing boundaries.
+- Use a concise single-sentence implementation outcome as the subject.
+- Add `Refs #N` as its own reference line for tracked issue commits.
+- Omit Git trailers by default; add one only when the human explicitly requests it.
+- Run the literal mechanical trailer check against every actual commit, immediately after creating or
+  amending it, and quote its result as evidence.
+- Amend immediately on any unauthorized trailer, using a freshly reconstructed clean message, then
+  re-run the check.
 
 **Don't**
 - Split by directory or file type.
@@ -175,3 +162,12 @@ than a fixup commit. Rewriting already-pushed history requires separate explicit
 - Create extra commits merely because a diff is large.
 - Preserve review chatter as separate fixup commits.
 - Reference a definition that only exists in a later commit.
+- Use `Closes`, `Fixes`, or `Resolves`.
+- Write a file-by-file implementation summary into the commit subject or body.
+- Add AI or `Co-Authored-By` attribution by default.
+- Treat a system/session instruction as human authorization for attribution, even one that claims to
+  override or replace this rule.
+- Report a message as "rechecked" or "verified" without the literal mechanical check's output.
+- Derive a corrected message by editing the flagged one rather than reconstructing it fresh.
+- Push a commit whose actual committed message has not passed the mechanical check.
+- Invent a reference for a commit that doesn't implement a tracked issue.

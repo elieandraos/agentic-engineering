@@ -16,10 +16,10 @@ The post-merge release workflow has its own separate approval boundary
 (`ship-it/rules/release.md`), over the proposed version, tag target, title, and body. That boundary
 is not part of either gate below — a merged PR does not satisfy it.
 
-`rules/issue-closure.md`'s push-authorization request — asking whether to push already-approved
-commits to the correct remote branch, before asking to close the issue — is a similar separate
-boundary, not a third review gate. It approves nothing about the implementation or the commit
-structure; Gate 1 and Gate 2 below remain the only approvals of either.
+`rules/push-readiness.md`'s push-authorization request — asking whether to push already-approved
+commits to the correct remote branch, before `rules/issue-closure.md` asks whether to close the
+issue — is a similar separate boundary, not a third review gate. It approves nothing about the
+implementation or the commit structure; Gate 1 and Gate 2 below remain the only approvals of either.
 
 ## Gate 1 — implementation review
 
@@ -130,9 +130,9 @@ Partial feedback on part of a plan is not approval of the rest of it.
 > An approval is scoped to what it actually reviewed. Work, scope, or the proposed action moving on
 > after that approval doesn't automatically carry the approval forward with it.
 
-Before Gate 2, and again before requesting push authorization (`rules/issue-closure.md`'s "Push
-readiness"), check that the current work, its scope, and the action about to be proposed still
-match what the relevant approval actually covered:
+Before Gate 2, and again before requesting push authorization (`rules/push-readiness.md`), check that
+the current work, its scope, and the action about to be proposed still match what the relevant
+approval actually covered:
 
 - **A material change requires the affected review and approval to be renewed.** A scope change
   since Gate 1, a diff that no longer matches what Gate 2 approved, or an issue body edited since
@@ -149,10 +149,10 @@ match what the relevant approval actually covered:
   Confirm the actual content is unchanged before treating an approval as still valid, and confirm it
   again before treating it as stale.
 - **Remote commit reachability proves presence, not verification or authorization.** Finding a
-  commit already on the remote branch (`rules/issue-closure.md`'s "Push readiness," step 2) shows
-  only that it's there — it is not evidence that Gate 1, Gate 2, or push authorization actually
-  happened for it. Resuming interrupted work from remote state still requires confirming those
-  approvals independently, the same way any other resumed state does.
+  commit already on the remote branch (`rules/push-readiness.md`'s step 2) shows only that it's
+  there — it is not evidence that Gate 1, Gate 2, or push authorization actually happened for it.
+  Resuming interrupted work from remote state still requires confirming those approvals
+  independently, the same way any other resumed state does.
 
 When this check surfaces a genuine material change with no already-renewed approval covering it,
 that's a stop under "When to stop and ask," below — report the divergence and what it means, rather

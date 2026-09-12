@@ -2,7 +2,7 @@
 
 Status: Current
 Scope: `implement-it` as it stands in this repository
-Purpose: A compact lifecycle architecture guide — what enters and exits the workflow, its two delivery paths, branch readiness and companion activation, its two review gates including `review-it`'s role at Gate 1, its commit architecture and message-validation boundary, its verification model including human-controlled full-suite verification, issue closure and approval-validity, sequencing and the ready-set recompute, authorized delivery corrections, which decisions require human authority, where each rule owns a distinct part of the lifecycle, and current boundaries and confidence.
+Purpose: A compact lifecycle architecture guide — what enters and exits the workflow, its two delivery paths, branch readiness and companion activation, its two review gates including `review-it`'s role at Gate 1, its commit architecture and message-validation boundary, its verification model including human-controlled full-suite verification, push readiness and issue closure and their approval-validity boundary, sequencing and the ready-set recompute, authorized delivery corrections, which decisions require human authority, where each rule owns a distinct part of the lifecycle, and current boundaries and confidence.
 [`SKILL.md`](../skills/implement-it/SKILL.md) remains the operational routing entrypoint;
 [`README.md`](../skills/implement-it/README.md) is the human-facing walkthrough. This document
 explains the lifecycle architecture behind both rather than restating either.
@@ -125,7 +125,7 @@ other:
   checklist, its verification and staleness discipline — is not restated here; see its own dossier.
 - **Gate 2 — commit-plan review.** Only after Gate 1 is approved: the finished diff is inspected, a
   semantic commit plan is derived and presented — grouping, order and its rationale, which tests
-  travel with which commit, draft messages, and the issue-reference trailer — and no commit is
+  travel with which commit, draft messages, and the `Refs #N` reference line — and no commit is
   written until the human approves that plan explicitly. A partial correction to part of the plan is
   never treated as approval of the rest of it.
 
@@ -184,11 +184,10 @@ trailer, any parsed output at all is presumptively an unauthorized trailer — t
 enumerate known attribution wording, catches a format it has never seen before, and never mistakes body
 prose that merely discusses trailers for carrying one. This runs immediately
 after every commit and amend, with its exact output quoted as evidence rather than a claim of having
-inspected the message; `rules/issue-closure.md`'s push-readiness step repeats the same check, per commit,
-across the entire unpushed range as an independent second gate right before push. Any unauthorized match
-is a hard failure corrected by reconstructing the message fresh and re-running the check, not by editing
-the flagged text. See §10 for why this replaced a narrative
-self-check.
+inspected the message; `rules/push-readiness.md` repeats the same check, per commit, across the entire
+unpushed range as an independent second gate right before push. Any unauthorized match is a hard
+failure corrected by reconstructing the message fresh and re-running the check, not by editing the
+flagged text. See §10 for why this replaced a narrative self-check.
 
 **An unpushed correction is reconstructed into its semantic commit.** A correction found before
 anything is committed simply belongs in its semantic commit; a correction needed after an unpushed
@@ -229,11 +228,23 @@ regression is chosen. Project-specific commands, such as useOrbit's `php artisan
 Isolation verification remains a deliberate escalation only when an intermediate committed state
 itself needs proof.
 
-## 7. Issue closure and mutation boundaries
+## 7. Push readiness, issue closure, and mutation boundaries
 
 The issue lifecycle has separate approval boundaries for implementation, commit construction, push,
 and closure. Implementing or verifying an issue never authorizes its commit, push, or closure by
 itself.
+
+**Push readiness and issue closure are separate rules with separate consumers.**
+`rules/push-readiness.md` establishes remote-branch identification, the unpushed-range determination,
+the mechanical trailer re-check across the whole unpushed range, push authorization, the push itself,
+and post-push reachability verification. `rules/issue-closure.md` consumes that procedure as a
+precondition — it asks whether to close only once push readiness confirms the issue's commits are
+reachable remotely — but does not re-derive or duplicate the push mechanics. Push readiness has
+consumers beyond issue closure: an authorized delivery correction pushes through the same procedure
+with no issue closure involved at all (§9), `rules/commit-reconstruction.md` reads its unpushed-range
+check to confirm a correction's range is still unpublished, and `rules/review-gates.md`'s
+approval-validity check reads its reachability check to distinguish a commit's remote presence from
+proof it was reviewed or authorized.
 
 The human approvals and choices are:
 
@@ -243,8 +254,8 @@ The human approvals and choices are:
 | Full regression suite: run or skip | After targeted verification, before Gate 1 |
 | Gate 1 implementation approval | After verification + clean/resolved review-it result |
 | Commit-plan approval | After Gate 1 |
-| Push authorization | Before push |
-| Issue-closure approval | Before closure |
+| Push authorization | Before push (`rules/push-readiness.md`) |
+| Issue-closure approval | Before closure (`rules/issue-closure.md`), after push readiness |
 
 The full-suite decision is deliberately separate from Gate 1. Gate 1 requires targeted verification,
 applicable code-quality checks, and a clean/resolved `review-it` result; the human's full-suite choice
@@ -264,7 +275,10 @@ When `ship-it` investigates a CI failure on an open milestone PR, determines a c
 within already-approved scope, and the human explicitly authorizes it, it hands the authorized fix
 to this skill. Perform the correction through the same lifecycle — Gate 1 and Gate 2 as applicable,
 `review-it` before Gate 1, targeted verification, and the human-controlled full-suite choice, then
-commit construction and authorized push — whether or not the original issue is still open.
+commit construction and authorized push (`rules/push-readiness.md`) — whether or not the original
+issue is still open. This route reaches push readiness without ever reaching issue closure: no issue
+needs to exist, let alone close, for the correction's commits to become reachable on the milestone
+branch.
 
 ## 10. Open decisions, current boundaries, and confidence
 

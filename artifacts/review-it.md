@@ -75,9 +75,9 @@ needs direct inspection, since a `HEAD`-relative diff never surfaces one, and no
 or otherwise mutated merely to bring it into view.
 
 **The intended scope** is discovered from a linked issue or milestone, a PR description, an approved
-`plan.md`, explicit scope stated in the request, or `Refs #N` trailers and commit messages already
-in the diff. No `plan-it`-authored issue, approved `plan.md`, or prior `implement-it` session is
-required — when no scope evidence exists at all, that is stated plainly as a limitation, never
+`plan.md`, explicit scope stated in the request, or `Refs #N` reference lines and commit messages
+already in the diff. No `plan-it`-authored issue, approved `plan.md`, or prior `implement-it` session
+is required — when no scope evidence exists at all, that is stated plainly as a limitation, never
 inferred from the diff's own shape and then treated as if it had been approved. A diff is evidence
 of what changed, never proof of what was authorized.
 
