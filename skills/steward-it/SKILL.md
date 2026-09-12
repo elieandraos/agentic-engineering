@@ -1,6 +1,6 @@
 ---
 name: steward-it
-description: "Retrospectively investigates an engineering session when work was unexpectedly slow, difficult, repeatedly off course, or exposed a recurring agent-workflow problem. Reconstruct the session from available conversation, tool, repository, skill-trace, context-cost, and outcome evidence; distinguish observed facts from inference; classify the likely cause across methodology, skill, project, stack, prompt, execution, or external limitation; detect repeated patterns; and recommend deliberate improvements without changing canonical guidance automatically. Invoke explicitly for requests such as 'steward this session', 'what happened here?', 'why did this take so long?', or 'is this a recurring problem?'. A plain stewardship request produces the standard compact retrospective; a stewardship request followed by a diagnostic question switches to focused causal investigation. Not part of the normal lifecycle and not an automatic reviewer of ordinary work."
+description: "Retrospectively investigates an engineering session when work was unexpectedly slow, difficult, repeatedly off course, or exposed a recurring agent-workflow problem. Reconstruct the session from available conversation, tool, repository, skill-trace, context-cost, and outcome evidence; distinguish observed facts from inference; classify the likely cause across methodology, skill, project, stack, prompt, execution, or external limitation; detect repeated patterns; and recommend deliberate improvements without changing canonical guidance automatically. Invoke explicitly for requests such as 'steward this session', 'what happened here?', 'why did this take so long?', or 'is this a recurring problem?'. A plain stewardship request produces the standard compact retrospective; a stewardship request followed by a diagnostic question switches to focused causal investigation. After a standard report, offer an optional execution-time and context/usage breakdown by skill when meaningful telemetry is available. Not part of the normal lifecycle and not an automatic reviewer of ordinary work."
 ---
 
 # steward-it
@@ -51,6 +51,8 @@ A diagnostic follow-up may look like:
 4. Classify supported findings and check for recurrence.
 5. Produce either the standard compact stewardship report or, when the human asked a diagnostic
    question, a focused causal answer with evidence, classification, and recommendation.
+6. After a standard report, offer one optional execution-time and context/usage breakdown by skill when
+   meaningful telemetry is available. Keep it opt-in so the baseline report remains compact.
 
 ## Rules
 
@@ -67,8 +69,9 @@ A diagnostic follow-up may look like:
 - `evidence.md` — owns the durable-evidence recording convention; load only when the consuming project
   maintains a stewardship evidence file and the current review produces durable evidence worth
   retaining.
-- `report.md` — owns the compact baseline report and presentation of measured, reconstructed, and
-  unavailable evidence; load for every non-trivial stewardship pass.
+- `report.md` — owns the compact baseline report, presentation of measured, reconstructed, and
+  unavailable evidence, and the optional telemetry follow-up; load for every non-trivial stewardship
+  pass.
 
 `session-reconstruction.md`, `telemetry.md`, and `report.md` form the standard baseline and load by
 default for any non-trivial pass. `findings.md` and `evidence.md` are the genuinely conditional rules —
