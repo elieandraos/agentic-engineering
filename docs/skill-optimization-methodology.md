@@ -68,6 +68,8 @@ Do not optimize a proxy at the expense of the outcome it represents. For example
 
 Similarly, a file split is not automatically an optimization. It becomes one when the split creates a real loading or ownership boundary that avoids unnecessary context or work without creating greater routing complexity.
 
+**Prevented defect cost matters.** Additional execution time, tool calls, or context can be justified when they produce materially stronger evidence, catch a defect that cheaper verification would likely miss, or prevent later recovery and human cost. Evaluate that work against the defect or recovery cost it prevented rather than labeling it waste solely because it made the session longer. A longer validation pass that discovers and removes a real acceptance-criteria failure can be more efficient overall than a faster pass that lets the defect escape.
+
 ## 5. Conditional loading and structural optimization
 
 Conditional splitting is one optimization lever, not a goal in itself.
@@ -120,7 +122,11 @@ When execution evidence shows repeated work, classify the repetition before remo
 
 **Human authorization** - an intentional decision boundary. Do not remove or collapse it merely because it increases elapsed time.
 
-A successful outcome does not prove the workflow is efficient. A fast outcome does not prove it is safe.
+**Preventive verification** - additional work intentionally spent to expose defects before an approval or delivery boundary. Preserve it when the evidence shows it catches materially different failures or avoids greater downstream cost; assess its net value rather than optimizing away the extra step simply because it is slower.
+
+A successful outcome does not prove the workflow is efficient. A fast outcome does not prove it is safe. A slower outcome does not prove waste when the extra work materially increases confidence or prevents expensive recovery.
+
+Low-cost, self-corrected slips should be treated as signals to watch, not immediate canonical findings. An isolated tool-call mistake, edit mismatch, or syntax assumption that is caught within seconds by an existing validation mechanism and never reaches a human may justify observation in stewardship, but it does not automatically justify a new rule. Promote that signal only when it recurs coherently, costs something meaningful, survives existing checks, or exposes a gap in the current workflow.
 
 ## 8. Human attention as a cost
 
@@ -165,7 +171,7 @@ Prefer explicit hypotheses such as:
 
 or:
 
-> "Two verification commands repeatedly establish the same fact without covering independent failure modes."
+> "Two verification commands repeatedly establish the same thing without covering independent failure modes."
 
 over vague claims such as:
 
