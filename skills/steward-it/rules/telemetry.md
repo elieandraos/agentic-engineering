@@ -72,13 +72,33 @@ Report, per session:
 
 State each field as measured, reconstructed, or unavailable per the evidence states above.
 
-Use telemetry as diagnostic evidence, not as a quality verdict. Large prompts, repeated loads, cache
-footprints, and long phases justify investigation but do not prove waste by themselves.
+### Skill attribution is diagnostic, not causal
+
+A runtime-provided `attributionSkill` field may represent **the last skill invoked**, not the skill
+responsible for each subsequent turn. When stewarding such a runtime, treat the field as an
+**attributed interval label** rather than true per-skill cost unless the runtime documents stronger
+semantics or the session evidence independently establishes them.
+
+For any per-skill usage or time table:
+
+- report the values as **attributed usage/time**, not "skill cost";
+- state the attribution semantics before presenting the table when they are known to be sticky or
+  otherwise non-causal;
+- where useful, reconstruct what work actually occurred during a heavily attributed interval (for
+  example implementation, testing, review, or GitHub operations) so readers can distinguish a label
+  from causality;
+- do not recommend optimizing or removing a skill solely because its attributed bucket is large when
+  the underlying evidence shows the bucket mostly contains work performed after the skill was loaded;
+- use the attributed data as a correlation signal for follow-up investigation, not a quality or cost
+  verdict.
+
+A heavy attributed bucket can still be a useful reason to inspect the skill's real context footprint,
+loading behavior, or invocation pattern. Those are separate questions and require direct evidence.
 
 ## Claude Code discovery mechanism (verified instance)
 
-The following is the concrete instance of "Portable contract" steps 1–3 verified against actual Claude
-Code session logs. It is runtime-specific implementation detail, not the portable requirement itself —
+The following is the concrete instance of "Portable contract" steps 1–3 verified against actual Claude Code
+session logs. It is runtime-specific implementation detail, not the portable requirement itself —
 a different runtime satisfies the same contract through its own equivalent mechanism (see "Other
 runtimes" below), not this one.
 
@@ -91,10 +111,7 @@ runtimes" below), not this one.
    - **Stewarding the current session:** derive both parts directly from the identifiable path already
      present in context.
    - **Stewarding a different or historical session** (for example, investigating an earlier session
-     from within a later one): do not guess a session id. Search the same project directory for the
-     JSONL whose content contains a known, distinguishing string (an issue number, a commit SHA, a
-     quoted prompt) or whose modification time matches the known event window, and confirm the match
-     before relying on it.
+     from within a later one): do not guess a session id. Search the same project directory for the JSONL whose content contains a known, distinguishing string (an issue number, a commit SHA, a quoted prompt) or whose modification time matches the known event window, and confirm the match before relying on it.
 3. **Parse it.** Each line is one JSON record. Read `type` (`user`, `assistant`, `system`, and so on). An
    `assistant` record normally carries a top-level `timestamp` (ISO-8601) and a `message.usage` object
    (`input_tokens`, `output_tokens`, `cache_creation_input_tokens`, `cache_read_input_tokens`,
@@ -104,9 +121,8 @@ runtimes" below), not this one.
 For Claude Code sessions specifically, treat a confirmed `AskUserQuestion` tool-use/tool-result pair as a
 human-wait interval from the tool-use event through the matching tool-result event. Do not require the
 enclosing user turn to have `origin.kind == human`; observed sessions may have `origin: None` on those
-result turns. A plain-text approval (a human reply following an assistant report, with no
-`AskUserQuestion` involved) is also a measurable human-wait interval — the gap between the report's
-timestamp and the next user turn's timestamp.
+result turns. A plain-text approval (a human reply following an assistant report, with no `AskUserQuestion`
+involved) is also a measurable human-wait interval — the gap between the report's timestamp and the next user turn's timestamp.
 
 ## Other runtimes
 
