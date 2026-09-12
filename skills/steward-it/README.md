@@ -56,6 +56,11 @@ Diagnostic follow-ups are intentionally different: when the human asks a specifi
 invoking stewardship, answer that question directly with the relevant evidence, classification, and
 recommendation rather than repeating the entire baseline report.
 
+After a standard baseline report, when meaningful telemetry is available, offer one optional next step:
+request a detailed execution-time and context/usage breakdown by skill. Keep it opt-in so the default
+report remains compact. When that breakdown is requested, clearly caveat any sticky or otherwise
+non-causal skill-attribution field before presenting per-skill tables.
+
 The useful diagnostic path is:
 
 `session -> timeline -> skill/rule trace -> verification/actions -> token/context -> outcome -> recurrence -> finding`
@@ -119,6 +124,7 @@ owns the smallest justified fix.
 5. Produce either the standard compact stewardship report or, when a diagnostic question was asked,
    a focused causal answer with evidence, classification, and recommendation, plus a durable evidence
    record only when a project evidence file is maintained.
+6. After a standard report, offer the optional telemetry breakdown when meaningful telemetry exists.
 
 ## Evidence convention
 
