@@ -30,6 +30,32 @@ A plain `/steward-it` request produces that standard compact retrospective. When
 with a specific diagnostic question, stewardship switches to focused causal investigation for that
 question and explicitly classifies the supported cause rather than merely repeating the baseline report.
 
+## Baseline report structure
+
+The standard retrospective keeps a stable semantic section order so reports remain comparable across
+sessions:
+
+1. **Expected** — why stewardship was requested and what was expected.
+2. **Execution** — elapsed time, active time, human wait, and phase breakdown when measurable.
+3. **Context / usage** — output, thinking, cache usage, and skill attribution when supported.
+4. **Skill activation** — expected and observed activation plus mismatches.
+5. **Verification / workflow** — tests, review, approvals, commits, closure, and other material events.
+6. **Findings** — confirmed problems or no material finding.
+7. **Cause** — evidence-backed causal classification.
+8. **Pattern** — recurrence status from available evidence.
+9. **Recommendation** — smallest justified improvement and likely owner.
+10. **Evidence record** — only when durable evidence applies.
+
+The semantic structure is stable, but presentation can adapt to the evidence. Tables are encouraged when
+they make comparable timing, usage, or attribution data easier to inspect. Narrative is appropriate when
+the evidence is better expressed that way. The baseline sections should not be silently renamed or
+omitted merely because a session is unusually small or rich; use `not applicable` or `unavailable` when
+necessary.
+
+Diagnostic follow-ups are intentionally different: when the human asks a specific causal question after
+invoking stewardship, answer that question directly with the relevant evidence, classification, and
+recommendation rather than repeating the entire baseline report.
+
 The useful diagnostic path is:
 
 `session -> timeline -> skill/rule trace -> verification/actions -> token/context -> outcome -> recurrence -> finding`
