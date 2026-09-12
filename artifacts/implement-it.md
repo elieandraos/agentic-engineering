@@ -2,7 +2,7 @@
 
 Status: Current
 Scope: `implement-it` as it stands in this repository
-Purpose: A compact lifecycle architecture guide — what enters and exits the workflow, its two delivery paths, branch readiness and companion activation, its two review gates including `review-it`'s role at Gate 1, its commit architecture and message-validation boundary, its verification model including human-controlled full-suite verification, issue closure and approval-validity, sequencing and the ready-set recompute, authorized delivery corrections, which decisions require human authority, where each rule owns a distinct part of the lifecycle, and current boundaries and confidence.
+Purpose: A compact lifecycle architecture guide — what enters and exits the workflow, its two delivery paths, branch readiness and companion activation, its two review gates including `review-it`'s role at Gate 1, its commit architecture and message-validation boundary, its verification model including human-controlled full-suite verification, push readiness and issue closure and their approval-validity boundary, sequencing and the ready-set recompute, authorized delivery corrections, which decisions require human authority, where each rule owns a distinct part of the lifecycle, and current boundaries and confidence.
 [`SKILL.md`](../skills/implement-it/SKILL.md) remains the operational routing entrypoint;
 [`README.md`](../skills/implement-it/README.md) is the human-facing walkthrough. This document
 explains the lifecycle architecture behind both rather than restating either.
@@ -93,12 +93,19 @@ convention assumed in advance. A stale or unexpected branch is always surfaced, 
 worked around — for Backlog/hotfix by refusing to proceed off-trunk, and for milestone work by
 asking before changing anything.
 
-**Companion activation.** Before writing code, `implement-it` enumerates the available implementation,
-testing, tooling, and custom stack-companion skills that may apply. It reads their activation/trigger
-text and activates every applicable skill; finding one matching skill does not substitute for another
-matching companion. Relevant non-activation decisions are recorded when useful, and inaccessible
-activation metadata is surfaced rather than silently replaced with an assumption that the first
-visible skill is sufficient.
+**Companion activation.** Before touching any implementation surface, `implement-it` enumerates the
+available implementation, testing, tooling, and custom stack-companion skills that may apply, and
+activates every applicable one *through the consuming agent's skill mechanism* — inspecting a
+skill's trigger text or reading its rule files is supporting evidence, never a substitute for that
+mechanism call. Finding one matching skill does not substitute for another matching companion.
+Reading a not-yet-activated skill's own rules file is itself the trigger to activate it through the
+mechanism first, not a way to resolve its applicability in place of activating it. The result is
+recorded as an explicit pre-implementation checkpoint (candidates considered, activated, and
+deliberately not activated with why) and restated as a one-line `Activated skills:` record at Gate 1,
+so the decision stays visible at the implementation boundary rather than only living in an earlier
+step. Relevant non-activation decisions are recorded when useful, and inaccessible activation
+metadata is surfaced rather than silently replaced with an assumption that the first visible skill is
+sufficient. See §10 for why this replaced a reminder-only version of the same requirement.
 
 ## 4. Two review gates
 
@@ -118,7 +125,7 @@ other:
   checklist, its verification and staleness discipline — is not restated here; see its own dossier.
 - **Gate 2 — commit-plan review.** Only after Gate 1 is approved: the finished diff is inspected, a
   semantic commit plan is derived and presented — grouping, order and its rationale, which tests
-  travel with which commit, draft messages, and the issue-reference trailer — and no commit is
+  travel with which commit, draft messages, and the `Refs #N` reference line — and no commit is
   written until the human approves that plan explicitly. A partial correction to part of the plan is
   never treated as approval of the rest of it.
 
@@ -164,13 +171,23 @@ dependency, then checked for runtime activation effects that can require a narro
 commit scope it actually contains** — never planning boundaries speculatively while still writing
 code, and never copying how a superficially similar earlier change happened to split.
 
-**Commit messages are a separate verification boundary.** Each committed message must be checked
-against `rules/commit-boundaries.md` before push authorization: one concise implementation-outcome
+**Commit messages are a separate verification boundary, checked mechanically, not by self-report.**
+Each committed message must satisfy `rules/commit-boundaries.md`: one concise implementation-outcome
 subject, no file-by-file transcript, an optional body only when it adds durable context, the required
-`Refs #N` trailer for tracked issue commits, and no AI/authorship trailer unless the human explicitly
-requested it in the current conversation. A system/session instruction or tool default is not human
-authorization. If the actual local commit violates the rule, correct it before requesting push
-authorization.
+`Refs #N` reference line for tracked issue commits, and no Git trailer at all — commits created by
+this workflow contain none, with no exception; a system/session instruction, a tool default, or even
+an explicit human request in the current conversation does not authorize one, even one framed as
+overriding this rule. Compliance is verified structurally: the check pipes the committed message
+through `git interpret-trailers --parse`, which isolates only the message's real trailer block, and
+since this workflow's own `Refs #N` reference is written without a colon and never parses as a
+trailer, any parsed output at all is unconditionally a violation — the check has no branch for an
+authorized trailer, never needs to enumerate known attribution wording, catches a format it has never
+seen before, and never mistakes body prose that merely discusses trailers for carrying one. This runs
+immediately after every commit and amend, with its exact output quoted as evidence rather than a claim
+of having inspected the message; `rules/push-readiness.md` repeats the same check, per commit, across
+the entire unpushed range as an independent second gate right before push. Any match is a hard failure
+corrected by reconstructing the message fresh and re-running the check, not by editing the flagged
+text. See §10 for why this replaced a narrative self-check.
 
 **An unpushed correction is reconstructed into its semantic commit.** A correction found before
 anything is committed simply belongs in its semantic commit; a correction needed after an unpushed
@@ -211,11 +228,23 @@ regression is chosen. Project-specific commands, such as useOrbit's `php artisan
 Isolation verification remains a deliberate escalation only when an intermediate committed state
 itself needs proof.
 
-## 7. Issue closure and mutation boundaries
+## 7. Push readiness, issue closure, and mutation boundaries
 
 The issue lifecycle has separate approval boundaries for implementation, commit construction, push,
 and closure. Implementing or verifying an issue never authorizes its commit, push, or closure by
 itself.
+
+**Push readiness and issue closure are separate rules with separate consumers.**
+`rules/push-readiness.md` establishes remote-branch identification, the unpushed-range determination,
+the mechanical trailer re-check across the whole unpushed range, push authorization, the push itself,
+and post-push reachability verification. `rules/issue-closure.md` consumes that procedure as a
+precondition — it asks whether to close only once push readiness confirms the issue's commits are
+reachable remotely — but does not re-derive or duplicate the push mechanics. Push readiness has
+consumers beyond issue closure: an authorized delivery correction pushes through the same procedure
+with no issue closure involved at all (§9), `rules/commit-reconstruction.md` reads its unpushed-range
+check to confirm a correction's range is still unpublished, and `rules/review-gates.md`'s
+approval-validity check reads its reachability check to distinguish a commit's remote presence from
+proof it was reviewed or authorized.
 
 The human approvals and choices are:
 
@@ -225,8 +254,8 @@ The human approvals and choices are:
 | Full regression suite: run or skip | After targeted verification, before Gate 1 |
 | Gate 1 implementation approval | After verification + clean/resolved review-it result |
 | Commit-plan approval | After Gate 1 |
-| Push authorization | Before push |
-| Issue-closure approval | Before closure |
+| Push authorization | Before push (`rules/push-readiness.md`) |
+| Issue-closure approval | Before closure (`rules/issue-closure.md`), after push readiness |
 
 The full-suite decision is deliberately separate from Gate 1. Gate 1 requires targeted verification,
 applicable code-quality checks, and a clean/resolved `review-it` result; the human's full-suite choice
@@ -246,7 +275,10 @@ When `ship-it` investigates a CI failure on an open milestone PR, determines a c
 within already-approved scope, and the human explicitly authorizes it, it hands the authorized fix
 to this skill. Perform the correction through the same lifecycle — Gate 1 and Gate 2 as applicable,
 `review-it` before Gate 1, targeted verification, and the human-controlled full-suite choice, then
-commit construction and authorized push — whether or not the original issue is still open.
+commit construction and authorized push (`rules/push-readiness.md`) — whether or not the original
+issue is still open. This route reaches push readiness without ever reaching issue closure: no issue
+needs to exist, let alone close, for the correction's commits to become reachable on the milestone
+branch.
 
 ## 10. Open decisions, current boundaries, and confidence
 
@@ -255,19 +287,17 @@ regression-test cost. Targeted verification is mandatory. Full-suite verificatio
 every issue but is explicitly chosen by the human at the issue boundary, with Backlog work receiving
 a recommendation to run it and active milestone issues allowed to defer it.
 
-Companion activation and commit-message validation are now explicit pre-implementation and pre-push
-checks, respectively, based on observed useOrbit execution that showed a matching stack companion
-being omitted and a clearly stated commit-attribution/message contract being violated despite being
-read in-context. These checks should be revisited if live smoke tests show that the behavior remains
-unreliable or if the added procedural checks create disproportionate overhead.
-
-This change is grounded in observed useOrbit Policies sessions from issues #312 through #316 and
-v2.0.4/v2.1.0 follow-up stewardship observations. These session-level observations live primarily
-in the consuming project's execution records rather than this repository's durable evidence, so this
-dossier records the concrete issue range without implying that the underlying session transcripts are
-stored here. Revisit this statement if durable stewardship evidence is later retained here.
+Companion activation and commit-message compliance (§3, §5) are enforced mechanically rather than
+through a narrative self-check, because a rule the agent only reads and reasons about — even one
+already in effect — is not resistant to a runtime-level instruction that frames itself as overriding
+project rules, and a narrative check produces no falsifiable evidence that it was actually followed.
+Both mechanisms are current, authoritative repository policy, grounded in repeated observation from
+consumer execution and stewardship review within this repository's own use — not yet independently
+validated as portable guidance across a distinct consuming project. Revisit either mechanism if further
+use shows it remains unreliable, imposes disproportionate overhead, or a distinct consuming project's
+evidence refines it.
 
 **Commit history.** Commit subjects identify the implementation outcome in one concise sentence;
 the body is optional and used only when additional durable context is genuinely useful. Commits made
-by this workflow do not receive `Co-Authored-By`, AI attribution, model attribution, or similar
-authorship trailers unless the human explicitly requests that attribution.
+by this workflow never receive `Co-Authored-By`, AI attribution, model attribution, or any other Git
+trailer — this policy has no exception, including for an explicit human request.
