@@ -51,21 +51,6 @@ ask rather than guess.
 Once every issue in the milestone is closed on this shared branch, the recompute below reports an
 empty ready set — see "When the ready set is empty" for what happens next.
 
-## Dependency issues' comments, not just their state
-
-Before implementation begins, when a dependency/predecessor issue is identified as relevant to the
-issue about to be worked (its stated `Depends on #N` or equivalent), check that dependency's comments
-as well as its state. A dependency's closing comment can carry a deferred decision, a follow-up note,
-or handoff context that never made it into the issue body and is not visible from state alone.
-
-Apply this only once a dependency issue has actually been identified as relevant to the current issue.
-It does not extend to every issue in the milestone, and it is not a general instruction to read all
-comments on all issues. Confirming that a dependency is closed remains sufficient by itself whenever
-nothing in its comments bears on the issue being started.
-
-Report anything found this way rather than silently folding it into the current issue's scope. A
-comment is evidence for reconciliation, not automatic authorization to expand the current issue.
-
 ## Recompute the dependency-ready set
 
 This phase starts only after a validated closure (`rules/issue-closure.md`) — never before.
@@ -78,8 +63,9 @@ This phase starts only after a validated closure (`rules/issue-closure.md`) — 
 
 2. For each issue, read its actual dependency information. Never assume a particular structured
    field or textual syntax — dependencies are represented however the project's established issue
-   convention records them. `plan-it`'s issue/dependency convention owns that representation; this
-   rule only reads and evaluates the resulting graph, and does not redesign or invent one.
+   convention records them. `plan-it`'s issue/dependency convention owns that
+   representation; this rule only reads and evaluates the resulting graph, and does not redesign or
+   invent one.
 3. An issue is dependency-ready when every issue it depends on is closed.
 4. An issue with no stated dependency is a root issue, and is always ready.
 5. Everything else is blocked — record what each blocked issue is still waiting on.
@@ -92,7 +78,8 @@ Summarize compactly, in categories — never a flat ready list:
 - which were already ready;
 - which are still blocked, and on what.
 
-For example: issue {A} closes, issues {B} and {C} become ready, and issue {D} remains blocked on {E}.
+For example: issue {A} closes, issues {B} and {C} become ready, and issue {D} remains blocked on
+{E}.
 
 Recommend one ready issue, with a concise rationale, when the evidence gives a reasonable basis —
 e.g. it unblocks the most follow-on work, or it continues the same implementation layer/context the
@@ -120,10 +107,10 @@ milestone delivery:
   check that gate's conditions itself (final manual testing, whether it found anything) — it only
   recognizes this state and points to where that question actually gets answered.
 - **Open issues remain, but every one of them is currently blocked** on something that hasn't closed
-  yet. The milestone is not done, and this is not a hand-off to PR readiness — report which issues are
-  blocked and on what (per "Report the graph, recommend, let the human choose" above), the same way a
-  partially-blocked recompute does. Nothing dependency-ready right now is a normal, expected state
-  mid-milestone, not evidence the milestone is ready to move toward a PR.
+  yet. The milestone is not done, and this is not a hand-off to PR readiness — report which issues
+  are blocked and on what (per "Report the graph, recommend, let the human choose" above), the same
+  way a partially-blocked recompute does. Nothing dependency-ready right now is a normal, expected
+  state mid-milestone, not evidence the milestone is ready to move toward a PR.
 
 Only the first of these two cases hands off to milestone PR-readiness assessment.
 
@@ -141,9 +128,8 @@ authorization.
   applies at all.
 - Confirm the trunk branch is checked out before starting Backlog/hotfix work, and surface a mismatch
   instead of proceeding on it.
-- Inspect the current branch before starting milestone work, and ask before creating or switching to a
-  milestone branch.
-- Check a relevant dependency issue's comments, not only its state, before implementation begins.
+- Inspect the current branch before starting milestone work, and ask before creating or switching to
+  a milestone branch.
 - Recompute readiness from current issue state after every validated closure.
 - Explain newly ready, already ready, and blocked work — not just a flat ready list.
 - Recommend when the evidence supports one, with a concise rationale.
