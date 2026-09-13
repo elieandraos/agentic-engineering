@@ -110,6 +110,7 @@ Sources: [skill entrypoints](skills/), [authoring methodology](docs/skill-author
 | COMMON-07 | queries current state before retrying an ambiguous mutation | A timeout after a successful simulated creation causes discovery and reconciliation, not duplicate creation. | PLAN-01, SHIP-05 |
 | COMMON-08 | discovers project tools without importing another stack | A non-Laravel fixture uses its own test commands and conventions; unavailable companions are identified honestly. | IMP-01, SHIP-06 |
 | COMMON-09 | loads conditional procedures when their triggers apply | Paired ordinary/escalated fixtures check applicable reference reads and behavior; extra orientation reads alone are not an automatic correctness failure. | Owning routing rules |
+| COMMON-10 | propagates deferred future context at issue closure | When a closing comment identifies a deferred decision, follow-up, or implementation note that is explicitly relevant to a later issue, the workflow identifies the affected issue and asks the human whether to add concise context there before closure; approved propagation is validated, and the note remains context rather than automatic authorization to expand the later issue. The contract does not require searching unrelated issues or comments. | implement-it issue-closure |
 
 ### Investigation and architecture planning
 

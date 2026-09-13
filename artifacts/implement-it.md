@@ -2,7 +2,7 @@
 
 Status: Current
 Scope: `implement-it` as it stands in this repository
-Purpose: A compact lifecycle architecture guide — what enters and exits the workflow, its two delivery paths, branch readiness and companion activation, its two review gates including `review-it`'s role at Gate 1, its commit architecture and message-validation boundary, its verification model including human-controlled full-suite verification, push readiness and issue closure and their approval-validity boundary, sequencing and the ready-set recompute, authorized delivery corrections, which decisions require human authority, where each rule owns a distinct part of the lifecycle, and current boundaries and confidence.
+Purpose: A compact lifecycle architecture guide — what enters and exits the workflow, its two delivery paths, branch readiness and companion activation, its two review gates including `review-it`'s role at Gate 1, its commit architecture and message-validation boundary, its verification model including human-controlled full-suite verification, push readiness and issue closure and their approval-validity boundary, closure-time propagation of deferred future context, sequencing and the ready-set recompute, authorized delivery corrections, which decisions require human authority, where each rule owns a distinct part of the lifecycle, and current boundaries and confidence.
 [`SKILL.md`](../skills/implement-it/SKILL.md) remains the operational routing entrypoint;
 [`README.md`](../skills/implement-it/README.md) is the human-facing walkthrough. This document
 explains the lifecycle architecture behind both rather than restating either.
@@ -256,10 +256,18 @@ The human approvals and choices are:
 | Commit-plan approval | After Gate 1 |
 | Push authorization | Before push (`rules/push-readiness.md`) |
 | Issue-closure approval | Before closure (`rules/issue-closure.md`), after push readiness |
+| Deferred-future-context propagation | During issue closure, when the closing comment identifies a later issue that may benefit from the context |
 
 The full-suite decision is deliberately separate from Gate 1. Gate 1 requires targeted verification,
 applicable code-quality checks, and a clean/resolved `review-it` result; the human's full-suite choice
 determines whether broader regression evidence is also present.
+
+Issue closure also owns a narrow future-handoff path: when the closing comment identifies a deferred
+decision, follow-up, or implementation note that is explicitly relevant to a later issue, the workflow
+identifies that issue and asks the human whether the concise context should be added there before
+closure. Approval is required to mutate the later issue, and the updated issue is validated. This is
+a durability mechanism for newly learned cross-issue context; it is not a general search of milestone
+issues or an automatic expansion of the later issue's scope.
 
 ## 8. Sequencing
 
