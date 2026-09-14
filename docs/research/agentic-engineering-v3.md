@@ -224,9 +224,10 @@ Example:
 D  E     F
 ```
 
-Current execution:
+Current execution (one node at a time, in this order — not a
+dependency chain):
 
-A → B → C → D → E → F
+A, B, C, D, E, F
 
 Possible execution:
 
