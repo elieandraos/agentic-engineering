@@ -2,7 +2,7 @@
 
 Status: Investigation.
 
-This document follows `agentic-engineering-v3.md`.
+This document follows `v3-vision.md`.
 
 The vision asks whether Agentic Engineering needs an execution layer above the engineering methodology. This document describes the execution architecture that is emerging from that investigation.
 
