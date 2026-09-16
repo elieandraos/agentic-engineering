@@ -28,6 +28,7 @@ to `inertia-vue-development`.
 - Defining an Eloquent local scope or computed model attribute, a migration column, or a backed enum used as select options.
 - Generating factory or seeder data.
 - Building or reviewing an Inertia form that uses the Laravel/Inertia request serialization boundary.
+- Adding or reviewing a backend endpoint that renders a new Inertia page component.
 
 ## Routing
 
@@ -47,6 +48,7 @@ than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `temp
 | Coercing or defaulting request input | `rules/request-normalization.md` |
 | Building a JsonResource for Inertia | `rules/resources.md` |
 | Building an Inertia form or adapting custom controls to `<Form>` serialization | `rules/inertia-forms.md` |
+| Rendering a new Inertia page from a Laravel endpoint | `rules/inertia-pages.md` |
 | Writing a factory or a dev-only seeder | `rules/factories-and-seeders.md` |
 | Adding a mid-chain conditional query clause | `rules/query-conditionals.md` |
 | Declaring a new concrete application class | `rules/php-conventions.md` |
