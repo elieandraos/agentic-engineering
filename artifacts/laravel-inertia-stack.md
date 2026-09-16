@@ -22,10 +22,10 @@ already cover.
 It activates for implementation and review work that needs this stack's concrete conventions:
 composing or reviewing a controller, Form Request, Action, Policy, or Resource; adding index
 filtering or sorting; writing or organizing a Pest test; defining an Eloquent local scope, a migration
-column, or a backed enum's option list; generating factory or seeder data. If a task needs a Boost
-skill this installation doesn't have, the skill says so explicitly rather than silently filling the
-gap with improvised baseline guidance — it is an incomplete companion for that area, not a substitute
-author for it.
+column, or a backed enum's option list; generating factory or seeder data; or wiring a Laravel endpoint
+to a new Inertia page component. If a task needs a Boost skill this installation doesn't have, the
+skill says so explicitly rather than silently filling the gap with improvised baseline guidance — it
+is an incomplete companion for that area, not a substitute author for it.
 
 ## 2. Ownership model
 
@@ -38,9 +38,9 @@ Three parties hold three distinct, non-overlapping kinds of knowledge:
 | **Consuming project** | Its own domain model, product rules, repository policy, and any project-specific adaptation of a blueprint or template — tenancy mechanism, naming, UI decisions, deployment conventions. None of this is the skill's to prescribe. |
 
 A corollary of this split: `laravel-inertia-stack` states several of its own delta items as conditional
-rather than universal — tenancy, filters/sorters, non-CRUD controller shapes. That conditionality is a
-deliberate architectural boundary between what this skill can responsibly generalize and what only a
-concrete project can decide, not an omission to tighten later.
+rather than universal — tenancy, filters/sorters, non-CRUD controller shapes, and the Inertia page boundary.
+That conditionality is a deliberate architectural boundary between what this skill can responsibly
+generalize and what only a concrete project can decide, not an omission to tighten later.
 
 ## 3. Package architecture
 
@@ -91,6 +91,11 @@ exceptions to patch around. Within this composition:
   ([`rules/resources.md`](../skills/laravel-inertia-stack/rules/resources.md)) — a controller never passes a raw
   Eloquent result to Inertia, and a relation field is exposed through `whenLoaded()`, never a bare
   accessor or a model-wide `$with`, so the Resource stays safe regardless of which caller reaches it.
+- The **Inertia page boundary** owns one small but important cross-layer invariant
+  ([`rules/inertia-pages.md`](../skills/laravel-inertia-stack/rules/inertia-pages.md)) — when a Laravel endpoint
+  introduces a new Inertia component name, the corresponding Vue page component must exist in the same
+  implementation boundary. If the real frontend belongs to a later issue, a minimal placeholder is
+  acceptable; the issue should not fail simply because the named page does not exist yet.
 
 ### Filtering and sorting
 
@@ -165,6 +170,7 @@ that touches the same territory cross-references that owner instead of restating
 | Factory/seeder realism and structure | `rules/factories-and-seeders.md` |
 | Concrete-class finality | `rules/php-conventions.md` |
 | Migration column nullability | `rules/migrations.md` |
+| Backend-to-Inertia page-component boundary | `rules/inertia-pages.md` |
 
 This matters because two files that each describe part of the same decision can drift independently
 while each still assumes the other owns it. The clearest example still visible in the package's shape
@@ -172,7 +178,7 @@ is the test-ownership split above: `blueprints/pest-testing.md` states outright 
 restate the concrete class-taxonomy mapping, and `rules/test-ownership.md` states that it does not
 restate the general execution-boundary or de-duplication principles already owned elsewhere. A
 cross-reference composes the two into one coherent testing story without either file duplicating the
-other's authority.
+authority.
 
 ## 6. Templates
 
