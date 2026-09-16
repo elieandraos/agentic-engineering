@@ -140,6 +140,66 @@ implement-it contract
 
 The coordinator may decide **when** that worker runs and **where** its branch is integrated. It should not quietly delete steps from the worker's engineering contract.
 
+## Concurrent worker lifecycles
+
+The experiments suggest that parallelism should apply to more than worker startup and implementation. Multiple workers can progress through their normal engineering lifecycles concurrently.
+
+A worker still follows the ordinary lifecycle:
+
+```text
+Implement
+   ↓
+Review
+   ↓
+Gate 1
+   ↓
+Gate 2
+   ↓
+Push / closure
+```
+
+Control Room can coordinate several instances of this lifecycle at the same time.
+
+For example:
+
+```text
+#328  Gate 2 waiting
+#329  Implementing
+#330  Gate 1 waiting
+```
+
+A worker waiting for a human decision does not need to stop the other workers. Another worker may finish implementation, another may reach Gate 1, and another may continue its verification while the human handles the currently available decision.
+
+This suggests that execution should track **worker lifecycle state separately from overall wave state**.
+
+A worker may be in states such as:
+
+```text
+READY
+RUNNING
+GATE 1
+GATE 2
+PUSH READY
+CLOSED
+BLOCKED
+```
+
+While the wave can independently be in states such as:
+
+```text
+ACTIVE
+WAITING FOR HUMAN
+PARTIALLY COMPLETE
+READY FOR INTEGRATION
+INTEGRATING
+VERIFICATION
+COMPLETE
+```
+
+This model preserves the existing skill contracts. The worker still runs `implement-it` normally. Control Room coordinates when multiple workers pause, resume, and become actionable rather than shortening their lifecycle.
+
+The human experience therefore becomes a queue of real decisions rather than a forced serial dependency between workers. When one worker becomes actionable, Control Room can surface that gate while other workers continue progressing independently.
+
 ## Parallelism does not automatically flatten human gates
 
 Parallel execution creates a natural temptation to replace several issue-level approvals with one wave-level approval.
@@ -180,6 +240,10 @@ This phase should not be hidden inside worker implementation prompts.
 
 The first experiment showed why. Three workers can each be correct while their branches still require coordination before becoming one coherent feature branch.
 
+Worker lifecycle completion and integration readiness are therefore separate states. A worker can be complete while the wave is still waiting for another worker, and a completed worker can be eligible for integration without forcing every other worker to finish first.
+
+The experiments have not yet established whether incremental integration as workers finish or end-of-wave integration is preferable. Keep that decision open until a targeted experiment provides evidence about conflict risk, verification cost, and recovery behavior.
+
 ## A better execution shape
 
 The observed work suggests this model:
@@ -210,6 +274,20 @@ The observed work suggests this model:
 ```
 
 The diagram deliberately keeps the worker lifecycle intact while moving scheduling and integration above it.
+
+A more detailed runtime state can therefore be understood as two related dimensions:
+
+```text
+Worker states                         Wave state
+-------------                         ---------
+#328  GATE 2                          WAITING FOR HUMAN
+#329  RUNNING                         |
+#330  GATE 1                          +-- #328 actionable
+                                     +-- #329 active
+                                     +-- #330 actionable
+```
+
+This does not imply a final state-machine implementation. It is a useful working model for the next experiments.
 
 ## Partial failure becomes a first-class problem
 
