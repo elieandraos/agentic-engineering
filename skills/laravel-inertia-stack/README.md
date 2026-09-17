@@ -21,7 +21,7 @@ additive to them.
 ```shell
 "Add an is_active field with its migration, factory state, and tests."
 "Build a filterable resource index."
-"Implement issue #42 using this project's Laravel conventions."
+"Implement the approved issue using this project's Laravel conventions."
 ```
 
 ## What normally happens
