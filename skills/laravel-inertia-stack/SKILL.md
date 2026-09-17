@@ -5,12 +5,15 @@ description: "Companion conventions for a Laravel + InertiaJS + Vue 3 + Pest sta
 
 # laravel-inertia-stack
 
-Personal companion conventions for Laravel + InertiaJS + Vue 3 + Pest. This skill is additive only:
-Laravel Boost's `laravel-best-practices` and `testing-best-practices` own the general Laravel and Pest
-baseline, and `inertia-vue-development` owns Inertia/Vue client-side patterns. This skill contains only
-the delta genuinely additive to those skills — load it alongside the matching Boost skill(s), never as a
-substitute for them, and never as a generic Laravel manual, a complete Vue guide, or documentation for
-any one consuming project.
+Personal companion conventions for Laravel + InertiaJS + Vue 3 + Pest. Laravel Boost's
+`laravel-best-practices` and `testing-best-practices` are the first-party baseline and reference for
+general Laravel and Pest, and `inertia-vue-development` is the reference for Inertia/Vue client-side
+patterns. This skill states this stack's own durable, opinionated conventions on top of that
+baseline — load it alongside the matching Boost skill(s), never as a substitute for them. A rule here
+may restate or refine a topic Boost also covers when the stack has a stable, deliberate position on
+it; Boost covering a topic is not, by itself, a reason to omit or remove that position — only
+mechanical explanation Boost already covers well is trimmed. This skill is never a generic Laravel
+manual, a complete Vue guide, or documentation for any one consuming project.
 
 If a task needs a Boost skill this installation doesn't have, say so explicitly and treat this skill as
 an incomplete companion for that area rather than silently filling the gap with improvised baseline
@@ -64,5 +67,9 @@ This skill is not:
 - documentation for any single consuming project;
 - an architecture every project must adopt — the controller and Pest blueprints stay conditional
   (tenancy, non-CRUD shapes, filters/sorters) rather than mandatory for every feature.
+
+Overlapping a Boost topic is not itself a defect. A rule stays when it states this stack's own
+durable position on that topic; it is trimmed only when it merely re-teaches mechanics Boost already
+covers well, without adding one.
 
 Code examples throughout this skill use neutral, invented domain concepts. They are not drawn from, and do not document, any specific consuming project.

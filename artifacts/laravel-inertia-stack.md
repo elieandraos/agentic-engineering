@@ -13,11 +13,14 @@ architecture behind them.
 ## 1. Purpose and activation boundary
 
 `laravel-inertia-stack` is a portable stack companion for a **Laravel + InertiaJS + Vue 3 + Pest**
-stack. It is additive only: Laravel Boost's `laravel-best-practices` and `testing-best-practices`
-skills already own the general Laravel and Pest baseline, and `inertia-vue-development` owns
-Inertia/Vue client-side patterns. `laravel-inertia-stack` never substitutes for any of them — it activates
-*alongside* the matching Boost skill(s), carrying only the delta genuinely additive to what they
-already cover.
+stack. Laravel Boost's `laravel-best-practices` and `testing-best-practices` skills are the
+first-party baseline and reference for general Laravel and Pest, and `inertia-vue-development` is the
+reference for Inertia/Vue client-side patterns. `laravel-inertia-stack` never substitutes for any of
+them — it activates *alongside* the matching Boost skill(s), stating this stack's own durable,
+opinionated conventions on top of that baseline. A rule may restate or refine a Boost topic when the
+stack has a stable, deliberate position on it: Boost covering a topic is not, by itself, a reason to
+omit or remove that position from this skill. Only mechanical explanation Boost already covers well
+is trimmed — never a genuine stack-level opinion merely because Boost touches the same subject.
 
 It activates for implementation and review work that needs this stack's concrete conventions:
 composing or reviewing a controller, Form Request, Action, Policy, or Resource; adding index
@@ -29,15 +32,16 @@ is an incomplete companion for that area, not a substitute author for it.
 
 ## 2. Ownership model
 
-Three parties hold three distinct, non-overlapping kinds of knowledge:
+Three parties hold three distinct areas of responsibility — their stated content can still overlap
+where the stack intentionally restates a durable position on a topic Boost also covers:
 
 | Owner | Owns |
 |---|---|
-| **Laravel Boost** (`laravel-best-practices`, `testing-best-practices`, `inertia-vue-development`) | The general Laravel/Pest/Inertia-Vue baseline — validation, Eloquent mechanics, resource/CRUD organization, thin-controller and FormRequest-boundary philosophy, migrations in general, layer-ownership test de-duplication, record-level test-data minimalism, security, style. An external dependency, never extracted, renamed, or duplicated here. |
-| **`laravel-inertia-stack`** | The reusable custom stack delta — conventions, implementation blueprints, and reusable support templates verified for this stack, portable across compatible consuming projects by copy/reinstall. |
+| **Laravel Boost** (`laravel-best-practices`, `testing-best-practices`, `inertia-vue-development`) | The first-party Laravel/Pest/Inertia-Vue baseline and reference — validation, Eloquent mechanics, resource/CRUD organization, thin-controller and FormRequest-boundary philosophy, migrations in general, layer-ownership test de-duplication, record-level test-data minimalism, security, style. An external dependency: its own mechanics are not re-taught wholesale here, though a stack rule may still restate or refine one of its topics when the stack has its own durable, deliberate position on it. |
+| **`laravel-inertia-stack`** | The durable, opinionated conventions for this stack — implementation blueprints and reusable support templates verified for it, portable across compatible consuming projects by copy/reinstall. A rule may overlap a Boost topic when it states the stack's own stable position; only redundant mechanical explanation is avoided, never a genuine stack-level opinion. |
 | **Consuming project** | Its own domain model, product rules, repository policy, and any project-specific adaptation of a blueprint or template — tenancy mechanism, naming, UI decisions, deployment conventions. None of this is the skill's to prescribe. |
 
-A corollary of this split: `laravel-inertia-stack` states several of its own delta items as conditional
+A corollary of this split: `laravel-inertia-stack` states several of its own conventions as conditional
 rather than universal — tenancy, filters/sorters, non-CRUD controller shapes, and the Inertia page boundary.
 That conditionality is a deliberate architectural boundary between what this skill can responsibly
 generalize and what only a concrete project can decide, not an omission to tighten later.
