@@ -136,11 +136,11 @@ rather than duplicated.
 ### Supporting rules
 
 The remaining rules apply independently wherever their narrow subject appears: computed Eloquent
-`Attribute` accessors
-([`rules/eloquent-attributes.md`](../skills/laravel-inertia-stack/rules/eloquent-attributes.md)) — this
-file no longer teaches the `#[Scope]` attribute itself, since Laravel Boost's `laravel-best-practices`
-now ships it as its own default local-scope convention; only the version-gating caveat for it remains
-here; `when()` over an `if` block for a mid-chain query conditional
+`Attribute` accessors and a migration-debt policy on `#[Scope]`
+([`rules/eloquent-attributes.md`](../skills/laravel-inertia-stack/rules/eloquent-attributes.md)) — Boost's
+`laravel-best-practices` already teaches the attribute's own mechanics, so this file states only the
+stack's own position on top of that: a model's older, legacy-named scopes are not a pattern a new
+scope on the same model should match; `when()` over an `if` block for a mid-chain query conditional
 ([`rules/query-conditionals.md`](../skills/laravel-inertia-stack/rules/query-conditionals.md)); a static `all()`
 on a backed enum instead of mapping `::cases()` at each call site
 ([`rules/enum-options.md`](../skills/laravel-inertia-stack/rules/enum-options.md)); deriving dependent factory
@@ -166,7 +166,7 @@ that touches the same territory cross-references that owner instead of restating
 | The multi-component filter/sorter wiring across Form Request, model, and controller | `blueprints/filters-and-sorting.md` |
 | `tests/Unit`/`tests/Feature` execution-boundary classification and suite binding | `blueprints/pest-testing.md` |
 | Concrete per-class test location, ownership, and the no-redundancy rule | `rules/test-ownership.md` |
-| Computed Eloquent attribute convention; version-gating note for `#[Scope]` (owned by Boost) | `rules/eloquent-attributes.md` |
+| Computed Eloquent attribute convention; migration-debt policy on `#[Scope]` vs. legacy scopes | `rules/eloquent-attributes.md` |
 | Mid-chain query conditionals | `rules/query-conditionals.md` |
 | Backed-enum option lists | `rules/enum-options.md` |
 | Factory/seeder realism and structure | `rules/factories-and-seeders.md` |
