@@ -372,6 +372,44 @@ Priority is this audit's assessment of consequence for the stated fixture. It is
 
 **Evidence:** [skills/implement-it/rules/verification.md](https://github.com/elieandraos/agentic-engineering/blob/86107d1f3f310c5ae19d5ea8e8f8388d6738918a/skills/implement-it/rules/verification.md); [skills/implement-it/rules/review-gates.md](https://github.com/elieandraos/agentic-engineering/blob/86107d1f3f310c5ae19d5ea8e8f8388d6738918a/skills/implement-it/rules/review-gates.md).
 
+#### IMP-10 — Propagated architectural context is consumed in a fresh implementation session
+
+**Method:** Agent behavior / source trace from an actual consuming-project run. **Result:** Aligned.
+
+This is a verified observed scenario, not a hypothetical: it is drawn from an actual useOrbit
+implement-it run rather than reconstructed from source alone.
+
+**Fixture:** useOrbit issue #326 established an architectural decision for the remaining per-class
+policy backend issues: use one flat `Policy{Class}Resource`, with no separate nested
+`Policy{Class}DetailsResource`. At #326's closure, that decision was explicitly propagated as
+concise context to the dependent future issues, including #327. A fresh #327 implement-it session
+was then started after clearing prior conversation context, so the session held no memory of #326.
+
+**Request/action:** Before implementation, the fresh #327 session ran
+`gh issue view 327 --json title,body,labels,milestone,state,assignees,comments`. The returned issue
+comments included the propagated #326 architecture note.
+
+**Expected:** The session reads the issue/comment context, explicitly acknowledges the relevant
+decision before the first implementation write, and applies it — not merely produces a final
+implementation that happens to match.
+
+**Observed at this evidence level:** Before the first implementation write, the session explicitly
+acknowledged the inherited decision: "Good — this confirms the two established decisions from #326
+that carry directly into #327: single flat PolicyExpatResource (no nested details resource), and
+minimal placeholder Vue pages for each Inertia component the controller renders." The implementation
+then used the flat `PolicyExpatResource` shape, and the Gate 1 report explicitly attributed the
+decision to #326's comment. This chain — propagation, fresh-session retrieval, pre-implementation
+acknowledgment, implementation compliance, and source attribution — matches COMMON-11.
+
+**Evidence:** useOrbit issues #326 and #327 and the associated #327 implement-it session log
+(`gh issue view 326`, `gh issue view 327 --json title,body,labels,milestone,state,assignees,comments`);
+no stable public URL is available from this repository for that consuming project's issues or
+session log.
+
+**Limitations:** the session log's thinking blocks were redacted/empty, so hidden reasoning could
+not be inspected. This observation rests on visible tool calls and visible assistant text, not on
+an inspected chain of thought.
+
 ### Implementation review
 
 #### REV-01 — Real comparison base and complete worktree scope
