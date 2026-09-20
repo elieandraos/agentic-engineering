@@ -34,12 +34,27 @@ what that means for the release phase).
 **Delivery/phase milestone issue.** All issues in that milestone share one working branch —
 implementation does not get a fresh branch per issue.
 
+This is the default, single-worker path. When the human has explicitly authorized running more than
+one dependency-ready issue in this milestone concurrently, see "Parallel workers in a delivery/phase
+milestone" below instead — Git cannot check the same branch out for two concurrent workers at once, so
+this default path does not apply to that case.
+
 1. Inspect the currently checked-out branch.
 2. If it already is that milestone's working branch, proceed directly to implementation.
 3. If not, recommend a branch name derived from the milestone's actual nature and scope, and ask the
    human before creating or switching to it. Do not silently create or check out a branch.
 4. Only once the correct branch is confirmed active does implementation begin — the rest of the
    working lifecycle (`rules/review-gates.md` onward) is unchanged.
+
+### Parallel workers in a delivery/phase milestone
+
+Once the human has explicitly authorized concurrent execution of more than one dependency-ready issue
+in this milestone, each worker gets its own temporary issue branch, cut from the confirmed milestone
+branch, instead of implementing directly on the shared branch. The milestone branch remains the
+eventual convergence target for every worker's approved commits.
+
+This rule does not define how or when that convergence happens. That is an open question pending
+evidence from real parallel execution, not a decision this rule makes on its own.
 
 Do not turn observed branch-name patterns into a rigid taxonomy. A name derived from what the
 milestone actually is — its area, or the kind of change it bundles — is the goal; illustrative shapes
