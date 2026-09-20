@@ -15,9 +15,12 @@ recurring across all three experiments: **Control Room**.
 
 Two further useOrbit smoke tests, `#351` and `#352`, moved part of
 this document from working theory to observed evidence. Both are
-single-worker experiments, not multi-worker ones. Section
-["Evidence"](#evidence) below states plainly what they validated and
-what they did not.
+single-worker experiments, not multi-worker ones. A follow-up `#352`
+integration smoke test then validated that integration can run as a
+separate Control Room lifecycle after worker completion (see
+["Integration lifecycle"](#integration-lifecycle)). Section
+["Evidence"](#evidence) below states plainly what all of this
+validated and what it did not.
 
 This is not a finalized implementation design.
 
@@ -54,7 +57,12 @@ diagram is responsible for.
 
 ## Control Room
 
-Control Room coordinates execution state and decisions. That includes:
+Control Room coordinates worker execution and integration. Worker
+execution remains owned by the normal engineering lifecycle; Control
+Room owns execution state, human decisions, resume/progression, and
+the transition from completed workers into integration.
+
+Concretely, that includes:
 
 - reading the current issue dependency graph;
 - recalculating readiness after meaningful state changes;
@@ -452,6 +460,66 @@ simultaneously, and how Control Room would present that queue of
 decisions to the human, remain open (see
 ["Validated vs open questions"](#validated-vs-open-questions)).
 
+## Integration lifecycle
+
+A follow-up `#352` integration smoke test validated that integration
+can run as a distinct Control Room lifecycle after a worker completes.
+This is a single-worker integration, not a multi-worker one — see
+["Validated vs open questions"](#validated-vs-open-questions) for the
+exact boundary.
+
+Observed flow:
+
+```text
+worker complete
+    ↓
+integration decision
+    ↓
+human approval
+    ↓
+dedicated integration worktree
+    ↓
+merge
+    ↓
+post-integration verification
+    ↓
+integration complete
+```
+
+Observed facts from the experiment:
+
+- the `#352` worker lifecycle was already complete; the source branch
+  (`issue-352-policies-expat-pages`) remained untouched throughout
+  integration;
+- integration was performed separately from the worker lifecycle, from
+  a dedicated integration worktree created from the target branch
+  (`feat/policies-http-frontend`);
+- the integration decision was presented through structured
+  `AskUserQuestion` (see
+  ["Human interaction for integration"](#human-interaction-for-integration));
+- after approval, the branch merged cleanly, with no conflict;
+- the target integration branch was advanced to the resulting merge
+  commit, and the temporary integration worktree/branch were removed
+  afterward;
+- post-integration verification ran the narrowest relevant Pest suite:
+  18/18 tests passing, 88 assertions;
+- the experiment stopped after integration verification and did not
+  automatically continue to another issue.
+
+This establishes an ownership boundary that was previously only a
+candidate model:
+
+```text
+Worker
+    owns implementation and its own issue lifecycle.
+
+Control Room
+    owns the transition from completed worker to integration.
+```
+
+Integration is not implicit in worker completion, and the worker
+branch is not modified by the integration operation.
+
 ## Integration
 
 Integration stays separate from worker lifecycle completion, as
@@ -472,8 +540,8 @@ Integration:
 #330 is not yet eligible
 ```
 
-A candidate integration state model, building on the worker-complete
-state `#351`/`#352` actually reached:
+The integration state model, extended with the states the `#352`
+integration smoke test actually exercised:
 
 ```text
 WORKER_COMPLETE
@@ -489,26 +557,50 @@ VERIFYING_INTEGRATION
 INTEGRATED
 ```
 
-Integration should be an explicit human decision, presented as
-compactly as any other gate. Example:
+This sequence is now validated by `#352` for a single completed
+worker. It has not been exercised for concurrent integration of
+multiple completed workers.
+
+### Human interaction for integration
+
+Integration is a finite human decision, and the `#352` experiment
+validated the structured `AskUserQuestion` interaction mechanism for
+it, the same way `#351` validated it for worker-lifecycle gates (see
+["Structured human interaction belongs to Control Room"](#structured-human-interaction-belongs-to-control-room)).
+Conceptually:
 
 ```text
-Integrate #351?
+Integrate #352?
 
 [Merge into feat/policies-http-frontend]
 [Not yet]
 ```
 
-This flow has not been validated. No `#351`/`#352` worker went through
-an integration decision — both experiments stopped at worker
-completion.
+The exact option labels shown above are illustrative, not a permanent
+UI contract. What is validated is the mechanism — presenting
+integration as a compact, structured human decision — not any specific
+wording. As with worker-lifecycle gates, `implement-it`-style
+methodology defines *when* a decision boundary exists; Control Room
+decides *how* it is presented:
+
+```text
+implement-it
+    defines what engineering decision must happen.
+
+Control Room
+    decides how human decisions are surfaced and coordinates
+    state/resume/integration.
+
+runtime
+    provides the underlying session/worktree/interaction primitives.
+```
 
 ### Merge worktree ownership
 
-Control Room should own integration coordination. A worker should not
-silently merge its own branch into the shared integration branch.
+Control Room owns integration coordination. A worker does not merge
+its own branch into the shared integration branch.
 
-Candidate model:
+Validated by `#352`, for a single completed worker:
 
 ```text
 worker branch
@@ -519,17 +611,20 @@ integration decision
     ↓
 human approval
     ↓
-Control Room creates/uses integration worktree
+Control Room creates dedicated integration worktree from target branch
     ↓
 merge
     ↓
-resolve conflicts if necessary
-    ↓
 verify integrated state
+    ↓
+remove temporary integration worktree/branch
 ```
 
-The exact runtime mechanics are not finalized, and none of this has
-been exercised by real execution yet.
+`#352` produced no merge conflict, so conflict resolution during
+integration remains untested. Concurrent integration of multiple
+completed workers, and merge conflict handling in a live multi-worker
+wave, also remain untested — see
+["Validated vs open questions"](#validated-vs-open-questions).
 
 ## Token/context observation
 
@@ -604,38 +699,48 @@ implementation, Commit plan, Push authorization, Issue closure
 authorization — until the worker completes, exactly as observed in
 `#351` and `#352`.
 
-### Emerging, not yet validated: multi-worker coordination
+### Emerging: multi-worker fan-out, with a validated integration tail
 
 ```text
                     CONTROL ROOM
               coordination + state + UX
-                        │
-                 dependency graph
-                        │
-                  execution wave
-                        │
-           ┌────────────┼────────────┐
-           ▼            ▼            ▼
-        Worker A     Worker B     Worker C
-           │            │            │
-       implement-it implement-it implement-it
-           │            │            │
-      waiting human   running      waiting human
-           │            │            │
-           └────── independent resume ──────┘
-                        │
-                  worker complete
-                        │
+                       │
+                dependency graph
+                       │
+                 execution wave
+                       │
+          ┌────────────┼────────────┐
+          ▼            ▼            ▼
+       Worker A     Worker B     Worker C
+          │            │            │
+      implement-it  implement-it  implement-it
+          │            │            │
+      human stops  human stops  human stops
+          │            │            │
+          └──── independent resume ────┘
+                       │
+                 worker complete
+                       │
               integration decision
-                        │
-                 merge + verify
+                       │
+             dedicated worktree
+                       │
+                    merge
+                       │
+            post-integration verify
+                       │
+                 integrated
 ```
 
-Only the single-worker portion of this diagram (`Worker → implement-it
-→ gate → resume`) has real execution evidence behind it. The
-concurrent-waiting, independent-resume, and integration-decision
-portions are the working model this document is tracking toward, not
-confirmed behavior.
+Only part of this diagram has real execution evidence behind it.
+`Worker → implement-it → human stops → independent resume` is
+validated, but only for one worker at a time — `#351`/`#352` never ran
+Worker A/B/C concurrently, so the fan-out itself remains the working
+model this document is tracking toward, not confirmed behavior. The
+tail from `worker complete` through `integrated` is now validated by
+the `#352` integration smoke test, for a single completed worker (see
+["Integration lifecycle"](#integration-lifecycle)) — concurrent
+integration of multiple completed workers is not.
 
 ### Broader layering
 
@@ -676,6 +781,13 @@ separate layer of methodology.
   choice rather than a methodology requirement, and that recovery
   after interruption can correctly re-verify authoritative state
   before resuming.
+- a follow-up `#352` integration smoke test demonstrated, for the
+  first time with real execution, that integration can run as a
+  distinct Control Room lifecycle after worker completion: an explicit
+  integration decision presented through structured `AskUserQuestion`,
+  a dedicated integration worktree, a clean merge with the worker
+  branch left untouched, and targeted post-integration verification
+  (see ["Integration lifecycle"](#integration-lifecycle)).
 
 ## Validated vs open questions
 
@@ -690,18 +802,26 @@ separate layer of methodology.
 - Issue closure authorization;
 - same-worker continuation after approval;
 - recovery after interruption with authoritative-state verification;
-- worker completion independent of integration.
+- worker completion independent of integration;
+- explicit integration decision;
+- structured human interaction for integration;
+- dedicated integration worktree;
+- clean merge into the integration branch;
+- post-integration targeted verification.
 
 ### Not yet validated
 
 - multiple workers simultaneously waiting at different human gates;
 - clean presentation of multiple concurrent human decisions;
-- wave-level Control Room state;
-- integration approval;
-- integration worktree creation and merge coordination;
-- merge conflict handling;
+- wave-level Control Room state across several workers;
+- concurrent integration of multiple completed workers;
+- merge conflict handling in a live multi-worker wave;
 - partial-wave failure behavior;
 - wave completion verification.
+
+Do not read the `#352` integration smoke test as proving any of these
+multi-worker items — it exercised integration for exactly one
+completed worker.
 
 ## Open questions
 
@@ -713,7 +833,11 @@ separate layer of methodology.
 - How does pause/resume work across real runtimes other than the one
   used in `#351`/`#352`?
 - Where should worker lifecycle state persist?
-- Where should merge/integration ownership live?
+- How should merge/integration ownership and conflict resolution work
+  when multiple completed workers integrate concurrently? (Ownership
+  for a single completed worker is validated — see
+  ["Integration lifecycle"](#integration-lifecycle) — but concurrent
+  integration and conflict handling are not.)
 - Should Control Room inspect likely file/resource conflicts before
   launching a wave?
 - What context is shared across workers versus isolated?
@@ -739,7 +863,8 @@ Reusable rule
 ```
 
 `#351` and `#352` moved the single-worker pause/resume lifecycle from
-working theory to observed evidence. The next experiments should
-target the open questions above — starting with multiple workers
-waiting at different gates at once — rather than re-testing what these
-two smoke tests already settled.
+working theory to observed evidence, and the follow-up `#352`
+integration smoke test did the same for single-worker integration. The
+next experiments should target the open questions above — starting
+with multiple workers waiting at different gates at once — rather than
+re-testing what these smoke tests already settled.
