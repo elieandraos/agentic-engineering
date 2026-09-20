@@ -504,7 +504,11 @@ Observed facts from the experiment:
 - post-integration verification ran the narrowest relevant Pest suite:
   18/18 tests passing, 88 assertions;
 - the experiment stopped after integration verification and did not
-  automatically continue to another issue.
+  automatically continue to another issue;
+- the resulting `feat/policies-http-frontend` branch was pushed
+  manually by the human after the experiment concluded — this smoke
+  test did not validate Control Room ownership of pushing the
+  integrated branch.
 
 This establishes an ownership boundary that was previously only a
 candidate model:
@@ -817,7 +821,10 @@ separate layer of methodology.
 - concurrent integration of multiple completed workers;
 - merge conflict handling in a live multi-worker wave;
 - partial-wave failure behavior;
-- wave completion verification.
+- wave completion verification;
+- Control Room ownership of pushing the integrated branch (the
+  integrated branch in `#352` was pushed manually by the human, not by
+  Control Room).
 
 Do not read the `#352` integration smoke test as proving any of these
 multi-worker items — it exercised integration for exactly one
@@ -846,6 +853,8 @@ completed worker.
   completion?
 - How should Control Room present multiple actionable gates from
   different workers at once?
+- Should Control Room authorize and execute pushing the integrated
+  branch after integration, and if so, under what human decision?
 
 ## Guiding principle
 
