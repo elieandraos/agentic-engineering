@@ -1,7 +1,7 @@
 # Responsibility Boundaries After Parallel Smoke Tests
 
 Status: Investigation. This is an extraction *analysis*, not an orchestrator design. It reconciles
-Smoke Test 1 (`evidence.md`) and Smoke Test 2 (`evidence-2.md`) into one responsibility map. It does
+Smoke Test 1 (`smoke-test-1.md`) and Smoke Test 2 (`smoke-test-2.md`) into one responsibility map. It does
 not modify any skill, does not create an orchestrator, agent definition, or runtime adapter, and does
 not make a release/version decision.
 
@@ -22,8 +22,8 @@ process, service, or something else) is explicitly unresolved and out of scope h
 
 Primary sources, all read in full for this document:
 
-- `docs/research/evidence.md` — Smoke Test 1 forensic record (useOrbit #354/#355).
-- `docs/research/evidence-2.md` — Smoke Test 2 forensic record (useOrbit #341/#342/#343), including
+- `docs/research/smoke-test-1.md` — Smoke Test 1 forensic record (useOrbit #354/#355).
+- `docs/research/smoke-test-2.md` — Smoke Test 2 forensic record (useOrbit #341/#342/#343), including
   its ST2-specific review-presentation finding.
 - `docs/research/vision.md` — working hypothesis and diagrams predating both smoke tests.
 - `docs/research/orchestration.md` — the extraction watchlist and its pre-ST2 evidence state.
@@ -103,16 +103,16 @@ by both the skill text and observed ST2 behavior:
 
 | Responsibility | Skill | Evidence |
 |---|---|---|
-| Dependency/readiness inspection, per issue | `implement-it/rules/sequencing.md` | Recompute step ran correctly and identically across all three ST2 workers (`evidence-2.md`, "Next-issue recommendation" per worker) |
+| Dependency/readiness inspection, per issue | `implement-it/rules/sequencing.md` | Recompute step ran correctly and identically across all three ST2 workers (`smoke-test-2.md`, "Next-issue recommendation" per worker) |
 | Implementation | `implement-it` (+ stack companions) | Per-worker handbacks, all three ST2 workers |
 | Targeted + broader regression verification | `implement-it/rules/verification.md` | Explicitly present and cited by name in every ST2 worker's report; matches the rule's own numbered procedure |
-| `review-it` | `review-it` (independently callable) | Ran for all three ST2 workers (`evidence-2.md`, "Review and human approval" table) — a direct, confirmed reversal of ST1, where Travel skipped it entirely (`evidence.md`, "#355 Travel worker") |
-| Implementation-review report + human approval | `implement-it/rules/review-gates.md` | All three ST2 workers stopped and reported, and none proceeded without explicit approval (`evidence-2.md` table); ST1's bypass is independently explained in `evidence.md`/`vision.md` as a delegation-prompt conflict, not a rule gap |
+| `review-it` | `review-it` (independently callable) | Ran for all three ST2 workers (`smoke-test-2.md`, "Review and human approval" table) — a direct, confirmed reversal of ST1, where Travel skipped it entirely (`smoke-test-1.md`, "#355 Travel worker") |
+| Implementation-review report + human approval | `implement-it/rules/review-gates.md` | All three ST2 workers stopped and reported, and none proceeded without explicit approval (`smoke-test-2.md` table); ST1's bypass is independently explained in `smoke-test-1.md`/`vision.md` as a delegation-prompt conflict, not a rule gap |
 | Commit planning + human approval | `implement-it/rules/review-gates.md`, `rules/commit-boundaries.md` | Same evidence as above; no ST2 worker committed before its Commit-plan approval |
 | Commit creation mechanics (trailer check, boundaries) | `implement-it/rules/commit-boundaries.md` | All nine ST2 commits individually trailer-checked, confirmed clean |
 | Temporary issue branch, cut from the milestone branch | `implement-it/rules/sequencing.md`'s "Parallel workers" addition | The one behavioral change made before ST2; applied identically and unprompted by all three workers |
-| Push readiness (reachability + trailer re-check) | `implement-it/rules/push-readiness.md` | Run, unmodified, by every ST2 worker before and after its push; ST1 bypassed this rule entirely rather than exposing a gap in it (`evidence.md`, "Parent-session post-worker behavior") |
-| Issue closure, "ask first," and validation | `implement-it/rules/issue-closure.md` | All three ST2 issues closed with checkboxes independently re-verified on live GitHub (`evidence-2.md`, "Push and issue closure"); ST1's issues closed with checkboxes unchecked because the parent bypassed this rule, not because it was missing anything (`evidence.md`) |
+| Push readiness (reachability + trailer re-check) | `implement-it/rules/push-readiness.md` | Run, unmodified, by every ST2 worker before and after its push; ST1 bypassed this rule entirely rather than exposing a gap in it (`smoke-test-1.md`, "Parent-session post-worker behavior") |
+| Issue closure, "ask first," and validation | `implement-it/rules/issue-closure.md` | All three ST2 issues closed with checkboxes independently re-verified on live GitHub (`smoke-test-2.md`, "Push and issue closure"); ST1's issues closed with checkboxes unchecked because the parent bypassed this rule, not because it was missing anything (`smoke-test-1.md`) |
 | Next-work recommendation, per issue | `implement-it/rules/sequencing.md`'s recompute | All three ST2 workers independently recomputed and converged on the identical answer (#334/#344/#345) using only live GitHub state — no sibling-worker knowledge required |
 | Milestone PR readiness (zero-open-issues + manual-testing sign-off) | `ship-it/rules/milestone-pr-readiness.md` | Not exercised by either smoke test (neither wave emptied its milestone), but read directly: its three conditions are stated in terms of live GitHub state and a human manual-testing answer, not an automated combined-verification run — see "Combined verification" below for why this does not make it the owner of that gap |
 | Milestone closure gate | `ship-it/rules/milestone-completion.md` | Read directly: re-fetches and validates milestone state on closure; contains no automated-verification step at all |
@@ -135,7 +135,7 @@ listed separately because they are the shape a worker takes, not an additional p
 - Choosing execution-level technique within its own boundary — e.g., #343 independently invented the
   throwaway-branch-then-`push origin <throwaway>:<target>` technique to avoid disturbing the shared
   checkout in the main worktree, and #341/#342 reused it once the parent pointed them at it
-  (`evidence-2.md`, "Convergence"). This is worker judgment, not skill policy, and not parent
+  (`smoke-test-2.md`, "Convergence"). This is worker judgment, not skill policy, and not parent
   reasoning — no rule specifies this technique, and the parent did not invent it either.
 
 ## Runtime responsibilities
@@ -155,7 +155,7 @@ capability, not Claude Code's specific API, per `vision.md`'s and `orchestration
 
 **What this means for Agentic Engineering:** none of the above should be reinvented as methodology.
 `orchestration.md`'s "Human decision routing" and "Gate-specific worker resumption" watch items are
-now positively observed (`evidence-2.md`, "Independent human-gated progression") — but the *mechanism*
+now positively observed (`smoke-test-2.md`, "Independent human-gated progression") — but the *mechanism*
 that made them work was entirely this native runtime layer plus the parent's own conversational
 tracking (see below), not a new methodology construct.
 
@@ -167,7 +167,7 @@ at its own issue.
 ### Concurrent-safe work selection
 
 - **ST1 evidence:** observed once — the parent judged #354/#355 safe together based on disjoint
-  expected surfaces (`evidence.md`; `orchestration.md`, "Concurrent-safe issue selection").
+  expected surfaces (`smoke-test-1.md`; `orchestration.md`, "Concurrent-safe issue selection").
 - **ST2 evidence:** not independently exercised by the run itself — the #341/#342/#343 wave was
   pre-selected by `parallel-dry-run.md` before the smoke test began, using the same kind of ad hoc
   file-disjointness investigation, with no skill rule computing or authorizing it. The run confirms
@@ -188,7 +188,7 @@ at its own issue.
   workers — a `policiesCount`-derivation/route-placement scope note (#343) and an explicit renewal-
   window judgment call (#342) — and both the worker's own report and the parent's relay of it wrapped
   that substance in internal vocabulary ("Gate 1," rule-file names) rather than plain statements of
-  what was checked and what decision was needed (`evidence-2.md`, "Review and human approval," quoted
+  what was checked and what decision was needed (`smoke-test-2.md`, "Review and human approval," quoted
   directly there).
 - **Evidence strength: OBSERVED ONCE**, but with three independent instances inside that one run (all
   three workers' reports carried the same pattern), plus the parent's own summaries repeating it.
@@ -209,7 +209,7 @@ at its own issue.
   evidence" before ST2.
 - **ST2 evidence:** direct, and non-trivial. Two genuinely ambiguous human answers occurred (a
   human answer that didn't cleanly match any one worker's actual reported state) and both were
-  resolved correctly (`evidence-2.md`, "Independent human-gated progression," with the exact quoted
+  resolved correctly (`smoke-test-2.md`, "Independent human-gated progression," with the exact quoted
   episodes). Every `SendMessage` call's `resumedAgentId` matched the intended target exactly; at no
   point did resuming one worker change a different worker's state.
 - **Evidence strength: REPEATED WITHIN ONE WAVE** (two ambiguous cases inside the same run, both
@@ -217,11 +217,11 @@ at its own issue.
   against.
 - Inherently cross-worker: yes — routing a human answer to the *correct* one of several waiting
   workers requires knowing all their current states simultaneously; no worker skill has or needs that.
-- Currently handled adequately: yes, on this one run — but `evidence-2.md` is explicit that the
+- Currently handled adequately: yes, on this one run — but `smoke-test-2.md` is explicit that the
   mechanism was "the parent session's own conversational memory... not a mechanism `implement-it`/
   `sequencing.md` defines," not a data structure or rule that guarantees correctness at higher worker
   counts or across a session restart.
-- More evidence needed: yes, per both this document and `evidence-2.md`'s own conclusion — one run
+- More evidence needed: yes, per both this document and `smoke-test-2.md`'s own conclusion — one run
   succeeding, including under ambiguity, is meaningfully stronger than ST1's zero occurrences, but
   short of `orchestration.md`'s "recurs across waves" bar.
 
@@ -231,19 +231,19 @@ Kept as four separate responsibilities, per the audit's own instruction not to c
 
 - **Convergence policy** (what convergence should *look like* — push + merge into the milestone
   branch). **Human-decided, explicitly, both times it was needed.** In ST1 the parent inferred and
-  performed a `git merge --no-ff` pattern itself, without asking (`evidence.md`, "Parent-session branch
+  performed a `git merge --no-ff` pattern itself, without asking (`smoke-test-1.md`, "Parent-session branch
   behavior" — the document explicitly calls this "not sourced from `implement-it` ... parent reasoning").
   In ST2, the exact same shape of policy ("push each temp branch and merge it into
   `feat/policies-http-frontend`") was an explicit human decision, requested by the workers and given by
-  the human, not inferred by the parent (`evidence-2.md`, "Convergence"). **Evidence strength across both
+  the human, not inferred by the parent (`smoke-test-2.md`, "Convergence"). **Evidence strength across both
   runs: the *policy itself* (temp-branch-then-merge) recurred identically twice, but who decided it
   changed — ST1 parent-inferred, ST2 human-decided** — this is a difference the two-file
   `sequencing.md` patch produced on purpose (it deliberately left convergence undefined so a worker
   would stop and ask, rather than letting the parent infer silently again).
 - **Convergence execution** (who actually runs the merge/push). **Different between the two runs, and
   this is the sharpest finding in either report.** ST1: the parent performed both merges directly,
-  itself (`evidence.md`). ST2: each *original worker*, resumed by name, performed its own push and
-  merge inside its own worktree (`evidence-2.md`, "Convergence" — "each **original worker** was
+  itself (`smoke-test-1.md`). ST2: each *original worker*, resumed by name, performed its own push and
+  merge inside its own worktree (`smoke-test-2.md`, "Convergence" — "each **original worker** was
   resumed... and performed its own push and merge itself... No fresh agent was created for
   convergence, and the parent session did not perform any merge or push directly," confirmed by
   `SendMessage` targets matching the original agent IDs). **Evidence strength: VALIDATED BEHAVIOR for
@@ -256,13 +256,13 @@ Kept as four separate responsibilities, per the audit's own instruction not to c
   parent recognized a genuine race risk across three independently-acting workers converging onto one
   shared branch, chose an order (arrival order — whichever worker asked first was released first, not
   issue number or any other rule), and explicitly told each subsequent worker the shared branch's
-  moved tip before that worker had fetched it itself (`evidence-2.md`, "Convergence"). **Evidence
+  moved tip before that worker had fetched it itself (`smoke-test-2.md`, "Convergence"). **Evidence
   strength: OBSERVED ONCE**, and only because ST2 made convergence worker-performed in the first place
   — this responsibility did not exist as a distinct decision in ST1's single-actor shape.
 - **Shared-branch state validation before mutating it.** Owned by the worker performing the mutation,
   both times evidence exists: in ST2, every worker fetched the shared branch fresh (not trusting a
   previously-known SHA) before merging and pushing, ran its own targeted verification against the
-  merged tree, and trailer-checked the merge commit specifically (`evidence-2.md`, "Convergence").
+  merged tree, and trailer-checked the merge commit specifically (`smoke-test-2.md`, "Convergence").
   This is **worker responsibility**, exercised correctly each of three times — not cross-worker, since
   each worker only needed to validate the state it was about to mutate, using ordinary git commands.
 
@@ -274,7 +274,7 @@ mutation is ordinary worker discipline, evidenced correctly both times it matter
 
 ### Combined verification
 
-- **ST1 evidence:** a clean gap — `evidence.md` states plainly the final combined branch was never
+- **ST1 evidence:** a clean gap — `smoke-test-1.md` states plainly the final combined branch was never
   re-verified after both worker branches merged.
 - **ST2 evidence:** the same gap, in a subtler shape. No explicit human full-suite/skip decision was
   ever presented against the truly final, fully-converged milestone branch. The closest substitute —
@@ -282,7 +282,7 @@ mutation is ordinary worker discipline, evidenced correctly both times it matter
   content-equivalent to the final state (because #341 converged last, after #342 and #343 had already
   landed), but it was a targeted subset the worker chose unilaterally as part of its *own* per-issue
   convergence procedure, not a combined-verification decision presented to the human, and not the
-  unfiltered full suite (`evidence-2.md`, "Post-convergence verification" — which is explicit that this
+  unfiltered full suite (`smoke-test-2.md`, "Post-convergence verification" — which is explicit that this
   should not be reinterpreted as combined verification).
 - **Evidence strength: REPEATED ACROSS ST1 + ST2**, in the specific sense that both runs produced this
   exact gap independently, under two different two-file-patch conditions (ST1 had no parallel-aware
@@ -306,23 +306,80 @@ mutation is ordinary worker discipline, evidenced correctly both times it matter
 - **Is cross-worker orchestration a credible owner?** Plausibly, since verifying a union inherently
   requires knowing that union exists — but no run has ever exercised *anyone* correctly performing this
   as a deliberate decision, so there is no positive evidence to point to, only the repeated absence.
-- **What remains unresolved:** whether the fix is (a) a new explicit step somewhere in the existing
-  lifecycle that the parent is always told to perform after convergence (a smaller correction than
-  extraction), (b) a genuinely new cross-worker responsibility, or (c) something `ship-it`'s existing
-  gates should absorb with a modest addition. `evidence-2.md`'s own conclusion (`Conclusion`, point 8)
-  recommends deciding this deliberately before another smoke test, without picking an answer here.
+- **What remains unresolved (as a mechanism, after the policy decision below):** whether the fix is
+  (a) a new explicit step somewhere in the existing lifecycle that the parent is always told to perform
+  after convergence (a smaller correction than extraction), (b) a genuinely new cross-worker
+  responsibility, or (c) something `ship-it`'s existing gates should absorb with a modest addition.
+  `smoke-test-2.md`'s own conclusion (`Conclusion`, point 8) recommends deciding this deliberately
+  before another smoke test.
 
-### Next-work recommendation
+#### Research decision, recorded after Smoke Test 2 (policy, not yet a skill change)
+
+The gap above prompted an explicit interpretation change, recorded here as the current research
+position for *concurrent* implementation workers specifically. This is a decision about **what
+verification should happen and when**, separate from — and prior to — the still-open mechanism
+question of *how* to construct a combined candidate state before any commit exists (see
+`combined-candidate.md`).
+
+**Per-worker verification.** A parallel implementation worker proves its own change with required
+targeted verification, the narrowest meaningful broader regression verification, and `review-it`
+against its completed implementation. A parallel worker does **not** get its own full-project-suite
+run/skip decision. Running the full suite independently against several intermediate, not-yet-combined
+worker states is not useful enough to justify its cost, and duplicates verification that combined
+verification (below) will do once, properly, against the real union.
+
+**Combined verification.** Once the parallel workers' candidate implementations are assembled into one
+combined candidate state, the full project suite runs once against that combined state. This is a
+required step for the parallel wave, not a run/skip decision — unlike the existing per-issue full-suite
+choice `verification.md` already defines for a single (serial) worker, which is unaffected by this
+decision. Only after the combined candidate is green should the human-facing implementation-review
+checkpoint be presented. At that point the parent presents each worker's substantive `review-it`
+summary and focused verification evidence in plain technical language, plus the combined full-suite
+result, and asks the human to manually verify/approve each implementation before commit planning.
+
+**Scope of this decision.** This applies only to concurrent/parallel implementation workers. It does
+not silently change the normal serial/single-worker verification lifecycle — `verification.md`'s
+existing full-suite run/skip decision for one worker, running alone, stays exactly as it is.
+
+**Critical invariant, unchanged.** No durable implementation commit is created before both Review
+implementation and Commit plan have received explicit human approval. This decision does not weaken
+that guarantee, and no mechanism for combined verification is acceptable if it requires weakening it.
+
+**The resulting unresolved mechanism.** Workers reach "ready" (implementation done, targeted/broader
+verification passed, `review-it` run) while still uncommitted, because human approval hasn't happened
+yet. Assembling several such uncommitted, isolated workers' changes into one temporary combined
+repository state, in order to run the full suite against it once, without creating any durable
+implementation commit ahead of the existing approvals, is not solved by anything observed in either
+smoke test. ST2's temporary-branch convergence mechanism does not solve this: it only ever ran *after*
+commits already existed and had already been approved (`smoke-test-2.md`, "Convergence"). This is
+recorded as unresolved and investigated separately in `combined-candidate.md`.
+
+### Next-work recommendation / ready-work selection
 
 - Handled entirely and correctly by the existing skill (`implement-it/rules/sequencing.md`'s
   recompute), independently by all three ST2 workers, converging on an identical, correct answer
-  (#334/#344/#345) each time (`evidence-2.md`).
-- **Not cross-worker**: each worker only needed live GitHub state (which issues are open, what they
-  depend on), not knowledge of its siblings' internal state. The one nuance observed — #343 and #342
-  both separately noted, correctly, that #341 already "had an active worktree/branch... likely already
-  spoken for" — is itself derivable from public GitHub/git state (an existing branch), not from
-  privileged cross-worker visibility.
-- **Should clearly remain in the worker skill.** No evidence from either smoke test suggests otherwise.
+  (#334/#344/#345) each time (`smoke-test-2.md`).
+- **Correction to this document's earlier framing.** An earlier pass through this analysis treated
+  this as fully non-cross-worker and settled ("should clearly remain in the worker skill, no evidence
+  it needs to move up"), on the grounds that the one sibling-awareness nuance observed — #343 and #342
+  both separately, correctly noting that #341 already "had an active worktree/branch... likely already
+  spoken for" — was derivable from public GitHub/git state (an existing branch) rather than privileged
+  cross-worker visibility. That conclusion overstated what the evidence supports: it is true *in this
+  run*, but it depends on the sibling's claim already being visible as a branch/commit by the time the
+  recompute runs. Before any worker has pushed anything (e.g. two workers still mid-implementation, or
+  one that hasn't yet created its temporary branch), the same recompute has no public signal to check
+  against, and nothing in `sequencing.md` establishes what it should do then.
+- **Current classification.** Keep `implement-it`'s existing per-worker recompute behavior unchanged —
+  it produced the correct answer every time it was exercised, and there is no evidence it should move
+  out of `sequencing.md` now. But classify next-work recommendation / ready-work selection as a
+  legitimate **cross-worker extraction WATCH item**, not a settled, fully-owned worker responsibility:
+  the "uses only public state" property that made ST2 look self-contained is a fact about this run's
+  timing, not a guarantee `sequencing.md` enforces. Do not extract or design scheduling/orchestration
+  for this now — there is exactly one wave of evidence, and it happens to be the favorable case.
+- **What would strengthen or resolve this:** a future wave where a worker's recompute runs while a
+  sibling's claim on a ready issue exists only in that sibling's own in-progress state (not yet a
+  branch, commit, or comment visible to GitHub/git) — that would be the first real test of whether this
+  remains adequately handled by public-state derivation or needs actual cross-worker knowledge.
 
 ### Architectural/convention drift
 
@@ -333,11 +390,11 @@ mutation is ordinary worker discipline, evidenced correctly both times it matter
   *different* existing precedent — `carriers.branches.*`). Both choices are individually defensible
   against real prior conventions in the codebase; the three parallel workers picked two different,
   mutually inconsistent ones because none could see the others' route placement while implementing
-  (`evidence-2.md`, "Convergence," second unexpected finding). #343's own closing comment flagged this
+  (`smoke-test-2.md`, "Convergence," second unexpected finding). #343's own closing comment flagged this
   as worth checking once all three landed; verified directly against the final merged state, they did
   not end up consistent, and no worker or human decision in the run performed that follow-up check.
 - **ST1 evidence:** none directly comparable — #354/#355 touched genuinely separate page types with no
-  shared convention decision point of this kind exposed in `evidence.md`.
+  shared convention decision point of this kind exposed in `smoke-test-1.md`.
 - **Evidence strength: OBSERVED ONCE.**
 - **Classification, per the audit's own caution against forcing ownership:** this is most precisely an
   **inherent parallelism risk specific to convention decisions with no established single precedent
@@ -354,7 +411,7 @@ Kept as its own section per the required structure, consolidating what "Human-fa
 presentation" above established at the level of one worker's report, plus the parent's own summaries:
 
 - `review-it` produced real, specific substance for two of three ST2 workers (quoted directly in
-  `evidence-2.md`, "Review and human approval"). That substance mostly survived the parent's relay in
+  `smoke-test-2.md`, "Review and human approval"). That substance mostly survived the parent's relay in
   compressed form, but both the worker reports and the parent's own summaries to the human carried
   internal methodology vocabulary ("Gate 1," "Gate 2," rule-file names) that adds no engineering
   information for a human deciding whether to approve.
@@ -379,11 +436,14 @@ narrow if a cross-worker responsibility is extracted, without proposing that ext
   extension of "this issue just closed." New evidence from ST2: three workers independently ran the
   same recompute and got the identical answer, including a sibling-awareness nuance (#341's active
   branch) that happened to be derivable from public state rather than requiring genuine cross-worker
-  knowledge. **This is not evidence the responsibility is too broad** — it is evidence the current
-  scope (per-worker, GitHub-state-driven) already handles the multi-worker case correctly by accident
-  of using only public state. Watch, don't narrow: if a future scenario required a worker to know a
-  sibling's *private* in-progress state (not yet on GitHub) to recommend correctly, that would be new
-  evidence: none exists yet.
+  knowledge. **This is not yet evidence the responsibility must move out of `implement-it`** — the
+  current scope (per-worker, GitHub-state-driven) handled the multi-worker case correctly this time,
+  by using only public state. But per the corrected "Next-work recommendation / ready-work selection"
+  entry above, that correctness was contingent on the sibling's claim already being publicly visible —
+  it is not a guarantee the rule enforces. Watch, don't narrow: keep current behavior, but treat this
+  as a live cross-worker extraction WATCH item rather than a closed question. A future scenario where a
+  worker needs a sibling's *private* in-progress state (not yet on GitHub) to recommend correctly would
+  be the evidence that resolves it one way or the other; none exists yet.
 - **Sequencing/readiness behavior that spans multiple issues.** Current owner: `implement-it/rules/
   sequencing.md`, including its new "Parallel workers" section. Why it made sense historically:
   written for one worker deciding its own branch. New evidence: the "Parallel workers" addition
@@ -425,11 +485,12 @@ decision — that has not happened in either smoke test.
 | Convergence execution | Worker, resumed, in its own worktree | ST2 all 3; ST1 was parent-performed instead | No, once policy+current-tip are supplied | — | Medium (one run) | KEEP, watch for recurrence |
 | Convergence sequencing/serialization | Parent-session reasoning | ST2 only; not applicable in ST1's single-actor shape | Yes | Unresolved | Medium (one run, no conflict tested) | WATCH |
 | Shared-branch state validation before mutation | Worker (fetch fresh, verify, trailer-check) | ST2 all 3 | No | — | High | KEEP |
-| Combined (multi-worker) verification | **Unowned** | ST1 gap; ST2 gap in a subtler shape — recurs across both runs | Yes | Unresolved — possibly a `ship-it` addition, possibly cross-worker | Low | NEEDS DECISION |
-| Full-suite/skip decision, per issue | `implement-it/verification.md` | ST1 + ST2, though ordering vs. `review-it` deviated 2/3 times in ST2 | No | — | High (rule is sufficient); ordering visibility is the actual gap | CLARIFY (see Skill findings) |
+| Combined (multi-worker) verification | Policy now decided (required full-suite run once, before implementation-review); mechanism unowned | ST1 gap; ST2 gap in a subtler shape — recurs across both runs; post-ST2 research decision recorded above | Yes | Unresolved — see `combined-candidate.md` | Low (policy: High; mechanism: Low) | NEEDS DECISION (mechanism only) |
+| Full-suite/skip decision, per issue (serial worker) | `implement-it/verification.md` | ST1 + ST2, though ordering vs. `review-it` deviated 2/3 times in ST2 | No | — | High (rule is sufficient); ordering visibility is the actual gap | CLARIFY (see Skill findings) |
+| Full-suite decision, per parallel worker | Removed by research decision — no longer a per-worker choice | Post-ST2 decision (above); not yet exercised in a smoke test | No | — | Medium (decided, unvalidated) | NEEDS VALIDATION in Smoke Test 3 |
 | Push readiness | `implement-it/push-readiness.md` | ST2 all 3, unmodified; ST1 bypassed entirely | No | — | High | KEEP |
 | Issue closure + validation | `implement-it/issue-closure.md` | ST2 all 3, independently re-verified; ST1 bypassed | No | — | High | KEEP |
-| Next-work recommendation | `implement-it/sequencing.md` | ST2 all 3, converged on identical answer | No (uses only public state) | — | High | KEEP |
+| Next-work recommendation / ready-work selection | `implement-it/sequencing.md` (behavior unchanged) | ST2 all 3, converged on identical answer, using only public state | Contingently — correct this run only because a sibling's claim was already public | Unresolved | Medium | KEEP behavior; WATCH as cross-worker candidate |
 | Architectural/convention consistency across parallel workers | **Unowned** | ST2 once — real, confirmed drift | Yes, to detect; unclear to prevent without serializing | Unresolved | Low | WATCH |
 | Overall human-facing lifecycle presentation | Parent session (today) | ST2 | Not inherently | Possible future orchestrator, unresolved | Low-Medium | WATCH |
 
@@ -500,12 +561,21 @@ different skill-correction states. Every other cross-worker candidate (decision 
 sequencing, architectural drift) has exactly one wave's worth of evidence — real, but not yet
 recurrence in the sense this bar requires. None of the four currently clear the bar for "extract now";
 "combined verification" is the closest, and even it is closer to "needs an explicit decision somewhere
-in the existing lifecycle" than to "needs a new artifact" on the evidence gathered so far.
+in the existing lifecycle" than to "needs a new artifact" on the evidence gathered so far. The *policy*
+half of that decision has now been made (see "Combined verification"'s research decision, above); the
+remaining open question is narrower and purely mechanical — how to construct the combined candidate
+state before commit, investigated separately in `combined-candidate.md` — and still does not clear this
+bar for "extract into an orchestrator," since the mechanism may turn out to be ordinary Git/parent
+reasoning rather than a new cross-worker artifact.
 
 ## What remains unresolved
 
-- **Combined verification's actual owner.** Established as the strongest repeated gap; not resolved as
-  to whether the fix is a `ship-it` addition, a new explicit parent-session step, or something else.
+- **Combined verification's mechanism.** The policy (required full-suite pass against the assembled
+  combined candidate, before implementation-review) is now decided; the mechanism for safely
+  constructing that pre-commit combined candidate state without violating the existing approval
+  invariant is not — investigated in `combined-candidate.md`, unvalidated by any smoke test yet.
+- **Combined verification's owner, once a mechanism exists.** Not resolved as to whether running the
+  mechanism is a `ship-it` addition, a new explicit parent-session step, or something else.
 - **Whether decision routing and convergence sequencing recur identically in a third wave**, especially
   one with a higher worker count, a genuine file overlap/merge conflict, or a human answer arriving
   while a worker is still mid-execution rather than already paused — none of these conditions has been
@@ -549,7 +619,7 @@ Kept conservative per the audit's own instruction, especially regarding `review-
   ask as step 4 but does not itself restate that `review-it` must wait for it — a worker following the
   individual rule files it was told to load (`verification.md`, `review-gates.md`) rather than
   `SKILL.md`'s own summary sentence could plausibly miss the ordering constraint. Two of three
-  independent ST2 workers deviated in exactly this way. **This narrows `evidence-2.md`'s own
+  independent ST2 workers deviated in exactly this way. **This narrows `smoke-test-2.md`'s own
   "unresolved, not attributed" finding**: the rule exists and is unambiguous at the `SKILL.md` level,
   but is not restated where a worker actually executes the procedure. A conservative fix, if any is
   made, would restate the ordering inside `verification.md`'s own procedure or `review-gates.md`'s
@@ -561,7 +631,7 @@ Kept conservative per the audit's own instruction, especially regarding `review-
 **Execution mistake / rule not followed:**
 - No instance in ST2 where a worker violated an unambiguous rule outside the ordering deviation above.
   ST1's failures (`review-it` skipped, both gates bypassed, push/closure bypassed) are independently
-  attributed in `evidence.md`/`vision.md` to a contradictory delegation prompt, not to worker error
+  attributed in `smoke-test-1.md`/`vision.md` to a contradictory delegation prompt, not to worker error
   against a clear rule.
 
 **Cross-worker responsibility — do not put into a worker skill yet:**
@@ -583,11 +653,15 @@ Answering the audit's six framing questions directly:
    `review-it` requirement) is in `SKILL.md`/`verification.md`, not in the two-file patch itself,
    and is offered as evidence, not a mandated fix.
 2. **Is parallel implementation ready for documentation/publication?** Not yet, on this document's own
-   evidence standard — the combined-verification gap has now recurred across both runs unresolved, and
-   publishing before deciding it would document a known, repeated hole as if it were settled.
-3. **Does combined verification need a methodology decision before publication?** Yes — this is the
-   single clearest evidence-backed recommendation in this document. It is the only cross-worker
-   candidate that clears "recurs across ST1 and ST2" on this analysis's own extraction bar.
+   evidence standard — the combined-verification *mechanism* (constructing a pre-commit combined
+   candidate state) remains unresolved (`combined-candidate.md`), and publishing before validating it
+   in a smoke test would document an untested mechanism as if it were proven.
+3. **Does combined verification need a methodology decision before publication?** Yes, and the policy
+   half of that decision has now been recorded (see "Combined verification," above): per-worker
+   verification excludes a per-worker full-suite choice; combined verification is a required, not
+   run/skip, full-suite pass against the assembled candidate, before the implementation-review
+   checkpoint. What remains is validating the mechanism that assembles that candidate without violating
+   the existing approval invariant — see `combined-candidate.md` and point 4 below.
 4. **Is another smoke test needed?** Yes, and it should deliberately exercise what both prior runs
    could not by construction: a real file overlap or merge conflict during convergence, a worker
    interruption mid-gate (not merely pre-gate workspace preservation), a worker count beyond three, and
@@ -600,5 +674,6 @@ Answering the audit's six framing questions directly:
    artifact-form decision.
 6. **Which responsibilities should remain WATCH items instead of decisions?** Concurrent-safe issue
    selection, human-facing decision presentation, decision routing, convergence sequencing, worker
-   recovery mid-gate, and architectural/convention drift — each has real but single-occurrence
-   evidence; none should be decided, extracted, or codified from this evidence alone.
+   recovery mid-gate, next-work recommendation / ready-work selection, and architectural/convention
+   drift — each has real but single-occurrence (or contingently-correct) evidence; none should be
+   decided, extracted, or codified from this evidence alone.

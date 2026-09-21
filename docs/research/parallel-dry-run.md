@@ -5,7 +5,7 @@ Phase 26 — Policies HTTP & Frontend milestone. No useOrbit code, issues, or br
 produce this document, and no installed skill file was modified — every change below is a proposal
 only.
 
-This document treats `vision.md`, `evidence.md`, and `orchestration.md` as the current, not-yet-accepted
+This document treats `vision.md`, `smoke-test-1.md`, and `orchestration.md` as the current, not-yet-accepted
 investigation state, and treats the skills installed in useOrbit's `.agents/skills/` (`implement-it`,
 `review-it`, `ship-it`, `plan-it`) as the actual methodology being exercised — not the canonical
 GitHub copies.
@@ -83,7 +83,7 @@ governs them — those are what this smoke test is actually for.
    branch cut from the milestone branch (`feat/policies-http-frontend`) — the one structural carve-out
    proposed below, in `sequencing.md`. The delegation prompt for each worker instructs it to run
    `implement-it` to completion **including both approval stops** — it does not tell the worker to
-   stop once committed. This is the actual fix for `evidence.md`'s root cause; it is a change to how
+   stop once committed. This is the actual fix for `smoke-test-1.md`'s root cause; it is a change to how
    the wave is launched, not to any skill file (see "Existing rules already sufficient").
 2. **Implementation** — Each worker, running `implement-it`, with `companion-activation.md`'s
    checkpoint completed first (`inertia-vue-development`, `laravel-inertia-stack`,
@@ -186,13 +186,13 @@ After three review passes, exactly one real behavioral gap survives, plus one te
    issue") has no provision for more than one worker implementing different issues in the same
    milestone at once. Git cannot check the same branch out in two worktrees simultaneously, so this
    rule, taken literally, makes concurrent workers in one milestone impossible without parent
-   improvisation — which is exactly what happened in ST1 (`evidence.md`, "Parent-session branch
+   improvisation — which is exactly what happened in ST1 (`smoke-test-1.md`, "Parent-session branch
    behavior"). This is the one gap that actually blocks Smoke Test 2 from being runnable at all under
    the current text, and the only behavioral change proposed below.
 2. **Terminology risk, not a behavior gap**: `implement-it/rules/worktree-preservation.md`,
    `rules/verification.md`, and `review-it`'s rules all use "worktree" to mean the single active
    checkout's working tree/index (uncommitted content, `git status --porcelain`). The parallel-worker
-   design in `vision.md`/`evidence.md` uses "worktree" for Claude Code's isolated `git worktree`
+   design in `vision.md`/`smoke-test-1.md` uses "worktree" for Claude Code's isolated `git worktree`
    checkouts. Both senses now live in the same skill family the moment (1) lands. This was flagged in
    the prior audit referenced by the brief; it remains unresolved in the installed files.
 
@@ -245,7 +245,7 @@ No change proposed for these, with the evidence for why:
   tasks and validating the checked-task count against GitHub post-mutation
   (`## Closure procedure` step 1, `## Validation`). #354 and #355 closing with every checkbox still
   unmarked is direct evidence this *existing* rule was bypassed by the parent acting outside
-  `implement-it`/`ship-it` entirely (`evidence.md`, "Parent-session post-worker behavior" — "The parent
+  `implement-it`/`ship-it` entirely (`smoke-test-1.md`, "Parent-session post-worker behavior" — "The parent
   did not invoke `ship-it` or the relevant `implement-it` push/issue-closure procedures"), not evidence
   the rule is missing anything.
 - **`ship-it/rules/milestone-pr-readiness.md`**. Already re-queries GitHub state fresh rather than
@@ -263,7 +263,7 @@ Two files.
 
 - **Current behavior**: "All issues in that milestone share one working branch — implementation does
   not get a fresh branch per issue," with no exception.
-- **Evidence**: Git cannot check the same branch out for two concurrent worktrees. `evidence.md`,
+- **Evidence**: Git cannot check the same branch out for two concurrent worktrees. `smoke-test-1.md`,
   "Parent-session branch behavior," shows the parent improvising a topic-branch-then-merge pattern
   specifically because this rule, taken literally, made real parallel worktrees impossible.
 - **Smallest change**: state that a human-authorized concurrent wave uses a temporary issue branch per
@@ -281,7 +281,7 @@ Two files.
 - **Current behavior**: "worktree" means the single active checkout's working tree/index throughout
   this file (and `rules/verification.md`, and `review-it`'s rules).
 - **Evidence**: the brief's own flagged prior audit finding, confirmed by grep — every existing use of
-  "worktree" across `implement-it`/`review-it` means the single-checkout sense; `vision.md`/`evidence.md`
+  "worktree" across `implement-it`/`review-it` means the single-checkout sense; `vision.md`/`smoke-test-1.md`
   use "worktree" for Claude Code's isolated `git worktree` checkouts. Both meanings now coexist in the
   same skill family once change 1 lands.
 - **Smallest change**: one clarifying sentence at the top of this file naming both senses explicitly.
@@ -496,7 +496,7 @@ to completion, including both approval stops, and does not tell any worker to st
 Treat everything in "Unknowns" as data to collect, not behavior to assume — in particular, do not have
 the parent session privately decide a convergence or combined-verification procedure and then report it
 as if a rule required it; report what actually happened, including any improvisation, the same way
-`evidence.md` reported Smoke Test 1's. Update `evidence.md` (and `vision.md`/`orchestration.md` where
+`smoke-test-1.md` reported Smoke Test 1's. Update `smoke-test-1.md` (and `vision.md`/`orchestration.md` where
 warranted) with what's actually observed before considering any further methodology change, including
 anything resembling extraction toward an orchestrator — a second wave is a second data point, not yet
 grounds for a rule.

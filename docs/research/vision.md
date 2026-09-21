@@ -134,37 +134,44 @@ Each worker should run:
 - required targeted verification; and
 - the narrowest meaningful broader regression scope for its change.
 
-Then it invokes `review-it` and reaches Review implementation with that evidence.
+Then it invokes `review-it` and reaches Review implementation with that evidence. A parallel worker does not make its own full-project-suite run/skip choice — that choice belongs to combined verification, below, not to the individual worker.
 
-After approved worker commits converge onto the shared working branch, verify the combined state there. The human-facing combined-verification decision should summarize the evidence already produced by the workers before asking whether to run the full project suite.
-
-Conceptually:
+**Updated after Smoke Test 2** (see `smoke-test-2.md`, `responsibility-boundaries.md`'s "Combined verification"): both smoke tests showed the same gap — the final combined branch state was never verified with one explicit, deliberate decision. The corrected sequencing is combined verification *before* the implementation-review checkpoint, not after commits are already approved and converged:
 
 ```text
 Worker A
 targeted + broader verification
 review-it
-approved commit
+"ready" — still uncommitted
         \
          \
-          combined working branch
+          combined candidate state (uncommitted)
          /
         /
 Worker B
 targeted + broader verification
 review-it
-approved commit
+"ready" — still uncommitted
           │
           ▼
-combined verification decision
+full project suite — once, required (not a skip choice)
           │
-          ├── run full suite
-          └── skip, when the existing lifecycle permits it
+          ▼
+implementation-review checkpoint
+(each worker's review-it summary + verification evidence + combined result)
+          │
+          ▼
+human manual review + explicit approval, per worker
+          │
+          ▼
+Commit plan(s) → human approval → durable commits
 ```
+
+This is a required full-suite run for the parallel wave, not a run/skip decision — unlike the existing per-issue full-suite choice `verification.md` already defines for one worker running alone, which this does not change.
 
 The exact commands and test scopes remain stack/project-specific. useOrbit's Pest counts and filters are evidence, not portable methodology.
 
-Where combined verification ultimately belongs in the existing lifecycle remains under investigation. Do not assign it to a new orchestrator merely because the first experiment exposed the gap.
+**What this does not yet solve.** Constructing that combined candidate state safely — from several isolated workers' still-uncommitted changes, without creating a durable commit before Review implementation and Commit plan approval — is an open mechanism question, not a solved one. Neither smoke test's convergence behavior answers it: both only ever converged *after* commits already existed and were already approved. See `combined-candidate.md` for the mechanism investigation. Where the resulting step ultimately belongs in the existing lifecycle (a `ship-it` addition, an explicit parent-session step, something else) also remains under investigation. Do not assign either the mechanism or its ownership to a new orchestrator merely because two experiments exposed the gap.
 
 ## Branch and worktree direction
 

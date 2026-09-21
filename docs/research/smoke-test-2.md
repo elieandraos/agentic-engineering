@@ -34,8 +34,8 @@ reaching `push-readiness.md`'s branch-identification step, stop again — explic
 to guess an answer.
 
 This is a direct, evidence-supported difference from Smoke Test 1's delegation, where (per
-`evidence.md`) workers were told to "stop once its branch was committed and tests passed" —  a
-launch-time instruction identified there as `evidence.md`'s root-cause explanation for ST1's gate
+`smoke-test-1.md`) workers were told to "stop once its branch was committed and tests passed" —  a
+launch-time instruction identified there as `smoke-test-1.md`'s root-cause explanation for ST1's gate
 bypass. ST2's delegation did not contain that instruction.
 
 Resulting agent identities (used throughout as evidence anchors):
@@ -331,7 +331,7 @@ the important axis — see "Verification" below for the full comparison):
 | #342 | Yes, but *before* the full-suite question was resolved | Clean (one non-blocking maintainability note) | Yes — result stated in the same Gate‑1 message | Yes — separate, later, explicit "Approve #342 with a 30-day window" | No |
 | #343 | Yes, but *before* the full-suite question was resolved | Clean (two non-blocking scope notes) | Yes — result stated in the same Gate‑1 message | Yes — separate, explicit "approve #343's commit plan" after Gate 1 was separately approved | No |
 
-**Direct comparison against Smoke Test 1's failure mode** (`evidence.md`, "Human gates were bypassed"):
+**Direct comparison against Smoke Test 1's failure mode** (`smoke-test-1.md`, "Human gates were bypassed"):
 in ST1, neither worker surfaced Review implementation or requested approval at all — both proceeded
 straight from implementation/verification to committing, and Travel skipped `review-it` entirely. In
 ST2, all three workers (a) ran `review-it`, (b) included its result in a report presented to the human,
@@ -442,7 +442,7 @@ without prompting from the parent to look for it.
 resumed (via `SendMessage` to its existing agent ID — `a45052861002f76d7`, `af568be37d36d15ee`,
 `ab013dbcd10f9fc5e`) and performed its own push and merge itself, inside its own existing worktree. No
 fresh agent was created for convergence, and the parent session did not perform any merge or push
-directly. This is a direct, load-bearing difference from Smoke Test 1, where `evidence.md`'s "Parent-
+directly. This is a direct, load-bearing difference from Smoke Test 1, where `smoke-test-1.md`'s "Parent-
 session branch behavior" and "Parent-session post-worker behavior" sections record the **parent**
 inspecting worker branches and running `git merge --no-ff` itself.
 
@@ -572,7 +572,7 @@ body,comments`:
 | #342 | Yes, same pattern | Yes, same pattern | Yes | Yes — 5/5 checked (confirmed) | Yes — confirmed, names 3 SHAs + the renewal-window note | Yes — independently re-confirmed | Yes |
 | #343 | Yes, same pattern | Yes, same pattern | Yes | Yes — 4/4 checked (confirmed; this issue has 4 tasks, not 5) | Yes — confirmed, names 4 SHAs + both `review-it` scope notes | Yes — independently re-confirmed | Yes |
 
-**Direct comparison against Smoke Test 1's specific failure** (`evidence.md`: "the issue task checkboxes
+**Direct comparison against Smoke Test 1's specific failure** (`smoke-test-1.md`: "the issue task checkboxes
 remained unchecked even though the issues were closed"): in ST2, all three issues closed with every
 completed task checkbox actually checked, and this audit independently re-verified that against live
 GitHub state rather than trusting any worker's or the parent's self-report. This is a direct, confirmed

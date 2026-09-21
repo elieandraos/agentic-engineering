@@ -61,13 +61,28 @@ This may become parallel-aware `implement-it`/lifecycle policy rather than orche
 
 ### Combined-state verification
 
-Observed as a gap.
+Observed as a gap, and confirmed recurring: Smoke Test 2 produced the same gap independently, under a
+corrected parallel-aware `sequencing.md` (`smoke-test-2.md`; `responsibility-boundaries.md`'s "Combined
+verification"). This is now the strongest recurrence evidence of any candidate on this watchlist — the
+same gap, twice, under two different skill-correction states.
 
-Each worker verified its own branch, but the parent did not re-verify the final branch after both results converged.
+Each worker verified its own branch, but neither run re-verified the final combined state with one
+explicit decision before implementation-review.
 
 Verification of the union inherently requires knowledge beyond either worker's isolated change.
 
-This may naturally belong to existing milestone/Ship progression rather than an orchestrator. Do not assign ownership prematurely.
+**Policy now decided, mechanism still open.** After Smoke Test 2, the research position changed: a
+parallel worker no longer gets its own full-suite run/skip choice at all (targeted + narrowest broader
+regression + `review-it` is sufficient per worker); the full suite instead runs once, required, against
+one assembled combined candidate state, before the implementation-review checkpoint — see `vision.md`'s
+updated "Verification model" and `responsibility-boundaries.md`. This is a policy decision, not yet a
+skill change and not yet validated by any smoke test. The genuinely unresolved part is narrower than
+"who owns combined verification": it is *how* to assemble that combined candidate from several still-
+uncommitted, isolated workers without creating a durable commit ahead of the existing Review
+implementation/Commit plan approvals — investigated in `combined-candidate.md`. This may still naturally
+belong to existing milestone/Ship progression, to a new explicit parent-session step, or to something
+else; do not assign ownership prematurely, and do not treat the mechanism as solved by either smoke
+test's convergence behavior, which only ever ran after commits already existed and were approved.
 
 ### Cross-worker lifecycle judgment
 
@@ -101,7 +116,7 @@ The next smoke test should exercise it deliberately.
 
 ### Human-facing decision presentation
 
-Now has direct supporting evidence, from Smoke Test 2 (`evidence-2.md`), distinct from "Human decision
+Now has direct supporting evidence, from Smoke Test 2 (`smoke-test-2.md`), distinct from "Human decision
 routing" above: routing is about getting the right answer back to the right worker; this is about how
 the evidence a skill already produced gets *worded* for the human in between.
 
