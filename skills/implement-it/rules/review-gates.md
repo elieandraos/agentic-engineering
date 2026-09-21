@@ -41,6 +41,13 @@ pass does not grant authorization by itself; it is evidence this report cites, a
 implementation's approval mechanics — the report below, then explicit human approval — stay exactly
 as they were.
 
+A worker in a human-authorized concurrent wave (`rules/sequencing.md`'s "Parallel workers in a
+delivery/phase milestone") may complete the bullets above and `review-it`, but this stop is not reached
+yet: report the implementation as ready for combined verification and hold, rather than presenting
+Review implementation, until successful full-suite evidence covering this worker's candidate
+implementation — from the wave's combined candidate state — is available. Once that evidence exists,
+cite it below in place of a per-worker full-suite result.
+
 Report concisely:
 
 - `Activated skills:` — the activation checkpoint's result (`rules/companion-activation.md`), restated
