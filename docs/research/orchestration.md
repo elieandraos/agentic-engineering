@@ -99,6 +99,31 @@ This is one of the most orchestrator-shaped hypotheses, but currently has zero d
 
 The next smoke test should exercise it deliberately.
 
+### Human-facing decision presentation
+
+Now has direct supporting evidence, from Smoke Test 2 (`evidence-2.md`), distinct from "Human decision
+routing" above: routing is about getting the right answer back to the right worker; this is about how
+the evidence a skill already produced gets *worded* for the human in between.
+
+In that run, `review-it` produced substantive, specific findings for two of the three workers (a
+`policiesCount`-derivation and route-placement scope note; a renewal-window judgment call), and both the
+worker's own report and the parent's relay of it wrapped that substance in internal methodology
+vocabulary — "Gate 1," "Gate 2," rule-file names — rather than plain statements of what was checked and
+what decision was needed. The substance itself mostly survived the compression in this run; the
+vocabulary and compactness did not match what a human operating the workflow actually needs.
+
+This shows a coordinating parent does receive skill-owned results and must decide how to surface them —
+which is plausibly, eventually, an orchestrator-shaped responsibility. It is not extracted now: a single
+run's presentation gap is not repeated evidence, and this watchlist's own bar (below) requires seeing a
+responsibility recur before treating it as a real candidate. It is also not a reason to move review
+semantics or findings out of `review-it` — `review-it` continues to own *what* the review found; this
+watch item is only about *how* an already-correct result gets presented, and that boundary should stay
+sharp as more evidence accumulates.
+
+The next smoke test should observe whether this recurs, and whether it recurs identically for a
+single-worker (non-parallel) `implement-it` run — nothing about the underlying gap is inherently
+parallel-specific; parallel execution only made the parent/presentation boundary easier to see.
+
 ### Gate-specific worker resumption
 
 Not observed.

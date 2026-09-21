@@ -345,13 +345,36 @@ implementation," "Commit plan," rule-file names (`review-gates.md`, `push-readin
 mechanics ("per `commit-boundaries.md`'s mechanical post-commit verification"). This matches the user's
 own observation in this run's audit request. The parent's own relayed summaries to the human (e.g. "#343
 reached Gate 1," "approve Gate 1 for #343 and 341") **also carried this vocabulary forward** rather than
-translating it — this is a finding about the parent's own presentation, not only the workers'. The
-preferred phrasing the human described — "Implementation review is ready. review-it found no issues.
-Relevant verification passed. Please manually verify the implementation and approve when you're happy to
-proceed to the commit plan." — was not what was actually shown in this run, at either the worker or
-parent level. Classified as a UX/presentation finding only, per the audit's own instruction, not a skill
-defect: `review-gates.md` itself already permits internal identifiers only "when precise rule references
-need them," and does not mandate exposing them in the human-facing report.
+translating it — this is a finding about the parent's own presentation, not only the workers'.
+
+**The substance that existed vs. what the human actually saw, quoted directly.** `review-it` itself
+produced substantive, specific engineering evidence for #342 and #343 — not a bare "clean." #343's own
+report gave two named scope notes: "`CarrierPoliciesController::index()` also returns a real
+`policiesCount`... necessary because `CarrierDetailShell` is reused on the new page and requires that
+prop" and "The `carriers.policies.index` route's placement... is a convention choice made from the
+closest existing precedent (`carriers.branches.*`), since sibling issues #341/#342 aren't merged yet."
+#342's report flagged, in its own words, that the 30-day renewal window and 5-item cap were "my own
+judgment call — no existing product decision or codebase precedent set either number." The parent's
+relay to the human preserved a compressed version of this substance ("review-it clean with two scope
+notes (both reasonable: policiesCount derivation, and route placement chosen from `carriers.branches.*`
+precedent...)" for #343; "one non-blocking maintainability note: per-class route map now duplicated in a
+third place" for #342) — so in this run the *content* mostly survived the relay, but wrapped in
+gate/rule vocabulary ("#343 reached Gate 1") the human does not need to operate the workflow, and #341's
+relay ("review-it clean, 343 tests passing") dropped down to the bare-clean phrasing precisely because
+#341's own `review-it` pass genuinely had no scope notes to lose — so the risk of over-compression is
+real but was not fully realized against #341 only because there was nothing substantive there to
+compress in the first place. The preferred phrasing the human described — "Implementation review is
+ready. review-it found no issues. Relevant verification passed. Please manually verify the implementation
+and approve when you're happy to proceed to the commit plan." — was not what was actually shown in this
+run, at either the worker or parent level, for any of the three issues.
+
+**Classification.** This is a presentation finding, not a correctness finding and not automatically a
+skill defect: lifecycle mechanics were correct for all three workers (both gates held, `review-it` ran
+and its result reached the human every time, worker-specific resume worked, nothing committed before its
+approval) — the only thing wrong was the vocabulary and compactness of how that already-correct result
+was surfaced. `review-gates.md` itself already permits internal identifiers only "when precise rule
+references need them," and does not mandate exposing them in the human-facing report, so this is a
+parent-presentation gap, not evidence that `review-gates.md`'s own text needs to change.
 
 ## Verification
 
@@ -728,7 +751,13 @@ Consolidated from above, kept separate per the required document structure:
 1. Worker reports consistently used internal identifiers (Gate 1/Gate 2, rule filenames like
    `review-gates.md`/`push-readiness.md`, mechanism names like "mechanical trailer re-check") in the
    text actually shown to the human, rather than plain statements of what was checked and what decision
-   is needed.
+   is needed. `review-it` itself produced substantive, specific findings for #342 and #343 (the
+   `policiesCount`-derivation and route-placement scope notes; the renewal-window judgment call) — that
+   substance mostly survived into the parent's relay in compressed form, but wrapped in gate/rule
+   vocabulary the human does not need. Lifecycle correctness was unaffected in every case (both gates
+   held, nothing committed early); this is a presentation gap, not a correctness defect and not
+   automatically evidence that `review-gates.md` needs to change — see "Review and human approval" for
+   the full quoted comparison.
 2. The parent's own relayed summaries to the human carried this vocabulary forward rather than
    translating it (e.g., "reached Gate 1," "approve Gate 1 for #343 and 341").
 3. When a human answer only partially matched what a worker had actually asked (the two cases in

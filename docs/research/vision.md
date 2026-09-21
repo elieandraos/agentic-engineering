@@ -190,6 +190,23 @@ Push, issue closure, milestone progression, PR readiness, and release should con
 
 The parallel experiment exposed places where the parent session bypassed those procedures. That is evidence to preserve and correctly invoke the existing contracts, not evidence for replacing them.
 
+## Human-facing presentation
+
+Skills own engineering semantics and results — what `review-it` found, what verification ran, what a
+commit plan proposes. A coordinating parent (today's session, potentially a future orchestrator) owns
+how those already-correct results are surfaced to the human at each lifecycle checkpoint.
+
+> Human-facing lifecycle checkpoints should preserve the substance of skill results while hiding
+> internal methodology mechanics the human does not need to operate the workflow.
+
+A second real-work run surfaced this distinction directly: lifecycle mechanics were correct, but the
+reports a human actually saw carried internal identifiers (gate numbers, rule-file names) that add no
+engineering information for someone deciding whether to approve. This is a presentation concern, not a
+reason to change what any skill decides or reports internally, and not evidence for a fixed message
+template or UI protocol yet — see `orchestration.md`'s watchlist for the current, evidence-gated status
+of this as a possible future responsibility. The distinction is not inherently parallel-specific; a
+single-worker session hits the same checkpoints and would benefit from the same presentation care.
+
 ## Orchestration extraction hypothesis
 
 A small set of responsibilities remained genuinely cross-worker in the first experiment:
