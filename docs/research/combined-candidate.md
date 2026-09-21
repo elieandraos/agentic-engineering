@@ -279,24 +279,7 @@ Applying the recommended mechanism (#6):
 
 ## Recovery
 
-- **Combined verification fails (suite red).** The integration worktree is untouched worker state plus
-  a disposable overlay; nothing about a red suite damages any worker. The failure needs to be traced to
-  which worker's change is responsible (ordinary debugging against the combined worktree, or by
-  removing one worker's applied patch at a time), and that worker's own implementation, targeted
-  verification, or review-it may need revisiting — but none of that touches the invariant, since nothing
-  has been approved or committed yet for anyone.
-- **The integration worktree is interrupted, lost, or corrupted.** Fully reconstructible, deterministically,
-  from the same worker diffs, because assembling it never consumed or altered the source (true for #1/#6
-  and #5; #2's stash variant has the caveat noted above about needing the SHA still to be resolvable).
-  There is no unique state inside the integration worktree that doesn't already exist, in a more
-  authoritative form, inside the workers' own worktrees.
-- **A worker itself is interrupted while "ready" and awaiting combination.** Outside this document's
-  scope to solve generally — `evidence.md`/`smoke-test-1.md`'s pre-gate worktree/branch preservation
-  already showed Claude Code's native recovery handles an interrupted worker's workspace; nothing about
-  combined verification changes that. What is new and untested is recovery of a worker interrupted
-  specifically *after* it was included in a combined run but *before* its own implementation-review
-  approval — not yet exercised by either smoke test, and worth Smoke Test 3's attention if schedule
-  allows (see below).
+- **Combined verification fails (suite red).** The integration worktree is a verification and diagnosis surface, never an implementation workspace. Do not fix an implementation defect there. Trace the failure to the affected original worker or workers, make the correction in each worker's own workspace, repeat that worker's targeted and broader verification, and re-run `review-it` when the changed surface makes the prior review stale. Then discard/rebuild the temporary combined candidate from the updated worker state and run the full suite again. This preserves each worker as the authoritative implementation source and preserves later semantic commit planning from that worker's own reviewed diff.
 
 ## Portability
 
