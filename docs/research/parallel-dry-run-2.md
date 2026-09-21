@@ -4,6 +4,13 @@ Status: Investigation and dry run. No useOrbit code, issues, or branches were to
 document. No installed skill file was modified — every change below is a proposal only. Smoke Test 3
 itself was not started.
 
+This is the second `parallel-dry-run` document — `parallel-dry-run.md` (no number) prepared Smoke Test
+2; this one, `parallel-dry-run-2.md`, prepares Smoke Test 3. Its filename numbers *this document* in
+that sequence, not the smoke test it targets; do not confuse it with `smoke-test-2.md`, which is Smoke
+Test 2's separate forensic evidence report. This revision also re-reviews and minimizes the proposed
+skill patch first drafted below, per a second, more aggressive pass — see "Proposed minimum skill
+changes" for what changed.
+
 This document treats `vision.md`, `smoke-test-1.md`, `smoke-test-2.md`, `orchestration.md`,
 `responsibility-boundaries.md`, and `combined-candidate.md` as the current, not-yet-accepted
 investigation state — evidence and recorded decisions, not automatically accepted methodology — and
@@ -309,73 +316,139 @@ itself.
 
 ## Proposed minimum skill changes
 
-Two files — the same file family, same conservative posture, as `parallel-dry-run.md`'s own two-file
-patch for ST2.
+Re-reviewed against a stricter question than the first draft used: *is this the minimum portable
+methodology change required to make Smoke Test 3 possible, without moving combined-candidate
+coordination or orchestration into an individual worker skill?* Each hunk from the first draft is
+reclassified KEEP / REDUCE / REMOVE below; nothing here is applied — this remains a proposal only.
 
-### 1. `implement-it/rules/verification.md` — a concurrent worker skips its own full-suite choice
+Two files survive, both REDUCEd from their first-draft wording; nothing new was added.
+
+### 1. `implement-it/rules/verification.md` — REDUCE, then KEEP
 
 - **Current behavior:** step 4 of "Targeted verification before Gate 1" always asks the full-suite
   run/skip question, with no exception; "Gate 1 evidence" always requires that choice's result.
 - **Evidence this is required:** the post-ST2 research decision (`responsibility-boundaries.md`,
   `vision.md`'s updated "Verification model") already removed the per-worker full-suite choice for a
-  concurrent worker; nothing in the installed rule text reflects that removal. Applied literally today,
-  a Smoke-Test-3 worker would ask a question the current research position says should not be asked.
-- **Smallest change:** step 4 gains a one-clause exception routing a concurrent worker (identified by
-  `sequencing.md`'s already-installed "Parallel workers" section) to a new short subsection instead of
-  asking; that subsection states the worker reports "ready for combined verification" and stops, without
-  specifying who assembles the candidate, when, or how — exactly the same restraint
-  `sequencing.md`'s own patch already exercised about convergence. "Gate 1 evidence" gains a matching
-  either/or clause.
-- **Why here, not elsewhere:** this rule already owns exactly this decision point for the serial case;
-  the concurrent case is a carve-out of the same decision point, not a new responsibility.
-- **Portability:** fully portable — states a stop condition and a substitute evidence source, names no
-  runtime.
-- **Serial/single-worker behavior:** entirely unchanged — the exception only applies when
-  `sequencing.md`'s parallel-worker condition already applies, which requires explicit prior human
-  authorization of a concurrent wave.
+  concurrent worker; nothing in the installed rule text reflects that removal. Applied literally, a
+  Smoke Test 3 worker would ask a question the current research position says should not be asked.
+- **Why existing rules are insufficient:** nothing else in `verification.md` carves out the concurrent
+  case; step 4 and "Gate 1 evidence" are both unconditional today.
+- **Why it belongs here:** this rule already owns exactly this decision point for the serial case; the
+  concurrent case is a narrower carve-out of the same decision point, not a new responsibility.
+- **Why it does not encode orchestration:** the surviving wording says only that this worker does not
+  make the full-suite choice, and points to `review-gates.md` for what it needs instead. It says nothing
+  about who assembles the combined candidate, when, or how multiple workers' readiness is judged —
+  those questions are not answered here at all.
+- **Serial/single-worker behavior:** unchanged — conditioned entirely on `sequencing.md`'s existing
+  "Parallel workers" authorization, which already requires explicit prior human sign-off.
+- **What was cut from the first draft (REDUCE):** the first draft's new subsection additionally told the
+  worker to "report the implementation as ready for combined verification and stop... do not proceed to
+  Review implementation yet" and stated that combined verification's result "supplies the regression
+  evidence this worker's own Review implementation report will cite." Both sentences describe the
+  approval-stop itself — timing, reporting, and what unlocks Review implementation — which
+  `review-gates.md`, not this rule, owns. Removed from here entirely and consolidated into the
+  `review-gates.md` hunk below, so the two files each own one thing: this rule owns *that the full-suite
+  choice moved*; `review-gates.md` owns *what a concurrent worker does about the approval stop as a
+  result*.
+- **Final scope, stated as small as the brief asked:** *when explicitly executing as one worker in an
+  authorized concurrent wave, do not perform the normal per-issue full-suite decision, because final
+  regression verification for the wave belongs once to the combined candidate state, not per worker.*
 
-### 2. `implement-it/rules/review-gates.md` — Review implementation waits for combined evidence
+### 2. `implement-it/rules/review-gates.md` — REDUCE, then KEEP
 
 - **Current behavior:** "Review implementation" stops once "the verification appropriate to it has
   been run (`rules/verification.md`)" — a generic reference that, without change 1 above, resolves
-  identically for a serial or concurrent worker.
+  identically for a serial or concurrent worker, and says nothing about waiting for evidence that does
+  not yet exist at the moment `review-it` finishes.
 - **Evidence this is required:** ST2 already demonstrated the exact failure shape this would otherwise
   reproduce: two of three workers built a complete Gate‑1 report *before* a required verification
   decision was actually resolved, because the ordering constraint lived only in `SKILL.md`'s summary
-  sentence and not in the rule text a worker actually executes
-  (`responsibility-boundaries.md`, "Skill findings"). Without an explicit wait-condition here, a
-  concurrent worker could satisfy the letter of "the verification appropriate to it has been run" the
-  moment its own `review-it` pass completes, before the combined-suite result the new research decision
-  requires actually exists — repeating the identical class of ordering deviation on a different pairing
-  of steps.
-- **Smallest change:** one paragraph stating that for a worker in an authorized concurrent wave, this
-  stop is reached only once the wave's combined verification result has been supplied to it, and that
-  until then the worker holds in the state `verification.md`'s new subsection describes.
-- **Why here, not an orchestrator:** this is an entry-condition timing clarification to an approval this
-  rule already owns end-to-end — the approval mechanics, the report shape, and the requirement for
-  explicit human approval are all completely unchanged.
-- **Portability:** fully portable.
-- **Serial/single-worker behavior:** unchanged — the clause is conditioned on the same parallel-worker
-  authorization as change 1.
+  sentence and not in the rule text a worker actually executes (`responsibility-boundaries.md`, "Skill
+  findings"). Without an explicit wait-condition here, a concurrent worker could satisfy the letter of
+  "the verification appropriate to it has been run" the moment `review-it` completes, before combined
+  verification's result exists — reproducing the identical class of deviation on a different pairing of
+  steps.
+- **Why existing rules are insufficient:** the two-approval structure, the report shape, and "no commit
+  before Commit plan" all already hold unconditionally — but none of them currently says a concurrent
+  worker must wait *past* `review-it` for evidence it does not itself produce.
+- **Why it belongs here:** this rule already owns the Review implementation stop condition end to end
+  for the serial case; this is the same stop's entry condition, narrowed for the concurrent case, not a
+  new approval or a new gate.
+- **Why it does not encode orchestration:** the surviving wording states only the *prerequisite* —
+  successful combined full-suite evidence must exist before this worker presents Review implementation —
+  and says nothing about how the combined candidate is constructed, who coordinates it, when siblings
+  are judged ready, how the suite runs, how results route back, or how convergence works. All of that
+  stays exactly as unresolved as `combined-candidate.md`/`responsibility-boundaries.md` already left it.
+- **Serial/single-worker behavior:** unchanged — conditioned on the same `sequencing.md` authorization
+  as change 1; a serial worker's Review implementation stop is untouched.
+- **Human-facing checkpoint preserved, unchanged:** `review-it` still owns producing substantive,
+  specific engineering evidence; the parent/session still owns presenting that evidence (plus the
+  combined-suite result) in plain technical language; the human still manually verifies and explicitly
+  approves. Nothing here adds a fixed message template or restates Gate 1/Gate 2 vocabulary as a
+  requirement — `vision.md`'s existing UX finding and `review-gates.md`'s existing "Gate 1/Gate 2 remain
+  internal... when precise rule references need them" wording are both left exactly as they are.
+- **What was cut from the first draft (REDUCE):** the first draft's paragraph explained "the verification
+  appropriate to it" by paraphrasing `verification.md`'s subsection name back into this file, and told
+  the worker to "hold in the 'ready for combined verification' state that section describes" — an
+  unnecessary round-trip once change 1 above no longer defines that state itself. The final wording below
+  states the prerequisite directly, in this file's own terms, with no cross-file paraphrase.
+- **Final scope, stated as tightly as the brief asked:** *a concurrent worker may complete its focused
+  verification and `review-it`, but must not present Review implementation for human approval until
+  successful combined full-suite evidence covering its candidate implementation is available.*
 
-### Considered and rejected as unnecessary
+### Re-checked: confirmed still unnecessary (REMOVE)
 
-- **A `sequencing.md` addition.** Investigated directly against the desired lifecycle; branch mechanics
-  are untouched by anything in this wave. Not proposed.
-- **A `commit-boundaries.md` clarification about the combined candidate.** Investigated directly; the
-  existing "commit-plan derivation only starts after Review implementation is approved" already makes
-  the sequencing question moot, since the combined candidate is fully assembled and disposed of *before*
-  any worker's Review implementation is even reported. Not proposed.
-- **A `push-readiness.md` or `issue-closure.md` clause.** Both already operate strictly post-commit and
-  are agnostic to pre-commit assembly mechanics, confirmed by direct reading. Not proposed.
-- **Any rule encoding the `git worktree`/`git diff`/`git apply --3way --index` mechanism itself.** This
-  is Category C — native Git capability this document validated experimentally, not methodology. Not
-  proposed, consistent with every prior document's "do not reinvent runtime mechanics" stance.
-- **Any rule assigning ownership of *who* runs the combined-candidate mechanism.** Explicitly left
-  unresolved in `combined-candidate.md`, and this document adds no new evidence resolving it before ST3
-  runs. Not proposed.
+Every file below was investigated directly against the desired ST3 lifecycle a second time, specifically
+looking for anything the stricter minimum-methodology question above would justify. None survives.
+
+- **`sequencing.md`, beyond its already-installed "Parallel workers" section.** That section already
+  states the one structural fact ST3 needs (temporary branch, milestone branch as eventual convergence
+  target, convergence mechanics undefined). Nothing in this document's tighter combined-verification
+  scope touches branch mechanics. REMOVE (no change).
+- **`worktree-preservation.md`, beyond its already-installed vocabulary note.** That note disambiguates
+  "worktree" for a file whose own procedure (qualified stash handling) is unrelated to combined
+  verification. Nothing here interacts with it. REMOVE (no change).
+- **`commit-boundaries.md`.** Its commit-plan derivation already starts only after Review implementation
+  is approved — which, under the final hunks above, now happens strictly *after* combined verification
+  is green. There is no path where combined-candidate assembly could be read as commit permission, with
+  or without a clarifying sentence added here. REMOVE (no change).
+- **`push-readiness.md`.** Operates strictly post-commit, on already-approved, already-committed content;
+  agnostic to how that content's pre-commit state was assembled. REMOVE (no change).
+- **`issue-closure.md`.** Same reasoning as `push-readiness.md` — its "ask first," closing recipe, and
+  validation steps all begin after commits already exist and are reachable. REMOVE (no change).
+- **`ship-it` (`milestone-pr-readiness.md`, `milestone-completion.md`, `release.md`,
+  `ci-failure-correction.md`).** None of these own an automated combined-suite decision today
+  (`responsibility-boundaries.md`'s own direct reading already confirmed this), and this smoke test's
+  combined verification happens mid-milestone, before any of `ship-it`'s own gates are reachable — #345
+  closing is what first empties the milestone, and only then does `ship-it` become relevant at all, via
+  the unchanged recompute hand-off. REMOVE (no change).
+- **`review-it`.** Already worktree/branch/PR-agnostic, already stateless between invocations, already
+  carries its own staleness rule for a material change to what it reviewed. Nothing about combined
+  verification changes what `review-it` is asked to review or how it reports — it still reviews one
+  worker's own worktree, once, exactly as today. REMOVE (no change).
+- **`plan-it`.** Owns issue drafting and review before `implement-it` ever starts; combined verification
+  is an `implement-it`-internal lifecycle question with no effect on issue authoring or planning. REMOVE
+  (no change).
+
+### Combined-candidate mechanism: reconfirmed out of scope for this patch
+
+The experimentally-validated capture/apply/suite-run mechanism (temporary `git worktree`; intent-to-add
+plus `--binary` diff capture for each ready worker; `git apply --3way --index`; run the suite; discard)
+is not encoded into any skill file by this patch, and is not proposed to be. The only methodology
+requirement either surviving hunk depends on is stated once, plainly, and is the actual substance of
+this entire patch:
+
+> The final combined candidate state must receive successful full-project verification before Review
+> implementation can be approved.
+
+*How* that state is assembled, *who* assembles it, and *when* assembly is triggered relative to sibling
+workers' readiness all remain under observation — exactly as `combined-candidate.md` and
+`responsibility-boundaries.md` already left them, and exactly as the brief asked this document to
+preserve.
 
 ## Proposed unified diffs
+
+Final, minimized. Not applied.
 
 ```diff
 --- a/implement-it/rules/verification.md
@@ -388,8 +461,8 @@ patch for ST2.
 -4. Then ask the human whether to run the **full regression suite for this issue** or skip it.
 +4. Then ask the human whether to run the **full regression suite for this issue** or skip it — unless
 +   this is a worker in a human-authorized concurrent wave (`rules/sequencing.md`'s "Parallel workers in
-+   a delivery/phase milestone"), in which case skip this step and see "Concurrent workers in a parallel
-+   wave" below instead.
++   a delivery/phase milestone"), in which case skip this step; see "Concurrent workers in a parallel
++   wave" below.
  
  The targeted check is the required implementation proof. The full suite is a separate regression choice.
  Do not silently decide that a full suite is required merely because the issue is complete.
@@ -400,16 +473,13 @@ patch for ST2.
 +### Concurrent workers in a parallel wave
 +
 +A worker executing as part of a human-authorized concurrent wave does not make the full-suite choice
-+above at all — that choice, and the full-suite run it may trigger, belong once to the wave's combined
-+candidate state, not per worker. Once targeted verification (steps 1–3 above) and `review-it` are
-+complete, report the implementation as ready for combined verification and stop — do not proceed to
-+Review implementation yet, and do not ask the full-suite question. Combined verification's result, once
-+supplied, supplies the regression evidence this worker's own Review implementation report will cite in
-+place of step 4 and "Full-suite choice" above (`rules/review-gates.md`'s "Review implementation — first
-+approval (Gate 1)").
++above. Final regression verification for its candidate implementation belongs to the wave's combined
++candidate state — decided and run once, for the wave, not per worker (`rules/review-gates.md`'s "Review
++implementation — first approval (Gate 1)" states what this worker still needs before presenting that
++approval).
 +
-+This section does not change the full-suite choice for a single worker running alone, and does not
-+specify how, by whom, or when the combined candidate state is assembled or verified — that stays
++This does not change the full-suite choice for a single worker running alone, and does not specify
++how, when, or by whom the combined candidate state is assembled, verified, or evaluated — that stays
 +outside this rule.
 +
  ## Gate 1 evidence
@@ -433,49 +503,45 @@ patch for ST2.
 --- a/implement-it/rules/review-gates.md
 +++ b/implement-it/rules/review-gates.md
 @@
- Stop here once:
- 
- - the approved scope has been implemented — the approved issue, for ordinary implementation work,
-   or the explicitly authorized correction, for a delivery correction (see "Consuming review-it's
-   result," below, for how each supplies `review-it`'s intended scope);
- - the verification appropriate to it has been run (`rules/verification.md`);
- - `review-it`'s pass against the completed implementation is either clean, or its findings have
-   been resolved and re-verified.
- 
-+For a worker in a human-authorized concurrent wave (`rules/sequencing.md`'s "Parallel workers in a
-+delivery/phase milestone"), "the verification appropriate to it" is `rules/verification.md`'s
-+"Concurrent workers in a parallel wave" path, and this stop is reached only once that wave's combined
-+verification result exists and has been supplied to this worker. Until then, hold in the "ready for
-+combined verification" state that section describes rather than reporting Review implementation early.
-+
  Invoke `review-it` standalone against the completed working tree once the first two bullets hold,
  before reporting at this approval stop — see "Consuming review-it's result," below. A `review-it`
  pass does not grant authorization by itself; it is evidence this report cites, and Review
  implementation's approval mechanics — the report below, then explicit human approval — stay exactly
  as they were.
+ 
++A worker in a human-authorized concurrent wave (`rules/sequencing.md`'s "Parallel workers in a
++delivery/phase milestone") may complete the bullets above and `review-it`, but this stop is not reached
++yet: report the implementation as ready for combined verification and hold, rather than presenting
++Review implementation, until successful full-suite evidence covering this worker's candidate
++implementation — from the wave's combined candidate state — is available. Once that evidence exists,
++cite it below in place of a per-worker full-suite result.
++
+ Report concisely:
 ```
 
-### Self-challenge (per the brief's Part 8)
+### What changed from the first draft, explicitly
 
-- **Removed before this draft:** an earlier version of this proposal included a third hunk in
-  `commit-boundaries.md` restating the no-commit invariant for the combined-candidate case. Removed
-  after re-checking `commit-boundaries.md`'s actual installed text directly — the existing "derivation
-  only starts after Review implementation is approved" already makes the restatement redundant; keeping
-  it would have been adding a sentence the rule already implies, which the brief's own challenge step
-  asks to cut.
-- **Removed before this draft:** a clause in `sequencing.md` pointing at the new verification path.
-  Removed because nothing in the desired lifecycle requires a worker to consult `sequencing.md` to learn
-  about combined verification — it learns that from `verification.md`/`review-gates.md` directly, the
-  same two files change 1/2 already touch.
-- **Not added:** any statement about *when* assembly triggers or *who* performs it. Both remain
-  Category E per the classification table; adding either would be exactly the kind of premature
-  ownership assignment `orchestration.md` and `combined-candidate.md` both warn against.
-- **Not added:** anything about the `--3way`/untracked-file/binary corrections this document's mechanism
-  review found. Those are runtime/Git mechanics (Category C), not methodology, and belong to whoever
-  executes the mechanism in ST3 — not to a skill rule.
-- **Confirmed unchanged:** re-reading both diffs against the full `verification.md` and `review-gates.md`
-  text one more time — the full-suite choice for a serial worker, the two-approval structure, the
-  report shapes, and "no commit before Commit plan" are all untouched by either hunk.
+- **Removed** from `verification.md`'s new subsection: the instruction to report "ready for combined
+  verification and stop" and the clause about what that report may later cite — both moved to
+  `review-gates.md`, which actually owns approval-stop timing and reporting. `verification.md` now says
+  only that the full-suite choice moved; it says nothing about the approval stop itself.
+- **Removed** from `review-gates.md`'s addition: the paraphrase of `verification.md`'s subsection name
+  back into this file, and the cross-file pointer to a state `verification.md` no longer defines.
+  Replaced with a direct statement of the prerequisite, in this file's own terms, positioned after the
+  `review-it` paragraph it logically follows rather than before it.
+- **Unchanged in substance:** which two files change (still exactly two), the requirement itself (no
+  per-worker full-suite choice; combined-suite evidence required before Review implementation), and
+  every serial/single-worker code path.
+- **Reconfirmed, not newly decided:** `sequencing.md`, `worktree-preservation.md`,
+  `commit-boundaries.md`, `push-readiness.md`, `issue-closure.md`, `ship-it`, `review-it`, and `plan-it`
+  all still need no change — see "Re-checked: confirmed still unnecessary" above for the per-file reason,
+  not merely a restated conclusion.
+- **Not added, and still deliberately absent:** any statement of who assembles the combined candidate,
+  when assembly triggers, how a conflict is resolved, how results route to a specific worker, or how
+  convergence works. All remain Category D/E per the responsibility classification above.
+- **Not added:** anything about the intent-to-add/`--binary`/`--3way` capture corrections this
+  document's mechanism review found. Those are runtime/Git mechanics (Category C), not methodology, and
+  belong to whoever executes the mechanism in ST3 — not to a skill rule.
 
 ## Runtime/parent responsibilities
 
