@@ -15,7 +15,7 @@
 - **These skills do not assume a language, framework, or project layout.** The consuming project supplies those; each skill supplies the method.
 - **PR approval and merge always stay with a human.** No skill in this pipeline merges its own work.
 - The pipeline is composable, not mandatory end-to-end. Use the skills independently or combine them into the workflow your project needs.
-- **`implement-it` supports authorized parallel implementation of independent, dependency-ready issues in the same milestone.** Each concurrent worker still runs the full single-issue lifecycle — its own branch, focused verification, `review-it`, human approval, and a semantic commit plan. The one difference from working a single issue: the human makes one combined regression run/skip decision for the whole batch of work instead of one per issue, then each approved issue's commits converge back onto the shared branch in turn. Implementing one issue on its own is unchanged.
+- **`implement-it` supports authorized parallel implementation of independent, dependency-ready issues in the same milestone.** Each concurrent worker preserves the normal per-issue engineering and approval lifecycle — its own branch, focused verification, `review-it`, human approval, and a semantic commit plan — while regression verification is coordinated once at the wave level: the human makes one combined regression run/skip decision for the whole batch instead of one per issue, then each approved issue's commits converge back onto the shared branch in turn. Implementing one issue on its own is unchanged.
 
 # Stack companions
 
