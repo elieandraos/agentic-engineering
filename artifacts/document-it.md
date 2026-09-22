@@ -243,9 +243,9 @@ dependency and must work without either. Neither makes this skill tracker- or st
   one snippet per supported language), content preservation through highlighting — the original
   source recoverable from the rendered spans, and the plain-text fallback reached rather than
   aborting the highlighting pass for every later block — is confirmed by executing the shipped script
-  against a minimal DOM stub in Node (`scenarios.md`'s template follow-up records). That confirmation
+  against a minimal DOM stub in Node (`docs/research/scenarios.md`'s template follow-up records). That confirmation
   covers those specific fixtures, not a fuzz corpus or the full breadth of each language's syntax —
-  a case `scenarios.md` itself flags as unexercised (an attribute inside a template-literal string,
+  a case `docs/research/scenarios.md` itself flags as unexercised (an attribute inside a template-literal string,
   or immediately adjacent to a string or comment with no separating whitespace) is not covered by it
   — and it is script-execution verification, not a rendered page or a published Artifact; real-browser
   rendering of the highlighted output remains unexercised by this evidence.
