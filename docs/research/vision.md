@@ -196,10 +196,11 @@ The #354/#355 experiment showed a practical candidate:
 **Settled by the final reconciliation after Smoke Test 3** (`parallel-final-reconciliation.md`):
 convergence mechanics being unresolved is not a reason to delay authorizing or launching a wave — it
 only becomes relevant once durable, approved commits exist. Once that point is reached, converging
-sequentially onto the milestone branch is normal mechanical progression, performed by resuming the
-original worker (not the parent acting in its place), stopping only for a genuine conflict, drift,
-stale approval, or ambiguous target. This is now a small, additive `sequencing.md` clarification, not
-an open design question.
+sequentially onto the milestone branch is normal mechanical progression that never shortens or bypasses
+push-readiness, issue-closure, or their validation, stopping only for a genuine conflict, drift, stale
+approval, or ambiguous target. This is now a small, additive `sequencing.md` clarification. *Which*
+context actually carries convergence out remains deliberately open — a runtime/Control Room question
+(`responsibility-boundaries.md`'s "Convergence execution"), not encoded in the skill.
 
 ## Existing lifecycle ownership remains
 

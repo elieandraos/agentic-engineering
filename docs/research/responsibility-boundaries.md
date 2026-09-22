@@ -272,16 +272,16 @@ of letting the parent infer silently; sequencing/serialization is the one piece 
 cross-worker and was supplied only by the parent's own reasoning in ST2; state validation before
 mutation is ordinary worker discipline, evidenced correctly both times it mattered.
 
-**Settled after Smoke Test 3, for two of these four** (`smoke-test-3.md`, `parallel-final-reconciliation.md`):
+**Settled after Smoke Test 3, for one of these four** (`smoke-test-3.md`, `parallel-final-reconciliation.md`):
 ST3 reverted convergence execution to ST1's parent-performed shape — the parent merged, pushed, and
 closed all three issues directly, bypassing `push-readiness.md`/`issue-closure.md` as procedures rather
-than exposing any defect in either. The final reconciliation settles the *policy* going forward
-regardless of that asymmetric two-against-one evidence: convergence timing is not a launch
-prerequisite (relevant only once durable approved commits exist), and convergence execution is
-worker-performed by decision, not merely by the one run (ST2) that happened to do it that way before
-the policy was explicit. This narrows, but does not resolve, the "convergence performer" entry in the
-matrix and Control Room evidence below — the policy is now decided; a clean run that actually follows
-it, under real parallel conditions, has not yet been observed.
+than exposing any defect in either. The final reconciliation settles convergence *timing* going forward
+(not a launch prerequisite; relevant only once durable approved commits exist) and one invariant that
+holds regardless of who performs it: convergence must never shorten or bypass push-readiness,
+issue-closure, or their validation. It deliberately does not settle *who or what performs* convergence
+execution — that stays the open "convergence performer" entry in the matrix and Control Room evidence
+below, exactly as before, with the same asymmetric two-against-one (ST1/ST3 parent-performed vs. ST2
+worker-performed) evidence still unresolved.
 
 ### Combined verification
 
@@ -498,7 +498,7 @@ decision — that has not happened in either smoke test.
 | Interrupted-worker recovery | Native runtime (workspace/branch preservation) + `review-gates.md`'s approval-validity check | ST1 once, pre-gate only; not exercised mid-gate in ST2 | Partly | — | Low (mid-gate case untested) | WATCH |
 | Temporary-branch push | Worker, using `push-readiness.md` mechanics | ST2 all 3 | No | — | High | KEEP |
 | Convergence policy decision | Human, explicitly, both times needed | ST1 inferred by parent (no ask); ST2 explicit human decision | Yes (deciding for the whole wave) | Human decision, standing | High (should stay human) | KEEP — always ask |
-| Convergence execution | Worker, resumed, in its own worktree | ST2 all 3; ST1 was parent-performed instead | No, once policy+current-tip are supplied | — | Medium (one run) | KEEP, watch for recurrence |
+| Convergence execution | Undecided: worker in ST2, parent in ST1 and ST3 | ST2 worker-performed (3/3); ST1 and ST3 both parent-performed instead | No, once policy+current-tip are supplied | — | Medium (2-against-1, still asymmetric after ST3) | WATCH — final reconciliation settled timing and the no-bypass invariant, not who performs it |
 | Convergence sequencing/serialization | Parent-session reasoning | ST2 only; not applicable in ST1's single-actor shape | Yes | Unresolved | Medium (one run, no conflict tested) | WATCH |
 | Shared-branch state validation before mutation | Worker (fetch fresh, verify, trailer-check) | ST2 all 3 | No | — | High | KEEP |
 | Combined (multi-worker) verification | Policy now decided (required full-suite run once, before implementation-review); mechanism unowned | ST1 gap; ST2 gap in a subtler shape — recurs across both runs; post-ST2 research decision recorded above | Yes | Unresolved — see `combined-candidate.md` | Low (policy: High; mechanism: Low) | NEEDS DECISION (mechanism only) |

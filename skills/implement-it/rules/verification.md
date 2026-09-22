@@ -102,6 +102,11 @@ candidate state — decided and run once, for the wave, not per worker (`rules/r
 implementation — first approval (Gate 1)" states what this worker still needs before presenting that
 approval).
 
+Like the per-issue choice above, the wave-level decision is itself a human-controlled run-or-skip
+choice — made once for the whole wave, after every participating worker has reached this point, never
+asked separately of each worker. A successful combined run and an explicit wave-level skip both satisfy
+it; neither this rule nor `review-gates.md` requires the combined suite to always be run.
+
 This does not change the full-suite choice for a single worker running alone, and does not specify
 how, when, or by whom the combined candidate state is assembled, verified, or evaluated — that stays
 outside this rule.
@@ -115,8 +120,9 @@ Gate 1 requires:
 - applicable code-quality checks complete;
 - `review-it` clean, or findings fixed and re-reviewed;
 - the human's explicit full-suite choice, including the result if run or an explicit skip — or, for a
-  concurrent worker, the wave's combined verification result in its place (see "Concurrent workers in a
-  parallel wave" above).
+  concurrent worker, the wave's combined-verification decision in its place: a successful combined-suite
+  result if run, or the wave's recorded explicit skip (see "Concurrent workers in a parallel wave"
+  above).
 
 A full-suite result is evidence of regression coverage, not authorization. Gate 1 remains the human's
 approval of the implementation report.

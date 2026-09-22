@@ -65,9 +65,12 @@ with the reconciliation each one drives:
 7. **Sequential convergence is normal mechanical progression** once durable commits exist, stopping
    only for a genuine unsafe/ambiguous condition. **Drives the same `sequencing.md` hunk as #6.**
 8. **Worker lifecycle ownership after convergence** — the parent coordinates, it does not impersonate;
-   convergence/push/closure stay worker-executed procedures. `issue-closure.md` itself needs no
-   change (confirmed below); **the performer fact belongs in the same `sequencing.md` hunk as #6/#7**,
-   since that is the file that already owns "who does what" for a parallel worker's convergence.
+   convergence must never substitute an abbreviated action for push-readiness, issue-closure, or their
+   validation. `issue-closure.md` itself needs no change (confirmed below); **the no-bypass invariant
+   belongs in the same `sequencing.md` hunk as #6/#7**, stated without naming which context performs
+   convergence — that specific mechanism (worker-executed vs. parent-executed) names Claude Code
+   runtime topology, not portable methodology, and stays an open Control Room/runtime question
+   (`responsibility-boundaries.md`'s "Convergence execution").
 9. **Closing comments in parallel execution** — provenance is additive, not a replacement for the
    normal record. Already correctly specified; the repaired #334/#344/#345 records are the evidence
    this already works when the procedure is actually followed. No skill change.
@@ -126,12 +129,13 @@ independently; only then does that worker create its durable commit(s).
         ▼
 Once one or more workers have durable, approved commits that need to reach the shared
 milestone branch, converging them there — sequentially, one at a time — is normal
-mechanical progression, not a fresh permission question each time. Convergence is
-performed by resuming the original worker whose commits are converging, using its own
-unchanged push-readiness and issue-closure procedures — not by the coordinating session
-acting in the worker's place. The human is asked again only if convergence itself surfaces
-a real conflict, unexpected drift in the milestone branch's tip, a stale/invalidated
-approval, or ambiguity about the correct target branch.
+mechanical progression, not a fresh permission question each time. Converging a worker's
+commits does not shorten or bypass any part of that issue's remaining lifecycle:
+push-readiness, issue-closure, and their validation steps still apply exactly as they do
+outside a concurrent wave, regardless of which context carries convergence out — that
+question is left to runtime/Control Room, not decided here. The human is asked again only
+if convergence itself surfaces a real conflict, unexpected drift in the milestone branch's
+tip, a stale/invalidated approval, or ambiguity about the correct target branch.
         │
         ▼
 Push readiness, issue closure (including checked task boxes and a durable closing
@@ -173,11 +177,13 @@ unchanged):
 - **`responsibility-boundaries.md`.** "Combined verification" section's research decision is updated
   to the final wave-level run/skip framing (#3), explicitly marked as superseding the prior
   "mandatory" text. "Convergence policy decision" and "Convergence execution" entries, and the
-  matrix rows for both, are updated to record the final decision (#7/#8: sequential convergence is
-  normal mechanical progression once durable commits exist, performed by the original worker) as the
-  settled position going forward, while preserving the historical fact that ST1 and ST3 both actually
-  used parent-performed convergence and only ST2 used worker-performed convergence — the decision
-  settles what *should* happen next, not what happened in the three runs already recorded elsewhere.
+  matrix rows for both, are updated to record the final decision (#6/#7: convergence is not a
+  pre-launch decision, and sequential convergence is normal mechanical progression once durable
+  commits exist, without shortening push-readiness/issue-closure/validation) as the settled position
+  going forward. *Which* context performs convergence remains an open runtime/Control Room question,
+  not settled methodology — the historical fact that ST1 and ST3 both used parent-performed
+  convergence, while ST2 used worker-performed convergence, is preserved as evidence for that still-
+  open question, not resolved by this decision.
 - **`orchestration.md`.** "Combined-state verification" watch item updated: now attempted for real
   once (ST3), with confirmed mechanism divergence — still the strongest recurring candidate, still
   not promoted past "watch," since a working mechanism has not yet been observed twice. "Convergence
@@ -314,16 +320,22 @@ behavior unchanged:** untouched for a worker not part of an authorized concurren
 ### 3. `implement-it/rules/sequencing.md`
 
 **Evidence requiring it:** decision #6 (ST3's premature convergence question, corrected live by the
-human) and decisions #7/#8 (sequential convergence as normal mechanical progression, performed by the
-original worker, not the parent — closing the exact regression `smoke-test-3.md` records). **Final
-behavior:** convergence mechanics remaining undefined is not a reason to delay authorizing or launching
-a wave; once durable, approved commits exist, sequential convergence onto the milestone branch is
-ordinary progression, executed by resuming the original worker, using its own unchanged procedures —
-not a new decision to ask about each time, and not something the coordinating session performs in the
-worker's place. **Why it belongs here:** this section already owns the one structural fact about
-parallel convergence the milestone rule needs; this adds the timing and performer facts the same
-section was previously silent on. **What stays outside this rule:** how a real conflict, drift, or stale
-approval gets resolved once one occurs — those remain human judgment calls, not mechanical defaults.
+human) and decision #7 (sequential convergence as normal mechanical progression once durable, approved
+commits exist — closing the exact regression `smoke-test-3.md` records, where the *parent* performed
+convergence/push/closure directly instead of the mechanics composing normally). **Final behavior:**
+convergence mechanics remaining undefined is not a reason to delay authorizing or launching a wave, and
+is not a pre-launch decision to ask about; once durable, approved commits exist, sequential convergence
+onto the milestone branch is ordinary progression, not a fresh permission question each time it happens
+— and it does not shorten or bypass any part of the converging issue's remaining lifecycle: push-
+readiness, issue-closure, and their validation steps apply exactly as they do outside a concurrent wave.
+**Deliberately not decided here:** which context or agent identity actually carries out convergence
+(the runtime/Control Room question decision #8 raises) and whether convergence starts as each worker
+individually becomes ready or waits for the whole wave — both stay open, since neither is settled
+methodology and encoding either would overreach this rule's portable scope. **Why it belongs here:**
+this section already owns the one structural fact about parallel convergence the milestone rule needs;
+this adds the timing fact and the lifecycle-preservation invariant the same section was previously
+silent on. **What stays outside this rule:** how a real conflict, drift, or stale approval gets resolved
+once one occurs — those remain human judgment calls, not mechanical defaults.
 
 ```diff
 --- a/implement-it/rules/sequencing.md
@@ -334,21 +346,25 @@ approval gets resolved once one occurs — those remain human judgment calls, no
  branch, instead of implementing directly on the shared branch. The milestone branch remains the
  eventual convergence target for every worker's approved commits.
  
- This rule does not define how or when that convergence happens. That is an open question pending
- evidence from real parallel execution, not a decision this rule makes on its own.
+-This rule does not define how or when that convergence happens. That is an open question pending
+-evidence from real parallel execution, not a decision this rule makes on its own.
++This rule does not define how that convergence happens — which context actually carries it out remains
++an open question pending evidence from real parallel execution, not a decision this rule makes on its
++own.
  
 +Convergence mechanics being unresolved is not a reason to delay authorizing or launching this wave, and
 +is not a decision to ask the human to make before any worker starts — it only becomes relevant once one
 +or more workers have durable, approved commits that need to reach the milestone branch.
 +
-+Once that point is reached, converging each approved worker's commits onto the milestone branch,
-+sequentially, is normal mechanical progression — not a fresh permission question on every occurrence.
-+Convergence is performed by resuming the original worker whose commits are converging, using its own
-+unchanged push-readiness and issue-closure procedures; the coordinating session does not perform
-+convergence, push, or closure in that worker's place. Stop and ask only when convergence itself surfaces
-+a genuine unsafe or ambiguous condition: a real merge conflict, unexpected drift in the milestone
-+branch's tip, a stale or partially-invalidated approval, or ambiguity about which branch is actually the
-+correct convergence target.
++Once that point is reached, converging approved worker commits onto the milestone branch, sequentially,
++is normal mechanical progression for this workflow — not a fresh permission question every time it
++happens. Converging a worker's commits onto the milestone branch does not shorten or bypass any part of
++that issue's remaining lifecycle: push-readiness, issue-closure, and their validation steps
++(`rules/push-readiness.md`, `rules/issue-closure.md`) still apply exactly as they do outside a
++concurrent wave. Stop and ask only when convergence itself surfaces a genuine unsafe or ambiguous
++condition: a real merge conflict, unexpected drift in the milestone branch's tip, a stale or
++partially-invalidated approval, or ambiguity about which branch is actually the correct convergence
++target.
 +
  Do not turn observed branch-name patterns into a rigid taxonomy. A name derived from what the
  milestone actually is — its area, or the kind of change it bundles — is the goal; illustrative shapes
@@ -366,7 +382,7 @@ Per the request's Part 3, classified explicitly rather than silently dropped:
 | `git apply --3way --index`, intent-to-add capture steps, `git worktree add/remove` | **REMOVE** | Exactly the Git mechanics decision #5 says stay out of methodology; belongs in `combined-candidate.md`'s mechanism investigation, not in a skill rule. |
 | "Paste patched rule text into each worker's launch prompt" as a standing instruction | **REMOVE** | Explicitly rejected by decision #12 — a workaround for an experimental, uncommitted installation state, not permanent methodology; also inapplicable once the patch is actually committed, as it already is on this branch. |
 | A conflict-detection/resolution-routing subsystem | **REMOVE** | No smoke test has exercised a real conflict yet (`smoke-test-3.md`, "What remains unresolved"); speculative ahead of evidence, and explicitly out of scope per the request. |
-| Convergence-performer statement (worker, not parent) | **KEEP** | Folded into the `sequencing.md` hunk above — this is decision #8 itself, not a speculative addition. |
+| Convergence-performer statement naming "the original worker" / "the coordinating session" | **REDUCE** | An earlier draft of the `sequencing.md` hunk named who performs convergence (worker, not parent) — that names Claude Code runtime topology (agent identity, resumption), not portable methodology. Reduced to a topology-neutral invariant instead: convergence does not shorten or bypass push-readiness/issue-closure/validation, regardless of who or what carries it out. Decision #8's actual finding (the parent should not bypass those procedures) survives; the runtime-specific "resume the original worker" mechanism does not. |
 | Wave-level run/skip clarification | **KEEP** | Folded into the `verification.md`/`review-gates.md` hunks above — this is decision #3 itself. |
 | Convergence-timing clarification | **KEEP** | Folded into the `sequencing.md` hunk above — this is decisions #6/#7 themselves. |
 
@@ -399,9 +415,11 @@ context, the same category as workspace isolation itself.
 - Routing human decisions to the correct worker — validated across ST2 and ST3, including ambiguous
   cases; native runtime plus parent conversational tracking, not a new construct.
 - Commit-plan aggregation — real, recurring gap (ST3's async relay-by-arrival pattern); not resolved.
-- Convergence serialization (ordering, not performance) — validated across ST1–ST3 as a parent
-  responsibility; convergence *performance* is now settled as worker-owned by decision #8, which
-  narrows, but does not eliminate, this candidate's remaining scope to sequencing/serialization itself.
+- Convergence serialization (ordering) — validated across ST1–ST3 as a parent responsibility.
+  Convergence *performance* (who or what actually merges/pushes/closes) stays a live, unresolved
+  candidate here too — the final decisions settle its timing and its no-bypass invariant, not who
+  carries it out; this asymmetric two-against-one (ST1/ST3 parent-performed vs. ST2 worker-performed)
+  evidence remains exactly as open as before.
 
 No artifact form is decided here. Per the request, next-work recommendation stays a WATCH item —
 ST3's wave was pre-selected as the milestone's entire remaining open set, so it added no new evidence
@@ -421,10 +439,10 @@ smoke tests' combined evidence:
    stages). Growing toward the bar, not at it — still evidenced only within single runs, not against a
    clean before/after skill correction the way `sequencing.md`'s branch patch was tested.
 3. **Convergence performer.** Now two data points for parent-performed (ST1, ST3) against one for
-   worker-performed (ST2) — but decision #8 settles the *policy* going forward regardless of that
-   asymmetric evidence; what's still missing is a clean run that actually follows the now-settled policy,
-   to confirm it holds under real parallel conditions rather than only in the one run (ST2) that
-   happened to do it before the policy was explicit.
+   worker-performed (ST2) — still genuinely open. The final decisions settle convergence *timing* (not
+   a launch prerequisite) and one invariant that holds regardless of performer (push-readiness,
+   issue-closure, and their validation are never bypassed), but deliberately leave *who or what performs*
+   convergence unresolved — that stays this candidate's open question, not narrowed by the reconciliation.
 4. **Candidate-patch propagation.** Real and consequential, but reclassified here (per decision #12 and
    the "Evidence base" section above) as runtime mechanics, not cross-worker coordination — it does not
    compete for the same extraction bar as the other three.
@@ -498,9 +516,11 @@ workers running the existing `implement-it` lifecycle, independently, through bo
 worker-specific resume and semantic commit planning, is validated, repeated, and correct. What
 changed at ST3 is narrower than it first appeared — not a new lifecycle stage, but one wave-level
 verification decision (settled here as a run-or-skip choice, correcting an earlier "mandatory" research
-position that a live run did not actually honor) and one timing/performer clarification for convergence
-(settled here as "not before launch, and performed by the worker, not the parent, once it matters").
-Both are now a three-file, additive skill diff — proposed, not applied — against text that, on this
+position that a live run did not actually honor) and one timing clarification for convergence (settled
+here as "not before launch — only once durable, approved commits exist, and without ever shortening
+push-readiness, issue-closure, or their validation"). *Who or what* performs convergence stays
+deliberately open, a runtime/Control Room question rather than settled methodology. Both are now a
+three-file, additive skill diff — proposed, not applied — against text that, on this
 branch, is already committed rather than the uncommitted candidate state ST3 actually exercised in
 useOrbit. No genuinely unresolved architecture problem surfaced. The remaining open items are
 validation and presentation questions, better answered by the next real parallel wave or a dedicated

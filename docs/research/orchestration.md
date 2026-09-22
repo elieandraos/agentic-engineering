@@ -61,11 +61,13 @@ This may become parallel-aware `implement-it`/lifecycle policy rather than orche
 
 **Settled after Smoke Test 3** (`parallel-final-reconciliation.md`): sequencing itself — converging
 approved commits onto the milestone branch, one at a time, once durable commits exist — is no longer an
-open judgment call requiring parent reasoning each time; it is now normal mechanical progression,
-performed by resuming the original worker. What remains genuinely open, and still requires human
-judgment rather than a mechanical default, narrows to: a real merge conflict, unexpected drift in the
-milestone branch's tip, a stale or partially-invalidated approval, or ambiguity about the correct
-convergence target — none of which any of the three smoke tests has yet exercised.
+open judgment call requiring parent reasoning each time; it is now normal mechanical progression that
+never shortens or bypasses push-readiness, issue-closure, or their validation. *Which* context actually
+performs that convergence remains open and belongs here, as a Control Room/runtime question, not to the
+skill. What remains genuinely open, and still requires human judgment rather than a mechanical default,
+narrows to: a real merge conflict, unexpected drift in the milestone branch's tip, a stale or
+partially-invalidated approval, or ambiguity about the correct convergence target — none of which any of
+the three smoke tests has yet exercised.
 
 ### Combined-state verification
 
