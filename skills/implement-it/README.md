@@ -11,6 +11,14 @@ Take an approved GitHub issue from implementation through verified commits and c
 It is the implementation stage of `Lab -> Plan -> Implement -> Review -> Ship` and handles one approved
 issue at a time.
 
+When the human has explicitly authorized concurrent execution of more than one dependency-ready issue
+in the same milestone, each concurrent worker still owns exactly one issue's lifecycle above — its own
+temporary branch, its own verification and `review-it`, and its own human approvals and commit plan. The
+only change from the single-issue case: the full regression suite becomes one combined run/skip
+decision for the whole batch instead of one per issue, and approved issues converge back onto the shared
+milestone branch afterward. This coordination does not turn `implement-it` into an orchestrator — every
+issue's lifecycle and every approval stay exactly as they are for a single issue.
+
 ## Boring prompts
 
 ```shell
