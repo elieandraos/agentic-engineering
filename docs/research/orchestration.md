@@ -59,6 +59,14 @@ The current one-working-branch milestone rule does not describe this case.
 
 This may become parallel-aware `implement-it`/lifecycle policy rather than orchestration. Correct the skills and repeat the experiment before deciding.
 
+**Settled after Smoke Test 3** (`parallel-final-reconciliation.md`): sequencing itself — converging
+approved commits onto the milestone branch, one at a time, once durable commits exist — is no longer an
+open judgment call requiring parent reasoning each time; it is now normal mechanical progression,
+performed by resuming the original worker. What remains genuinely open, and still requires human
+judgment rather than a mechanical default, narrows to: a real merge conflict, unexpected drift in the
+milestone branch's tip, a stale or partially-invalidated approval, or ambiguity about the correct
+convergence target — none of which any of the three smoke tests has yet exercised.
+
 ### Combined-state verification
 
 Observed as a gap, and confirmed recurring: Smoke Test 2 produced the same gap independently, under a
@@ -70,6 +78,16 @@ Each worker verified its own branch, but neither run re-verified the final combi
 explicit decision before implementation-review.
 
 Verification of the union inherently requires knowledge beyond either worker's isolated change.
+
+**Escalated further by Smoke Test 3** (`smoke-test-3.md`): attempted for real for the first time — a
+full, fresh, uncommitted-union regression pass actually ran and passed, before any worker's Review
+implementation — but using a mechanism that diverged from the validated procedure
+(`combined-candidate.md`) in ways that happened not to matter only because that wave was file-disjoint.
+This remains the single strongest recurring candidate on this watchlist across all three smoke tests,
+and is still not promoted past "watch" — one real attempt with a divergent mechanism is evidence of how
+it goes when tried, not a second clean success confirming a stable, repeatable procedure. The wave-level
+run/skip framing question this run also surfaced is now settled as a final decision, not left open — see
+`parallel-final-reconciliation.md`.
 
 **Policy now decided, mechanism still open.** After Smoke Test 2, the research position changed: a
 parallel worker no longer gets its own full-suite run/skip choice at all (targeted + narrowest broader
@@ -154,6 +172,22 @@ Not observed.
 #354/#355 were deliberately non-overlapping. No merge conflict or material shared-file overlap occurred.
 
 A future run with real overlap may expose responsibility that the current experiment could not.
+
+### Candidate-patch propagation into isolated workers
+
+New finding from Smoke Test 3 (`smoke-test-3.md`), not previously identified. Two of three ST3 workers
+read a stale, un-patched copy of `verification.md`/`review-gates.md` because an in-progress candidate
+methodology change existed only as an uncommitted diff in a main checkout's working directory — invisible
+by construction to a concurrently-launched isolated `git worktree`, regardless of which absolute path a
+worker happened to read from.
+
+**Classified as runtime mechanics, not cross-worker coordination.** This is not a candidate for the
+same extraction bar as decision routing or combined verification — it is about how one specific kind
+of state (an uncommitted methodology change) reaches, or fails to reach, an isolated execution context,
+the same category as workspace isolation itself. It is also a one-time installation-window risk, not a
+standing property of the methodology: once a candidate patch is actually committed and released — as
+the equivalent patch already is on this branch — no worker in any worktree fails to see it. See
+`parallel-final-reconciliation.md` for why this drives no skill-file change.
 
 ## What is not orchestration
 

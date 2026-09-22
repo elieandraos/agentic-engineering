@@ -1,8 +1,20 @@
 # Parallel Implementation Smoke Test 3 — Dry Run
 
-Status: Investigation and dry run. No useOrbit code, issues, or branches were touched to produce this
-document. No installed skill file was modified — every change below is a proposal only. Smoke Test 3
-itself was not started.
+Status: Investigation and dry run, since executed. See `smoke-test-3.md` for the actual evidence record
+and `parallel-final-reconciliation.md` for the reconciled final position. The dry run's own predictions
+partly held and partly diverged from what actually happened: the two-file `verification.md`/
+`review-gates.md` patch this document proposed was applied (and is, on the canonical branch, now
+committed rather than the uncommitted state ST3 exercised in useOrbit); the combined-candidate
+mechanism this document experimentally validated (intent-to-add + `diff --binary` + `--3way --index`)
+was **not** the mechanism ST3 actually used — see `combined-candidate.md`'s "Smoke Test 3: executed"
+section; and two of three workers initially took the wrong verification path despite the patch being
+correct, traced to candidate-patch propagation into isolated worktrees rather than to the ordering
+correction this document anticipated. The content below is left as the historical planning record, not
+rewritten to match the outcome.
+
+Original status line, preserved: Investigation and dry run. No useOrbit code, issues, or branches were
+touched to produce this document. No installed skill file was modified — every change below is a
+proposal only. Smoke Test 3 itself was not started.
 
 This is the second `parallel-dry-run` document — `parallel-dry-run.md` (no number) prepared Smoke Test
 2; this one, `parallel-dry-run-2.md`, prepares Smoke Test 3. Its filename numbers *this document* in

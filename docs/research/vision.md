@@ -167,7 +167,13 @@ human manual review + explicit approval, per worker
 Commit plan(s) → human approval → durable commits
 ```
 
-This is a required full-suite run for the parallel wave, not a run/skip decision — unlike the existing per-issue full-suite choice `verification.md` already defines for one worker running alone, which this does not change.
+**Superseded by Smoke Test 3's live evidence and the resulting final decision** (see
+`parallel-final-reconciliation.md`): this is a full-suite decision for the whole wave, not per worker —
+but it is a human run-or-skip choice, made once for the wave, not a mandatory-run requirement. A live
+run's own presentation reopened the "mandatory" framing this paragraph originally stated, and the human
+ratified the run-or-skip framing when asked; the final reconciliation records that as the settled
+position going forward, alongside the existing per-issue full-suite choice `verification.md` already
+defines for one worker running alone, which this does not change.
 
 The exact commands and test scopes remain stack/project-specific. useOrbit's Pest counts and filters are evidence, not portable methodology.
 
@@ -187,7 +193,13 @@ The #354/#355 experiment showed a practical candidate:
 - converge approved worker commits back onto the shared working branch;
 - verify the combined state before shared delivery.
 
-This is an emerging design, not yet an accepted `implement-it` rule. The next smoke tests must establish the smallest safe branch/convergence procedure.
+**Settled by the final reconciliation after Smoke Test 3** (`parallel-final-reconciliation.md`):
+convergence mechanics being unresolved is not a reason to delay authorizing or launching a wave — it
+only becomes relevant once durable, approved commits exist. Once that point is reached, converging
+sequentially onto the milestone branch is normal mechanical progression, performed by resuming the
+original worker (not the parent acting in its place), stopping only for a genuine conflict, drift,
+stale approval, or ambiguous target. This is now a small, additive `sequencing.md` clarification, not
+an open design question.
 
 ## Existing lifecycle ownership remains
 
@@ -259,6 +271,11 @@ Current evidence does not justify introducing:
 These remain possible future outcomes only if repeated evidence earns them.
 
 ## Next smoke-test goals
+
+**Status after Smoke Test 3:** the goals below have been exercised across Smoke Tests 2 and 3; see
+`parallel-final-reconciliation.md` for the reconciled final position and what remains open (narrower
+validation questions, not a fresh goal list). Left below as the historical record of what this
+document asked for before either test ran.
 
 Before extracting orchestration, validate the missing behavior with another real parallel wave:
 

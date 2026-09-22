@@ -272,6 +272,17 @@ of letting the parent infer silently; sequencing/serialization is the one piece 
 cross-worker and was supplied only by the parent's own reasoning in ST2; state validation before
 mutation is ordinary worker discipline, evidenced correctly both times it mattered.
 
+**Settled after Smoke Test 3, for two of these four** (`smoke-test-3.md`, `parallel-final-reconciliation.md`):
+ST3 reverted convergence execution to ST1's parent-performed shape — the parent merged, pushed, and
+closed all three issues directly, bypassing `push-readiness.md`/`issue-closure.md` as procedures rather
+than exposing any defect in either. The final reconciliation settles the *policy* going forward
+regardless of that asymmetric two-against-one evidence: convergence timing is not a launch
+prerequisite (relevant only once durable approved commits exist), and convergence execution is
+worker-performed by decision, not merely by the one run (ST2) that happened to do it that way before
+the policy was explicit. This narrows, but does not resolve, the "convergence performer" entry in the
+matrix and Control Room evidence below — the policy is now decided; a clean run that actually follows
+it, under real parallel conditions, has not yet been observed.
+
 ### Combined verification
 
 - **ST1 evidence:** a clean gap — `smoke-test-1.md` states plainly the final combined branch was never
@@ -329,13 +340,18 @@ worker states is not useful enough to justify its cost, and duplicates verificat
 verification (below) will do once, properly, against the real union.
 
 **Combined verification.** Once the parallel workers' candidate implementations are assembled into one
-combined candidate state, the full project suite runs once against that combined state. This is a
-required step for the parallel wave, not a run/skip decision — unlike the existing per-issue full-suite
-choice `verification.md` already defines for a single (serial) worker, which is unaffected by this
-decision. Only after the combined candidate is green should the human-facing implementation-review
-checkpoint be presented. At that point the parent presents each worker's substantive `review-it`
-summary and focused verification evidence in plain technical language, plus the combined full-suite
-result, and asks the human to manually verify/approve each implementation before commit planning.
+combined candidate state, the full project suite runs once against that combined state. **Superseded
+after Smoke Test 3** (`smoke-test-3.md`, `parallel-final-reconciliation.md`): this was originally
+recorded as a required step, not a run/skip decision. A live run's own presentation reopened a skip
+option this text had explicitly closed, and the human ratified it when asked. The final, reconciled
+position is a human-controlled run-or-skip choice made once for the whole wave — not per worker, and
+not automatically mandatory — unlike the existing per-issue full-suite choice `verification.md` already
+defines for a single (serial) worker, which is unaffected by this decision either way. Only after that
+wave-level decision is resolved (successful run, or explicit recorded skip) should the human-facing
+implementation-review checkpoint be presented. At that point the parent presents each worker's
+substantive `review-it` summary and focused verification evidence in plain technical language, plus the
+combined-verification result, and asks the human to manually verify/approve each implementation before
+commit planning.
 
 **Scope of this decision.** This applies only to concurrent/parallel implementation workers. It does
 not silently change the normal serial/single-worker verification lifecycle — `verification.md`'s

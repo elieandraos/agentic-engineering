@@ -133,10 +133,26 @@ than inventing something unrelated.
 ### #1 / #6 — Diff/patch into a temporary integration worktree (baseline and its refinement)
 
 **Mechanics.** `git worktree add <path> <milestone-branch-tip>` creates a fresh, ordinary worktree with
-nothing uncommitted in it. For each ready worker, `git -C <worker-worktree> diff HEAD` captures its
-full uncommitted change (staged and unstaged) as a patch; `git -C <integration-worktree> apply
---3way --index <patch>` applies it, staging the result. Repeat per worker, in any order the workers
-themselves are file-disjoint enough to tolerate. Run the full suite in the integration worktree.
+nothing uncommitted in it. For each ready worker: `git add -N -- $(git ls-files --others
+--exclude-standard)` marks untracked files intent-to-add in the worker's own worktree; `git -C
+<worker-worktree> diff HEAD --binary` then captures the full uncommitted change — staged, unstaged,
+untracked, and binary content together — as one patch; `git reset -- $(git ls-files --others
+--exclude-standard)` immediately undoes the intent-to-add staging, restoring the worker's worktree to
+its exact prior state. `git -C <integration-worktree> apply --3way --index <patch>` applies the patch,
+staging the result. Repeat per worker, in any order the workers themselves are file-disjoint enough to
+tolerate. Run the full suite in the integration worktree.
+
+**Corrected from the original description, and why.** An earlier version of this section claimed
+`git diff HEAD` alone "captures its full uncommitted change (staged and unstaged)." `parallel-dry-run-2.md`
+tested this directly and found two real gaps this document's own analysis should have caught: plain
+`git diff HEAD` silently omits untracked files entirely (the same silent-loss failure mode this
+document already disqualifies option #5 for), and omits `--binary`, which causes a hard apply failure
+against any modified binary file. The three-step procedure above — intent-to-add, `diff --binary`,
+immediate reset — was validated experimentally against a synthetic repository carrying a modified
+tracked file, a staged new file, a staged deletion, an untracked new file, and a modified binary file,
+and confirmed to restore the worker's worktree to byte-identical `git status --porcelain` output
+afterward. This is a correction to this mechanism's own description, not a reason to prefer a different
+option from the table above.
 
 **Approval invariant.** No commit is created anywhere by this mechanism — not in the integration
 worktree, not in any worker's own worktree. The integration worktree's index holds staged-but-uncommitted
@@ -396,7 +412,26 @@ consequence back to the correct worker — both inherently require visibility ac
 worker's state, joining the existing "decision routing" and "convergence sequencing" watch items rather
 than becoming a new, separate category.
 
-## Smoke Test 3 proposal
+## Smoke Test 3: executed
+
+This proposal was carried out against useOrbit issues #334/#344/#345; see `smoke-test-3.md` for the
+full evidence record and `parallel-final-reconciliation.md` for the reconciled final position. Two
+findings from that run matter specifically to this document's own mechanism recommendation:
+
+- **The corrected capture procedure above was validated in advance by `parallel-dry-run-2.md`, but was
+  not the procedure Smoke Test 3 actually used.** ST3's parent instead ran plain `git diff HEAD`
+  (without `--binary`) for tracked changes, and used `git ls-files --others --exclude-standard` plus
+  individual filesystem `cp` for untracked files — closer to this document's rejected option #5 for the
+  untracked-file portion, and without `--3way`/`--index` for the tracked-file portion. It also omitted
+  `--3way`/`--index` from the tracked-diff apply step.
+- **This worked, but only because that wave was file-disjoint by construction.** No conflict and no
+  untracked-file collision occurred to actually exercise the difference. This is evidence that the
+  looser mechanism is not safe in general — it reintroduces the exact silent-overwrite risk this
+  document identifies as disqualifying for option #5 — not evidence that the recommended mechanism
+  (#6, with the corrected capture procedure above) was unnecessary. Do not treat ST3's success as
+  validating the looser procedure as an acceptable default.
+
+## Smoke Test 3 proposal (as originally written, before execution)
 
 A narrow validation of this mechanism, not a retest of everything ST1/ST2 already validated:
 
