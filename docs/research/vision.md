@@ -2,7 +2,9 @@
 
 Status: Investigation.
 
-This document records the current direction discovered through real use of Agentic Engineering in useOrbit. It is a working hypothesis for the next smoke tests, not an accepted release design or version commitment.
+**Historical research.** This document records the working hypothesis that guided Smoke Tests 2 and 3, written before they ran. Current, reconciled parallel-implementation decisions are in [`parallel-final-reconciliation.md`](parallel-final-reconciliation.md); where this document's inline notes mark a passage as settled by that reconciliation, treat the reconciliation as authoritative.
+
+This document records the direction discovered through real use of Agentic Engineering in useOrbit before Smoke Test 3 confirmed or refined it.
 
 ## Direction
 

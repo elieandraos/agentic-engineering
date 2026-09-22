@@ -1,6 +1,9 @@
 # Parallel Implementation Smoke Test 2 — Dry Run
 
-Status: Investigation and dry run. Consumer evidence gathered against `elieandraos/useOrbit`,
+Status: Investigation and dry run, since executed. **Historical research.** This document records
+predictions made before Smoke Test 2 ran; see [`smoke-test-2.md`](smoke-test-2.md) for what actually
+happened and [`parallel-final-reconciliation.md`](parallel-final-reconciliation.md) for the current,
+reconciled decisions. Consumer evidence gathered against `elieandraos/useOrbit`,
 Phase 26 — Policies HTTP & Frontend milestone. No useOrbit code, issues, or branches were touched to
 produce this document, and no installed skill file was modified — every change below is a proposal
 only.

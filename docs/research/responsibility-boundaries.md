@@ -1,9 +1,12 @@
 # Responsibility Boundaries After Parallel Smoke Tests
 
 Status: Investigation. This is an extraction *analysis*, not an orchestrator design. It reconciles
-Smoke Test 1 (`smoke-test-1.md`) and Smoke Test 2 (`smoke-test-2.md`) into one responsibility map. It does
-not modify any skill, does not create an orchestrator, agent definition, or runtime adapter, and does
-not make a release/version decision.
+Smoke Test 1 (`smoke-test-1.md`) and Smoke Test 2 (`smoke-test-2.md`) into one responsibility map, later
+annotated with Smoke Test 3 (`smoke-test-3.md`) evidence in the specific rows and sections it touched. It
+does not modify any skill, does not create an orchestrator, agent definition, or runtime adapter, and
+does not make a release/version decision. Where a passage below is marked settled by the final
+reconciliation, [`parallel-final-reconciliation.md`](parallel-final-reconciliation.md) is the
+authoritative current decision — this document remains the analysis and evidence trail behind it.
 
 ## Purpose
 
