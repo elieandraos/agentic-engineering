@@ -2,12 +2,14 @@
 
 Status: Investigation. Do not implement an orchestrator from this document.
 
-This document records a possible future extraction discovered while investigating parallel implementation in useOrbit. It exists to prevent two opposite mistakes:
+This document records a possible future extraction first discovered while investigating parallel implementation in useOrbit and now also observed across lifecycle stages during normal post-v2.2.0 work. It exists to prevent two opposite mistakes:
 
-1. forcing genuinely cross-worker responsibility into single-worker engineering skills; and
+1. forcing coordination responsibility into specialist engineering skills merely because those skills participate in the workflow; and
 2. inventing an orchestration architecture before repeated evidence shows one is needed.
 
-The current strategy is deliberately simpler: make parallel execution correct through the existing Agentic Engineering ecosystem first, then observe what remains.
+Parallel execution exposed the first strong cross-worker cases. A later Phase 26 review exposed a different signal without parallel workers: the coordinating context had to route raw human observations into `lab-it`, preserve surrounding PR/milestone state, retain separate project/stack/methodology evidence, and define the later handoff to `plan-it`. See `lifecycle-orchestration-evidence.md`.
+
+The current strategy remains evidence-first: keep specialist skills correct and focused, observe coordination that remains above or between them, then extract only stable repeated responsibility.
 
 ## Evidence boundary
 
@@ -121,6 +123,16 @@ Worker C → Commit plan → waiting
 ```
 
 No real run has yet exercised this state with valid skill-owned gates.
+
+### Cross-skill lifecycle routing and knowledge-boundary coordination
+
+Observed once outside parallel execution during normal post-v2.2.0 useOrbit work. See `lifecycle-orchestration-evidence.md`.
+
+Raw Phase 26 review feedback contained file-level observations and proposed solutions, but the useful next action required coordination before `lab-it` began: challenge premature solution framing, group observations into architecture themes, preserve the open PR/milestone context, route unresolved architecture through Lab before Plan, and retain resulting evidence separately for project decisions, `laravel-inertia-stack`, and portable Agentic Engineering.
+
+This is not evidence that those responsibilities belong inside `lab-it`. Lab owns the architecture investigation itself. The candidate orchestration responsibility is knowing **where the work is in the lifecycle, which specialist stage is needed next, what surrounding state must survive the handoff, and which knowledge boundary each resulting finding belongs to**.
+
+This broadens the orchestration hypothesis beyond cross-worker coordination. It does not yet clear the extraction bar: one natural non-parallel occurrence is evidence to retain and watch for recurrence across Lab → Plan → Implement → Review → Ship.
 
 ## Candidate responsibilities with insufficient evidence
 
@@ -306,10 +318,10 @@ Those are later artifact decisions.
 
 A responsibility becomes a credible orchestration-extraction candidate when:
 
-- it is inherently cross-worker rather than per-issue;
-- it remains necessary after parallel-aware skill corrections;
-- it recurs across real execution waves;
-- putting it inside a worker skill creates awkward ownership or duplicated knowledge;
+- it inherently requires context beyond one specialist skill or one worker;
+- it remains necessary after the participating skills are themselves correct;
+- it recurs across real project execution rather than only designed experiments;
+- putting it inside a specialist skill creates awkward ownership, duplicated knowledge, or lifecycle coupling;
 - it can be stated independently of Claude Code-specific mechanisms.
 
 One experiment is evidence, not a reusable rule.
@@ -332,8 +344,6 @@ The next smoke tests should answer:
 
 The evidence supports investigating orchestration, not implementing it.
 
-The near-term problem is smaller:
+Parallel implementation is now canonical in v2.2.0, so the observation target is broader than parallel execution alone: watch normal project work for coordination that remains necessary across workers, lifecycle stages, or knowledge boundaries after the specialist skills themselves are correct.
 
-> Make the existing Agentic Engineering lifecycle correct under native parallel worker execution.
-
-Only after that works repeatedly should Agentic Engineering remove responsibilities from skills and place them into a higher-level orchestrator.
+Only repeated evidence should justify removing responsibilities from skills and placing them into a higher-level Control Room/orchestrator.
