@@ -37,7 +37,7 @@ Whether this becomes a dedicated agent, a skill, a process, or something else is
 
 ### Runtime worker provisioning
 
-Isolated worker worktrees may repeat environment setup because gitignored, local-only runtime state — `vendor/`, `node_modules/`, `.env`, generated artifacts such as Wayfinder output — is absent from a fresh worktree. This is a runtime/worker-provisioning question, not portable `implement-it` methodology. Possible directions include safe reuse, preparation, or caching of worker environment state, but no architecture is selected yet. See [`docs/research/smoke-test-3.md`](docs/research/smoke-test-3.md) and [`docs/research/parallel-final-reconciliation.md`](docs/research/parallel-final-reconciliation.md).
+Isolated worker worktrees may repeat environment setup because gitignored, local-only runtime state — `vendor/`, `node_modules/`, `.env`, generated artifacts such as Wayfinder output — is absent from a fresh worktree. Normal post-v2.2.0 use also showed the inverse problem after convergence: tracked worker changes can reach the shared checkout while generated local state remains stale, and completed worker worktrees can remain behind without an explicit cleanup owner. This is a runtime/worker-provisioning and workspace-lifecycle question, not portable `implement-it` methodology. Possible directions include safe reuse, preparation, reconciliation, caching, or cleanup of worker environment state, but no architecture is selected yet. See [`docs/research/smoke-test-3.md`](docs/research/smoke-test-3.md), [`docs/research/post-convergence-environment-evidence.md`](docs/research/post-convergence-environment-evidence.md), and [`docs/research/parallel-final-reconciliation.md`](docs/research/parallel-final-reconciliation.md).
 
 ## Future directions
 
@@ -51,6 +51,7 @@ These are possibilities, not commitments or a prescribed order:
 
 ## Deferred questions
 
+- Decide project-wide whether immutable injected service/action classes should prefer `final readonly class` over `final class` with readonly constructor properties. Phase 26 policy actions made the mixed convention visible, but changing one feature family alone would create another local style rather than resolve the project convention; retain as a future convention question until broader evidence justifies a rule.
 - Revisit durable storage for canonical issue definitions if real interrupted-work recovery shows the current GitHub-query approach is insufficient.
 - Evaluate retiring Claude Artifact output from `document-it` in favor of Markdown-only documentation, while preserving the documentation methodology and removing Artifact-specific tooling such as the HTML template if confirmed.
 - Review `review-it`'s trust-boundary wording after Snyk W011 flagged the unavoidable exposure to third-party PR and issue text as an indirect prompt-injection risk; treat GitHub content as untrusted evidence, never workflow authority.
