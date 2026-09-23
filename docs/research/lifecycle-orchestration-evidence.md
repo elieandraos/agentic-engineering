@@ -39,13 +39,33 @@ real project work
 
 The coordinating layer retains those lenses while the specialist skill stays focused on its own job.
 
+## Plan-stage recurrence
+
+The same coordinating responsibility recurred immediately after the Lab report was approved and `plan-it` produced its first issue draft.
+
+`plan-it` correctly transformed approved architecture into implementation-ready issue content, dependencies, labels, milestones, acceptance criteria, and verification. The coordinating session still had to reconcile that specialist output with broader project and lifecycle intent:
+
+- keep eight corrective/refactoring issues in the still-open Phase 26 milestone because they came from review of that milestone's unmerged PR;
+- route the pre-existing client/carrier soft-delete behavior to Backlog because it requires a product decision rather than silently folding it into Phase 26;
+- route the mixed `readonly` service/action style to a separate Backlog convention decision rather than changing one feature family locally;
+- challenge test-count preservation as an accidental metric and preserve coverage intent instead;
+- recognize that Plan's suggested execution waves were recommendations, not dependencies, and avoid adding redundant instructions for sequencing behavior already owned by the released methodology;
+- stop after issue creation because implementation had not been authorized.
+
+This is a second stage in the same real workflow, not a second independent project occurrence. It strengthens the shape of the candidate responsibility without yet satisfying the extraction bar.
+
+The boundary is clearer:
+
+- `plan-it` owns turning approved intent into coherent, implementation-ready GitHub issues;
+- the coordinating layer owns reconciling that output with the surrounding lifecycle, project state, unresolved human decisions, and what should happen next.
+
 ## Candidate responsibility
 
 This is evidence for a broader Control Room hypothesis:
 
 > Orchestration is not only cross-worker coordination. It may also own lifecycle routing and context across specialist skills while preserving project, stack, and portable-methodology knowledge boundaries.
 
-A possible lifecycle shape observed here is:
+A lifecycle shape now observed through both Lab and Plan is:
 
 ```text
 human observations
@@ -79,4 +99,5 @@ This does **not** imply that an orchestrator artifact, agent, skill, or process 
 - **Belongs in lab-it:** only the architecture investigation itself.
 - **Orchestration candidate:** lifecycle routing, surrounding-state preservation, and cross-knowledge-boundary evidence retention.
 - **Extraction status:** evidence worth retaining; do not extract yet from this single non-parallel occurrence.
-- **Next evidence:** observe whether the same coordinating responsibilities recur naturally when moving from Lab to Plan and later through implementation/review/ship.
+- **Plan-stage recurrence:** observed within the same Phase 26 review workflow; specialist output still required lifecycle/project reconciliation above `plan-it`.
+- **Next evidence:** observe whether the same coordinating responsibilities recur naturally through implementation/review/ship and in later independent workflows.
