@@ -134,6 +134,38 @@ This is not evidence that those responsibilities belong inside `lab-it`. Lab own
 
 This broadens the orchestration hypothesis beyond cross-worker coordination. It does not yet clear the extraction bar: one natural non-parallel occurrence is evidence to retain and watch for recurrence across Lab → Plan → Implement → Review → Ship.
 
+### Two dimensions of orchestration
+
+Current evidence now suggests two distinct dimensions of the same possible Control Room layer.
+
+```text
+vertical lifecycle coordination
+Lab -> Plan -> Implement -> Review -> Ship
+
+horizontal execution coordination
+Worker A | Worker B | Worker C
+```
+
+The horizontal dimension became visible first through parallel implementation: synchronization, combined-state decisions, decision presentation/routing, and convergence awareness.
+
+The vertical dimension became visible during normal Phase 26 review without parallel workers: preserve project/lifecycle state across specialist stages, select the appropriate next stage, reconcile specialist output with unresolved human decisions, and retain evidence across project, stack, and portable-methodology knowledge boundaries.
+
+These are evidence categories, not a proposed architecture. A future Control Room may coordinate both, or later evidence may show that some responsibilities belong elsewhere.
+
+### Specialist skills versus coordinating context
+
+The emerging boundary is:
+
+> The coordinating layer understands where the engineering journey is, what specialist work is needed next, what context and decisions must survive the handoff, and what happens after that work completes. A specialist skill owns how to perform its engineering stage correctly.
+
+The Phase 26 Lab -> Plan flow provides concrete evidence:
+
+- `lab-it` investigated architecture and produced evidence-backed decisions;
+- `plan-it` converted approved intent into implementation-ready issues;
+- the coordinating context preserved the open PR/milestone state, separated Phase 26 corrections from Backlog product/convention decisions, challenged accidental planning constraints, retained stack/methodology evidence, and enforced the stop before implementation.
+
+This does not make project management, product decisions, or stewardship themselves orchestration responsibilities. It is evidence that routing and preserving those boundaries may be.
+
 ## Candidate responsibilities with insufficient evidence
 
 ### Human decision routing
@@ -272,7 +304,9 @@ Agentic Engineering methodology should remain runtime-independent.
 
 ## Extraction strategy
 
-The development sequence is:
+The original parallel-execution sequence below is historical context for how the watchlist began. With v2.2.0 shipped, evidence collection now also follows ordinary lifecycle transitions between specialist skills.
+
+The development sequence was:
 
 ```text
 1. correct parallel execution through existing skills
@@ -328,7 +362,7 @@ One experiment is evidence, not a reusable rule.
 
 ## What to observe next
 
-The next smoke tests should answer:
+Do not schedule dedicated smoke tests solely for these questions. Observe them during normal project work. Useful questions include:
 
 - Can a background worker surface Review implementation and genuinely wait?
 - Can the human approve one waiting worker while siblings continue or remain paused?
