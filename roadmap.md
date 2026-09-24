@@ -35,6 +35,12 @@ The three smoke tests exposed recurring cross-worker responsibilities that no si
 
 Whether this becomes a dedicated agent, a skill, a process, or something else is unresolved. See [`docs/research/orchestration.md`](docs/research/orchestration.md), [`docs/research/responsibility-boundaries.md`](docs/research/responsibility-boundaries.md), and [`docs/research/parallel-final-reconciliation.md`](docs/research/parallel-final-reconciliation.md) rather than duplicating that evidence here.
 
+### Runtime model routing
+
+Claude Code exposes enough per-worker model, effort, tool, isolation, and execution controls to investigate capability-aware routing without putting vendor model names into portable skills. The first research pass also produced a cautionary data point: a cheaper built-in documentation agent returned two material inaccuracies that required stronger-model verification, so routing quality must include verification/rework cost rather than token price alone.
+
+No routing policy or capability tiers are selected. Keep normal project execution as baseline evidence and observe whether model/effort choices can later be evaluated against duration, tokens, corrections, verification, and final engineering outcome. See [`docs/research/model-routing.md`](docs/research/model-routing.md).
+
 ### Runtime worker provisioning
 
 Isolated worker worktrees may repeat environment setup because gitignored, local-only runtime state — `vendor/`, `node_modules/`, `.env`, generated artifacts such as Wayfinder output — is absent from a fresh worktree. Normal post-v2.2.0 use also showed the inverse problem after convergence: tracked worker changes can reach the shared checkout while generated local state remains stale, and completed worker worktrees can remain behind without an explicit cleanup owner. This is a runtime/worker-provisioning and workspace-lifecycle question, not portable `implement-it` methodology. Possible directions include safe reuse, preparation, reconciliation, caching, or cleanup of worker environment state, but no architecture is selected yet. See [`docs/research/smoke-test-3.md`](docs/research/smoke-test-3.md), [`docs/research/post-convergence-environment-evidence.md`](docs/research/post-convergence-environment-evidence.md), and [`docs/research/parallel-final-reconciliation.md`](docs/research/parallel-final-reconciliation.md).
