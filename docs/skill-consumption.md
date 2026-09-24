@@ -113,7 +113,35 @@ that the installed content is semantically correct for the consuming project. Re
 and validating the affected skills after an update remains the consuming project's own
 responsibility — the lock file is an integrity record, not a correctness guarantee.
 
-## 8. A simple refresh script
+## 8. Effective runtime resolution
+
+Repository-managed files and `skills-lock.json` describe the skill state the project intends to expose. They do not necessarily prove which same-named skill an agent runtime will activate when that runtime supports multiple installation scopes.
+
+Treat these as separate questions:
+
+```text
+project installation / lock integrity
+            !=
+effective runtime activation
+```
+
+A higher-precedence personal or managed installation can shadow a correct project copy without changing the consuming repository at all. Claude Code, for example, documents same-name precedence across its enterprise, personal, and project skill locations; its precedence is runtime-specific and should not be generalized to other agents.
+
+Normally there is no reason to add activation-path ceremony to every skill invocation. When a skill's observed behavior contradicts the repository-managed copy, however, verify which installation the runtime actually activated before diagnosing or changing the skill itself.
+
+Avoid same-named personal copies for skills a repository deliberately manages unless the override is intentional.
+
+### Scope safety for skill-management commands
+
+Use explicit scope flags for repository-managed operations. The refresh example below uses `-p/--project` deliberately.
+
+Do not assume a scope flag alone proves that a skill-management command cannot affect another filesystem scope. CLI behavior can vary by tool and version. Before a cross-scope cleanup or other potentially destructive skill-management operation, inspect the relevant project/user state; afterward, verify that the repository-managed files, discovery links, and lock state still match the intended project installation.
+
+When managed skill files are tracked in Git, an unexpected local mutation is visible and can be recovered from the repository's known state rather than reconstructed manually.
+
+See [`docs/research/skill-resolution-and-scope-evidence.md`](research/skill-resolution-and-scope-evidence.md) for the useOrbit incident that motivated this clarification.
+
+## 9. A simple refresh script
 
 Wrap the update command in a project script rather than expecting every contributor to remember the
 right flags:
@@ -131,14 +159,14 @@ skips the interactive scope prompt so the script runs unattended. Naming the man
 explicitly keeps a refresh scoped to what the project actually installed, rather than picking up
 anything unrelated.
 
-## 9. Proportional validation after a refresh
+## 10. Proportional validation after a refresh
 
 A refresh can touch some managed skills and leave others untouched. Diff the update before
 committing it, and validate only the skills whose files actually changed — re-reading their updated
 rules, re-exercising whatever claim in that skill actually moved — rather than re-validating the
 whole managed set on every refresh regardless of what changed.
 
-## 10. Git history as the provenance record
+## 11. Git history as the provenance record
 
 A repository-managed install doesn't need a separate changelog or ledger recording when each skill
 was installed or refreshed and why. The consuming project's own commit history — one commit per
@@ -146,7 +174,7 @@ install or refresh, with a message describing what changed — already is that r
 one a team is already equipped to search, blame, and diff, unlike a hand-maintained file that can
 silently fall out of date.
 
-## 11. skills.sh as an optional discovery surface
+## 12. skills.sh as an optional discovery surface
 
 skills.sh is a public directory for finding skills by keyword or owner. It is not a prerequisite for
 installing from a GitHub source — a repository never needs to be listed there before `skills add
@@ -154,20 +182,20 @@ installing from a GitHub source — a repository never needs to be listed there 
 GitHub confirms are public: visibility follows real usage, not a manual submission or a special
 manifest a source repository has to add.
 
-## 12. Telemetry
+## 13. Telemetry
 
 The CLI reports anonymous usage telemetry, including source and skill identifiers for
 confirmed-public GitHub installs. Set `DISABLE_TELEMETRY=1` or `DO_NOT_TRACK=1` in the installing
 environment to opt out entirely.
 
-## 13. What GitHub-source consumption does not require
+## 14. What GitHub-source consumption does not require
 
 Releases, tags, npm publication of the skill content itself, and a Claude Code plugin marketplace
 manifest are all optional. A GitHub source installs and updates straight off its default-branch
 content; a plugin manifest is one additional, opt-in discovery path the CLI also recognizes, not a
 requirement for installation or for skills.sh listing.
 
-## 14. Stack companions are installed selectively
+## 15. Stack companions are installed selectively
 
 Not every consuming project needs every skill a source repository publishes. A stack companion —
 one that carries technology-specific implementation knowledge for a particular framework or stack —
