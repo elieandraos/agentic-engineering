@@ -41,15 +41,15 @@ The audit identified a smaller residue that genuinely required knowledge beyond 
 
 ### Concurrent-safe issue selection
 
-Observed once.
+Observed initially in the #354/#355 wave and again during normal post-v2.2.0 Phase 26 sequencing.
 
-The parent inspected multiple ready issues and judged #354/#355 safe to run concurrently because their expected implementation surfaces were disjoint.
+The original parallel experiment required the human to originate the idea of running several ready issues concurrently. After v2.2.0 shipped, a fresh normal-use session reconstructed fourteen dependency-ready Phase 26 issues correctly but still recommended only one issue. Inspection showed this was faithful to `sequencing.md`: the rule supported parallel execution after explicit human authorization but told the skill to recommend one ready issue by default.
 
-This is relational: one worker cannot determine whether its work is safe to execute concurrently without knowledge of the other candidate work.
+This exposed a methodology/discoverability gap rather than a failure of the parallel worker lifecycle. A human should still authorize concurrency, but should not have to remember that parallel execution exists before the methodology can surface it.
 
-Current skills can determine readiness and recommend one next issue, but do not define selection of a concurrent-safe subset.
+The candidate correction is intentionally small: milestone sequencing may recommend a safe concurrent subset when expected overlap is low and concurrency would materially help, while explicit human authorization remains mandatory before the parallel path begins.
 
-Watch for recurrence before extracting it.
+This responsibility is still relational: judging a safe subset requires knowledge across candidate issues. Today it remains in `implement-it` because that skill owns milestone sequencing. If a Control Room is later extracted, repeated evidence may move this cross-issue recommendation upward rather than duplicating it.
 
 ### Convergence sequencing
 
@@ -165,6 +165,18 @@ The Phase 26 Lab -> Plan flow provides concrete evidence:
 - the coordinating context preserved the open PR/milestone state, separated Phase 26 corrections from Backlog product/convention decisions, challenged accidental planning constraints, retained stack/methodology evidence, and enforced the stop before implementation.
 
 This does not make project management, product decisions, or stewardship themselves orchestration responsibilities. It is evidence that routing and preserving those boundaries may be.
+
+### Evidence is not execution policy
+
+Observed during the same Phase 26 sequencing discussion.
+
+The coordinating session remembered two post-convergence findings from earlier research — a stale Vite manifest and leftover worker worktrees — and promoted them into proposed operational steps: rebuild the Vite manifest before merging and remove worker worktrees afterward.
+
+Those findings had deliberately been retained as unresolved runtime/provisioning evidence, not adopted as portable procedure. The leap is therefore a useful boundary signal:
+
+> A retained finding or watch item is evidence to consider, not an instruction to execute, unless a later decision has promoted it into current guidance.
+
+Do not patch a specialist skill from this single occurrence. Watch whether future coordinating contexts similarly confuse research state with active methodology. A future Control Room may need a clearer distinction between current rules, project state, and research/watch evidence.
 
 ## Candidate responsibilities with insufficient evidence
 
