@@ -344,9 +344,34 @@ Do not schedule dedicated smoke tests solely for these questions. Observe them d
 - Which runtime/Control Room capability should own safe combined-candidate assembly, environment preparation, and retirement of completed temporary workspaces?
 - Which of these responsibilities recur often enough across runtimes or projects to justify extraction?
 
+## Extraction-bar reassessment after the overlapping wave
+
+The evidence base has now crossed a useful threshold for a dedicated v2.3 orchestration investigation, while still not justifying an implementation artifact.
+
+Responsibilities with repeated normal-use evidence and a credible cross-worker/cross-stage character now include:
+
+- selecting a useful execution shape from several ready issues while preserving human authorization;
+- tracking asynchronous worker lifecycle state and wave synchronization;
+- routing worker-specific human decisions back to the correct execution context;
+- composing specialist evidence into decision-specific human checkpoints;
+- coordinating combined-candidate verification across isolated workers;
+- reconciling compatible overlap and preserving the relationship between the verified candidate and converged history;
+- preserving lifecycle/project context across specialist-stage handoffs.
+
+A separate recurring cluster is clearly runtime-sensitive rather than specialist methodology:
+
+- worker workspace base/provisioning;
+- dependency/environment preparation;
+- generated state;
+- permission enforcement;
+- shared repository state such as stash;
+- temporary worktree/branch retirement.
+
+The next v2.3 step is therefore not to add an orchestrator skill. It is to define the responsibility boundary between **portable methodology**, **specialist skills**, **Control Room coordination**, and **runtime adapter/capabilities**, then test that boundary against the accumulated evidence before choosing an artifact form.
+
 ## Current conclusion
 
-The evidence supports investigating orchestration, not implementing it.
+The evidence now supports a dedicated orchestration/Control Room investigation. It does not yet support implementing a specific orchestrator artifact.
 
 Parallel implementation is now canonical in v2.2.0, so the observation target is broader than parallel execution alone: watch normal project work for coordination that remains necessary across workers, lifecycle stages, or knowledge boundaries after the specialist skills themselves are correct.
 
