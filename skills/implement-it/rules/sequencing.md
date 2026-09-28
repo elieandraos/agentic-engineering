@@ -83,7 +83,7 @@ empty ready set — see "When the ready set is empty" for what happens next.
 
 ## Recompute the dependency-ready set
 
-This phase starts only after a validated closure (`rules/issue-closure.md`) — never before.
+This phase starts after a validated closure (`rules/issue-closure.md`) or when the human explicitly asks what's next in a milestone. It never starts merely because an implementation worker wants to chain into more work.
 
 1. List the open issues remaining in the current milestone:
 
