@@ -13,7 +13,7 @@ The current strategy remains evidence-first: keep specialist skills correct and 
 
 ## Evidence boundary
 
-The evidence now spans three designed smoke-test waves and one normal post-v2.2.0 parallel wave, all on one runtime: Claude Code.
+The evidence now spans three designed smoke-test waves and two normal post-release parallel waves, all on one runtime: Claude Code. The second normal wave ran on released v2.2.1 and deliberately exercised known shared-file overlap; see `phase26-overlapping-parallel-wave.md`.
 
 It showed that Claude Code natively handled much of what earlier research had tentatively called an execution or Control Room layer:
 
@@ -60,9 +60,7 @@ approved commits onto the milestone branch, one at a time, once durable commits 
 open judgment call requiring parent reasoning each time; it is now normal mechanical progression that
 never shortens or bypasses push-readiness, issue-closure, or their validation. *Which* context actually
 performs that convergence remains open and belongs here, as a Control Room/runtime question, not to the
-skill. What remains genuinely open, and still requires human judgment rather than a mechanical default,
-narrows to: a real merge conflict, unexpected drift in the milestone branch's tip, a stale or
-partially-invalidated approval, or ambiguity about the correct convergence target — none of which the three smoke tests or the later normal Phase 26 wave exercised.
+skill. The later overlapping Phase 26 wave (`phase26-overlapping-parallel-wave.md`) exercised a real merge conflict. The parent reproduced a reconciliation already tested in a disposable combined candidate, then proved the final milestone tree identical to that candidate before push. Unexpected milestone-tip drift, stale/partially-invalidated approval, and target-branch ambiguity remain unexercised.
 
 ### Combined-state verification
 
@@ -167,6 +165,16 @@ This sharpens the candidate responsibility:
 `review-it` still owns what was found, and `implement-it` still owns what Review implementation must prove. The coordinating layer's candidate responsibility is presentation and orientation, not review semantics.
 
 The same run also exposed a real-time orientation issue: partial worker/plan/commit batches arrived as 1/4, 2/4, 3/4 and 4/4 updates. The human found the overall UX good but occasionally lost where the wave stood. A stable compact wave-progress view is therefore worth watching as a presentation concern, without turning worker event streaming into methodology.
+
+A second normal wave on v2.2.1 sharpened the presentation boundary further (`phase26-overlapping-parallel-wave.md`). Before the full-suite decision, the parent gave a compact candidate summary covering worker outcomes, overlap/reconciliation, combined targeted evidence, and the run/skip choice. After the suite, Review implementation repeated enough implementation detail that the human initially experienced it as a second review.
+
+The distinction that emerged through use was decision-specific:
+
+- **candidate checkpoint:** what happened across workers, where they interacted, and what combined verification decision is needed;
+- **Review implementation:** what changed in the codebase, how it was implemented, and what proof/review supports approval;
+- **Commit plan:** how approved work becomes semantic Git history and converges.
+
+The human also asked for a compact **Code surface** view in Review implementation, grouped by responsibility rather than a raw filename dump. This is human-facing coordination evidence, not a request to make `review-it` more verbose.
 ### Gate-specific worker resumption
 
 Now observed in the normal Phase 26 four-issue wave. Workers stopped before Review implementation, were resumed after implementation approval to derive Commit plans, and were resumed again after Commit-plan approval to create commits. The runtime implemented "holding" by ending a worker session and later resuming it; the coordinating parent preserved which lifecycle decision unlocked which resumption.
@@ -175,11 +183,13 @@ This is evidence for coordination across human gates, while the gate semantics t
 
 ### Conflict handling
 
-Not observed.
+Now directly observed in normal v2.2.1 work; see `phase26-overlapping-parallel-wave.md`.
 
-#354/#355 were deliberately non-overlapping. No merge conflict or material shared-file overlap occurred.
+#359 and #360 shared three files. Two auto-composed; `routes/members.php` conflicted because one worker added policy-class middleware while the other converted the route to an invokable controller. The coordinating parent authored a third state containing both approved intents. That state existed in neither worker's reviewed worktree.
 
-A future run with real overlap may expose responsibility that the current experiment could not.
+The reconciled disposable candidate passed combined targeted verification and a fresh full suite before Review implementation. The same conflict reproduced during real convergence, where the parent reproduced the tested resolution. The final milestone Git tree was identical to the fully tested combined candidate.
+
+This resolves the earlier "not observed" gap but exposes a narrower assurance question: neither worker's `review-it` covered the parent-authored reconciliation. Reconciliation ownership, review staleness/materiality, and whether final-tree identity should be a reusable invariant remain investigation questions rather than new skill rules.
 
 ### Candidate-patch propagation into isolated workers
 
@@ -326,7 +336,8 @@ One experiment is evidence, not a reusable rule.
 
 Do not schedule dedicated smoke tests solely for these questions. Observe them during normal project work. Useful remaining questions include:
 
-- What happens with actual file overlap or a convergence conflict?
+- When parent/coordinator reconciliation creates implementation content present in neither reviewed worker state, what materiality threshold requires renewed specialist review, and who owns obtaining it?
+- Does final-tree identity remain a useful bridge between a verified disposable candidate and converged history when overlap is larger or structurally different?
 - Does interrupted-worker recovery need portable methodology, or is runtime-specific recovery plus existing approval-validity checking sufficient?
 - Does human decision routing remain reliable when several workers need unrelated decisions at once?
 - What stable human-facing orientation is useful during longer waves without turning runtime events into methodology?
