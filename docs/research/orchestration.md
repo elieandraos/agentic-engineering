@@ -78,7 +78,6 @@ This is now repeated evidence that a coordinating context can provide combined-c
 
 The open question has therefore narrowed from whether combined verification can work to **which runtime/Control Room capability should own safe combined-candidate assembly and environment preparation across stacks and runtimes**. Keep `combined-candidate.md` as mechanism research rather than portable procedure.
 
-
 ### Cross-worker lifecycle judgment
 
 Now directly observed in normal post-v2.2.0 work. See `phase26-normal-parallel-wave.md`.
@@ -261,7 +260,7 @@ A runtime capable of parallel Agentic Engineering would conceptually need:
 - a return channel to the coordinating context;
 - durable enough state to recover safely from interruption.
 
-Do not design a common runtime interface from this list yet. It is derived from one runtime and one parallel wave.
+Do not design a common runtime interface from this list yet. It is derived from one runtime and several parallel waves.
 
 Agentic Engineering methodology should remain runtime-independent.
 
