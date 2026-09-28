@@ -72,6 +72,17 @@ The later wave did not exercise the stale-Vite-manifest condition: it added no n
 
 Do not solve the recurrence by adding an unconditional worktree-removal command to portable `implement-it`. Cleanup safety depends on whether a workspace is clean, merged, locked, interrupted, or still needed for recovery.
 
+## Additional v2.2.1 wave evidence
+
+The later overlapping #359/#360 wave (`phase26-overlapping-parallel-wave.md`) added a second normal-use occurrence of two runtime/provisioning behaviors already seen in the prior normal wave:
+
+- Claude Code's automatic isolated worktrees were again created from `main` rather than the checked-out milestone tip. Worker base checks caught this before edits; unchanged failed-worker worktrees were then auto-removed by the runtime.
+- symlinked Laravel `vendor` again resolved application classes from the main checkout rather than the worker worktree. Both workers switched to real copied dependency trees before any passing verification result.
+
+The same wave also exercised bounded post-wave cleanup: seven safe worktrees and forty merged issue/runtime branches were retired only after state checks, while unrelated branches outside the human's authorization were left alone. Failed automatic worktrees and successful/manual worktrees showed different retirement behavior.
+
+These observations strengthen the runtime/workspace-lifecycle evidence without promoting one provisioning or cleanup recipe into portable methodology.
+
 ## Next evidence
 
 During future real parallel waves, observe:
