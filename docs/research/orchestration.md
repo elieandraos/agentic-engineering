@@ -73,38 +73,18 @@ the three smoke tests has yet exercised.
 
 ### Combined-state verification
 
-Observed as a gap, and confirmed recurring: Smoke Test 2 produced the same gap independently, under a
-corrected parallel-aware `sequencing.md` (`smoke-test-2.md`; `responsibility-boundaries.md`'s "Combined
-verification"). This is now the strongest recurrence evidence of any candidate on this watchlist — the
-same gap, twice, under two different skill-correction states.
+The policy gap is settled in v2.2.0: concurrent workers perform their own targeted/quality verification and `review-it`, then the wave gets one human-controlled combined full-suite run/skip decision before Review implementation. The worker skill deliberately does not prescribe how the combined candidate is assembled or which context runs it.
 
-Each worker verified its own branch, but neither run re-verified the final combined state with one
-explicit decision before implementation-review.
+Mechanism evidence has now progressed through the smoke tests and one normal post-release wave:
 
-Verification of the union inherently requires knowledge beyond either worker's isolated change.
+- Smoke Tests 1–2 exposed the missing combined-state boundary.
+- Smoke Test 3 ran a fresh uncommitted-union suite successfully, but with a looser assembly mechanism that was safe only because the wave was file-disjoint.
+- The normal Phase 26 four-issue wave (`phase26-normal-parallel-wave.md`) again assembled a disposable uncommitted union, ran `1331/1331` fresh with TIA disabled, removed the combined worktree, and later verified the converged 47-file result through per-worker/final-state equivalence checks.
 
-**Escalated further by Smoke Test 3** (`smoke-test-3.md`): attempted for real for the first time — a
-full, fresh, uncommitted-union regression pass actually ran and passed, before any worker's Review
-implementation — but using a mechanism that diverged from the validated procedure
-(`combined-candidate.md`) in ways that happened not to matter only because that wave was file-disjoint.
-This remains the single strongest recurring candidate on this watchlist across all three smoke tests,
-and is still not promoted past "watch" — one real attempt with a divergent mechanism is evidence of how
-it goes when tried, not a second clean success confirming a stable, repeatable procedure. The wave-level
-run/skip framing question this run also surfaced is now settled as a final decision, not left open — see
-`parallel-final-reconciliation.md`.
+This is now repeated evidence that a coordinating context can provide combined-candidate verification without creating premature implementation commits. It still does not justify putting a Git patch/worktree recipe into portable `implement-it`: assembly, dependency preparation, generated state, and final equivalence checks remain runtime/project-sensitive.
 
-**Policy now decided, mechanism still open.** After Smoke Test 2, the research position changed: a
-parallel worker no longer gets its own full-suite run/skip choice at all (targeted + narrowest broader
-regression + `review-it` is sufficient per worker); the full suite instead runs once, required, against
-one assembled combined candidate state, before the implementation-review checkpoint — see `vision.md`'s
-updated "Verification model" and `responsibility-boundaries.md`. This is a policy decision, not yet a
-skill change and not yet validated by any smoke test. The genuinely unresolved part is narrower than
-"who owns combined verification": it is *how* to assemble that combined candidate from several still-
-uncommitted, isolated workers without creating a durable commit ahead of the existing Review
-implementation/Commit plan approvals — investigated in `combined-candidate.md`. This may still naturally
-belong to existing milestone/Ship progression, to a new explicit parent-session step, or to something
-else; do not assign ownership prematurely, and do not treat the mechanism as solved by either smoke
-test's convergence behavior, which only ever ran after commits already existed and were approved.
+The open question has therefore narrowed from whether combined verification can work to **which runtime/Control Room capability should own safe combined-candidate assembly and environment preparation across stacks and runtimes**. Keep `combined-candidate.md` as mechanism research rather than portable procedure.
+
 
 ### Cross-worker lifecycle judgment
 
