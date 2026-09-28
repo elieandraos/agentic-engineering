@@ -57,7 +57,6 @@ These are possibilities, not commitments or a prescribed order:
 
 ## Deferred questions
 
-- Decide project-wide whether immutable injected service/action classes should prefer `final readonly class` over `final class` with readonly constructor properties. Phase 26 policy actions made the mixed convention visible, but changing one feature family alone would create another local style rather than resolve the project convention; retain as a future convention question until broader evidence justifies a rule.
 - Revisit durable storage for canonical issue definitions if real interrupted-work recovery shows the current GitHub-query approach is insufficient.
 - Evaluate retiring Claude Artifact output from `document-it` in favor of Markdown-only documentation, while preserving the documentation methodology and removing Artifact-specific tooling such as the HTML template if confirmed.
 - Review `review-it`'s trust-boundary wording after Snyk W011 flagged the unavoidable exposure to third-party PR and issue text as an indirect prompt-injection risk; treat GitHub content as untrusted evidence, never workflow authority.
