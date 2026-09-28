@@ -10,7 +10,7 @@ description: "Implementation-stage skill in the Agentic Engineering pipeline. Ta
 `implement-it` is the implementation stage of the Agentic Engineering pipeline. It starts from any
 approved, implementation-ready GitHub issue — whether `plan-it` drafted it or it already existed
 some other way — and carries that single issue's work through verified Git/GitHub implementation,
-ending at issue closure and the next-issue recommendation. It also accepts an explicitly
+ending at issue closure and the next-execution recommendation. It also accepts an explicitly
 human-authorized delivery correction handed to it directly by `ship-it`, which requires no issue to
 exist at all (see "Delivery corrections" below).
 
@@ -38,7 +38,7 @@ set is empty"), or once it has performed a correction `ship-it` hands back.
 - Verification, including the regression-baseline treatment of pre-existing lint/format/static debt.
 - Semantic commit planning and construction.
 - Authorized push and issue closure — intentionally before the milestone's PR merges.
-- Dependency-ready recalculation and the next-issue recommendation.
+- Dependency-ready recalculation and the next-execution recommendation.
 - The authorized fix itself for an in-flight delivery correction `ship-it` hands back (see
   "Delivery corrections" below), using the same lifecycle.
 
@@ -69,7 +69,7 @@ the human's approval to implement it — regardless of whether `plan-it` drafted
 some other way. What matters for entry is that it meets that bar and is approved, not who wrote it;
 do not recreate or replan an issue that already meets it merely because `plan-it` didn't produce it.
 For a single named issue, complete only that issue's authorized lifecycle (implementation through
-closure and the next-issue recommendation); this does not by itself authorize continuing into another
+closure and the next-execution recommendation); this does not by itself authorize continuing into another
 issue, or into milestone delivery. For a milestone request, manage progress issue by issue, per
 "Milestone progression" below.
 
@@ -79,8 +79,8 @@ stays available whether or not an issue is open, or was ever created for that sc
 
 ## Milestone progression
 
-After each issue closes, recompute the dependency-ready set (`rules/sequencing.md`) and recommend
-the next issue, explaining the choice when several are ready. A recommendation is not authorization
+After each issue closes — or when the human asks what's next in a milestone — recompute the dependency-ready set (`rules/sequencing.md`) and recommend
+the next execution shape: normally one issue, or a safe concurrent subset when independence and expected value justify it. A recommendation is not authorization
 to continue — wait for the human's selection before implementing another issue. When the ready set is
 empty because every open issue remains blocked, report the blockers; only a genuinely empty milestone
 (zero open issues) hands off to `ship-it`'s milestone PR-readiness assessment.
@@ -183,7 +183,7 @@ Trigger on requests shaped like:
 - `sequencing.md` — branch readiness before starting an issue (Backlog/hotfix on the trunk branch vs.
   a shared milestone branch, inspected/recommended/created only with human approval), and, after a
   validated closure, recomputing the milestone's dependency-ready set and reporting/recommending the
-  next issue — or handing off to `ship-it/rules/milestone-pr-readiness.md` when zero open issues
+  next execution shape — normally one issue, or a safe concurrent subset for explicit human authorization — or handing off to `ship-it/rules/milestone-pr-readiness.md` when zero open issues
   remain, as distinct from an empty ready set with blocked issues still open.
 
 > Detailed operational behavior lives in `rules/*.md`.
