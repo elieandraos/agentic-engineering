@@ -182,7 +182,7 @@ Trigger on requests shaped like:
   reachable on the correct remote branch. Closure is intentional before a milestone's PR merges.
 - `sequencing.md` — branch readiness before starting an issue (Backlog/hotfix on the trunk branch vs.
   a shared milestone branch, inspected/recommended/created only with human approval), and, after a
-  validated closure, recomputing the milestone's dependency-ready set and reporting/recommending the
+  validated closure or when the human asks what's next in a milestone, recomputing the milestone's dependency-ready set and reporting/recommending the
   next execution shape — normally one issue, or a safe concurrent subset for explicit human authorization — or handing off to `ship-it/rules/milestone-pr-readiness.md` when zero open issues
   remain, as distinct from an empty ready set with blocked issues still open.
 
