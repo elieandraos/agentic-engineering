@@ -104,7 +104,7 @@ This phase starts after a validated closure (`rules/issue-closure.md`) or when t
 
 Summarize compactly, in categories — never a flat ready list:
 
-- which issues just became newly ready because of this closure;
+- which issues just became newly ready because of this closure, when this recompute follows a closure;
 - which were already ready;
 - which are still blocked, and on what.
 
