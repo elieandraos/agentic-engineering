@@ -203,7 +203,7 @@ The human authorized concurrency, chose the #373 product wording, chose to run c
 3. Review implementation needs enough implementation substance to make approval meaningful; this presentation gap has now recurred beyond designed smoke tests.
 4. Real-time parent checkpoints can become disorienting when partial batches are presented without a stable wave-progress orientation.
 5. Combined uncommitted-union verification worked again, but its assembly mechanism remains runtime-specific.
-6. Runtime worker provisioning can violate the intended milestone base; effective workspace state must be verified before implementation.
+6. Runtime worker provisioning did violate the intended milestone base in this run; the workers corrected it before implementation.
 7. Dependency sharing through symlinked `vendor` was unsafe in this Laravel worktree setup.
 8. Runtime permission prompts can duplicate already-made methodology decisions without changing the underlying engineering authorization.
 9. Temporary worktree/branch retirement remains unowned after successful wave completion and has now recurred during normal post-release use.
