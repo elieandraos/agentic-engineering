@@ -108,21 +108,11 @@ test's convergence behavior, which only ever ran after commits already existed a
 
 ### Cross-worker lifecycle judgment
 
-Thin but real.
+Now directly observed in normal post-v2.2.0 work. See `phase26-normal-parallel-wave.md`.
 
-The runtime knew that one worker had completed while another was running. Runtime status itself required no parent reasoning.
+Four workers became ready at different times. The parent absorbed those asynchronous completions, routed one worker-specific product decision while siblings continued, waited for the wave synchronization point before combined verification, then batched the later human gates.
 
-The potential higher-level responsibility is deciding what should happen when workers occupy different lifecycle states.
-
-For example:
-
-```text
-Worker A → Review implementation → waiting
-Worker B → implementing
-Worker C → Commit plan → waiting
-```
-
-No real run has yet exercised this state with valid skill-owned gates.
+The runtime supplied completion/resumption mechanics; the coordinating parent decided what those states meant for wave progression. This is stronger evidence than merely observing worker status: the parent had to preserve issue identity, wave readiness, and pending human decisions across different worker lifecycle states.
 
 ### Cross-skill lifecycle routing and knowledge-boundary coordination
 
@@ -182,39 +172,29 @@ Do not patch a specialist skill from this single occurrence. Watch whether futur
 
 ### Human decision routing
 
-Not observed.
+Now directly observed during the normal Phase 26 four-issue wave (`phase26-normal-parallel-wave.md`).
 
-The #354/#355 workers never surfaced Review implementation or Commit plan. Therefore the parent never had to receive a decision from one worker, present it to the human, and route the response back to that exact worker.
+The #373 worker surfaced a product wording choice while three siblings continued. The parent presented that choice to the human, received `Export`, resumed the correct worker, and that worker changed and re-verified only its own implementation before returning to candidate-ready. The later combined suite included the human-approved result.
 
-This is one of the most orchestrator-shaped hypotheses, but currently has zero direct supporting execution evidence.
-
-The next smoke test should exercise it deliberately.
+This is direct evidence for a coordinating responsibility distinct from the worker's own engineering semantics: receive a worker-specific decision, preserve its identity while other work continues, present it coherently, and route the answer back to the correct execution context.
 
 ### Human-facing decision presentation
 
-Now has direct supporting evidence, from Smoke Test 2 (`smoke-test-2.md`), distinct from "Human decision
-routing" above: routing is about getting the right answer back to the right worker; this is about how
-the evidence a skill already produced gets *worded* for the human in between.
+Repeated and now observed in normal post-release work, not only smoke tests. See `phase26-normal-parallel-wave.md`.
 
-In that run, `review-it` produced substantive, specific findings for two of the three workers (a
-`policiesCount`-derivation and route-placement scope note; a renewal-window judgment call), and both the
-worker's own report and the parent's relay of it wrapped that substance in internal methodology
-vocabulary — "Gate 1," "Gate 2," rule-file names — rather than plain statements of what was checked and
-what decision was needed. The substance itself mostly survived the compression in this run; the
-vocabulary and compactness did not match what a human operating the workflow actually needs.
+The normal four-issue wave showed that batching itself works well: the parent waited for all workers before the combined-verification choice, presented four per-issue Review implementation decisions in one interaction, batched all four Commit-plan approvals, and later batched closure choices.
 
-This shows a coordinating parent does receive skill-owned results and must decide how to surface them —
-which is plausibly, eventually, an orchestrator-shaped responsibility. It is not extracted now: a single
-run's presentation gap is not repeated evidence, and this watchlist's own bar (below) requires seeing a
-responsibility recur before treating it as a real candidate. It is also not a reason to move review
-semantics or findings out of `review-it` — `review-it` continues to own *what* the review found; this
-watch item is only about *how* an already-correct result gets presented, and that boundary should stay
-sharp as more evidence accumulates.
+The remaining problem is evidence preservation at the decision boundary. Review implementation was compressed too aggressively: none of the four presentations included the required `Activated skills:` line, and #362 never received a substantive text summary before its approval question. The human explicitly reported that the approval UI did not provide enough compact evidence about what each worker actually changed.
 
-The next smoke test should observe whether this recurs, and whether it recurs identically for a
-single-worker (non-parallel) `implement-it` run — nothing about the underlying gap is inherently
-parallel-specific; parallel execution only made the parent/presentation boundary easier to see.
+By contrast, the batched Commit-plan presentation preserved the information needed for that decision: semantic grouping, order, messages, and per-issue boundaries.
 
+This sharpens the candidate responsibility:
+
+> Aggregate asynchronous specialist output into a compact, decision-ready human presentation without stripping away the evidence needed for the specific decision being asked.
+
+`review-it` still owns what was found, and `implement-it` still owns what Review implementation must prove. The coordinating layer's candidate responsibility is presentation and orientation, not review semantics.
+
+The same run also exposed a real-time orientation issue: partial worker/plan/commit batches arrived as 1/4, 2/4, 3/4 and 4/4 updates. The human found the overall UX good but occasionally lost where the wave stood. A stable compact wave-progress view is therefore worth watching as a presentation concern, without turning worker event streaming into methodology.
 ### Gate-specific worker resumption
 
 Not observed.
