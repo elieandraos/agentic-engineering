@@ -68,7 +68,7 @@ A later normal four-issue Phase 26 wave (`phase26-normal-parallel-wave.md`) comp
 
 This strengthens the worker-workspace lifecycle finding: successful issue/wave completion does not currently retire temporary execution resources automatically, and no existing portable issue lifecycle owns that retirement.
 
-The later wave did not reproduce the stale-Vite-manifest failure, so generated-state reconciliation remains a separate stack/runtime watch item rather than a generalized post-convergence procedure.
+The later wave did not exercise the stale-Vite-manifest condition: it added no new Inertia pages and did not run a post-merge local suite in the shared checkout. Generated-state reconciliation therefore remains a separate stack/runtime watch item rather than a generalized post-convergence procedure.
 
 Do not solve the recurrence by adding an unconditional worktree-removal command to portable `implement-it`. Cleanup safety depends on whether a workspace is clean, merged, locked, interrupted, or still needed for recovery.
 
