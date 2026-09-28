@@ -62,11 +62,15 @@ The evidence may belong to different future owners:
 
 ## Extraction status
 
-Retain and watch.
+Retain and watch, with recurrence now established for workspace cleanup.
 
-This is the first normal post-v2.2.0 occurrence showing that convergence can leave the shared local environment semantically stale even when Git state is correct. It also repeats the broader worker-provisioning/worktree-lifecycle concern observed during Smoke Test 3.
+A later normal four-issue Phase 26 wave (`phase26-normal-parallel-wave.md`) completed successfully through convergence, push, and issue closure while all four current worker worktrees remained present. Twelve older clean/merged worktrees were removed only because the human explicitly requested housekeeping during the wave; runtime-created `worktree-agent-*` branches still remained afterward.
 
-Do not change a portable skill from this observation alone.
+This strengthens the worker-workspace lifecycle finding: successful issue/wave completion does not currently retire temporary execution resources automatically, and no existing portable issue lifecycle owns that retirement.
+
+The later wave did not reproduce the stale-Vite-manifest failure, so generated-state reconciliation remains a separate stack/runtime watch item rather than a generalized post-convergence procedure.
+
+Do not solve the recurrence by adding an unconditional worktree-removal command to portable `implement-it`. Cleanup safety depends on whether a workspace is clean, merged, locked, interrupted, or still needed for recovery.
 
 ## Next evidence
 
@@ -75,5 +79,5 @@ During future real parallel waves, observe:
 - whether generated/runtime state becomes stale again after convergence;
 - whether combined verification already refreshes enough state when it runs;
 - whether an explicit wave-level skip makes post-convergence reconciliation more important;
-- when completed worker worktrees can be safely removed;
+- when completed worker worktrees can be safely removed, and which layer can prove they are no longer needed;
 - whether cleanup/reconciliation is naturally performed by the runtime, coordinating context, stack companion, or an existing lifecycle stage.
