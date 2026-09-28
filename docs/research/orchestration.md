@@ -13,7 +13,7 @@ The current strategy remains evidence-first: keep specialist skills correct and 
 
 ## Evidence boundary
 
-The #354/#355 experiment is one parallel wave on one runtime: Claude Code.
+The evidence now spans three designed smoke-test waves and one normal post-v2.2.0 parallel wave, all on one runtime: Claude Code.
 
 It showed that Claude Code natively handled much of what earlier research had tentatively called an execution or Control Room layer:
 
@@ -43,7 +43,7 @@ The audit identified a smaller residue that genuinely required knowledge beyond 
 
 Observed initially in the #354/#355 wave and again during normal post-v2.2.0 Phase 26 sequencing.
 
-The original parallel experiment required the human to originate the idea of running several ready issues concurrently. After v2.2.0 shipped, a fresh normal-use session reconstructed fourteen dependency-ready Phase 26 issues correctly but still recommended only one issue. Inspection showed this was faithful to `sequencing.md`: the rule supported parallel execution after explicit human authorization but told the skill to recommend one ready issue by default.
+The original parallel experiment required the human to originate the idea of running several ready issues concurrently. After v2.2.0 shipped, a fresh normal-use session reconstructed thirteen dependency-ready Phase 26 issues correctly but still recommended only one issue. Inspection showed this was faithful to `sequencing.md`: the rule supported parallel execution after explicit human authorization but told the skill to recommend one ready issue by default.
 
 This exposed a methodology/discoverability gap rather than a failure of the parallel worker lifecycle. A human should still authorize concurrency, but should not have to remember that parallel execution exists before the methodology can surface it.
 
@@ -53,13 +53,7 @@ This responsibility is still relational: judging a safe subset requires knowledg
 
 ### Convergence sequencing
 
-Observed once.
-
-Parallel isolated worktrees required separate worker branches. The parent then sequenced those approved results back into the shared milestone branch.
-
-The current one-working-branch milestone rule does not describe this case.
-
-This may become parallel-aware `implement-it`/lifecycle policy rather than orchestration. Correct the skills and repeat the experiment before deciding.
+Observed repeatedly across the smoke tests and again in the normal Phase 26 four-issue wave. Parallel isolated worktrees required separate worker branches, and approved results converged sequentially back into the shared milestone branch.
 
 **Settled after Smoke Test 3** (`parallel-final-reconciliation.md`): sequencing itself — converging
 approved commits onto the milestone branch, one at a time, once durable commits exist — is no longer an
@@ -68,8 +62,7 @@ never shortens or bypasses push-readiness, issue-closure, or their validation. *
 performs that convergence remains open and belongs here, as a Control Room/runtime question, not to the
 skill. What remains genuinely open, and still requires human judgment rather than a mechanical default,
 narrows to: a real merge conflict, unexpected drift in the milestone branch's tip, a stale or
-partially-invalidated approval, or ambiguity about the correct convergence target — none of which any of
-the three smoke tests has yet exercised.
+partially-invalidated approval, or ambiguity about the correct convergence target — none of which the three smoke tests or the later normal Phase 26 wave exercised.
 
 ### Combined-state verification
 
@@ -148,7 +141,7 @@ Those findings had deliberately been retained as unresolved runtime/provisioning
 
 Do not patch a specialist skill from this single occurrence. Watch whether future coordinating contexts similarly confuse research state with active methodology. A future Control Room may need a clearer distinction between current rules, project state, and research/watch evidence.
 
-## Candidate responsibilities with insufficient evidence
+## Candidate responsibilities still under investigation
 
 ### Human decision routing
 
@@ -164,7 +157,7 @@ Repeated and now observed in normal post-release work, not only smoke tests. See
 
 The normal four-issue wave showed that batching itself works well: the parent waited for all workers before the combined-verification choice, presented four per-issue Review implementation decisions in one interaction, batched all four Commit-plan approvals, and later batched closure choices.
 
-The remaining problem is evidence preservation at the decision boundary. Review implementation was compressed too aggressively: none of the four presentations included the required `Activated skills:` line, and #362 never received a substantive text summary before its approval question. The human explicitly reported that the approval UI did not provide enough compact evidence about what each worker actually changed.
+The remaining problem is evidence preservation at the decision boundary. Review implementation was compressed too aggressively: none of the four presentations included the required `Activated skills:` line, and #362 never received a substantive text summary before its approval question. The parent presentation did not provide one compact summary preserving enough implementation evidence about what each worker actually changed; #362 in particular had no substantive text summary before its approval question.
 
 By contrast, the batched Commit-plan presentation preserved the information needed for that decision: semantic grouping, order, messages, and per-issue boundaries.
 
@@ -177,11 +170,9 @@ This sharpens the candidate responsibility:
 The same run also exposed a real-time orientation issue: partial worker/plan/commit batches arrived as 1/4, 2/4, 3/4 and 4/4 updates. The human found the overall UX good but occasionally lost where the wave stood. A stable compact wave-progress view is therefore worth watching as a presentation concern, without turning worker event streaming into methodology.
 ### Gate-specific worker resumption
 
-Not observed.
+Now observed in the normal Phase 26 four-issue wave. Workers stopped before Review implementation, were resumed after implementation approval to derive Commit plans, and were resumed again after Commit-plan approval to create commits. The runtime implemented "holding" by ending a worker session and later resuming it; the coordinating parent preserved which lifecycle decision unlocked which resumption.
 
-The interrupted Life worker was recovered, but that was process/workspace recovery, not resumption from a human gate.
-
-Do not treat the two as equivalent.
+This is evidence for coordination across human gates, while the gate semantics themselves remain owned by `implement-it`.
 
 ### Conflict handling
 
@@ -334,17 +325,14 @@ One experiment is evidence, not a reusable rule.
 
 ## What to observe next
 
-Do not schedule dedicated smoke tests solely for these questions. Observe them during normal project work. Useful questions include:
+Do not schedule dedicated smoke tests solely for these questions. Observe them during normal project work. Useful remaining questions include:
 
-- Can a background worker surface Review implementation and genuinely wait?
-- Can the human approve one waiting worker while siblings continue or remain paused?
-- Can the correct worker resume without another worker being affected?
-- Does decision routing require explicit orchestration machinery or does the runtime make it trivial?
-- What branch/convergence rule survives repeated parallel waves?
-- Where does combined verification fit most naturally in the existing lifecycle?
 - What happens with actual file overlap or a convergence conflict?
 - Does interrupted-worker recovery need portable methodology, or is runtime-specific recovery plus existing approval-validity checking sufficient?
-- Which of these responsibilities recur often enough to justify extraction?
+- Does human decision routing remain reliable when several workers need unrelated decisions at once?
+- What stable human-facing orientation is useful during longer waves without turning runtime events into methodology?
+- Which runtime/Control Room capability should own safe combined-candidate assembly, environment preparation, and retirement of completed temporary workspaces?
+- Which of these responsibilities recur often enough across runtimes or projects to justify extraction?
 
 ## Current conclusion
 
