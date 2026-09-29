@@ -67,3 +67,31 @@ $search = $request->validated('search');
 Still call `$request->validated()` (no key) when a whole array is needed as-is, e.g. passing it straight
 into a Filter (see `blueprints/filters-and-sorting.md`) — the point is to stop hand-rolling per-field
 defaults the accessor already does.
+
+## Restoring query-driven form state: validate shape before meaning
+
+When a GET endpoint restores form state from query parameters, treat that input as untrusted even when
+it only preselects UI values. A query key expected to be a scalar can arrive as an array
+(`?status[]=open`), and membership/enum helpers that assume a string may throw before the page renders.
+
+Validate the runtime shape before checking whether the value is allowed:
+
+```php
+private function enumValue(mixed $value, string $enum): ?string
+{
+    if (! is_string($value)) {
+        return null;
+    }
+
+    return $enum::tryFrom($value)?->value;
+}
+```
+
+The same boundary applies to relationship identifiers used for preselection: resolve them through the
+same tenant/organization scope the real form uses, and ignore values that do not belong to the current
+scope rather than reflecting them back as trusted state.
+
+This rule is about **restored/preselected UI state**, not mutation input. Mutation validation still
+belongs in a Form Request. Do not create a Form Request merely to echo optional query state into a page
+when a small, type-safe, scoped read is sufficient.
+
