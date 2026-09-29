@@ -85,6 +85,32 @@ attribute-level rule it doesn't cover:
 > incomplete coverage: a test specifically proving field mapping may intentionally provide the complete
 > relevant payload.
 
+## Shared request/action payload builders: defaults arrange, overrides prove
+
+When many HTTP and Action tests for the same domain repeat large valid input arrays, a shared test
+payload builder can remove setup noise without turning model factories into request factories.
+
+Keep the boundaries explicit:
+
+- **model factories** create persisted/domain model state;
+- **test payload builders** create plain input arrays shaped for Form Requests/Actions;
+- builders provide a valid baseline and accept explicit per-test overrides;
+- a test keeps every value material to its assertion visible at the call site rather than deriving its
+  expected value from the builder default;
+- nested associative detail overrides merge by key when that preserves unrelated valid defaults;
+  list-valued inputs normally replace the default list rather than being appended implicitly.
+
+A shared builder is justified by repeated payload structure, not by a desire to make every test one
+line. Keep a local payload when the shape is unique or when sharing it would hide the behavior under
+test.
+
+For update tests, make the changed value explicit when the test is meant to prove a mutation. Do not
+let the submitted value accidentally equal the persisted/default value, because the test can then pass
+without proving that the update occurred.
+
+When consolidating existing helpers, preserve test names, case coverage, and meaningful assertion
+counts/behavior. Do not rewrite expected values merely to match the new builder.
+
 ## Reusable Inertia testing macros
 
 `hasResource`, `hasPaginatedResource`, `assertHasResource`, `assertHasPaginatedResource`, and
