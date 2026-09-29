@@ -39,3 +39,25 @@ For components with internal derived values, keep the existing reactive state an
 For invisible defaults that need no custom control, use a normal hidden input in the page itself.
 
 Native controls and components that already forward `$attrs` to their native input/select do not need a custom serialization layer.
+
+## Extract shared form-option assembly without erasing feature ownership
+
+When several Create/Edit endpoints repeatedly assemble the same stable option lists, extract that
+assembly behind one focused provider or equivalent application boundary. Keep only genuinely shared
+options there.
+
+Class-, subtype-, or feature-specific options stay with the controller or feature that owns them. Do
+not turn repeated option assembly into a universal form-schema abstraction, and do not make one provider
+know every variant merely to remove a few repeated lines.
+
+A useful split is:
+
+- shared provider: stable cross-form lists such as actors, statuses, or sources used with the same
+  resource shape and ordering;
+- owning controller/feature: subtype choices, conditional options, selected/restored values, and other
+  props whose meaning varies by page.
+
+When extracting, preserve the existing option resource/shape and ordering unless the change explicitly
+intends to alter the UI contract. HTTP/Inertia tests should protect the page's meaningful prop contract,
+especially ordering when the UI relies on it.
+
