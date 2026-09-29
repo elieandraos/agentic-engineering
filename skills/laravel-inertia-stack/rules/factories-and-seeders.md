@@ -24,6 +24,37 @@ The same principle applies to any dependent pair — for example a region field 
 sub-areas are valid: pick the parent value first, then constrain the child's `randomElement()` to the
 set that's valid for it, rather than randomizing both from unrelated pools.
 
+## Factories must produce application-valid states
+
+A factory is executable domain data, not merely a collection of individually plausible attributes.
+Its default output should satisfy the application's current invariants so a record created by the
+factory can travel through normal application behavior without immediately becoming invalid.
+
+When one generated attribute constrains another, choose the owning value first and derive the dependent
+value from the valid set for that owner. This includes enum-backed combinations and polymorphic or
+type/class-specific detail values.
+
+If a later factory state or callback determines the owning attribute, derive dependent attributes from
+that **final** value rather than from an earlier random default. Otherwise the factory can occasionally
+create combinations the application's own validation rejects.
+
+Keep invalid combinations available through explicit test overrides/states when a test needs them; do
+not make invalid data part of the default factory distribution.
+
+This extends the dependent-field rule below from plausibility to application validity: a factory that
+creates a syntactically valid record which cannot be edited/saved through the application's own rules
+is not a sound default factory.
+
+## Avoid collisions with deterministic fixture identities
+
+Before randomizing an attribute that participates in a unique identity, inspect deterministic
+factory/seeder fixtures that intentionally own specific values. Exclude those reserved identities from
+the random factory's default pool rather than relying on probability to avoid a unique-constraint
+collision.
+
+Keep the portable rule at the identity/invariant level: which concrete codes, slugs, emails, or other
+values are reserved belongs to the consuming project's fixtures, not this skill.
+
 ## Build emails from the generated name
 
 Prefer an email derived from the same generated name over Faker's random `safeEmail()`/`freeEmail()`,
