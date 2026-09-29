@@ -201,6 +201,64 @@ Candidate presentation distinction supported by Phase 26:
 
 These are presentation responsibilities, not new approval semantics.
 
+## Specialist composition hypothesis
+
+A narrower Control Room hypothesis emerged after the responsibility audit and is worth retaining
+without adopting it yet:
+
+> **If a first-class Control Room is eventually justified, its strongest extraction seam may be
+> specialist composition: a specialist performs one bounded engineering responsibility, returns an
+> explicit outcome state to the coordinating context, and does not itself decide which other
+> specialist executes next. Control Room interprets that result, preserves human gates, and routes
+> the next specialist when appropriate.**
+
+This differs from extracting specialist semantics. The specialist still owns what counts as a valid
+result for its stage; Control Room would own the transition between results.
+
+Current cross-skill control-flow candidates include:
+
+- `lab-it` completing investigation/plan synthesis and referring downstream work to `plan-it`;
+- `plan-it` handing implementation-ready work to `implement-it`;
+- `implement-it` invoking `review-it` before Review implementation;
+- `implement-it` handing zero-open milestone state to `ship-it`;
+- `ship-it` handing an authorized delivery correction back to `implement-it`;
+- `document-it` routing missing/stale evidence through `lab-it`.
+
+Not every cross-skill reference is orchestration. Ownership documentation, input contracts, and
+specialist-defined completion semantics may remain local even if execution routing moves upward.
+The useful distinction to investigate is **reference versus control flow**.
+
+A possible future interaction model, stated only as a hypothesis, is:
+
+```text
+Control Room
+    → specialist
+    → explicit specialist result
+    → Control Room
+    → human decision when required
+    → next specialist or completion
+```
+
+Examples of result states might conceptually be “investigation resolved”, “planning complete”,
+“implementation candidate ready”, “review clean/findings”, or “delivery correction required”.
+Those labels are illustrative, not a proposed protocol.
+
+This hypothesis applies equally to serial and parallel implementation. Parallel execution adds
+multiple simultaneously active specialist results and synchronization; it does not change the
+composition model.
+
+It also sharpens the runtime boundary. Control Room may coordinate an execution state such as
+“run this implementation from the approved milestone state” or “retire this completed temporary
+execution context”, while runtime/stack capabilities own how worktrees, dependencies, generated
+state, worker resumption, permissions, and cleanup mechanics make that state real. This could
+prevent specialist skills from accumulating runtime-specific workspace procedures.
+
+**Evidence status:** current Phase 26 evidence strongly supports the existence of cross-skill
+references and parent-owned coordination, but it does not yet show that distributed cross-skill
+invocation is causing enough cost or failure to justify extraction. Keep this as a laboratory
+hypothesis. Normal use should establish whether specialist-to-specialist control flow becomes a
+material source of complexity before any skill is narrowed around it.
+
 ## Runtime capability boundary
 
 Control Room expresses required execution state; runtime/stack capabilities make it real.
