@@ -42,15 +42,15 @@ than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `temp
 | Task | Load |
 |---|---|
 | Composing a CRUD or single-action controller | `blueprints/resource-controller.md` |
-| Writing or organizing a Pest test | `blueprints/pest-testing.md`, then `rules/test-ownership.md` for the concrete class-ownership mapping |
+| Writing or organizing a Pest test, including repeated request/action payload setup | `blueprints/pest-testing.md`, then `rules/test-ownership.md` for the concrete class-ownership mapping |
 | Wiring Form Request -> Action -> Controller | `rules/actions.md` |
 | Authorizing a controller method | `rules/authorization.md` |
 | Defining an Eloquent local scope or computed model attribute | `rules/eloquent-attributes.md` |
 | Adding index filtering and/or sorting | `blueprints/filters-and-sorting.md` + `rules/request-normalization.md` (a sort `direction` must be defaulted, not left nullable) + `templates/app/Filters/QueryFilter.php`, `templates/app/Sorts/QuerySorter.php`, `templates/app/Models/Concerns/Filterable.php`, `templates/app/Models/Concerns/Sortable.php` |
 | Exposing a backed enum as select options | `rules/enum-options.md` |
-| Coercing or defaulting request input | `rules/request-normalization.md` |
+| Coercing/defaulting request input or safely restoring query-driven form state | `rules/request-normalization.md` |
 | Building a JsonResource for Inertia | `rules/resources.md` |
-| Building an Inertia form or adapting custom controls to `<Form>` serialization | `rules/inertia-forms.md` |
+| Building an Inertia form, adapting custom controls, or extracting repeated shared form-option assembly | `rules/inertia-forms.md` |
 | Rendering a new Inertia page from a Laravel endpoint | `rules/inertia-pages.md` |
 | Writing a factory or a dev-only seeder | `rules/factories-and-seeders.md` |
 | Adding a mid-chain conditional query clause | `rules/query-conditionals.md` |
