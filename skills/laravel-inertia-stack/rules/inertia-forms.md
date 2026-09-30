@@ -61,3 +61,21 @@ When extracting, preserve the existing option resource/shape and ordering unless
 intends to alter the UI contract. HTTP/Inertia tests should protect the page's meaningful prop contract,
 especially ordering when the UI relies on it.
 
+## Keep client-side constraints within the server/domain contract
+
+A form control may make the server's valid states easier to enter, but its defaults must not silently
+make valid server/domain states unreachable. When a reusable control adds a range, option list, minimum,
+maximum, or other selectable constraint, compare that constraint with the Form Request/domain rule at
+the consuming feature boundary.
+
+A component-wide default is especially risky when different domains have different valid ranges. Prefer
+an explicit feature-level bound over changing the shared default when only one feature needs a wider or
+narrower range. Existing persisted values that remain valid on the server must also remain representable
+when editing, even when they fall outside a normal convenience range.
+
+The inverse applies to closed choices: when the product defines a finite option set, do not let the UI
+and server maintain independent lists that can drift. Give both sides one authoritative application
+source where the stack already has a suitable representation (for example a backed enum with
+`rules/enum-options.md`). Do not invent an enum merely because a field happens to use a select; the
+set must actually be closed by the domain.
+
