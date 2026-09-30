@@ -10,14 +10,14 @@ drives the relationship first, then derive the other(s) from it.
 
 ✅
 ```php
-$gender = fake()->randomElement(Gender::cases());
-$firstName = fake()->firstName($gender->value); // Faker's firstName() accepts 'male'|'female'
+'gender' => fake()->randomElement(Gender::cases())->value,
+'first_name' => fn (array $attributes) => fake()->firstName($attributes['gender']), // Faker's firstName() accepts 'male'|'female'
 ```
 
 ❌
 ```php
 'first_name' => fake()->firstName(), // gender-agnostic
-'gender' => fake()->randomElement(Gender::cases()), // picked independently — can mismatch
+'gender' => fake()->randomElement(Gender::cases())->value, // picked independently — can mismatch
 ```
 
 The same principle applies to any dependent pair — for example a region field constraining which
