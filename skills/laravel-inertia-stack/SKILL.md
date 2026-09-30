@@ -48,9 +48,9 @@ than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `temp
 | Defining an Eloquent local scope or computed model attribute | `rules/eloquent-attributes.md` |
 | Adding index filtering and/or sorting | `blueprints/filters-and-sorting.md` + `rules/request-normalization.md` (a sort `direction` must be defaulted, not left nullable) + `templates/app/Filters/QueryFilter.php`, `templates/app/Sorts/QuerySorter.php`, `templates/app/Models/Concerns/Filterable.php`, `templates/app/Models/Concerns/Sortable.php` |
 | Exposing a backed enum as select options | `rules/enum-options.md` |
-| Coercing/defaulting request input or safely restoring query-driven form state | `rules/request-normalization.md` |
-| Building a JsonResource for Inertia | `rules/resources.md` |
-| Building an Inertia form, adapting custom controls, or extracting repeated shared form-option assembly | `rules/inertia-forms.md` |
+| Coercing/defaulting request input, safely restoring query-driven form state, or surfacing predictable persistence conflicts through validation | `rules/request-normalization.md` |
+| Building a JsonResource or shared variant-aware Inertia page chrome | `rules/resources.md` |
+| Building an Inertia form, adapting custom controls, aligning client constraints/options with server rules, or extracting repeated shared form-option assembly | `rules/inertia-forms.md` |
 | Rendering a new Inertia page from a Laravel endpoint | `rules/inertia-pages.md` |
 | Writing a factory or a dev-only seeder | `rules/factories-and-seeders.md` |
 | Adding a mid-chain conditional query clause | `rules/query-conditionals.md` |
