@@ -68,9 +68,10 @@ Prefer an email derived from the same generated name over Faker's random `safeEm
 rotating across a small pool of realistic domains instead of one hardcoded domain:
 
 ```php
-$emailDomain = fake()->randomElement(['gmail.com', 'outlook.com', 'yahoo.com', 'hotmail.com', 'icloud.com']);
-
-'email' => Str::slug($firstName, '_').'_'.Str::slug($lastName, '_').'@'.$emailDomain,
+// declared after first_name/last_name, so it receives their final resolved values
+'email' => fn (array $attributes) => Str::slug($attributes['first_name'], '_').'_'
+    .Str::slug($attributes['last_name'], '_').'@'
+    .fake()->randomElement(['gmail.com', 'outlook.com', 'yahoo.com', 'hotmail.com', 'icloud.com']),
 ```
 
 ## Chain date fields chronologically
