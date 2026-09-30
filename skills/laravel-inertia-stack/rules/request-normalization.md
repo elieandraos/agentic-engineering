@@ -95,3 +95,15 @@ This rule is about **restored/preselected UI state**, not mutation input. Mutati
 belongs in a Form Request. Do not create a Form Request merely to echo optional query state into a page
 when a small, type-safe, scoped read is sufficient.
 
+## Surface predictable persistence conflicts before the database exception
+
+Database constraints remain the authoritative integrity boundary, but a predictable conflict caused by
+normal user input should be represented in Form Request validation when Laravel can express the same
+rule faithfully. Do not knowingly let an ordinary duplicate or scoped-uniqueness conflict pass
+validation only to become a database exception and a 500 response.
+
+Keep the validation rule aligned with the real constraint: include the same tenant/organization scope,
+soft-deleted rows when the database constraint still counts them, and the current record exclusion on
+Update. The database constraint stays in place for races and non-HTTP writers; request validation is the
+user-facing prediction of that invariant, not its replacement.
+
