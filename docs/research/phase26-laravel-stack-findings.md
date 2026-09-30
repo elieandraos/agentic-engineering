@@ -16,6 +16,12 @@
 | 27 tests repeated large valid request/action arrays through 42 local helpers | MODIFY | `blueprints/pest-testing.md` | Shared plain-array payload builders may provide valid defaults, while values under assertion remain explicit overrides; factories remain model-state builders. |
 | An update test's submitted value accidentally matched the shared default | MODIFY | `blueprints/pest-testing.md` | Mutation tests must make the changed value explicit so they cannot pass without proving the mutation. |
 
+| Reusable UI date bounds made server-valid future values unreachable | MODIFY | `rules/inertia-forms.md` | Client-side ranges/options must stay within the server/domain contract and valid persisted values must remain representable on Edit. |
+| Nested Form Request keys leaked into user-facing validation copy | ALREADY COVERED / PROJECT APPLICATION | Laravel Form Request `attributes()` / focused messages | Important application polish, but Laravel already provides the mechanism; no stack-specific abstraction is needed. |
+| A database uniqueness invariant was predictable from normal input but surfaced only as a 500 | MODIFY | `rules/request-normalization.md` | Keep the database constraint authoritative while mirroring predictable scoped conflicts in Form Request validation. |
+| Six page shells/headers differed only by class routes and one small conditional; a shared page reused the concrete Medical copy and broke other classes | MODIFY | `rules/resources.md` | When presentation chrome is structurally identical, drive small variant differences through explicit configuration; never reuse one concrete variant as a generic shell. |
+| A finite Travel tier list existed only in the UI while the server accepted arbitrary strings | MODIFY | `rules/inertia-forms.md` + existing `rules/enum-options.md` | Closed domain choices should have one authoritative application source shared by server validation and UI options; do not infer that every select needs an enum. |
+
 ## Already covered or not yet promoted
 
 ### Dependent factory values
@@ -81,5 +87,4 @@ It does not include:
 - a requirement to introduce JavaScript tests;
 - broad Laravel guidance already owned by Boost.
 
-Further UI/domain findings from the final Phase 26 manual audit should be reconciled separately before
-being added to this patch.
+The final Phase 26 UI/domain audit has now been reconciled above. Product-specific findings remain in useOrbit; only the portable stack lessons were promoted.
