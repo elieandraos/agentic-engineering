@@ -40,42 +40,18 @@ For invisible defaults that need no custom control, use a normal hidden input in
 
 Native controls and components that already forward `$attrs` to their native input/select do not need a custom serialization layer.
 
-## Extract shared form-option assembly without erasing feature ownership
+## Client-side constraints must not hide server-valid values
 
-When several Create/Edit endpoints repeatedly assemble the same stable option lists, extract that
-assembly behind one focused provider or equivalent application boundary. Keep only genuinely shared
-options there.
+A reusable control's convenience defaults — a date picker's year range, a `min`/`max`, a trimmed option
+list — must not make values the Form Request accepts impossible to enter, and a persisted value that is
+still valid must remain representable when editing. When one feature's valid range differs from the
+control's default, pass the bound from the page rather than changing the shared default:
 
-Class-, subtype-, or feature-specific options stay with the controller or feature that owns them. Do
-not turn repeated option assembly into a universal form-schema abstraction, and do not make one provider
-know every variant merely to remove a few repeated lines.
+```vue
+<!-- this field accepts future dates; the page, not the shared control, says so -->
+<DateInput name="starts_on" v-model="startsOn" :max-year="currentYear + 5" />
+```
 
-A useful split is:
-
-- shared provider: stable cross-form lists such as actors, statuses, or sources used with the same
-  resource shape and ordering;
-- owning controller/feature: subtype choices, conditional options, selected/restored values, and other
-  props whose meaning varies by page.
-
-When extracting, preserve the existing option resource/shape and ordering unless the change explicitly
-intends to alter the UI contract. HTTP/Inertia tests should protect the page's meaningful prop contract,
-especially ordering when the UI relies on it.
-
-## Keep client-side constraints within the server/domain contract
-
-A form control may make the server's valid states easier to enter, but its defaults must not silently
-make valid server/domain states unreachable. When a reusable control adds a range, option list, minimum,
-maximum, or other selectable constraint, compare that constraint with the Form Request/domain rule at
-the consuming feature boundary.
-
-A component-wide default is especially risky when different domains have different valid ranges. Prefer
-an explicit feature-level bound over changing the shared default when only one feature needs a wider or
-narrower range. Existing persisted values that remain valid on the server must also remain representable
-when editing, even when they fall outside a normal convenience range.
-
-The inverse applies to closed choices: when the product defines a finite option set, do not let the UI
-and server maintain independent lists that can drift. Give both sides one authoritative application
-source where the stack already has a suitable representation (for example a backed enum with
-`rules/enum-options.md`). Do not invent an enum merely because a field happens to use a select; the
-set must actually be closed by the domain.
-
+This is not a requirement to mirror server rules in the UI or to teach shared controls domain rules:
+the Form Request stays authoritative, and a control only has to avoid excluding what it accepts. For a
+closed choice list, see `enum-options.md`.

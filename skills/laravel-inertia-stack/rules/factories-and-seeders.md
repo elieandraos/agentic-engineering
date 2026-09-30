@@ -24,36 +24,43 @@ The same principle applies to any dependent pair — for example a region field 
 sub-areas are valid: pick the parent value first, then constrain the child's `randomElement()` to the
 set that's valid for it, rather than randomizing both from unrelated pools.
 
-## Factories must produce application-valid states
+The goal is application validity, not only plausibility: default factory output should satisfy the
+cross-attribute invariants the application enforces on that record (a valid enum combination, a
+type-specific detail record matching its parent's type). Keep invalid combinations for explicit test
+states or overrides. This does not make a factory responsible for every Form Request rule or workflow
+precondition — request-only input and multi-step business states stay with the tests that need them.
 
-A factory is executable domain data, not merely a collection of individually plausible attributes.
-Its default output should satisfy the application's current invariants so a record created by the
-factory can travel through normal application behavior without immediately becoming invalid.
+A local variable computed at the top of `definition()` goes stale when a `state()` or `create([...])`
+override replaces the driving field. When a dependent value must follow an overridable field, use a
+closure attribute — Laravel evaluates it against the final merged attributes:
 
-When one generated attribute constrains another, choose the owning value first and derive the dependent
-value from the valid set for that owner. This includes enum-backed combinations and polymorphic or
-type/class-specific detail values.
+✅
+```php
+'region' => fake()->randomElement(Region::cases())->value,
+'sub_area' => fn (array $attributes) => fake()->randomElement(
+    SubArea::validFor(Region::from($attributes['region'])),
+),
+```
 
-If a later factory state or callback determines the owning attribute, derive dependent attributes from
-that **final** value rather than from an earlier random default. Otherwise the factory can occasionally
-create combinations the application's own validation rejects.
+❌ *(`Area::factory()->create(['region' => Region::North->value])` keeps a sub-area picked for the old region)*
+```php
+$region = fake()->randomElement(Region::cases());
 
-Keep invalid combinations available through explicit test overrides/states when a test needs them; do
-not make invalid data part of the default factory distribution.
+'region' => $region->value,
+'sub_area' => fake()->randomElement(SubArea::validFor($region)),
+```
 
-This extends the dependent-field rule below from plausibility to application validity: a factory that
-creates a syntactically valid record which cannot be edited/saved through the application's own rules
-is not a sound default factory.
+The closure receives the raw merged value, not the model-cast one — whatever the definition or override
+supplied. Keep that value in one form (here the backing value, matching the `->value` convention in the
+parent-state example below) so the closure can normalize it reliably.
 
-## Avoid collisions with deterministic fixture identities
+## Keep random unique values out of fixture-owned identities
 
-Before randomizing an attribute that participates in a unique identity, inspect deterministic
-factory/seeder fixtures that intentionally own specific values. Exclude those reserved identities from
-the random factory's default pool rather than relying on probability to avoid a unique-constraint
-collision.
-
-Keep the portable rule at the identity/invariant level: which concrete codes, slugs, emails, or other
-values are reserved belongs to the consuming project's fixtures, not this skill.
+When a factory draws a unique attribute from a small, finite pool (ISO codes, fixed slugs) and a
+deterministic seeder or fixture also owns specific values from that pool, exclude those values from the
+factory's default pool. Don't rely on probability or `fake()->unique()` — `unique()` tracks only values
+Faker generated, not rows a seeder inserted. Which values are reserved is the consuming project's
+knowledge, not this skill's.
 
 ## Build emails from the generated name
 

@@ -68,42 +68,25 @@ Still call `$request->validated()` (no key) when a whole array is needed as-is, 
 into a Filter (see `blueprints/filters-and-sorting.md`) — the point is to stop hand-rolling per-field
 defaults the accessor already does.
 
-## Restoring query-driven form state: validate shape before meaning
+## Restoring optional query state into a form: check shape, ignore what doesn't fit
 
-When a GET endpoint restores form state from query parameters, treat that input as untrusted even when
-it only preselects UI values. A query key expected to be a scalar can arrive as an array
-(`?status[]=open`), and membership/enum helpers that assume a string may throw before the page renders.
+A GET page that preselects form values from the query string treats them as untrusted. This is the one
+case where this file does not route input through a Form Request: an invalid preselection is simply
+ignored, not turned into a validation redirect on page load. The submitted form is still validated by
+its Form Request.
 
-Validate the runtime shape before checking whether the value is allowed:
+A scalar key can arrive as an array (`?status[]=open`), and `$request->enum()` hands it straight to
+`tryFrom()`, which throws a `TypeError`:
 
 ```php
-private function enumValue(mixed $value, string $enum): ?string
-{
-    if (! is_string($value)) {
-        return null;
-    }
+// ❌ ?status[]=open throws before the page renders
+'status' => $request->enum('status', OrderStatus::class)?->value,
 
-    return $enum::tryFrom($value)?->value;
-}
+// ✅ check the runtime shape first, then the meaning
+$status = $request->query('status');
+
+'status' => is_string($status) ? OrderStatus::tryFrom($status)?->value : null,
 ```
 
-The same boundary applies to relationship identifiers used for preselection: resolve them through the
-same tenant/organization scope the real form uses, and ignore values that do not belong to the current
-scope rather than reflecting them back as trusted state.
-
-This rule is about **restored/preselected UI state**, not mutation input. Mutation validation still
-belongs in a Form Request. Do not create a Form Request merely to echo optional query state into a page
-when a small, type-safe, scoped read is sufficient.
-
-## Surface predictable persistence conflicts before the database exception
-
-Database constraints remain the authoritative integrity boundary, but a predictable conflict caused by
-normal user input should be represented in Form Request validation when Laravel can express the same
-rule faithfully. Do not knowingly let an ordinary duplicate or scoped-uniqueness conflict pass
-validation only to become a database exception and a 500 response.
-
-Keep the validation rule aligned with the real constraint: include the same tenant/organization scope,
-soft-deleted rows when the database constraint still counts them, and the current record exclusion on
-Update. The database constraint stays in place for races and non-HTTP writers; request validation is the
-user-facing prediction of that invariant, not its replacement.
-
+Preselect a related record only when it is one of the options the form renders: resolve the ID through
+the same query that builds those options, so it inherits that query's scoping, and ignore it otherwise.

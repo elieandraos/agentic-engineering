@@ -98,19 +98,3 @@ class's internal `->fresh()`, every factory call in every test — not just the 
 needs it. Keep eager-loading explicit and endpoint-scoped (`->load()`/`->with()` in the specific
 controller method that needs the field), and let `whenLoaded()` make the resource safe regardless of
 which caller reaches it.
-
-## Share presentation chrome by configuration when variants differ only by routes or labels
-
-When several Inertia page shells or headers have the same markup and behavior and differ only by
-variant-specific route targets, labels, or other small lookup values, prefer one shared component driven
-by explicit configuration over copying a component per variant.
-
-Keep actual variant content outside the shared chrome (for example in the page body/slot), and keep
-genuine variant behavior as a small, explicit condition rather than growing a universal component with
-many branches. A shared shell is justified when the duplicated components are structurally the same;
-visual similarity alone is not enough.
-
-This is also an integration-safety rule: a shared cross-variant page must not reuse one concrete
-variant's shell merely because it looks identical today. That silently imports the concrete variant's
-routes and behavior. Either use the neutral shared shell or keep the variants separate.
-
