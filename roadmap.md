@@ -32,9 +32,9 @@ The exact artifact, runtime integration, installation mechanism, persistence mod
 
 ## Historical execution-layer research
 
-Parallel implementation and orchestration work is no longer an active roadmap direction. The implemented worker-level conclusions are already reflected in the released methodology. Keep the remaining documents as historical/research evidence while deciding what can be archived or removed; do not treat them as commitments to an orchestrator, model router, worker-provisioning layer, or other execution architecture.
+Parallel implementation and orchestration work is no longer an active roadmap direction. The implemented worker-level conclusions are already reflected in the released methodology, and the research behind them has been consolidated. Neither document below is a commitment to an orchestrator, model router, worker-provisioning layer, or other execution architecture.
 
-For the reconciled parallel result, start with [`docs/research/parallel-final-reconciliation.md`](docs/research/parallel-final-reconciliation.md). For the unresolved orchestration watchlist and runtime-model investigation, see [`docs/research/orchestration.md`](docs/research/orchestration.md) and [`docs/research/model-routing.md`](docs/research/model-routing.md).
+[`docs/research/parallel-final-reconciliation.md`](docs/research/parallel-final-reconciliation.md) is the single historical record of the released parallel methodology; the earlier smoke tests, dry runs, and orchestration analyses it reconciled remain available at tag `v2.2.2`. [`docs/research/model-routing.md`](docs/research/model-routing.md) retains the dormant runtime-model investigation.
 
 ## Future directions
 

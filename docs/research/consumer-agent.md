@@ -168,6 +168,12 @@ Maybe it belongs in:
 
 This is important because otherwise this Agent becomes a **“put everything into the skill” machine**.
 
+One observation can also split across several owners at once. A single investigation may produce a project issue, a stack candidate, and a methodology candidate together.
+
+So the Agent should classify each part separately rather than forcing one owner.
+
+The project's delivery work stays primary. Capturing ecosystem evidence must not reshape or delay the delivery that surfaced it.
+
 ---
 
 ### D. Evaluate whether it deserves canonical guidance
@@ -439,6 +445,12 @@ Then later:
 > “Finish the Agentic Engineering update for the finding we discussed.”
 
 It can inspect the current remote state and resume.
+
+A retained record is evidence to weigh, not an instruction to execute.
+
+> A candidate, watch item, or earlier research finding becomes guidance only once an approved change has promoted it.
+
+So when it resumes, the Agent should keep current canonical guidance, project state, and retained research distinct.
 
 That means the Agent becomes a **long-lived relationship manager**, while the skills remain task-oriented.
 
