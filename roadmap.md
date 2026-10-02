@@ -18,32 +18,23 @@ Explore repeatable testing using [`test-contracts.md`](docs/research/test-contra
 
 The initial cases, framework, and any later CI integration remain future decisions. Use a small pilot to judge usefulness, execution cost, and maintenance effort before expanding coverage.
 
-## Parallel implementation follow-on research
+## Consumer-side Agent
 
-Three real parallel-implementation smoke tests established the worker-level methodology now shipped in `implement-it` (see [`docs/research/parallel-final-reconciliation.md`](docs/research/parallel-final-reconciliation.md)) and exposed two evidence-backed directions worth investigating further. Neither is a commitment to a specific artifact, agent, or architecture.
+Investigate a consumer-side Agentic Engineering agent that lives with a project using the skills and maintains the relationship between that project and the canonical ecosystem.
 
-### Control Room / orchestration
+The agent should help notice and investigate reusable findings from normal engineering work, classify whether they belong to project knowledge, stack knowledge, portable methodology, framework knowledge, runtime behavior, or nowhere canonical, and compare candidates with current guidance before recommending a change.
 
-The three smoke tests exposed recurring cross-worker responsibilities that no single worker's engineering skill owns. Potential investigation areas, where current research already supports them:
+When a canonical change is approved, the agent may eventually manage the cross-repository mechanics around that decision: preserve compact evidence, prepare an Agentic Engineering branch and patch, validate the authoring, open the repository's normal PR, and later support an approved release and consumer refresh. It should understand the skill-authoring methodology, skill ownership boundaries, skill-consumption guidance, canonical repository conventions, and the consuming project's installed skill state without duplicating those sources.
 
-- authoritative wave-state tracking;
-- candidate-ready synchronization across workers;
-- decision-oriented human presentation instead of raw event streaming;
-- combined-state coordination;
-- routing human decisions to the relevant worker(s);
-- convergence coordination and shared-state awareness.
+Human approval remains the publication boundary. The agent does not silently promote findings, merge its own changes, publish releases, or refresh a consumer unexpectedly. It is not a lifecycle skill, worker orchestrator, replacement for `steward-it`, or generic project manager.
 
-Whether this becomes a dedicated agent, a skill, a process, or something else is unresolved. See [`docs/research/orchestration.md`](docs/research/orchestration.md), [`docs/research/responsibility-boundaries.md`](docs/research/responsibility-boundaries.md), and [`docs/research/parallel-final-reconciliation.md`](docs/research/parallel-final-reconciliation.md) rather than duplicating that evidence here.
+The exact artifact, runtime integration, installation mechanism, persistence model, and eventual name remain research questions. Start from [`docs/research/consumer-agent.md`](docs/research/consumer-agent.md) and validate the smallest useful consumer-side responsibility before implementation.
 
-### Runtime model routing
+## Historical execution-layer research
 
-Claude Code exposes enough per-worker model, effort, tool, isolation, and execution controls to investigate capability-aware routing without putting vendor model names into portable skills. The first research pass also produced a cautionary data point: a cheaper built-in documentation agent returned two material inaccuracies that required stronger-model verification, so routing quality must include verification/rework cost rather than token price alone.
+Parallel implementation and orchestration work is no longer an active roadmap direction. The implemented worker-level conclusions are already reflected in the released methodology. Keep the remaining documents as historical/research evidence while deciding what can be archived or removed; do not treat them as commitments to an orchestrator, model router, worker-provisioning layer, or other execution architecture.
 
-No routing policy or capability tiers are selected. Keep normal project execution as baseline evidence and observe whether model/effort choices can later be evaluated against duration, tokens, corrections, verification, and final engineering outcome. See [`docs/research/model-routing.md`](docs/research/model-routing.md).
-
-### Runtime worker provisioning
-
-Isolated worker worktrees may repeat environment setup because gitignored, local-only runtime state — `vendor/`, `node_modules/`, `.env`, generated artifacts such as Wayfinder output — is absent from a fresh worktree. Normal post-v2.2.0 use also showed the inverse problem after convergence: tracked worker changes can reach the shared checkout while generated local state remains stale, and completed worker worktrees can remain behind without an explicit cleanup owner. This is a runtime/worker-provisioning and workspace-lifecycle question, not portable `implement-it` methodology. Possible directions include safe reuse, preparation, reconciliation, caching, or cleanup of worker environment state, but no architecture is selected yet. See [`docs/research/smoke-test-3.md`](docs/research/smoke-test-3.md), [`docs/research/post-convergence-environment-evidence.md`](docs/research/post-convergence-environment-evidence.md), and [`docs/research/parallel-final-reconciliation.md`](docs/research/parallel-final-reconciliation.md).
+For the reconciled parallel result, start with [`docs/research/parallel-final-reconciliation.md`](docs/research/parallel-final-reconciliation.md). For the unresolved orchestration watchlist and runtime-model investigation, see [`docs/research/orchestration.md`](docs/research/orchestration.md) and [`docs/research/model-routing.md`](docs/research/model-routing.md).
 
 ## Future directions
 
