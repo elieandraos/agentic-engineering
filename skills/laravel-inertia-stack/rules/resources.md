@@ -72,6 +72,30 @@ return Inertia::render('Orders/Index', [
 ]);
 ```
 
+## Option lists are their own projection
+
+A select or filter option list is a different consumer from the page a model's detail `JsonResource`
+was shaped for, even when both render the same model. Every Inertia prop is serialized into the page
+response whether or not the page renders it, so reusing the detail resource for options ships its whole
+field set — contact details, addresses, audit fields — once per option.
+
+Give the option list an explicit projection of the fields its control reads, typically the submitted key
+and the label:
+
+```php
+// ❌ every option carries the full detail resource
+'customers' => CustomerResource::collection(Customer::query()->orderBy('name')->get()),
+
+// ✅ an explicit option projection
+'customers' => Customer::query()->orderBy('name')->get()
+    ->map(fn (Customer $customer): array => ['id' => $customer->id, 'name' => $customer->name]),
+```
+
+A small dedicated option resource is an equally valid projection; follow whichever form the project
+already uses. Either satisfies "never pass a raw Eloquent result" above — what matters is that the option
+shape is chosen for its consumer rather than inherited from the detail page. A resource that is already
+exactly the option shape can be reused as-is.
+
 ## Exposing a relation — `whenLoaded()`, never a bare accessor, never model `$with`
 
 **Problem:** a resource field that reads a relation directly (`$this->customer?->name`) looks fine

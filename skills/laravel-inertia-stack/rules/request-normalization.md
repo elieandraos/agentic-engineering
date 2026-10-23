@@ -75,8 +75,9 @@ case where this file does not route input through a Form Request: an invalid pre
 ignored, not turned into a validation redirect on page load. The submitted form is still validated by
 its Form Request.
 
-A scalar key can arrive as an array (`?status[]=open`), and `$request->enum()` hands it straight to
-`tryFrom()`, which throws a `TypeError`:
+Any scalar key can arrive as an array (`?status[]=open`, `?customer_id[]=5`), so check its runtime
+shape before a typed accessor or cast coerces it. The accessors fail differently on the same input.
+`$request->enum()` hands the array straight to `tryFrom()`, which throws a `TypeError`:
 
 ```php
 // ❌ ?status[]=open throws before the page renders
@@ -86,6 +87,19 @@ A scalar key can arrive as an array (`?status[]=open`), and `$request->enum()` h
 $status = $request->query('status');
 
 'status' => is_string($status) ? OrderStatus::tryFrom($status)?->value : null,
+```
+
+`$request->integer()` casts instead (`(int) ['5']` is `1`), so an array-shaped ID silently preselects a
+different record rather than none:
+
+```php
+// ❌ ?customer_id[]=5 preselects customer 1
+'customer_id' => Customer::query()->find($request->integer('customer_id'))?->id,
+
+// ✅ only a single integer value is considered
+$customerId = filter_var($request->query('customer_id'), FILTER_VALIDATE_INT);
+
+'customer_id' => $customerId === false ? null : Customer::query()->find($customerId)?->id,
 ```
 
 Preselect a related record only when it is one of the options the form renders: resolve the ID through
