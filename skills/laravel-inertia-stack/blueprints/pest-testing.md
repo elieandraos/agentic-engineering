@@ -73,6 +73,27 @@ comparison self-referential — if the Resource's shape regresses in a way that 
 self-consistent, the test cannot catch it. In that case, assert the literal expected value instead of
 deriving it from the Resource under test.
 
+## Consolidate by behavior, not by test count
+
+When several tests arrange the same scenario and differ only in which related outcome they assert, consider
+checking those outcomes together in one test. For example, one successful Action scenario can verify the
+submitted values, defaults, tenant association, and audit fields. Keep separate tests for genuinely
+different conditions, contexts, or failure behavior. Keep HTTP and Action tests in their existing layers;
+consolidation does not mean combining endpoint and Action tests.
+
+Use a dataset when it makes the same behavior easy to verify across several cases. Do not optimize for
+fewer files or tests: keep separate tests or files when that makes behavior easier to find, and avoid a
+dataset whose unused parameters or placeholder callbacks make the tests harder to understand.
+
+Before removing or consolidating a test, identify where each meaningful assertion remains protected.
+Shared line coverage is not enough to call tests redundant: two tests can execute the same code while
+checking different outcomes.
+
+When testing a relationship or association, arrange the expected identity independently. If a test
+explicitly supplies a creator, parent, or other related model, assert that exact model is returned or
+persisted. Reading the expected ID back from the record under test can make the assertion circular and
+miss a failure to preserve the supplied value.
+
 ## Minimal test data — the attribute-level delta
 
 `testing-best-practices`'s `test-data.md` already owns record-level minimalism ("create only the records
@@ -121,6 +142,11 @@ This proves integration — the `show` route wraps the requested `$order` in `Or
 exactly the case the warning above allows. It would stop being appropriate if the test's actual
 responsibility were proving a specific field transformation `OrderResource` performs; that case calls for
 a literal expected value instead.
+
+Keep these Resource comparison macros for HTTP integration checks. Add focused known-value assertions for
+meaningful calculations, formatting, and conditional fields when they lack independent verification.
+Do not require a separate assertion for every straightforward passthrough field or broadly replace the
+macros with manual shape checks.
 
 ## Capability gating
 

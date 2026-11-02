@@ -48,6 +48,7 @@ than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `temp
 | Defining an Eloquent local scope or computed model attribute | `rules/eloquent-attributes.md` |
 | Adding index filtering and/or sorting | `blueprints/filters-and-sorting.md` + `rules/request-normalization.md` (a sort `direction` must be defaulted, not left nullable) + `templates/app/Filters/QueryFilter.php`, `templates/app/Sorts/QuerySorter.php`, `templates/app/Models/Concerns/Filterable.php`, `templates/app/Models/Concerns/Sortable.php` |
 | Exposing a backed enum as select options | `rules/enum-options.md` |
+| Exposing model records as select or filter options | `rules/resources.md` |
 | Coercing or defaulting request input, or restoring optional query state into a form | `rules/request-normalization.md` |
 | Building a JsonResource for Inertia | `rules/resources.md` |
 | Building an Inertia form, adapting custom controls to `<Form>` serialization, or setting a reusable control's range/option bounds | `rules/inertia-forms.md` |

@@ -1,12 +1,16 @@
 # Parallel Implementation — Final Reconciliation
 
-Status: Decision input for publication. This document reconciles Smoke Tests 1–3
-(`smoke-test-1.md`, `smoke-test-2.md`, `smoke-test-3.md`), the mechanism investigation
-(`combined-candidate.md`, `parallel-dry-run.md`, `parallel-dry-run-2.md`), and the responsibility
-analysis (`responsibility-boundaries.md`, `orchestration.md`, `vision.md`) into one final position,
-against ten explicit decisions the human made after Smoke Test 3. It proposes an exact, unapplied
-skill diff and states what remains before publication. No skill file, useOrbit file, or GitHub state
-was changed to produce this document. The smoke-test evidence documents are unchanged.
+Status: Historical record of the released parallel methodology. The skill diff this document proposed
+was applied (`7cc8925`) and released in v2.2.0; the canonical text lives in `skills/implement-it`.
+Parallel follow-on work is no longer an active roadmap direction, so the open questions below are
+retained as history, not as planned work.
+
+This is the single durable record of how the parallel methodology was settled. It reconciled Smoke
+Tests 1–3, the mechanism investigation, and the responsibility analysis into one final position,
+against ten explicit decisions the human made after Smoke Test 3. Those source documents have been
+retired from `docs/research/`; every file this document names remains available at tag `v2.2.2`.
+"Retained from retired source documents" below keeps the parts still needed to understand or operate
+the released method.
 
 ## Purpose
 
@@ -70,7 +74,9 @@ with the reconciliation each one drives:
    belongs in the same `sequencing.md` hunk as #6/#7**, stated without naming which context performs
    convergence — that specific mechanism (worker-executed vs. parent-executed) names Claude Code
    runtime topology, not portable methodology, and stays an open Control Room/runtime question
-   (`responsibility-boundaries.md`'s "Convergence execution").
+   (`responsibility-boundaries.md`'s "Convergence execution"). Control Room was the working name used
+   during this research for a hypothetical coordination layer above the specialist skills. It was
+   never adopted as a canonical Agentic Engineering component.
 9. **Closing comments in parallel execution** — provenance is additive, not a replacement for the
    normal record. Already correctly specified; the repaired #334/#344/#345 records are the evidence
    this already works when the procedure is actually followed. No skill change.
@@ -154,54 +160,42 @@ checkpoint (the wave-level combined-verification decision) and one clarified tim
 (convergence). Everything else — Review implementation, Commit plan, push readiness, issue closure —
 is the existing serial contract, unweakened.
 
-## Research reconciliation
+## Retained from retired source documents
 
-Targeted updates made to design documents (not to the smoke-test evidence records, which are
-unchanged):
+The source documents are available at tag `v2.2.2`. These points are needed to understand or operate
+the released method and are not stated in the canonical skill text:
 
-- **`vision.md`.** "Verification model" updated: the prior "required full-suite run... not a run/skip
-  decision" language is superseded by the final wave-level run/skip decision (#3 above), with a
-  pointer to `smoke-test-3.md` for why the prior position didn't survive contact with a live run.
-  "Branch and worktree direction" gets a one-line pointer to the convergence-timing/performer
-  clarification instead of leaving convergence framed as fully open. "Next smoke-test goals" gets a
-  status note that the goals it listed have been exercised across ST2/ST3, with the residue now
-  tracked in this document's "What remains unresolved," not as a still-open goal list of its own.
-- **`combined-candidate.md`.** "Mechanics" section updated with the corrected three-step capture
-  procedure `parallel-dry-run-2.md` validated experimentally (intent-to-add untracked paths, `git diff
-  HEAD --binary`, immediate reset) in place of the original under-specified `git diff HEAD` claim. A
-  new subsection records that Smoke Test 3 used a *different*, looser mechanism (plain `git apply`
-  without `--3way`/`--index`, filesystem copy for untracked files) and succeeded only because that
-  wave was file-disjoint by construction — this is evidence the looser mechanism is not safe in
-  general, not evidence the recommended mechanism was wrong. "Smoke Test 3 proposal" is marked
-  executed, with a pointer to `smoke-test-3.md` rather than restating it as a future plan.
-- **`responsibility-boundaries.md`.** "Combined verification" section's research decision is updated
-  to the final wave-level run/skip framing (#3), explicitly marked as superseding the prior
-  "mandatory" text. "Convergence policy decision" and "Convergence execution" entries, and the
-  matrix rows for both, are updated to record the final decision (#6/#7: convergence is not a
-  pre-launch decision, and sequential convergence is normal mechanical progression once durable
-  commits exist, without shortening push-readiness/issue-closure/validation) as the settled position
-  going forward. *Which* context performs convergence remains an open runtime/Control Room question,
-  not settled methodology — the historical fact that ST1 and ST3 both used parent-performed
-  convergence, while ST2 used worker-performed convergence, is preserved as evidence for that still-
-  open question, not resolved by this decision.
-- **`orchestration.md`.** "Combined-state verification" watch item updated: now attempted for real
-  once (ST3), with confirmed mechanism divergence — still the strongest recurring candidate, still
-  not promoted past "watch," since a working mechanism has not yet been observed twice. "Convergence
-  sequencing" updated to reflect that *sequencing itself* is no longer an open judgment call requiring
-  parent reasoning each time (decision #7 makes it default mechanical progression); the genuinely open
-  part narrows to conflict/drift/staleness/ambiguous-target handling. A new entry records the
-  candidate-patch-propagation finding explicitly as **runtime mechanics** (how an uncommitted
-  methodology change reaches an isolated worktree), not a cross-worker coordination candidate — it does
-  not belong in the same category as decision routing or combined verification.
-- **`parallel-dry-run-2.md`.** A short status note added pointing to `smoke-test-3.md` as the executed
-  result, naming where execution diverged from this document's own predictions (the mechanism
-  divergence; two of three workers initially taking the wrong verification path, traced to candidate-
-  patch propagation rather than the ordering correction this document proposed). The document's own
-  predictive content and validated capture-procedure experiment are left intact as the historical
-  record of what was planned and pre-validated.
+- **What a combined candidate is.** The union of every ready worker's uncommitted, reviewed changes,
+  applied onto the milestone branch tip in a disposable copy. Capture only from workers that have
+  reported ready, never from one still implementing. Assembling it creates no commit object anywhere,
+  because no implementation commit may exist before both human approvals, and it leaves each worker's
+  own worktree, branch, and diff exactly as they were (`combined-candidate.md`, "Invariants";
+  `parallel-dry-run-2.md`).
+- **When the combined run fails or the changes conflict.** The combined copy is a verification and
+  diagnosis surface, never an implementation workspace. Trace a failure to the affected worker, fix it
+  in that worker's own workspace, repeat its verification, and re-run `review-it` when the change makes
+  the earlier review stale. Then rebuild the combined candidate and run the full suite again. A conflict
+  surfaces when the changes are applied, before the suite runs; if resolving it changes reviewed
+  content, that worker's `review-it` result is stale (`combined-candidate.md`, "Conflict and staleness
+  implications" and "Recovery").
+- **Why workers skip their own full suite.** Running the full suite against several partial states is
+  costly and repeats the single combined run, so each worker proves only its own change
+  (`vision.md`, "Verification model"; `responsibility-boundaries.md`).
+- **Why Smoke Test 1 bypassed the gates.** The parent's delegation prompt told workers to finish once
+  their branch was committed and tests passed, which conflicted with the skill's stop-and-wait gates.
+  The gate rules themselves were sufficient (`smoke-test-1.md`, "Delegation instructions").
+- **Two operating hazards.**
+  - The runtime can provision worker worktrees from the wrong base. In the first normal post-release
+    wave, all four isolated worktrees started from `main` instead of the milestone branch; a worker
+    detected it and every worker corrected its base before editing (`phase26-normal-parallel-wave.md`,
+    "Worker base mismatch"). The canonical "cut from the confirmed milestone branch" invariant is
+    worth checking, not assuming.
+  - When workers converge by pushing `<temporary branch>:<milestone branch>` straight to the remote,
+    the main checkout's local milestone ref stays at its pre-convergence commit until it is fetched
+    (`smoke-test-2.md`).
 
-`smoke-test-1.md`, `smoke-test-2.md`, and `smoke-test-3.md` are unchanged — they are evidence, not
-design documents, and nothing above rewrites what actually happened in any of the three runs.
+That same normal post-release wave also ran the released v2.2.0 method end to end across four
+workers, including a combined-candidate run before approval (`phase26-normal-parallel-wave.md`).
 
 ## Final skill findings
 
@@ -494,20 +488,7 @@ Control Room investigation or a runtime-provisioning investigation, not a fourth
 
 ## Publication readiness
 
-Assuming the skill diff above is reviewed and applied on its own, separate track, what remains before
-publication, listed without performing any of it:
-
-1. Apply the three-file skill diff above (a separate, explicit change from this reconciliation).
-2. Review the applied diff against this document and the smoke-test evidence once more, post-apply.
-3. Reconcile public README/documentation with the final lifecycle described here.
-4. Make the version/release decision this document explicitly does not make.
-5. PR, merge, and release the methodology change through whatever process this repository's own
-   release discipline requires.
-6. Refresh any consuming project (starting with useOrbit, where the candidate patch has existed only
-   as an uncommitted working-tree change throughout ST2 and ST3) onto the released version.
-
-None of the above is performed by this document. The useOrbit Phase 26 PR (#357) is a separate,
-application-delivery concern, untouched by anything here, and remains open and unmerged.
+Completed. The three-file skill diff was applied (`7cc8925`) and released in v2.2.0.
 
 ## Conclusion
 
@@ -520,7 +501,7 @@ position that a live run did not actually honor) and one timing clarification fo
 here as "not before launch — only once durable, approved commits exist, and without ever shortening
 push-readiness, issue-closure, or their validation"). *Who or what* performs convergence stays
 deliberately open, a runtime/Control Room question rather than settled methodology. Both are now a
-three-file, additive skill diff — proposed, not applied — against text that, on this
+three-file, additive skill diff — since applied and released in v2.2.0 — against text that, on this
 branch, is already committed rather than the uncommitted candidate state ST3 actually exercised in
 useOrbit. No genuinely unresolved architecture problem surfaced. The remaining open items are
 validation and presentation questions, better answered by the next real parallel wave or a dedicated
