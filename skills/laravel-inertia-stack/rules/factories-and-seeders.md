@@ -154,6 +154,12 @@ Use the base parent factory plus `state(...)` (or another non-side-effecting par
 constructing the parent from a child factory. Reserve the side-effecting parent state for callers that
 actually want the complete parent-plus-child graph.
 
+## `make()` still creates nested parents
+
+`make()` does not guarantee nothing is persisted: a nested factory attribute (`'team_id' =>
+Team::factory()`) is resolved with `create()`, so the parent is written to the current connection. Use
+`withoutParents()`, or `recycle()` with an existing parent, when a new parent must not be created.
+
 ## Seeder structure
 
 - One seeder per concern or model — don't inline unrelated model creation into `DatabaseSeeder` itself.

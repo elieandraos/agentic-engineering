@@ -148,6 +148,19 @@ meaningful calculations, formatting, and conditional fields when they lack indep
 Do not require a separate assertion for every straightforward passthrough field or broadly replace the
 macros with manual shape checks.
 
+## Confirm the effective database before targeting the test environment
+
+The test runner and artisan can resolve different configuration. Values from `phpunit.xml` `<env>`
+entries apply only under the test runner. `php artisan … --env=testing` loads `.env.testing` only when
+that file exists and otherwise falls back to the project's normal environment file, and a cached
+configuration ignores environment files altogether. Depending on the project, `migrate:fresh
+--env=testing` or a tinker session can therefore run against the development database.
+
+Before a writing or destructive artisan or tinker command meant for the test database, confirm the
+connection and database name it will actually use (`php artisan db:show` with the same flags), not only
+the environment name it reports. Prefer exercising factories and data setup inside a Pest test, which
+runs under the runner's configuration.
+
 ## Capability gating
 
 Treat Pest TIA (`pest()->tia()->always()->locally()` — a core Pest 5 feature) and any other optional Pest
