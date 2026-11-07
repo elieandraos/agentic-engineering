@@ -20,8 +20,8 @@ A Form Request with nested fields lacked `attributes()`, so messages showed dott
 classification as `phase26-laravel-stack-findings.md`: framework-owned, project application. **No
 change.**
 
-## Boundary of v2.2.3
+## Boundary of these findings
 
 Evidence is one project. Candidate 1 is strong (the gap sat beside code already following the rule);
-candidate 2 is moderate (three independent introductions in one project, generic Inertia mechanism). No
-new rule file, no new naming convention for option resources, and no Vue-side guidance.
+candidate 2 is moderate (three independent introductions in one project, generic Inertia mechanism).
+These findings add no rule file, no new naming convention for option resources, and no Vue-side guidance.
