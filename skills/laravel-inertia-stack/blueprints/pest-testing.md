@@ -73,6 +73,25 @@ comparison self-referential — if the Resource's shape regresses in a way that 
 self-consistent, the test cannot catch it. In that case, assert the literal expected value instead of
 deriving it from the Resource under test.
 
+## Consolidate by behavior, not by test count
+
+Group related assertions from one arranged scenario within its layer as `rules/test-ownership.md`'s
+"Group assertions by scenario" describes. This section covers consolidating tests without losing what
+they protect.
+
+Use a dataset when it makes the same behavior easy to verify across several cases. Do not optimize for
+fewer files or tests: keep separate tests or files when that makes behavior easier to find, and avoid a
+dataset whose unused parameters or placeholder callbacks make the tests harder to understand.
+
+Before removing or consolidating a test, identify where each meaningful assertion remains protected.
+Shared line coverage is not enough to call tests redundant: two tests can execute the same code while
+checking different outcomes.
+
+When testing a relationship or association, arrange the expected identity independently. If a test
+explicitly supplies a creator, parent, or other related model, assert that exact model is returned or
+persisted. Reading the expected ID back from the record under test can make the assertion circular and
+miss a failure to preserve the supplied value.
+
 ## Minimal test data — the attribute-level delta
 
 `testing-best-practices`'s `test-data.md` already owns record-level minimalism ("create only the records
@@ -121,6 +140,24 @@ This proves integration — the `show` route wraps the requested `$order` in `Or
 exactly the case the warning above allows. It would stop being appropriate if the test's actual
 responsibility were proving a specific field transformation `OrderResource` performs; that case calls for
 a literal expected value instead.
+
+Keep these Resource comparison macros for HTTP integration checks. Add focused known-value assertions for
+meaningful calculations, formatting, and conditional fields when they lack independent verification.
+Do not require a separate assertion for every straightforward passthrough field or broadly replace the
+macros with manual shape checks.
+
+## Confirm the effective database before targeting the test environment
+
+The test runner and artisan can resolve different configuration. Values from `phpunit.xml` `<env>`
+entries apply only under the test runner. `php artisan … --env=testing` loads `.env.testing` only when
+that file exists and otherwise falls back to the project's normal environment file, and a cached
+configuration ignores environment files altogether. Depending on the project, `migrate:fresh
+--env=testing` or a tinker session can therefore run against the development database.
+
+Before a writing or destructive artisan or tinker command meant for the test database, confirm the
+connection and database name it will actually use (`php artisan db:show` with the same flags), not only
+the environment name it reports. Prefer exercising factories and data setup inside a Pest test, which
+runs under the runner's configuration.
 
 ## Capability gating
 

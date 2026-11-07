@@ -153,6 +153,9 @@ where each of these is actually enforced:
 A project may answer these differently than another project on the same stack. Identify the actual
 mechanism in the code under review rather than assuming any one of them.
 
+When read scoping is a context-dependent global scope, see `rules/global-scope-tenancy.md` for the paths
+it does not reach.
+
 ## Non-CRUD and single-action controllers are first-class
 
 Do not manufacture CRUD symmetry a feature does not have. Four real, non-exceptional shapes:

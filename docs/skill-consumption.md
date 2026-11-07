@@ -139,7 +139,7 @@ Do not assume a scope flag alone proves that a skill-management command cannot a
 
 When managed skill files are tracked in Git, an unexpected local mutation is visible and can be recovered from the repository's known state rather than reconstructed manually.
 
-See [`docs/research/skill-resolution-and-scope-evidence.md`](research/skill-resolution-and-scope-evidence.md) for the useOrbit incident that motivated this clarification.
+The useOrbit incident that motivated this clarification is recorded in Git history (`ac27640`).
 
 ## 9. A simple refresh script
 

@@ -31,6 +31,7 @@ to `inertia-vue-development`.
 - Defining an Eloquent local scope or computed model attribute, a migration column, or a backed enum used as select options.
 - Generating factory or seeder data.
 - Building or reviewing an Inertia form that uses the Laravel/Inertia request serialization boundary.
+- Enforcing or testing tenant isolation through a global Eloquent scope.
 - Adding or reviewing a backend endpoint that renders a new Inertia page component.
 
 ## Routing
@@ -48,9 +49,11 @@ than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `temp
 | Defining an Eloquent local scope or computed model attribute | `rules/eloquent-attributes.md` |
 | Adding index filtering and/or sorting | `blueprints/filters-and-sorting.md` + `rules/request-normalization.md` (a sort `direction` must be defaulted, not left nullable) + `templates/app/Filters/QueryFilter.php`, `templates/app/Sorts/QuerySorter.php`, `templates/app/Models/Concerns/Filterable.php`, `templates/app/Models/Concerns/Sortable.php` |
 | Exposing a backed enum as select options | `rules/enum-options.md` |
+| Exposing model records as select or filter options | `rules/resources.md` |
 | Coercing or defaulting request input, or restoring optional query state into a form | `rules/request-normalization.md` |
 | Building a JsonResource for Inertia | `rules/resources.md` |
-| Building an Inertia form, adapting custom controls to `<Form>` serialization, or setting a reusable control's range/option bounds | `rules/inertia-forms.md` |
+| Building an Inertia form, adapting custom controls to `<Form>` serialization, setting a reusable control's range/option bounds, or validating before submit with Precognition | `rules/inertia-forms.md` |
+| Enforcing or testing tenant isolation through a global Eloquent scope | `rules/global-scope-tenancy.md` |
 | Rendering a new Inertia page from a Laravel endpoint | `rules/inertia-pages.md` |
 | Writing a factory or a dev-only seeder | `rules/factories-and-seeders.md` |
 | Adding a mid-chain conditional query clause | `rules/query-conditionals.md` |

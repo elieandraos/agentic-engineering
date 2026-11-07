@@ -21,6 +21,20 @@ and Pest capability gating — this file does not restate any of that.
 | Model | `tests/Feature/Models/{Model}Test.php` | Project-owned behavior, scopes, and relationship constraints whose failure would materially affect application behavior — not Laravel, Pest, or Inertia internals, and not every cast/relationship/scope merely because it exists |
 | HTTP (Controller) | `tests/Feature/Http/{Domain}/{Endpoint}Test.php` | Public endpoint behavior: authentication, authorization wiring, validation, route-model and controller-to-Action wiring, response status, redirects, flash messages, and the Inertia component/prop contract — proven with representative cases, not a lower layer's complete matrix |
 
+## Group assertions by scenario
+
+Within one layer, keep related assertions from the same scenario together. A successful Action test may
+verify submitted fields, defaults, tenant association, and audit fields in one pass; do not create a
+separate test for each field solely to make each test assert one value. Keep materially different
+contexts and failure paths separate. HTTP and Action tests still have distinct owners and remain separate.
+
+## Test shared behavior at its owner
+
+Test behavior inherited from a shared base class at that shared owner once, then keep concrete-class tests
+for their own search fields, boundaries, and overrides. For example, test generic empty/unknown-filter
+handling in the shared query-filter tests and test each concrete filter's specific behavior in its own
+suite. Retain representative integration coverage where a caller's wiring could fail independently.
+
 ## Assertion note
 
 Use `assertModelExists()` for existence (Boost's default). Use `assertDatabaseHas()` when a test

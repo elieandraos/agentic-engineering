@@ -55,3 +55,18 @@ control's default, pass the bound from the page rather than changing the shared 
 This is not a requirement to mirror server rules in the UI or to teach shared controls domain rules:
 the Form Request stays authoritative, and a control only has to avoid excluding what it accepts. For a
 closed choice list, see `enum-options.md`.
+
+## Validating before submit with Precognition
+
+A precognitive request runs the route's middleware and model binding, then the Form Request's
+`prepareForValidation()`, `authorize()`, and rules (only the requested fields' rules when the client
+limits validation). Controller method dependencies are resolved, but the method body, and the Action it
+calls, never runs; success answers 204.
+
+- A check that must block before submit belongs in the Form Request's rules. A check in the Action runs
+  only on the real submit.
+- Middleware, `prepareForValidation()`, `authorize()`, and injected constructors run on every check, so
+  keep them free of side effects.
+- If the application customizes `shouldRenderJsonWhen`, confirm a failed precognitive request still
+  answers 422 JSON instead of redirecting with session errors. Test with `withPrecognition()`: assert the
+  422 and `assertSessionHasNoErrors()` for a failure, and `assertSuccessfulPrecognition()` for a pass.

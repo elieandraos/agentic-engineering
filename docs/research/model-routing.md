@@ -124,6 +124,8 @@ Portable skills should not need to name Claude models or other vendor-specific r
 
 ### Control Room
 
+Control Room was the working name used during this research for a hypothetical coordination layer above the specialist skills. It was never adopted as a canonical Agentic Engineering component.
+
 Potentially understands the current unit of work and the capability it requires, alongside the lifecycle and coordination responsibilities already under investigation.
 
 ### Runtime adapter

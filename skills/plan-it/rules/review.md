@@ -256,6 +256,9 @@ After each related mutation episode:
 2. compare them with the exact approved target;
 3. report a compact result.
 
+For live issue-body comparisons, trim whitespace only at the end of both complete bodies.
+Preserve the original text and all internal whitespace, including Markdown line breaks.
+
 Validate one related group of mutations as one episode, not one report per API call. No metadata
 field — milestone, labels, or assignee — is mandatory merely because this skill supports it;
 validate against whatever was actually approved, including its approved absence.
