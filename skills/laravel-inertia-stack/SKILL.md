@@ -52,7 +52,7 @@ than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `temp
 | Exposing model records as select or filter options | `rules/resources.md` |
 | Coercing or defaulting request input, or restoring optional query state into a form | `rules/request-normalization.md` |
 | Building a JsonResource for Inertia | `rules/resources.md` |
-| Building an Inertia form, adapting custom controls to `<Form>` serialization, or setting a reusable control's range/option bounds | `rules/inertia-forms.md` |
+| Building an Inertia form, adapting custom controls to `<Form>` serialization, setting a reusable control's range/option bounds, or validating before submit with Precognition | `rules/inertia-forms.md` |
 | Enforcing or testing tenant isolation through a global Eloquent scope | `rules/global-scope-tenancy.md` |
 | Rendering a new Inertia page from a Laravel endpoint | `rules/inertia-pages.md` |
 | Writing a factory or a dev-only seeder | `rules/factories-and-seeders.md` |
