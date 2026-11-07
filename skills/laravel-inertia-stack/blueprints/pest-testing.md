@@ -75,11 +75,9 @@ deriving it from the Resource under test.
 
 ## Consolidate by behavior, not by test count
 
-When several tests arrange the same scenario and differ only in which related outcome they assert, consider
-checking those outcomes together in one test. For example, one successful Action scenario can verify the
-submitted values, defaults, tenant association, and audit fields. Keep separate tests for genuinely
-different conditions, contexts, or failure behavior. Keep HTTP and Action tests in their existing layers;
-consolidation does not mean combining endpoint and Action tests.
+Group related assertions from one arranged scenario within its layer as `rules/test-ownership.md`'s
+"Group assertions by scenario" describes. This section covers consolidating tests without losing what
+they protect.
 
 Use a dataset when it makes the same behavior easy to verify across several cases. Do not optimize for
 fewer files or tests: keep separate tests or files when that makes behavior easier to find, and avoid a
