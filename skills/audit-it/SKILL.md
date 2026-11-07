@@ -26,6 +26,9 @@ engine, access layer, and runtime paths to select checks and tools.
    leads. State the conditions needed to reach each finding. A reproduction with intentionally
    invalid data establishes the effect under that condition. Establish separately whether a
    normal user action can create that data.
+   When verifying a prior finding, trace the normal operations that could create the same bad
+   state. If one can, reproduce it through the normal entry point and reassess the finding's
+   priority.
 4. For each finding, read the closest tests when a suite exists. Determine whether the gap is
    a missing test, a missing scenario, a missing assertion, or an execution gap such as a fake,
    different engine, or absent concurrency. State what the tests exercise and what they assert.
