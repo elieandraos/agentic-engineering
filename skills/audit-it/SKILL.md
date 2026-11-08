@@ -54,6 +54,20 @@ improvements to revisit when evidence changes. Report meaningful checks that pas
 material areas that remain unverified. If the evidence supports no findings, report that result
 within the audited scope.
 
+### Score breakdown
+
+When the audit module defines a rubric, report a score out of 100 alongside the findings.
+Show points earned and available per category, with the evidence and reason for each deduction.
+Assess deductions by impact, reachability, and expected workload. Count each finding in its
+primary category. Keep launch blockers explicit regardless of the score.
+
+For a focused audit, label the score with its scope. Mark excluded categories as out of scope
+or inapplicable. Calculate the total as 100 times earned points divided by the available points
+in the remaining categories. Mark a score provisional when material checks remain unverified.
+If the evidence is too limited to support a meaningful total, give the supported category scores
+and explain what evidence is missing. Keep the same scope and weights on re-audit when comparing
+scores. Explain any change in scope or weights.
+
 ## Ownership and handoff
 
 Finish with findings and proposed corrections. Use `lab-it` if remediation requires a product or

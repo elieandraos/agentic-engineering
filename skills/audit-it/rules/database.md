@@ -82,3 +82,14 @@ index inventory when available.
   Check that a rewrite preserves results, including date boundaries, sort order, and pagination.
   Where the test and deployed engines differ, verify behavior on the engines that matter.
   If performance is adequate, recommend deferring the change and name the condition for revisiting it.
+
+## Database scoring rubric
+
+Use these category weights with the score breakdown in the main skill.
+
+| Category | Points | What to assess |
+|---|---:|---|
+| Data access and tenant isolation | 40 | Ownership boundaries, authorization, and safe query construction across the paths in scope. |
+| N+1 prevention | 25 | Whether reads grow per result row, the impact of that growth, and the evidence from query counts. |
+| Query efficiency | 20 | Query cost, filtering, sorting, pagination, and index behavior for the expected workload. |
+| Data integrity | 15 | Record lifecycle, valid relationships, database constraints, atomicity, and concurrent writes. |
