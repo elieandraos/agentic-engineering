@@ -32,6 +32,8 @@ index inventory when available.
 - Exercise the normal action on a record with dependents. Verify what happens afterward in the
   relevant screens, exports, and jobs. Include historical dependents when the product keeps
   history. Verify that the action works for an unlinked record when the product allows it.
+- When a lifecycle action makes a record unavailable, also check whether a later create or
+  update can still link to that record.
 - Check that the database and application together enforce the relevant invariants. For example,
   an existing foreign key may still point to a row hidden by a soft delete. Verify whether the
   dependent operation can still resolve that row.
