@@ -1,6 +1,6 @@
 ---
 name: audit-it
-description: "Audit an existing system for security, data integrity, background-work reliability, query performance, and test gaps. Use for a database or security audit, tenant isolation review, query and index assessment, queued-job reliability review, business-rule consistency check, or launch-readiness audit. Trace current behavior, verify material findings, and recommend the smallest useful correction. Use review-it for implementation review of a proposed change and lab-it for architecture decisions."
+description: "Audit an existing system for security, data integrity, background-work reliability, query performance, and test gaps. Use for a database or security audit, tenant isolation review, query and index assessment, queued-job reliability review, business-rule consistency check, or launch-readiness audit of data access, security, or background work. Trace current behavior, verify material findings, and recommend the smallest useful correction. Use review-it for implementation review of a proposed change and lab-it for architecture decisions."
 ---
 
 # audit-it
@@ -69,8 +69,9 @@ a complete domain model.
   values such as dates, time zones, windows, and state combinations.
 - Establish whether supported application behavior can reach the contradiction. Classify it as a
   confirmed contradiction, an intentional exception, an unreachable scenario, or an unresolved
-  product decision. A test or comment that asserts the behavior is evidence of intent, not proof
-  of consistency with the other workflows.
+  product decision. Classify an exception as intentional only when requirements or project
+  instructions establish it. A test or comment that asserts the behavior shows implementation
+  intent, not product approval.
 - State which tests compare the implementations or workflows and which only test each one alone.
 
 Score a confirmed contradiction in the module category that matches its impact. Report an
@@ -110,7 +111,7 @@ blockers. A high score does not offset an open blocker.
 For a focused audit, label the score with its scope. Mark excluded categories as out of scope
 or inapplicable. Calculate the total as 100 times earned points divided by the available points
 in the remaining categories. Show the applicable points next to the total, for example
-`78/100 (31 of 40 applicable points)`. Mark a score provisional when material checks remain
+`78/100 normalized; 31/40 applicable points`. Mark a score provisional when material checks remain
 unverified. If the evidence is too limited to support a meaningful total, give the supported
 category scores and explain what evidence is missing.
 
