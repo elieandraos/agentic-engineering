@@ -28,6 +28,7 @@ Stack companions carry technology-specific implementation knowledge without beco
 
 Independent capabilities that support the workflow without becoming lifecycle stages.
 
+* [`audit-it`](skills/audit-it/) — independently audits a system's current behavior for database integrity and query performance, security, background-work reliability, and business-rule consistency. It verifies material findings with evidence and reports them with recommended corrections; it does not implement fixes, and it hands unresolved product decisions to `lab-it`.
 * [`document-it`](skills/document-it/) — creates, updates, and reviews durable engineering documentation in the supported output format(s).
 * [`steward-it`](skills/steward-it/) — retrospectively investigates real engineering sessions when something was unexpectedly slow, difficult, wasteful, repeatedly off course, or exposed a recurring workflow problem. It reconstructs timing, human waits, skill/rule usage, token and cache telemetry, verification, outcomes, and recurrence evidence, then recommends the smallest justified improvement.
 
@@ -52,6 +53,7 @@ State the goal, not the choreography. Investigation methods, planning checks, re
 "Implement issue #42."                                               # implement-it + stack companion when relevant
 "Review this branch before I open a PR."                             # review-it
 "Create the milestone PR."                                           # ship-it
+"Audit the billing module for security and data-integrity risks."    # audit-it
 "Steward this session. Tell me where the time, tokens, and workflow friction went."  # steward-it
 ```
 
