@@ -17,8 +17,14 @@ those checks there and report each finding in one module.
   before the effect. A control that only the UI applies, such as a hidden button, is absent.
 - Check capabilities that are not record-scoped: membership and role changes, invitations,
   ownership transfer, account and security settings, support or impersonation access, and
-  cross-tenant administration. Compare the permission that comparable effects require across
-  workflows.
+  cross-tenant administration. Compare the role and the fresh authentication that comparable
+  effects require across workflows.
+- For account and security changes, check what a caller with only a borrowed or stolen session
+  can do. A change to the sign-in identifier, password, recovery channel, or two-factor
+  requirement can turn temporary access into lasting control of an account. Check whether such a
+  change requires fresh authentication. Evaluate whether the affected user also needs an
+  independent notice, such as a message to the previous address, by comparison with similar
+  changes in the system.
 - For invitation, token, and signed-link flows, check expiry, single use, binding to the intended
   identity, and behavior after the related membership or record changes.
 - Verify a material gap with a request from an identity that the system should refuse.

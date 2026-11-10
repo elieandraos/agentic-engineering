@@ -9,8 +9,16 @@ description: "Audit an existing system for security, data integrity, background-
 
 Audit the current behavior of a system or subsystem. Establish the target revision or
 environment, the surfaces in scope, and the expected guarantees from project instructions,
-requirements, and the request. Reuse relevant prior evidence when it still applies. Ask only
-when an unresolved question would materially change the scope or the standard for a finding.
+requirements, recorded product decisions, and the request. Behavior that these guarantees
+intentionally allow is not a defect. Ask only when an unresolved question would materially
+change the scope or the standard for a finding.
+
+Treat a request as a re-audit only when it asks to verify earlier findings. Otherwise, audit
+independently: investigate the current system on its own evidence, and do not carry over
+earlier audit findings, conclusions, or scores. For a re-audit, collect the earlier findings,
+accepted risks, and recorded decisions from previous reports, tracker issues and milestones,
+and plans. Reuse earlier evidence only when it still applies. Whether the audit runs in the same
+session as earlier work does not change which operation applies.
 
 Load each module whose surfaces are in scope. Load more than one when the audit spans them.
 
@@ -45,7 +53,9 @@ select checks and tools.
    different engine, or absent concurrency. State what the tests exercise and what they assert.
    When feasible, verify that the proposed regression test fails on current code for the
    expected reason. Distinguish tests inspected from tests run.
-5. Rerun unexpected test failures under controlled conditions. Report confirmed test defects
+5. Do not run test processes that share files, databases, or other state at the same time in
+   one checkout. Run them in turn, or in separate checkouts or environments. Rerun unexpected
+   test failures under controlled conditions. Report confirmed test defects
    separately from application defects. Explain what changes between runs and how it affects
    the result.
 
@@ -69,9 +79,9 @@ a complete domain model.
   values such as dates, time zones, windows, and state combinations.
 - Establish whether supported application behavior can reach the contradiction. Classify it as a
   confirmed contradiction, an intentional exception, an unreachable scenario, or an unresolved
-  product decision. Classify an exception as intentional only when requirements or project
-  instructions establish it. A test or comment that asserts the behavior shows implementation
-  intent, not product approval.
+  product decision. Classify an exception as intentional only when requirements, project
+  instructions, or a recorded product decision establish it. A test or comment that asserts the
+  behavior shows implementation intent, not product approval.
 - State which tests compare the implementations or workflows and which only test each one alone.
 
 Score a confirmed contradiction in the module category that matches its impact. Report an
@@ -80,7 +90,7 @@ choose a new business rule during the audit.
 
 ## Report
 
-Lead with the highest-impact verified findings. For each finding, give:
+Lead with the highest-priority verified findings. For each finding, give:
 
 - **What happens and why it matters.** Explain the user or system impact in simple technical English.
 - **How it can happen.** State the trigger, prerequisites, and a concrete example when the path is
@@ -89,34 +99,67 @@ Lead with the highest-impact verified findings. For each finding, give:
 - **What to change and how to verify it.** Recommend the smallest correction that preserves the
   intended behavior. Give a regression test or measurement that would prove the correction.
 
-Prioritize by impact, reachability, and expected workload. Separate fixes worth doing now from
-improvements to revisit when evidence changes. Report meaningful checks that passed and
-material areas that remain unverified. An unverified check is not a pass. If the evidence
-supports no findings, report that result within the audited scope.
+Prioritize each finding by weighing these factors together:
 
-On re-audit, give the status of each prior finding: fixed, open, or regressed after a fix. List
-new findings separately.
+- **Impact:** what is exposed, lost, corrupted, or blocked, and for whom.
+- **Reachability:** whether supported actions reach it, or it needs a race, an interruption at a
+  specific moment, or invalid data.
+- **Likelihood:** how often the conditions realistically occur at the expected workload.
+- **Recoverability:** whether the effect lasts, or the user can retry and the project can
+  readily repair the state.
+- **Correction cost:** the effort and regression risk of the fix.
+
+A rare trigger does not by itself make a finding minor. A rare path to cross-tenant exposure or
+lasting data corruption can still need a fix before launch.
+
+A launch blocker is a finding whose material risk is not acceptable for launch under the
+project's guarantees and the request. State why each launch blocker meets that standard.
+
+Separate fixes worth doing now from improvements to revisit when evidence changes. Report
+meaningful checks that passed and material areas that remain unverified. An unverified check is
+not a pass. If the evidence supports no findings, report that result within the audited scope.
+
+On re-audit, give the status of each earlier finding:
+
+- **Fixed**, **open**, or **regressed** after a fix.
+- **Accepted risk:** the user chose to accept or defer the open finding. It remains a finding
+  and keeps its justified deduction. List it with its current priority and recorded reason.
+  Do not present it as a new finding or a launch blocker. Reassess it when new evidence
+  materially changes its impact, reachability, or likelihood.
+- **Intentional:** a recorded product decision approves the behavior. It is not a defect and
+  takes no deduction.
+
+List new findings separately.
 
 ### Score breakdown
 
 When a loaded module defines a rubric, report a score out of 100 for that module. Report one
 score per applicable module. Do not combine module scores. Show points earned and available per
-category, with the evidence and reason for each deduction. Assess deductions by impact,
-reachability, and expected workload. Count each finding once, in the primary category of one
-module. Reference it from other modules without a second deduction.
+category, with the evidence and reason for each deduction. Deduct points only for findings that
+are reproduced or established by source inspection. Size each deduction with the
+prioritization factors above. Count each finding once, in the primary category of one module.
+Reference it from other modules without a second deduction.
 
 List launch blockers before the scores. Next to each module score, state its number of open
 blockers. A high score does not offset an open blocker.
 
-For a focused audit, label the score with its scope. Mark excluded categories as out of scope
-or inapplicable. Calculate the total as 100 times earned points divided by the available points
-in the remaining categories. Show the applicable points next to the total, for example
-`78/100 normalized; 31/40 applicable points`. Mark a score provisional when material checks remain
-unverified. If the evidence is too limited to support a meaningful total, give the supported
-category scores and explain what evidence is missing.
+For a focused audit, label the score with its scope. A re-audit that searches for new findings
+only in changed code is a focused audit. Name its coverage, for example
+`diff-scoped: <base>..<head>`.
 
-On re-audit, compare scores only for categories whose scope and weights are unchanged. Explain
-any change in scope or weights, and do not compare totals across that change.
+Mark excluded categories as out of scope or inapplicable. Mark a category unassessed when the
+evidence cannot support a score for it, for example when none of its material checks could run.
+Do not award points for an unassessed category. Score a category whose verified evidence
+supports a score, even when some of its checks remain unverified. When any category
+is excluded or unassessed, calculate the total as 100 times earned points divided by the
+available points in the remaining categories. Show the applicable points next to the total, for
+example `78/100 normalized; 31/40 applicable points`. Mark a score provisional when material
+checks remain unverified. If the evidence is too limited to support a meaningful total, withhold
+the total, give the supported category scores, and explain what evidence is missing.
+
+On re-audit, compare scores only for categories whose scope and weights are unchanged. Do not
+compare a focused score with a full-audit score. Explain any change in scope or weights, and do
+not compare totals across that change.
 
 ## Ownership and handoff
 
