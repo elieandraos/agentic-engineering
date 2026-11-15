@@ -172,6 +172,26 @@ database assertions, or any other particular testing style — the concern is sp
 expectation that repeats the implementation instead of independently proving the behavior under
 test, not the technique used to express it.
 
+When the change modifies test infrastructure — runner configuration, the base test case or global test
+bootstrap, test scripts, coverage settings, or the CI test job — also verify the properties that the
+specific change could affect. Scale the checks to that change; do not apply all of them to every
+infrastructure edit:
+
+- **Execution completeness** — the run executes the complete suite, with no filtering, selection, or
+  replay, including when an environment variable could switch selection on. A test count that matches
+  the collected count is not sufficient proof on its own: a replayed or impact-selected run can report
+  the full count. Confirm from the runner's own output and configuration that every test executed.
+- **Isolation** — state the change introduces (a cached snapshot, a static resolver, a shared
+  directory) cannot carry from one test into another, on one process and, where the suite runs in
+  parallel, across processes.
+- **Coverage enforcement** — a changed coverage minimum is proven to fail below its threshold, not only
+  to pass above it.
+- **Assertion preservation** — no test was deleted, skipped, or weakened to make the infrastructure
+  change pass.
+
+Where the Laravel companion is installed, its `rules/test-execution.md` gives the concrete mechanics
+for its stack.
+
 ### Accidental scope expansion
 
 Compare every changed file and hunk against the established intended scope (`rules/scope.md`).

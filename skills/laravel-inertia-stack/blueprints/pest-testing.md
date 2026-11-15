@@ -146,6 +146,33 @@ meaningful calculations, formatting, and conditional fields when they lack indep
 Do not require a separate assertion for every straightforward passthrough field or broadly replace the
 macros with manual shape checks.
 
+## Global classes in namespace-free test files
+
+Pest test files usually declare no namespace. In such a file, `use LogicException;` for a global class
+has no effect and makes PHP emit a warning. The parallel runner turns that warning into an error and
+aborts before any test runs. Reference global classes without an import.
+
+## Absence assertions over rendered output
+
+An absence assertion (`->not->toContain(...)`) over rendered output, such as a mail body or a page,
+fails by chance when unrelated content can contain the value — for example a random UUID in an action
+URL. In order of preference:
+
+1. Control the fixture, so unrelated content cannot contain the value: generate known identifiers with
+   `Str::createUuidsUsingSequence()`, one value per created model (it also sets `HasUuids` keys), or
+   choose a hidden value that cannot occur in them.
+2. Otherwise, exclude only the known irrelevant content (that identifier, that URL) before the
+   assertion. Never strip broad parts of the output.
+
+Either way, keep detection for every display format the value can appear in — for an amount, the raw
+value, decimals, and thousands separators — not only the literal stored in the fixture.
+
+## Tests that change configuration, environment variables, or routes
+
+When the suite's base test case uses cached configuration and routes, read `rules/test-execution.md`'s
+"Cached configuration and routes in tests" before writing a test that changes configuration, sets
+environment variables, or registers routes.
+
 ## Confirm the effective database before targeting the test environment
 
 The test runner and artisan can resolve different configuration. Values from `phpunit.xml` `<env>`
@@ -161,10 +188,10 @@ runs under the runner's configuration.
 
 ## Capability gating
 
-Treat Pest TIA (`pest()->tia()->always()->locally()` — a core Pest 5 feature) and any other optional Pest
-plugin (architecture testing, type coverage, and similar) as capability-gated: check what the consuming
-project has actually installed and configured before assuming any of them is available. Never
-universally prescribe one.
+Treat Pest TIA (a core Pest 5 feature) and any other optional Pest plugin (architecture testing, type
+coverage, and similar) as capability-gated: check what the consuming project has actually installed and
+configured before assuming any of them is available. Never universally prescribe one. For TIA's
+tradeoffs and how full-suite and CI runs switch it off, see `rules/test-execution.md`.
 
 `LazilyRefreshDatabase` is a measured future candidate for a suite that currently binds `RefreshDatabase`
 uniformly across `Feature` and `Unit` — record it for evaluation, not as a requirement to adopt.

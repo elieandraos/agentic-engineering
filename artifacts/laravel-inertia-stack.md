@@ -115,7 +115,7 @@ Sorter classes never validate — they trust an already-validated value exactly 
 
 ### Testing
 
-Two distinct decisions compose here, deliberately kept apart:
+Three distinct decisions compose here, deliberately kept apart:
 
 - [`blueprints/pest-testing.md`](../skills/laravel-inertia-stack/blueprints/pest-testing.md) owns the
   **execution-boundary configuration** — classifying `tests/Unit` versus `tests/Feature` by what a
@@ -123,19 +123,26 @@ Two distinct decisions compose here, deliberately kept apart:
   `tests/Pest.php` binds a database-refresh trait to before trusting a directory name, and the safe
   order for narrowing that binding during a migration. It also owns endpoint-oriented HTTP test-file
   organization, the warning against building a test's expected value from the same production Resource
-  it's supposed to verify, and gating optional Pest capabilities (TIA, architecture testing) behind
-  what a project actually has installed.
+  it's supposed to verify, gating optional Pest capabilities (TIA, architecture testing) behind
+  what a project actually has installed, global-class imports in namespace-free test files, and
+  absence assertions over rendered output that can contain random identifiers.
 - [`rules/test-ownership.md`](../skills/laravel-inertia-stack/rules/test-ownership.md) owns **per-layer test
   responsibility** — the concrete Action/Policy/Filter/Sorter/Resource/Model/HTTP location-and-scope
   mapping, when to assert existence versus an exact persisted value, and the no-redundancy rule that a
   higher layer proves only what a lower layer doesn't already prove (with the minimal-wiring exception:
   an HTTP test may keep one persisted identity/association assertion to prove the correct route-bound
   model, actor, or pivot pair reached the Action — a bare row-count assertion cannot prove that).
+- [`rules/test-execution.md`](../skills/laravel-inertia-stack/rules/test-execution.md) owns **how the
+  suite runs** — what to measure before restructuring tests, the canonical full-suite and coverage
+  commands, runner flags passed through a wrapper, impact analysis, cached state in tests, and verifying
+  what a run executed. Version-specific behavior appears there only as labeled examples to recheck.
+  Boost's `testing-best-practices` keeps the baseline performance settings it already owns.
 
 A test file therefore answers "where does this test physically live and what does the suite boot for
 it" from the blueprint, and "what does this specific layer's test assert, and where does its
 responsibility stop" from the rule — two different questions with two different owners, composed
-rather than duplicated.
+rather than duplicated. How the suite runs is a third question, owned by `rules/test-execution.md`;
+neither the blueprint nor the ownership rule restates it.
 
 ### Supporting rules
 
@@ -170,6 +177,7 @@ that touches the same territory cross-references that owner instead of restating
 | The multi-component filter/sorter wiring across Form Request, model, and controller | `blueprints/filters-and-sorting.md` |
 | `tests/Unit`/`tests/Feature` execution-boundary classification and suite binding | `blueprints/pest-testing.md` |
 | Concrete per-class test location, ownership, and the no-redundancy rule | `rules/test-ownership.md` |
+| How the suite runs: measuring before restructuring tests, full-suite and coverage commands, runner flags through a wrapper, impact analysis, cached state in tests, run verification | `rules/test-execution.md` |
 | Computed Eloquent attribute convention; migration-debt policy on `#[Scope]` vs. legacy scopes | `rules/eloquent-attributes.md` |
 | Mid-chain query conditionals | `rules/query-conditionals.md` |
 | Backed-enum option lists | `rules/enum-options.md` |
@@ -246,6 +254,11 @@ The skill's Laravel, Inertia, and Pest guidance has been checked against real im
 verification work, not authored and left untested. That confidence does not extend to broad,
 multi-project portability — validation beyond one real consuming project remains unproven, and this
 document does not claim otherwise.
+
+`rules/test-execution.md` rests on measurements from one consuming project's suite and on reading the
+Pest 5 and Collision 8 sources. Its decisions are a working conclusion pending evidence from another
+project. Its version-specific examples were confirmed against those sources only, and the rule tells
+readers to recheck them against installed versions.
 
 Vue 3 is part of the declared stack boundary, since the stack this skill targets genuinely includes
 it, but mature, independently-owned Vue-specific guidance remains limited here. A Vue implementation

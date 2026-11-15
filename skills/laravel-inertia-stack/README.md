@@ -9,6 +9,7 @@ stage.
   this stack.
 - Adding query filtering or sorting to an Eloquent index query.
 - Writing or organizing a Pest test.
+- Speeding up the test suite or changing how it runs, locally or in CI.
 - Implementing an approved issue that touches this stack.
 
 This is an optional stack companion, not a pipeline stage — and not a replacement for

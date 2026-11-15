@@ -222,8 +222,10 @@ human chooses to skip, targeted verification remains the issue's required proof 
 risk escalation, or milestone-level decision requires broader regression evidence.
 
 Cache, replay, and impact-analysis results are distinguished from fresh execution whenever a full
-regression is chosen. Project-specific commands, such as useOrbit's `php artisan test --compact
---no-tia`, remain project knowledge rather than hardcoded methodology requirements.
+regression is chosen. Project-specific commands remain project knowledge rather than hardcoded
+methodology requirements; when a project exposes a canonical full-suite command, that command is
+preferred over a reconstructed runner invocation. The suite's current cost informs the run/skip
+recommendation but never replaces the human's choice.
 
 Isolation verification remains a deliberate escalation only when an intermediate committed state
 itself needs proof.
