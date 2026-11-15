@@ -133,11 +133,10 @@ Three distinct decisions compose here, deliberately kept apart:
   an HTTP test may keep one persisted identity/association assertion to prove the correct route-bound
   model, actor, or pivot pair reached the Action — a bare row-count assertion cannot prove that).
 - [`rules/test-execution.md`](../skills/laravel-inertia-stack/rules/test-execution.md) owns **how the
-  suite runs** — measuring instrumentation, runner configuration, parallelism, and bootstrap overhead
-  before restructuring tests; one canonical full-suite command with command-scoped Xdebug mode; calling
-  Pest directly for parallel runs; TIA tradeoffs, separating durable guidance from current Pest 5
-  behavior; what cached configuration and routes mean for tests; and verifying what a run actually
-  executed. Boost's `testing-best-practices` keeps the baseline performance settings it already owns.
+  suite runs** — what to measure before restructuring tests, the canonical full-suite and coverage
+  commands, runner flags passed through a wrapper, impact analysis, cached state in tests, and verifying
+  what a run executed. Version-specific behavior appears there only as labeled examples to recheck.
+  Boost's `testing-best-practices` keeps the baseline performance settings it already owns.
 
 A test file therefore answers "where does this test physically live and what does the suite boot for
 it" from the blueprint, and "what does this specific layer's test assert, and where does its
@@ -178,7 +177,7 @@ that touches the same territory cross-references that owner instead of restating
 | The multi-component filter/sorter wiring across Form Request, model, and controller | `blueprints/filters-and-sorting.md` |
 | `tests/Unit`/`tests/Feature` execution-boundary classification and suite binding | `blueprints/pest-testing.md` |
 | Concrete per-class test location, ownership, and the no-redundancy rule | `rules/test-ownership.md` |
-| How the suite runs: full-suite and coverage commands, parallel runs, TIA, cached state in tests, run verification | `rules/test-execution.md` |
+| How the suite runs: measuring before restructuring tests, full-suite and coverage commands, runner flags through a wrapper, impact analysis, cached state in tests, run verification | `rules/test-execution.md` |
 | Computed Eloquent attribute convention; migration-debt policy on `#[Scope]` vs. legacy scopes | `rules/eloquent-attributes.md` |
 | Mid-chain query conditionals | `rules/query-conditionals.md` |
 | Backed-enum option lists | `rules/enum-options.md` |
@@ -257,10 +256,9 @@ multi-project portability — validation beyond one real consuming project remai
 document does not claim otherwise.
 
 `rules/test-execution.md` rests on measurements from one consuming project's suite and on reading the
-current Pest 5 and Collision 8 sources. Its durable guidance (measure first, one canonical command,
-command-scoped instrumentation, verifying what a run executed) is a working conclusion pending
-evidence from another project; its current-tooling statements need rechecking after each Pest or
-Collision upgrade.
+Pest 5 and Collision 8 sources. Its decisions are a working conclusion pending evidence from another
+project. Its version-specific examples were confirmed against those sources only, and the rule tells
+readers to recheck them against installed versions.
 
 Vue 3 is part of the declared stack boundary, since the stack this skill targets genuinely includes
 it, but mature, independently-owned Vue-specific guidance remains limited here. A Vue implementation

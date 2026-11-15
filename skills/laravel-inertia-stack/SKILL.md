@@ -45,7 +45,7 @@ than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `temp
 |---|---|
 | Composing a CRUD or single-action controller | `blueprints/resource-controller.md` |
 | Writing or organizing a Pest test | `blueprints/pest-testing.md`, then `rules/test-ownership.md` for the concrete class-ownership mapping |
-| Speeding up the suite, or changing test scripts, parallelism, coverage, impact analysis, the base test case's cached state, or the CI test job | `rules/test-execution.md` |
+| Speeding up the suite or changing how it runs (test scripts, parallelism, coverage, impact analysis, cached test state, the CI test job) | `rules/test-execution.md` |
 | Wiring Form Request -> Action -> Controller | `rules/actions.md` |
 | Authorizing a controller method | `rules/authorization.md` |
 | Defining an Eloquent local scope or computed model attribute | `rules/eloquent-attributes.md` |

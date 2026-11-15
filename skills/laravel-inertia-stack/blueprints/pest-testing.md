@@ -149,9 +149,8 @@ macros with manual shape checks.
 ## Global classes in namespace-free test files
 
 Pest test files usually declare no namespace. In such a file, `use LogicException;` for a global class
-has no effect, and PHP warns: "The use statement with non-compound name 'LogicException' has no
-effect". The parallel runner turns that warning into an error and aborts before any test runs.
-Reference global classes without an import.
+has no effect and makes PHP emit a warning. The parallel runner turns that warning into an error and
+aborts before any test runs. Reference global classes without an import.
 
 ## Absence assertions over rendered output
 
@@ -160,9 +159,8 @@ fails by chance when unrelated content can contain the value — for example a r
 URL. In order of preference:
 
 1. Control the fixture, so unrelated content cannot contain the value: generate known identifiers with
-   `Str::createUuidsUsingSequence()` (it also covers `HasUuids` keys; give each created model its own
-   value, because a single fixed UUID collides on the primary key), or choose a hidden value that
-   cannot occur in them.
+   `Str::createUuidsUsingSequence()`, one value per created model (it also sets `HasUuids` keys), or
+   choose a hidden value that cannot occur in them.
 2. Otherwise, exclude only the known irrelevant content (that identifier, that URL) before the
    assertion. Never strip broad parts of the output.
 
@@ -171,10 +169,9 @@ value, decimals, and thousands separators — not only the literal stored in the
 
 ## Tests that change configuration, environment variables, or routes
 
-When the suite's base test case uses cached configuration and routes, a test that changes
-configuration, sets environment variables, or registers routes follows the constraints in
-`rules/test-execution.md`'s "Cached configuration and routes in tests". Check the base test case before
-writing such a test.
+When the suite's base test case uses cached configuration and routes, read `rules/test-execution.md`'s
+"Cached configuration and routes in tests" before writing a test that changes configuration, sets
+environment variables, or registers routes.
 
 ## Confirm the effective database before targeting the test environment
 
