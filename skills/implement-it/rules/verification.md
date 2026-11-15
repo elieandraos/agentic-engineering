@@ -22,6 +22,11 @@ project, its stack skills, configuration, scripts, CI, and established usage:
 The project owns the actual commands. Technology-specific commands belong in project or stack knowledge,
 not in this methodology.
 
+When the project exposes a canonical full-suite command — a script that sets the runner's flags and
+environment for its run — use it rather than reconstructing a runner invocation. A raw runner call can
+differ from it in process count, coverage instrumentation, or impact analysis, and so prove a different
+claim or cost far more time.
+
 ## Discover the verification starting state
 
 Where a result could be masked by local state, check the relevant boundary before trusting it. Examples:
@@ -81,6 +86,12 @@ After targeted verification, present the choice briefly:
   when reliable targeted verification is strong and the human intentionally prefers to defer the broader
   regression check.
 
+Weigh the full suite's current cost when recommending either option, and present that cost with the
+choice. When the suite is cheap, recommending a run costs little; when it is expensive, a skip for a
+suitable milestone issue is more reasonable. Use an existing recent measurement of the suite; when none
+is available, say the cost is unknown. Do not run the suite to measure it before the human chooses.
+Cost informs the recommendation only; the human still makes the choice.
+
 A milestone issue may still be run through the full suite; the distinction is the decision point, not a
 prohibition. Skipping does not claim that the entire milestone is regression-clean. A later milestone
 level check, CI run, or manual-testing pass can provide that broader evidence according to the delivery
@@ -88,8 +99,7 @@ workflow.
 
 If the human chooses to run the full suite, use the project's genuine full-regression mode. If the project
 uses a test-impact-analysis, cache, or replay feature by default and that would prevent proving a fresh
-complete run, use the project's uncached/full mode. In useOrbit, for example, full-suite proof uses
-`php artisan test --compact --no-tia` because TIA is enabled by default.
+complete run, use the project's uncached/full mode.
 
 If the human chooses to skip it, report that choice explicitly at Gate 1. Do not describe targeted tests
 as full-regression proof.
@@ -178,6 +188,8 @@ Only when an activation effect is found should `activation-ordering.md` be loade
 - Recommend the full suite by default for standalone Backlog/trunk work and when risk or uncertainty is
   materially higher; allow intentional deferral for suitable milestone issues.
 - Discover the project's real tooling and scoping behavior rather than assuming commands.
+- Use the project's canonical full-suite command when one exists, and present the suite's current cost
+  with the run/skip choice.
 - Distinguish fresh execution from cache, replay, and impact-analysis selection.
 - Verify semantic commits at the narrowest reliable scope.
 - Escalate to isolation verification only when an intermediate committed state itself needs proof.

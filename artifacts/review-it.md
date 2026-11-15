@@ -130,6 +130,11 @@ tests own the underlying value's correctness. The optional Laravel companion ill
 ownership distinction; the portable check does not require it. The owning checklist contains the
 inspection procedure for both concerns.
 
+When the reviewed change modifies test infrastructure, test adequacy also checks the properties that
+specific change could affect, scaled to it: execution completeness (a matching test count alone does
+not prove fresh execution), isolation of any state the change introduces, a changed coverage minimum proven
+to fail below its threshold, and no test deleted, skipped, or weakened to make the change pass.
+
 **The authorized-scope-change exemption is deliberately narrow.** An explicitly authorized scope
 change is exempt from exactly one category — Accidental scope expansion — because it is not
 accidental. It is not exempt from anything else: every other applicable category runs against it
