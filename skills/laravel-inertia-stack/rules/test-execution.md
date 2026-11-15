@@ -9,8 +9,7 @@ it claims. The consuming project owns its actual commands, thresholds, and proce
 
 ## Measure before restructuring tests
 
-A slow suite is usually slow because of what surrounds the tests, not the tests themselves.
-Investigate in this order before you restructure tests:
+Measure where the suite's time goes before you restructure tests. Investigate in this order:
 
 1. **Instrumentation** — whether a coverage driver (Xdebug in `coverage` mode, PCOV) is active for
    runs that collect no coverage.
@@ -65,8 +64,9 @@ Recheck this after upgrading Collision or Pest.
 
 Durable guidance:
 
-- Where the installed runner provides impact analysis, a full-suite command and every CI test job turn
-  it off explicitly. A run that claims fresh execution must not select or replay tests.
+- Where the installed runner provides impact analysis, a full-suite command and any CI job that claims
+  full regression verification turn it off explicitly. A run that claims fresh execution must not
+  select or replay tests.
 - Impact analysis records only with a coverage driver active. Enabling it by default keeps
   instrumentation on for every local run.
 - Decide from measurement whether it pays off for the project. When the full suite is already fast,
@@ -99,8 +99,11 @@ snapshot.
   (for example, in a `booted` callback) still apply; verify one such route after adopting the traits.
 
 Before adopting the traits, search the suite for tests that change environment variables before boot
-or reload the application. Prove isolation with a temporary pair of tests — one changes a config
-value, the next asserts the original — on one process and in parallel.
+or reload the application. Prove isolation with a temporary pair of tests that exercise the cached
+state itself: the first changes a cached config value (or registers a route), and the second asserts
+the original. Put both in one test file, so they run in order in one process. A parallel run gives
+whole test files to workers, so two separate files may never share a worker and prove nothing. Run the
+file on one process, and again inside a parallel run.
 
 ## Verify what a run executed
 
@@ -108,5 +111,6 @@ value, the next asserts the original — on one process and in parallel.
   fresh execution: a replayed run reports the full count too. Also confirm impact analysis was off and
   the output reports no replayed or skipped-by-selection tests.
 - Repeat parallel runs to surface order- and timing-dependent failures. A failure that also appears on
-  one process, or in the baseline before the change, is a determinism defect in that test, not a
-  parallel-run defect.
+  one process, or in the baseline before the change, is not caused by parallel execution alone.
+  Investigate its cause — timing, ordering, shared state, environment, or a real defect — before
+  attributing it to parallelism or to the test.
