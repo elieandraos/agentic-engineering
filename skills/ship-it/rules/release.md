@@ -72,6 +72,8 @@ what this repository actually does, in this order:
 1. **Look for an explicit policy first.** A documented versioning/release policy, changelog-tooling
    configuration, a `VERSION` file, semantic-release config, or anything else the repository states
    outright. Concrete places to check:
+   - project-level agent rules — the project instruction file (e.g. `CLAUDE.md`) and the rule files
+     it routes to;
    - a documented release/versioning policy (in a `CONTRIBUTING`, `RELEASING`, or similar file);
    - version-tracking files (`VERSION`, a `version` field in a package manifest, etc.);
    - changelog or release-automation tooling configuration;
@@ -84,7 +86,7 @@ what this repository actually does, in this order:
    If an explicit policy exists, it wins — do not override a stated policy with something inferred
    from history, even if history looks inconsistent with the stated policy. A stated policy and messy
    history disagreeing is itself worth flagging to the human, not silently resolving in history's
-   favor.
+   favor. A stated policy wins over inferred history, not over steps 0, 4, and 6.
 2. **Otherwise, infer from the repository's established release artifacts and history.** Tags,
    hosted releases, changelog files, package-registry versions — whatever the repository actually
    has. Read enough of it to name the pattern with evidence, not guess at one after skimming two

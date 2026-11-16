@@ -63,6 +63,9 @@ Its entry points have different prerequisites, not one shared precondition:
 - This skill composes with `implement-it` for any code correction the human explicitly authorizes
   after this skill's delivery-failure investigation — the investigation itself grants no authority.
 - Stack-specific knowledge does not belong in this skill.
+- Project-specific delivery, CI/CD, branching, and release policies belong in project rules, not in
+  this skill. Discover and follow them to extend this workflow. A project rule can add steps or
+  constraints; it does not waive this skill's human approval, verification, or authorization gates.
 
 ## Activation
 
