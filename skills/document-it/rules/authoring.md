@@ -1,4 +1,4 @@
-# Creating and updating architecture guides
+# Creating and updating technical guides
 
 This file owns the operational mechanics of `SKILL.md`'s three guide-producing conditions: format
 selection, writing a new guide, and updating an existing one. `SKILL.md` states the triggering
@@ -20,20 +20,19 @@ under way; `rules/review.md` judges the finished result.
   silently substitute the other format and report success as if the original request were
   fulfilled.
 
-## Document existing architecture (new guide)
+## Document a technical system or approved design (new guide)
 
-1. **Establish evidence.** Confirm the architectural surfaces the guide will cover are backed by
-   concrete, current evidence — implementation, configuration, schema, tests, runtime behavior.
-   Reuse what's already sufficient and current; route missing or stale evidence through `lab-it`.
-   Identify the **architectural center of gravity** — the one idea everything else hangs off (a
-   polymorphic contract, a queue pipeline, a runtime subsystem boundary, a sync-vs-async split) —
-   as a hypothesis the writing step will need.
+1. **Establish evidence.** Confirm the subject, intended audience, purpose and scope. Reuse current evidence:
+   implementation, configuration, schema, tests, runtime behavior, provider documentation,
+   approved decisions or cost assumptions. Route missing or stale evidence through `lab-it`.
+   Identify the central idea or reader task; for architecture this is the architectural
+   center of gravity. For connected guides, identify subject ownership and existing references.
 
 2. **Recap and confirm.** Write the recap directly as chat output, not a file or an artifact.
-   Cover, with concrete implementation references threaded throughout, whichever of these actually
+   Cover, with concrete evidence references where useful, whichever of these actually
    apply to the system: the problem being solved, the core architecture, reusable pieces versus
    integration-specific code, runtime behavior, the data model, the integration seam, security,
-   testing, architectural decisions, and remaining gaps. Don't invent a data model, runtime
+   testing, architectural decisions, and remaining gaps. For non-architecture subjects, recap the relevant operational steps, configuration, costs, constraints or approved design instead. Distinguish verified behavior from approved plans and estimates. Don't invent a data model, runtime
    lifecycle, security boundary, reuse seam, or integration split the system doesn't have just to
    fill out the list. Keep it bullet-driven and honest about gaps. **Stop here and wait for the
    user to confirm before this investigation becomes a published guide.** A correction here is
@@ -41,19 +40,18 @@ under way; `rules/review.md` judges the finished result.
 
 3. **Write and publish/save the guide.** Only after the recap is approved, and only after format
    selection (above):
-   - Decide the document's structure from the confirmed center of gravity. Architecture guides do
-     not use one fixed section inventory: structure follows the system being explained. See
+   - Decide structure from the confirmed purpose and central idea, not a fixed section inventory. See
      `rules/doc-style.md` for the writing grammar and content-block vocabulary — it covers both
      Markdown and Artifact output.
    - **Artifact:** load the `artifact-design` skill (required before writing any Artifact page).
      Write the HTML using `rules/template.html` as the starting scaffold. Replace content; keep
      the design system unless the system genuinely needs a new block type. Publish with the
-     `Artifact` tool: title `"{Capability} Architecture"`, a one-sentence description, and a
+     `Artifact` tool: a title appropriate to the subject and purpose, a one-sentence description, and a
      stable, domain-appropriate favicon (see `rules/doc-style.md#choosing-a-favicon-artifact-only`).
    - **Markdown:** write the guide under the consuming repository's `docs/` directory (create it
      if needed), applying the same writing grammar and content-block vocabulary in Markdown-native
      form (see `rules/doc-style.md`).
-   - **Both:** produce both outputs from the same confirmed recap and center of gravity, and give
+   - **Both:** produce both outputs from the same confirmed recap and purpose, and give
      each a minimal, discoverable cross-reference to the other's location (see `SKILL.md`'s
      "Maintaining both formats").
    - Run `rules/review.md`'s checklist against the finished guide(s) before considering the work
@@ -70,7 +68,7 @@ ambiguous — don't guess, and don't assume the target's content from memory.
 **Distinguish three different situations**, since each needs a different response:
 
 - **Genuinely missing** — no guide exists yet at the expected identity. This is a new-guide
-  request, not an update; route to "Document existing architecture" above.
+  request, not an update; route to "Document a technical system or approved design" above.
 - **Inaccessible** — the target exists (a known file path or Artifact URL) but can't currently be
   reached or read.
 - **Publishing capability unavailable** — the target is fine, but the tooling needed to update it
@@ -83,15 +81,13 @@ which would remain unchanged or stale — the user doesn't need to understand "d
 migration" to make this choice. **Never claim that writing a Markdown update updated the original
 Artifact** — those are different documents once an Artifact can't be reached or written.
 
-Once the target is confirmed reachable: compare its architectural claims against verified current
-implementation, configuration, runtime evidence, and tests (reuse sufficient current evidence;
+Once the target is confirmed reachable: compare its technical claims against current evidence and approved decisions (reuse sufficient current evidence;
 route to `lab-it` when it's missing or stale) → follow the complete affected claim graph, not only
-the section where the change was first noticed → update to describe how the architecture works
-now, not as a changelog → preserve identity (below) → run `rules/review.md` against the whole
+the section where the change was first noticed → update to describe current reality and explicitly approved future design, not as a changelog → preserve identity (below) → run `rules/review.md` against the whole
 updated guide, with emphasis on the changed claims and whatever depends on them.
 
 `rules/maintenance.md` governs every judgment call in this route — read it before making any edit.
-It preserves a guide's unaffected architectural meaning without freezing architecture the evidence
+It preserves a guide's unaffected technical meaning without freezing architecture the evidence
 shows has genuinely changed: the center of gravity, structure, ownership, or reasoning can move
 when verified reality requires it.
 
