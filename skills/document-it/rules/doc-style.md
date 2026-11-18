@@ -34,7 +34,9 @@ an Artifact page — write each format the way it's natively read.
 
 Use exact commands and configuration values when they are the subject of an operational or lookup guide. Explain prerequisites, consequences and verification where material. Keep secrets out. Diagrams must accurately represent the system; validate syntax and rendering when tooling permits, and report what could not be checked.
 
-For connected guides, keep overview-level explanations in primary documents and detailed facts in their authoritative reference. Link rather than repeat. Use dates or explicit currency notes for volatile facts, estimates and pending validation when useful.
+For connected guides, keep overview-level explanations in primary documents and detailed facts in their authoritative reference. Link rather than repeat.
+
+**Overview documents.** When introducing a larger system or connected documentation set, establish the big picture first. Give each material subject a compact explanation of what it is, why it matters, and how it relates to the whole. Link to its detailed guide for configuration, mechanics, procedures or deeper reasoning. The overview should be independently useful without becoming a duplicate handbook or a directory of links. Use dates or explicit currency notes for volatile facts, estimates and pending validation when useful.
 
 A guide's section list follows what the subject's information actually looks like, not a
 copied table of contents. Compact illustrations, not a checklist:
