@@ -53,6 +53,29 @@ the light.
 
 ## Checklist
 
+Review against the document's confirmed purpose, not against an architecture template.
+Apply the architecture-specific questions below only where architecture is part of the
+document's purpose. All guides need accurate evidence, coherent structure, consistent
+claims, useful references and honest uncertainty.
+
+For other purposes, check the relevant dimensions:
+- Operations: prerequisites, exact commands or actions, ordering, safeguards, failure
+  consequences, recovery and verification. Distinguish a proposed procedure from a tested one.
+- Technical references: accurate mechanisms, configuration names and values, scope,
+  dependencies, overrides, security constraints and lookup usability.
+- Costs and capacity: arithmetic, units, billing periods, assumptions, exclusions, shared
+  versus incremental costs, and estimates versus actual charges.
+- Approved designs: decision, known rationale, trade-offs, implementation status and
+  pending verification; do not invent missing rationale.
+- Connected documents: subject ownership, working cross-links, consistent shared claims
+  and no unnecessary duplication. Check affected neighboring documents, not only the target.
+
+Verify diagram semantics as well as syntax, and render when tooling permits. Report
+unverified checks. Never execute destructive procedures merely to review documentation.
+Match review effort to consequence and intended use; stop when material findings are resolved.
+
+
+
 ### Architectural center
 
 - Is the architectural center of gravity clear early enough to orient the reader — established in
@@ -99,7 +122,7 @@ the light.
   transitions ("component A hands off to component B")? A guide that uses one sentence shape for
   both is blurring them.
 
-### Architecture versus implementation
+### Architecture versus implementation — for explanatory architecture material
 
 - Does the guide explain the concept before showing code, every time, or does any section lead
   with a code block?
@@ -110,14 +133,14 @@ the light.
 
 ### Structure and content
 
-- Does each section answer a coherent reader question, with a direct architectural answer, rather
+- Does each section serve a coherent reader need, with a direct answer, rather
   than trying to cover two unrelated questions at once?
-- Is the structure driven by this capability's architecture, not carried over from a different
+- Is the structure driven by the subject and purpose, not carried over from a different
   guide's section list — a section that exists only because another guide had one is a finding?
 - Are diagrams used for movement, ownership, topology, or relationships — not decoration? A static
   topology or relationship diagram is valid on its own; one that shows none of these is a candidate
   for deletion, not a finding to soften.
-- Are tables used for responsibilities, guarantees, states, decisions, or trade-offs — not as
+- Are tables used for responsibilities, guarantees, states, decisions, configuration, costs, or trade-offs — not as
   formatting for prose that would read fine as a paragraph?
 
 ### Consistency
@@ -159,12 +182,12 @@ the light.
   outside `docs/` as correctly preserved identity, not a defect, unless the user explicitly
   authorized relocating it? Do internal links — to headings within the guide, to referenced source
   paths, and to a paired Artifact if one exists — actually resolve?
-- **Both formats maintained.** Are the architectural claims synchronized between them, per
+- **Both formats maintained.** Are the technical claims synchronized between them, per
   `SKILL.md`'s "Maintaining both formats" — or, when the user explicitly scoped this update to one
   format, is the other output's resulting divergence reported rather than left unstated or
   presented as current? Does each carry a working cross-reference to the other's location?
 
-### Overall
+### Overall — architecture-specific questions
 
 - Would another engineer understand *why* the system was designed this way, not just what it
   does? If every "why," "because," and trade-off were removed, would anything architectural
