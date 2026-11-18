@@ -1,10 +1,10 @@
-# Maintaining an technical guide
+# Maintaining a technical guide
 
 This file governs the "Update an existing guide" workflow — triggered from `SKILL.md`, with its
 locating, situation-handling, and identity-preservation mechanics in `rules/authoring.md` — for how
 to reconcile a published technical guide — Markdown, Artifact, or both — with verified current
 reality without breaking the identity and technical meaning it already carries. `rules/review.md`
-judges whether a finished guide communicates its architecture; this file governs what you're allowed
+judges whether a finished guide serves its purpose; this file governs what you're allowed
 to touch when a guide already does, so a maintenance pass doesn't quietly undo that.
 
 Maintenance fails in two opposite directions: leaving stale documentation in place for the sake of
@@ -30,7 +30,7 @@ Classify what you find:
 
 1. **No documentation event** — neither a claim nor its evidence reference changed. Leave the guide
    alone; not every commit is a documentation event.
-2. **A narrow update** — one fact or evidence reference is now wrong, with no architectural shift
+2. **A narrow update** — one fact or evidence reference is now wrong, with no material design or operational shift
    behind it. Correct it in place.
 3. **A connected technical change** — several claims or structural elements depend on each
    other and must move together (see "Follow the claim graph," below).
@@ -46,7 +46,7 @@ nearby prose merely because the file is already open, and don't restructure for 
 conformity with another guide's shape.
 
 Continuity is not the same as freezing the guide's center of gravity, ownership, boundaries, or
-reasoning in place. If verified architecture actually changed one of those, the guide must change
+reasoning in place. If verified reality actually changed one of those, the guide must change
 with it: a strengthened guarantee updates exactly where it already lives, but a moved
 responsibility, a new center of gravity, or a shifted boundary requires restructuring that section,
 a connected set of sections, or — rarely — the whole guide, in proportion to what actually changed.
@@ -92,7 +92,7 @@ both hold:
   the guide prints remains valid.
 
 A refactor with no architectural effect can still invalidate a printed reference. When it does, the
-guide needs an edit even though the architecture itself didn't move.
+guide needs an edit even though the underlying design itself didn't move.
 
 ## Keep deferred work current
 
