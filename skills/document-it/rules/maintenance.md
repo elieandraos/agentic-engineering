@@ -1,19 +1,19 @@
-# Maintaining an architecture guide
+# Maintaining a technical guide
 
 This file governs the "Update an existing guide" workflow — triggered from `SKILL.md`, with its
 locating, situation-handling, and identity-preservation mechanics in `rules/authoring.md` — for how
-to reconcile a published architecture guide — Markdown, Artifact, or both — with verified current
-reality without breaking the identity and architectural meaning it already carries. `rules/review.md`
-judges whether a finished guide communicates its architecture; this file governs what you're allowed
+to reconcile a published technical guide — Markdown, Artifact, or both — with verified current
+reality without breaking the identity and technical meaning it already carries. `rules/review.md`
+judges whether a finished guide serves its purpose; this file governs what you're allowed
 to touch when a guide already does, so a maintenance pass doesn't quietly undo that.
 
 Maintenance fails in two opposite directions: leaving stale documentation in place for the sake of
 continuity, and rewriting or restructuring the guide beyond what the verified change actually
 requires. Both are defects this file exists to prevent.
 
-## The maintenance unit: architectural claims
+## The maintenance unit: technical claims
 
-Treat every statement the guide makes as an **architectural claim** — a center of gravity, a
+Treat every statement the guide makes as an **technical claim** — a center of gravity, a
 responsibility or ownership, a boundary, an invariant or guarantee, a lifecycle or state, an
 integration or extension seam, a decision and its trade-off, a limitation or deferred item, or a
 concrete evidence reference. A claim, not the section, table, or paragraph carrying it, is the unit
@@ -21,8 +21,7 @@ of maintenance — the same claim routinely repeats across several of those.
 
 ## Reconcile before editing
 
-Locate the existing guide rather than assuming its content. Compare its claims against verified
-current implementation, configuration, runtime evidence, and relevant tests — the same evidence
+Locate the existing guide rather than assuming its content. Compare its claims against current evidence, approved decisions, configuration, runtime evidence, relevant tests and cost assumptions — the same evidence
 discipline `SKILL.md` requires before any documentation output: reuse what's already sufficient
 and current, and route missing or stale evidence through `lab-it` rather than repeating its
 investigation method here.
@@ -31,9 +30,9 @@ Classify what you find:
 
 1. **No documentation event** — neither a claim nor its evidence reference changed. Leave the guide
    alone; not every commit is a documentation event.
-2. **A narrow update** — one fact or evidence reference is now wrong, with no architectural shift
+2. **A narrow update** — one fact or evidence reference is now wrong, with no material design or operational shift
    behind it. Correct it in place.
-3. **A connected architectural change** — several claims or structural elements depend on each
+3. **A connected technical change** — several claims or structural elements depend on each
    other and must move together (see "Follow the claim graph," below).
 4. **Unresolved authority, intent, or a material decision** — stop. Return it to the user rather
    than deciding it during maintenance. Maintenance updates a guide to match an already-resolved
@@ -47,7 +46,7 @@ nearby prose merely because the file is already open, and don't restructure for 
 conformity with another guide's shape.
 
 Continuity is not the same as freezing the guide's center of gravity, ownership, boundaries, or
-reasoning in place. If verified architecture actually changed one of those, the guide must change
+reasoning in place. If verified reality actually changed one of those, the guide must change
 with it: a strengthened guarantee updates exactly where it already lives, but a moved
 responsibility, a new center of gravity, or a shifted boundary requires restructuring that section,
 a connected set of sections, or — rarely — the whole guide, in proportion to what actually changed.
@@ -78,17 +77,22 @@ both formats." When the user explicitly limits this update to one format, update
 format's claim graph, and record the resulting divergence in the other rather than leaving it
 unstated.
 
+For connected documentation, follow the affected claim graph across authoritative references,
+primary summaries and dependent guides. Update the owning document first and reconcile only
+materially affected summaries, links and claims. Do not duplicate detail or silently relocate
+files; report any scope-limited divergence.
+
 ## Implementation-only changes
 
 Not every implementation change requires a guide edit — but treat the guide as unaffected only when
 both hold:
 
-- the architecture the guide communicates remains accurate;
+- the technical understanding or procedure the guide communicates remains accurate;
 - every concrete evidence reference, path, symbol, configuration key, count, or other durable fact
   the guide prints remains valid.
 
 A refactor with no architectural effect can still invalidate a printed reference. When it does, the
-guide needs an edit even though the architecture itself didn't move.
+guide needs an edit even though the underlying design itself didn't move.
 
 ## Keep deferred work current
 
@@ -101,15 +105,15 @@ Wherever the guide records limitations or deferred work, it must describe curren
 No section is required for this, and none should be added to hold a single completed-item note. A
 guide with no materially useful limitations doesn't need one.
 
-## Present-tense architecture, not changelog
+## Current technical reality, not changelog
 
-Describe the architecture as it works now — write it the way you'd write it if documenting the
+Describe the system as it works now, or the approved design explicitly as such — write it the way you'd write it if documenting the
 system for the first time today. Don't narrate commits, pull requests, or before/after
 implementation history.
 
 This doesn't erase rationale. When a past decision or a rejected alternative materially explains
 why the current architecture is shaped the way it is, preserve that reasoning as durable
-architectural content, not chronology. Omit only the parts that serve solely as release history.
+technical content, not chronology. Omit only the parts that serve solely as release history.
 
 ## Redeployment, resaving, and review
 
@@ -140,7 +144,7 @@ guide.
    format the user explicitly authorized, recording the resulting divergence in the other.
 6. Preserve unaffected narrative and the guide's identity.
 7. Remove stale deferred-work claims and update whatever they affected.
-8. Reread the edit as present-tense architecture, not release notes.
+8. Reread the edit as current technical documentation, not release notes.
 9. Redeploy or resave the guide, preserving its identity — same `url` and favicon for Artifact;
    same file path, with unaffected metadata preserved, for Markdown.
 10. Run `rules/review.md` against the whole updated guide.
