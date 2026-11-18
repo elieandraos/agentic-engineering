@@ -1,19 +1,19 @@
 ---
 name: document-it
-description: "Creates, updates, and reviews explanatory architecture guides in Markdown, a Claude Artifact, or both — reusing sufficient, current, verified understanding already available, and routing to lab-it's investigation method only when evidence is missing or stale. Trigger to document existing architecture, update an existing guide, or review a guide's completeness. Not for debugging or reviewing a diff. Not for investigating a system from scratch, resolving architecture decisions for a proposed feature, or synthesizing plan.md — those stay with lab-it."
+description: "Creates, updates, and reviews evidence-backed technical documentation in Markdown, a Claude Artifact, or both. Covers architecture, infrastructure, operations, engineering practices, technical decisions, costs, integrations and product behavior. Reuses verified understanding and approved decisions; routes missing or stale evidence to lab-it. Not for debugging, diff review, making unresolved decisions, or synthesizing plan.md."
 ---
 
 # document-it
 
 ## What this skill does
 
-This skill creates, maintains, and reviews explanatory architecture guides — in Markdown, a Claude
+This skill creates, maintains, and reviews purpose-driven technical guides — in Markdown, a Claude
 Artifact, or both — from already-available, sufficient, and current understanding. It is
 independently callable: a documentation request does not require a fresh investigation to begin.
 
 | User intention                                    | Result                                         |
 | --------------------------------------------------- | ------------------------------------------------ |
-| Document existing architecture                     | A new guide (Markdown, Artifact, or both)        |
+| Document a technical system or approved design                     | A new guide (Markdown, Artifact, or both)        |
 | Reconcile a guide with verified changed reality    | An updated existing guide                        |
 | Evaluate whether a guide is complete               | A findings report, not a rewrite                 |
 
@@ -34,6 +34,24 @@ This distinction determines the entry point, not the destination: the result is 
 a review of one — never a `plan.md`. An approved `plan.md` stays `lab-it`'s output regardless of
 which skill performed the underlying investigation; file extension does not decide ownership.
 
+## Purpose and scope
+
+Establish what the reader needs to understand, operate, extend, look up or decide, and who
+will use the document. Architecture explains; operations instruct; technical references
+deepen understanding or support lookup; costs justify spending. These are examples, not
+mandatory modes or templates. A guide can combine purposes where useful.
+
+Evidence includes verified code and runtime behavior, configuration, provider documentation,
+approved decisions and explicit assumptions. A system need not be implemented yet: describe
+approved designs as approved, estimates as estimates, and pending verification as pending.
+Never invent rationale or turn a proposal into a verified fact.
+
+For connected documentation, identify the primary overview and the authoritative home of
+each detailed subject. Keep primary documents self-contained at their intended level;
+link to supporting detail instead of repeating it. Match effort to importance and intended
+use: operationally critical material needs stronger verification; supporting references
+need accuracy and usable coverage, not endless editorial polish.
+
 ## Format selection
 
 For a **new guide**, ask the user whether they want an Artifact, Markdown, or both — unless
@@ -41,20 +59,19 @@ they've already specified. Don't infer the format from context. See `rules/autho
 Artifact/Markdown mechanics, the `docs/` location default, and how to handle unavailable
 publishing capability.
 
-## Document existing architecture
+## Document a technical system or approved design
 
 Triggered by a user request for a new guide — an existing guide for this capability does not
 block an explicit request for another; that's a separate, deliberate choice the user is entitled
 to make, not an error condition. Route: establish sufficient current evidence (reuse, or route to
-`lab-it`) → recap and obtain confirmation → decide structure from the architectural center of
-gravity → write in the confirmed format(s) → publish/save → run `rules/review.md`. See
+`lab-it`) → recap and obtain confirmation → decide structure from the document's purpose and central idea → write in the confirmed format(s) → publish/save → run `rules/review.md`. See
 `rules/authoring.md` for the full procedure, including the mandatory recap-and-confirm gate before
 anything is published or saved.
 
 ## Update an existing guide
 
 Use this workflow when a published guide needs reconciling with verified current reality —
-triggered by a stale architectural claim, a stale evidence reference, changed configuration or
+triggered by a stale technical claim, a stale evidence reference, changed configuration or
 runtime behavior, or a prior documentation defect, not only a changed implementation. See
 `rules/authoring.md` for locating the target, the three missing/inaccessible/unavailable-tooling
 situations, and identity preservation. `rules/maintenance.md` governs every judgment call once the
@@ -64,7 +81,7 @@ target is confirmed reachable — read it before making any edit.
 
 When a guide is maintained in both Markdown and Artifact:
 
-- **Keep architectural claims synchronized** across both on an update, unless the user explicitly
+- **Keep technical claims synchronized** across both on an update, unless the user explicitly
   requests otherwise for that update.
 - **Format-appropriate presentation, not identical rendering.** Use `rules/review.md` for both —
   one shared checklist, with a handful of items that apply to only one medium (favicon/URL checks
@@ -81,7 +98,7 @@ When a guide is maintained in both Markdown and Artifact:
 ## Review a guide
 
 Run `rules/review.md` against the actual published or saved guide — Artifact, Markdown, or both —
-any time you're asked to evaluate whether a guide is complete or still architecturally misleading,
+any time you're asked to evaluate whether a guide is complete or still misleading for its purpose,
 independent of whether you also just wrote or updated it. See `rules/review.md` for the full
 checklist and its medium-conditional items.
 
@@ -89,9 +106,9 @@ checklist and its medium-conditional items.
 
 This skill owns:
 
-- creating new architecture guides, in Markdown, Artifact, or both;
+- creating new technical guides, in Markdown, Artifact, or both;
 - maintaining and reconciling existing guides with verified current reality;
-- reviewing a guide for architectural completeness.
+- reviewing a guide for fitness for purpose.
 
 This skill does not own:
 
@@ -119,17 +136,18 @@ These are loaded only when their workflow needs them — none is a universal pre
 
 ## Output-specific non-negotiables
 
-- Explain architecture, not implementation: why it exists, why it's shaped that way, and — where
-  extension is relevant — how it can be extended. Code blocks exist only at genuine extension
-  seams, never a walkthrough of a whole method body.
+- Explain at the depth the purpose requires. Architecture guides explain why and how the
+  design works, not method bodies. Operational guides may include exact commands, ordered
+  procedures, safeguards and verification; references may include configuration tables.
+  Avoid implementation walkthroughs that do not serve the reader.
 - When a real line exists between reusable infrastructure and integration-specific code, make it
   explicit in whatever structure the guide already uses — never a mandated section or table.
 - Explain runtime ownership and lifecycle wherever the system has either — don't invent one for a
   capability with no runtime story.
-- Ground material architectural claims in concrete evidence or enforcement references when an
+- Ground material technical claims in concrete evidence or enforcement references when an
   identifiable mechanism exists; never force a misleading one.
 - No API documentation, no endpoint inventories, no line-by-line implementation walkthroughs, no
-  duplicated explanations across sections.
+  unnecessary duplicated explanations across sections or connected guides.
 - Not every guide needs a limitations section. When limitations or deferred work materially affect
   understanding, state the reason rather than adding a generic TODO list.
 - A guide is never done until it has passed a `rules/review.md` pass — writing and reviewing are
