@@ -1,16 +1,16 @@
-# Reviewing an architecture guide
+# Reviewing a technical guide
 
-This is a check on whether a finished guide actually communicates the architecture — not a
+This is a check on whether a finished guide serves its intended purpose — not a
 proofreading pass. A guide can be well-written and still fail this review; a guide with rougher
 prose can pass it. Wording is not the subject. One shared checklist applies regardless of format —
 Markdown, Artifact, or both — with a small set of items conditional on which format is in play.
 
 ## When to consult this file
 
-- After publishing or saving a new architecture guide, before considering it complete.
-- After updating an existing architecture guide, before considering the update complete.
+- After publishing or saving a new technical guide, before considering it complete.
+- After updating an existing technical guide, before considering the update complete.
 - Any time you're explicitly asked to evaluate whether a guide is complete or still
-  architecturally misleading — independent of whether this skill also just wrote it.
+  misleading for its purpose — independent of whether this skill also just wrote it.
 
 **Not** while a guide is still being drafted — this is a review of a finished guide, not a
 drafting aid. Drafting uses `rules/authoring.md` for the writing/update procedure and
@@ -19,12 +19,12 @@ the light.
 
 ## Philosophy
 
-- The question is always "does this explain the architecture," never "does this read well."
+- The question is whether the guide serves its intended purpose accurately and usefully, not whether it matches a preferred writing style.
 - Every finding must materially affect what the reader understands about how the system is
   shaped, owned, constrained, or reasoned about — if a suggested change wouldn't change that, it
   isn't a finding, it's a preference. Drop it.
 - Don't nitpick style, word choice, or section ordering unless it actually obscures an
-  architectural claim (an ambiguous pronoun that leaves "who owns this" unclear is a finding; a
+  technical claim (an ambiguous pronoun that leaves "who owns this" unclear is a finding; a
   synonym you'd have picked instead is not).
 - A guide is allowed known gaps. The review's job is to confirm a gap that materially affects
   understanding is stated somewhere in the guide, not silently absent — an unstated gap is the
@@ -40,7 +40,7 @@ the light.
    themselves in. When both formats are maintained for the same guide, inspect each output that's
    actually published or saved, not only one.
 2. Work through the checklist below. Treat each category as conditional: a question about a
-   concern this architecture doesn't have (reuse, runtime, security, testing, decisions,
+   concern the subject doesn't have (reuse, runtime, security, testing, decisions,
    limitations) is inapplicable, not failed — skip it rather than forcing an answer.
 3. When a claim's factual accuracy is in question, reconcile it against verified implementation or
    investigation evidence, not the guide's own wording. This is a truth check on an existing
@@ -124,9 +124,8 @@ Match review effort to consequence and intended use; stop when material findings
 
 ### Architecture versus implementation — for explanatory architecture material
 
-- Does the guide explain the concept before showing code, every time, or does any section lead
-  with a code block?
-- Are code snippets limited to genuine extension seams — a contract, an interface, a scope — per
+- Does explanatory architecture material establish the concept before showing code? Operational commands may lead a section when their context is clear.
+- In explanatory architecture material, are code snippets limited to genuine extension seams — a contract, an interface, a scope — per
   `SKILL.md`'s output rules, or has a full method body snuck in for narrative decoration?
 - Has API documentation or an implementation walkthrough started replacing architecture? A tell: a
   section regenerable by reading the source top to bottom instead of by understanding the design.
@@ -214,11 +213,11 @@ Match review effort to consequence and intended use; stop when material findings
 ## What this review does not flag
 
 - Word choice, sentence rhythm, or comma placement that doesn't change what's understood.
-- A different but equally valid section order or shape, when it communicates the architecture
+- A different but equally valid section order or shape, when it serves the purpose
   equally well.
 - A missing content block, unless a real recurring distinction is being described in prose that a
   reader can't actually follow without it.
-- A "when applicable" checklist category that doesn't apply to this architecture.
+- A "when applicable" checklist category that doesn't apply to the subject.
 - A stated known gap, unless it contradicts another claim, hides a material consequence, or is
   presented misleadingly.
 - Divergence between two maintained formats that the user explicitly authorized for this update,
