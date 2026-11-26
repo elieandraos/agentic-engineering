@@ -24,9 +24,10 @@ implementation request does not activate this skill.
 Inspect the current code and agreed task before editing. Present a compact ordered
 checkpoint overview: one short purpose per checkpoint, not a restatement of the issue
 or implementation plan. Size checkpoints for human comprehension and technical
-coherence; prefer independently verifiable changes when practical. Note material
-dependencies and verification limitations, and adjust the sequence with the human.
-Reserve detailed explanations for the current checkpoint.
+coherence; prefer independently verifiable changes when practical. Mention dependencies
+only when they explain a material sequencing choice or verification limitation; do not
+narrate the dependency graph. Adjust the sequence with the human and reserve detailed
+explanations for the current checkpoint.
 
 For each checkpoint:
 
@@ -58,9 +59,13 @@ including how relevant components interact. Distinguish proposed code from exist
 code; avoid full-file dumps and snippets for routine edits. When a change participates
 in a non-obvious abstraction, shared mechanism or architectural pattern, explain that
 relationship and why it matters, even if the mechanism is outside the current checkpoint.
-Offer a deeper walkthrough when useful rather than assuming familiarity. Do not turn the
-walkthrough into a generic tutorial or repeat explanations already understood. Treat questions as
-part of collaborative implementation, not interruptions. A question or acknowledgment alone is not
+When a decision depends on a potentially unfamiliar mechanism, pause at that point
+and check whether the human understands it or wants a deeper explanation before asking
+for the decision. Discuss substantial concepts in manageable portions rather than
+presenting a long technical briefing followed by a batch of approvals. Do not quiz the
+human or interrupt routine explanations unnecessarily. Avoid generic tutorials and
+repeating explanations already understood. Treat questions as part of collaborative
+implementation, not interruptions. A question or acknowledgment alone is not
 authorization to advance. One explicit confirmation may cover both understanding
 the completed checkpoint and approval of the explained next checkpoint; do not ask
 twice when both decisions are clear.
