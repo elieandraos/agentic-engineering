@@ -107,6 +107,10 @@ step. Relevant non-activation decisions are recorded when useful, and inaccessib
 metadata is surfaced rather than silently replaced with an assumption that the first visible skill is
 sufficient. See §10 for why this replaced a reminder-only version of the same requirement.
 
+When requested, [`pair-it`](../skills/pair-it/) owns the collaborative checkpoint cadence inside
+implementation. It is an optional tool, not a pipeline prerequisite; the review gates below remain
+unchanged.
+
 ## 4. Two review gates
 
 Two separate human approvals gate everything before commits exist, and neither substitutes for the

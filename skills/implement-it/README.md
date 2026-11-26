@@ -71,6 +71,9 @@ run once per worker.
 "What's next in this milestone?"
 ```
 
+When the human requests pair programming, [`pair-it`](../pair-it/) adds collaborative checkpoints
+inside implementation without replacing the review and delivery lifecycle.
+
 ## What normally happens
 
 1. Establish the correct branch, enumerate applicable skills, activate every applicable skill through the consuming agent's skill mechanism, and report the activation checkpoint before writing code.
