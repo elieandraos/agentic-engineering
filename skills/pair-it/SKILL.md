@@ -37,11 +37,13 @@ For each checkpoint:
    Stop before editing.
 2. **Implement:** make only the approved checkpoint's changes. Stop for a material
    deviation or unresolved decision rather than extending the approval silently.
-3. **Walk through and verify:** show the actual changed files and relevant code.
-   Explain how the pieces interact, important decisions, safeguards and failure
-   paths. Run appropriate targeted verification and report actual results and any
-   limitations. If the checkpoint cannot yet be verified independently, explain why
-   and what remains to be verified. Do not claim an incomplete state is complete.
+3. **Walk through and verify:** summarize routine changes without repeating the
+   approved proposal. Make the complete set of changed files available for inspection
+   and highlight those most worth discussing. Use actual code to explain noteworthy
+   implementation choices, deviations, safeguards and interactions. Run appropriate
+   targeted verification and report actual results and any limitations. If the
+   checkpoint cannot yet be verified independently, explain why and what remains
+   to be verified. Do not claim an incomplete state is complete.
 4. **Review:** ask whether the human understands the implementation, has questions,
    or wants to explore any part further. Invite human edits. Address their questions
    before advancing. State what is complete, what remains and the next proposed

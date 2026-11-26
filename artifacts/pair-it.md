@@ -26,6 +26,10 @@ composition with an implementation workflow and approval stops. Human feedback i
 excessive upfront detail and insufficient concrete explanation of proposed code. The
 contract now favors compact orientation and focused technical examples at the current
 checkpoint. The candidate was read directly, not activated as an installed skill.
-Post-edit walkthroughs, full lifecycle behavior, automatic activation and portability
-remain unvalidated. Keep further growth proportional to observed evidence. The runtime contract lives in
+A subsequently reported first checkpoint cycle showed implementation, targeted
+verification and a human review stop. Human feedback favored the inspection pointers
+but found the report somewhat long; the walkthrough now separates the complete file
+inventory from discussion-worthy changes and avoids repeating the approved proposal.
+Full lifecycle behavior, automatic activation and portability remain unvalidated.
+Keep further growth proportional to observed evidence. The runtime contract lives in
 [`SKILL.md`](../skills/pair-it/SKILL.md).
