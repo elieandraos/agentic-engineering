@@ -30,6 +30,11 @@ A subsequently reported first checkpoint cycle showed implementation, targeted
 verification and a human review stop. Human feedback favored the inspection pointers
 but found the report somewhat long; the walkthrough now separates the complete file
 inventory from discussion-worthy changes and avoids repeating the approved proposal.
+A reported follow-up question about an enum elicited its consumers, architectural
+relationships and a proposed improvement. The human then requested a session-end
+reflection to identify documentation-worthy knowledge independently of issue delivery.
+That reflection is an approved design, not yet observed behavior; documentation remains
+owned by the applicable documentation workflow.
 Full lifecycle behavior, automatic activation and portability remain unvalidated.
 Keep further growth proportional to observed evidence. The runtime contract lives in
 [`SKILL.md`](../skills/pair-it/SKILL.md).

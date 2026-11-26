@@ -72,6 +72,19 @@ authorization to advance. One explicit confirmation may cover both understanding
 the completed checkpoint and approval of the explained next checkpoint; do not ask
 twice when both decisions are clear.
 
+## Session reflection
+
+Keep track of meaningful questions, explanations and resolved decisions in the
+conversation, without maintaining a separate log. When the human explicitly ends
+pairing, or the final pairing checkpoint is complete, briefly recap what was explored
+and identify any durable knowledge worth preserving. If useful, propose a focused
+new guide or update to existing documentation; ask before starting it. Use
+`document-it` if available and applicable, preserving its evidence and approval
+requirements; otherwise use the normal documentation workflow. Do not document every
+question or claim the human learned something they did not confirm. This reflection
+belongs to the pairing session, not to commit, push or issue closure, and must not
+imply that unfinished implementation is complete or authorize delivery.
+
 ## Completion
 
 After the last checkpoint, return to the underlying workflow's final verification,
