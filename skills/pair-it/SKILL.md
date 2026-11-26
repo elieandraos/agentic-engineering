@@ -45,9 +45,11 @@ For each checkpoint:
    the next checkpoint. Reinspect affected code and verification after human edits;
    preserve changes outside your authorized scope.
 
-Use explanations grounded in the actual code and adapt their depth to the human's
-experience and questions. Do not turn the walkthrough into a generic tutorial or
-repeat explanations already understood. Treat questions as part of collaborative
+Ground explanations in the actual code and adapt their depth to the human's
+experience and questions. Combine plain technical English with precise implementation
+terminology. Explain the intent and reasoning behind decisions before their mechanics;
+connect code choices to their practical consequences where relevant. Do not turn the
+walkthrough into a generic tutorial or repeat explanations already understood. Treat questions as part of collaborative
 implementation, not interruptions. A question or acknowledgment alone is not
 authorization to advance. One explicit confirmation may cover both understanding
 the completed checkpoint and approval of the explained next checkpoint; do not ask
