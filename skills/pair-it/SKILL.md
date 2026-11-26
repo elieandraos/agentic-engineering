@@ -15,15 +15,18 @@ This skill owns the interaction cadence, not scope discovery, architecture appro
 implementation conventions, independent review, or delivery. When `implement-it` or
 another implementation skill applies, activate it through the agent's skill mechanism
 and preserve its requirements and approval gates. Otherwise use the agent's normal
-implementation workflow. Pair programming is opt-in; an ordinary implementation
-request does not activate this skill.
+implementation workflow. Keep required lifecycle reports concise and avoid repeating
+them in the collaborative discussion. Pair programming is opt-in; an ordinary
+implementation request does not activate this skill.
 
 ## Checkpoints
 
-Inspect the current code and agreed task before editing. Propose an ordered sequence
-of meaningful implementation checkpoints, each small enough for the human to review
-and large enough to avoid stopping for routine edits. Explain dependencies and adjust
-the sequence with the human as needed.
+Inspect the current code and agreed task before editing. Present a compact ordered
+checkpoint overview: one short purpose per checkpoint, not a restatement of the issue
+or implementation plan. Size checkpoints for human comprehension and technical
+coherence; prefer independently verifiable changes when practical. Note material
+dependencies and verification limitations, and adjust the sequence with the human.
+Reserve detailed explanations for the current checkpoint.
 
 For each checkpoint:
 
@@ -48,9 +51,13 @@ For each checkpoint:
 Ground explanations in the actual code and adapt their depth to the human's
 experience and questions. Combine plain technical English with precise implementation
 terminology. Explain the intent and reasoning behind decisions before their mechanics;
-connect code choices to their practical consequences where relevant. Do not turn the
-walkthrough into a generic tutorial or repeat explanations already understood. Treat questions as part of collaborative
-implementation, not interruptions. A question or acknowledgment alone is not
+connect code choices to their practical consequences where relevant. When requesting
+a decision, explain the problem, the practical difference between options and why you
+recommend one. Use focused code snippets to make significant proposed designs concrete,
+including how relevant components interact. Distinguish proposed code from existing
+code; avoid full-file dumps and snippets for routine edits. Do not turn the walkthrough
+into a generic tutorial or repeat explanations already understood. Treat questions as
+part of collaborative implementation, not interruptions. A question or acknowledgment alone is not
 authorization to advance. One explicit confirmation may cover both understanding
 the completed checkpoint and approval of the explained next checkpoint; do not ask
 twice when both decisions are clear.

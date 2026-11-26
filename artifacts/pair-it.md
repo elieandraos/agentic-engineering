@@ -1,6 +1,6 @@
 # pair-it — Architecture Dossier
 
-Status: Initial contract; live validation pending.
+Status: Initial contract; partial forward-use evidence.
 Scope: Collaborative execution, independent of stack and delivery methodology.
 
 ## Purpose and ownership
@@ -20,8 +20,12 @@ stack is required for standalone use.
 
 ## Confidence and boundaries
 
-The initial contract reflects an explicit human decision about collaborative work,
-not observed cross-project behavior. Keep it small until live sessions supply
-evidence for refinements. Source-level reconciliation is not proof of activation,
-checkpoint adherence or usefulness in a real session. The runtime contract lives in
+The initial contract reflects an explicit human decision about collaborative work.
+Two reported pre-edit interactions in one consuming project showed checkpoint planning,
+composition with an implementation workflow and approval stops. Human feedback identified
+excessive upfront detail and insufficient concrete explanation of proposed code. The
+contract now favors compact orientation and focused technical examples at the current
+checkpoint. The candidate was read directly, not activated as an installed skill.
+Post-edit walkthroughs, full lifecycle behavior, automatic activation and portability
+remain unvalidated. Keep further growth proportional to observed evidence. The runtime contract lives in
 [`SKILL.md`](../skills/pair-it/SKILL.md).
