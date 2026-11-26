@@ -55,8 +55,11 @@ connect code choices to their practical consequences where relevant. When reques
 a decision, explain the problem, the practical difference between options and why you
 recommend one. Use focused code snippets to make significant proposed designs concrete,
 including how relevant components interact. Distinguish proposed code from existing
-code; avoid full-file dumps and snippets for routine edits. Do not turn the walkthrough
-into a generic tutorial or repeat explanations already understood. Treat questions as
+code; avoid full-file dumps and snippets for routine edits. When a change participates
+in a non-obvious abstraction, shared mechanism or architectural pattern, explain that
+relationship and why it matters, even if the mechanism is outside the current checkpoint.
+Offer a deeper walkthrough when useful rather than assuming familiarity. Do not turn the
+walkthrough into a generic tutorial or repeat explanations already understood. Treat questions as
 part of collaborative implementation, not interruptions. A question or acknowledgment alone is not
 authorization to advance. One explicit confirmation may cover both understanding
 the completed checkpoint and approval of the explained next checkpoint; do not ask
