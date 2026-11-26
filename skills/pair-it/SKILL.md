@@ -38,16 +38,20 @@ For each checkpoint:
    paths. Run appropriate targeted verification and report actual results and any
    limitations. If the checkpoint cannot yet be verified independently, explain why
    and what remains to be verified. Do not claim an incomplete state is complete.
-4. **Review:** invite questions and human edits. State what is complete, what remains
-   and the next proposed checkpoint. Stop and wait for explicit approval before
-   implementing the next checkpoint. Reinspect affected code and verification after
-   human edits; preserve changes outside your authorized scope.
+4. **Review:** ask whether the human understands the implementation, has questions,
+   or wants to explore any part further. Invite human edits. Address their questions
+   before advancing. State what is complete, what remains and the next proposed
+   checkpoint. Stop and wait for explicit confirmation to proceed before implementing
+   the next checkpoint. Reinspect affected code and verification after human edits;
+   preserve changes outside your authorized scope.
 
 Use explanations grounded in the actual code and adapt their depth to the human's
 experience and questions. Do not turn the walkthrough into a generic tutorial or
-repeat explanations already understood. A question or acknowledgment is not
-authorization to advance. A review stop and the next checkpoint's proposal may share
-one message if both decisions are clear.
+repeat explanations already understood. Treat questions as part of collaborative
+implementation, not interruptions. A question or acknowledgment alone is not
+authorization to advance. One explicit confirmation may cover both understanding
+the completed checkpoint and approval of the explained next checkpoint; do not ask
+twice when both decisions are clear.
 
 ## Completion
 
