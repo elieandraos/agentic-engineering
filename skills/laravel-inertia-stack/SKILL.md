@@ -29,7 +29,7 @@ to `inertia-vue-development`.
 - Adding query filtering or sorting to an Eloquent index query.
 - Writing or organizing a Pest test.
 - Changing how the test suite runs: test scripts, parallelism, coverage, impact analysis, the base test case, or the CI test job.
-- Defining an Eloquent local scope or computed model attribute, a migration column, or a backed enum used as select options.
+- Defining model behavior, an Eloquent local scope or computed model attribute, a migration column, or a backed enum used as select options.
 - Generating factory or seeder data.
 - Building or reviewing an Inertia form that uses the Laravel/Inertia request serialization boundary.
 - Enforcing or testing tenant isolation through a global Eloquent scope.
@@ -48,7 +48,7 @@ than repeating them. See `README.md` for what `rules/`, `blueprints/`, and `temp
 | Speeding up the suite or changing how it runs (test scripts, parallelism, coverage, impact analysis, cached test state, the CI test job) | `rules/test-execution.md` |
 | Wiring Form Request -> Action -> Controller | `rules/actions.md` |
 | Authorizing a controller method | `rules/authorization.md` |
-| Defining an Eloquent local scope or computed model attribute | `rules/eloquent-attributes.md` |
+| Placing model behavior, or defining an Eloquent local scope or computed model attribute | `rules/eloquent-attributes.md` |
 | Adding index filtering and/or sorting | `blueprints/filters-and-sorting.md` + `rules/request-normalization.md` (a sort `direction` must be defaulted, not left nullable) + `templates/app/Filters/QueryFilter.php`, `templates/app/Sorts/QuerySorter.php`, `templates/app/Models/Concerns/Filterable.php`, `templates/app/Models/Concerns/Sortable.php` |
 | Exposing a backed enum as select options | `rules/enum-options.md` |
 | Exposing model records as select or filter options | `rules/resources.md` |
