@@ -35,6 +35,12 @@ relationships and a proposed improvement. The human then requested a session-end
 reflection to identify documentation-worthy knowledge independently of issue delivery.
 That reflection is an approved design, not yet observed behavior; documentation remains
 owned by the applicable documentation workflow.
+Reported use in the same project also supports collaborative exploration of
+architectural trade-offs during implementation. The human's priorities can differ
+from the agent's initial optimization criteria; the interaction contract should
+surface those priorities without transferring scope or architecture approval to
+`pair-it`. The revised guidance is approved, but its effect without external
+prompt coaching remains unvalidated.
 Full lifecycle behavior, automatic activation and portability remain unvalidated.
 Keep further growth proportional to observed evidence. The runtime contract lives in
 [`SKILL.md`](../skills/pair-it/SKILL.md).

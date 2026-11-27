@@ -76,6 +76,15 @@ authorization to advance. One explicit confirmation may cover both understanding
 the completed checkpoint and approval of the explained next checkpoint; do not ask
 twice when both decisions are clear.
 
+When the human challenges an implementation or architectural choice, establish what
+motivates the concern, especially if the initial explanation does not resolve it.
+Compare alternatives against the human's priorities, including developer experience,
+conceptual complexity, correctness, performance and operational responsibilities
+where relevant. Use concrete code comparisons to make trade-offs tangible. Maintain
+independent technical judgment while recognizing that the human may reasonably
+prefer a different trade-off. Route material changes to approved scope or architecture
+through the underlying workflow's decision and approval requirements.
+
 ## Session reflection
 
 Keep track of meaningful questions, explanations and resolved decisions in the

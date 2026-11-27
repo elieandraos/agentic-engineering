@@ -3,6 +3,9 @@
 Pair-program with an agent through human-approved implementation checkpoints,
 architectural discussions and code walkthroughs.
 
+The goal is collaborative engineering with shared understanding and deliberate
+human ownership of technical decisions.
+
 ## When to use it
 
 Use it when you want to participate in implementation and understand the code as it
