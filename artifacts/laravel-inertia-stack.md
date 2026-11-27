@@ -178,13 +178,14 @@ that touches the same territory cross-references that owner instead of restating
 | `tests/Unit`/`tests/Feature` execution-boundary classification and suite binding | `blueprints/pest-testing.md` |
 | Concrete per-class test location, ownership, and the no-redundancy rule | `rules/test-ownership.md` |
 | How the suite runs: measuring before restructuring tests, full-suite and coverage commands, runner flags through a wrapper, impact analysis, cached state in tests, run verification | `rules/test-execution.md` |
-| Computed Eloquent attribute convention; migration-debt policy on `#[Scope]` vs. legacy scopes | `rules/eloquent-attributes.md` |
+| Model responsibility and calculation placement; computed Eloquent attributes; migration-debt policy on `#[Scope]` vs. legacy scopes | `rules/eloquent-attributes.md` |
 | Mid-chain query conditionals | `rules/query-conditionals.md` |
 | Backed-enum option lists | `rules/enum-options.md` |
 | Factory/seeder realism and structure | `rules/factories-and-seeders.md` |
 | Concrete-class finality | `rules/php-conventions.md` |
 | Migration column nullability | `rules/migrations.md` |
 | Backend-to-Inertia page-component boundary | `rules/inertia-pages.md` |
+| Global-scope tenancy, including explicit tenant boundaries outside HTTP | `rules/global-scope-tenancy.md` |
 
 This matters because two files that each describe part of the same decision can drift independently
 while each still assumes the other owns it. The clearest example still visible in the package's shape
@@ -259,6 +260,24 @@ document does not claim otherwise.
 Pest 5 and Collision 8 sources. Its decisions are a working conclusion pending evidence from another
 project. Its version-specific examples were confirmed against those sources only, and the rule tells
 readers to recheck them against installed versions.
+
+The preference for explicit tenant boundaries in context-independent Actions is an approved
+stack convention based on design review in one consuming project. Its proposed implementation
+has not yet been verified in that project; it is conditional on the complete operation being
+independent of ambient context.
+
+Engineering judgment in the runtime entrypoint governs architectural choices across the
+stack rather than adding a separate procedure. It is an approved convention supported by
+reported design iteration and targeted implementation verification in one consuming project;
+generalization to other projects and independent skill-driven behavior remain unvalidated.
+Proportionality of safeguards is an approved extension informed by concurrency design review.
+It does not prescribe a particular concurrent-edit policy or waive integrity guarantees.
+The simplified concurrency design has not yet been verified in implementation.
+
+The preference for focused models and support classes for context-dependent calculations
+is an approved stack convention informed by design review in one consuming project.
+The revised implementation is not yet verified. It is a placement preference, not a ban
+on model domain methods or a requirement to introduce support classes for local behavior.
 
 Vue 3 is part of the declared stack boundary, since the stack this skill targets genuinely includes
 it, but mature, independently-owned Vue-specific guidance remains limited here. A Vue implementation

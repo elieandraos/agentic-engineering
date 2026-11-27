@@ -104,6 +104,9 @@ delivery workflow.
 
 ## Composition
 
+- When the human requests pair programming, activate `pair-it` if available. Its collaborative
+  checkpoints supplement this lifecycle; they do not replace verification or review and delivery gates.
+
 - Git and GitHub are intentional core substrate for this methodology, not an abstraction to be
   swapped out.
 - This skill composes with whatever implementation, testing, and tooling skills the consuming

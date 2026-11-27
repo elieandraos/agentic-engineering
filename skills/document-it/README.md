@@ -1,12 +1,12 @@
 # document-it
 
-Create, update, and review explanatory architecture guides — in Markdown, a Claude Artifact, or
+Create, update, and review purpose-driven technical guides — in Markdown, a Claude Artifact, or
 both — reusing sufficient, current, verified understanding, and drawing on `lab-it`'s
 investigation method only when evidence is missing or stale.
 
 ## When to use it
 
-- A system's architecture needs a new guide, in Markdown, an Artifact, or both.
+- A technical system, operational process, reference, cost model or approved design needs a guide, in Markdown, an Artifact, or both.
 - A published guide needs reconciling with verified current reality.
 - An existing guide needs an independent completeness check.
 
@@ -20,6 +20,8 @@ architecture decisions for a proposed feature, or synthesizing `plan.md` — tho
 "Document the billing architecture."
 "Update the architecture guide to match the current implementation."
 "Is the authentication guide still accurate?"
+"Write a deployment and recovery handbook."
+"Document our infrastructure costs and assumptions."
 "Write a Markdown guide for the export pipeline under docs/."
 ```
 
@@ -30,6 +32,7 @@ current. When it is, this skill writes or updates directly; when it isn't, it ro
 investigation through `lab-it` first, then resumes. From there:
 
 1. A new guide — the user chooses Artifact, Markdown, or both, unless they've already said.
+   Confirm the evidence recap before writing; structure follows purpose and audience.
 2. An update to an existing guide, with its identity (file path, or `url` and favicon) preserved
    by default.
 3. A standalone review of a guide's completeness — a findings report, not a rewrite.

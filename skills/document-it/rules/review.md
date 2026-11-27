@@ -1,16 +1,16 @@
-# Reviewing an architecture guide
+# Reviewing a technical guide
 
-This is a check on whether a finished guide actually communicates the architecture — not a
+This is a check on whether a finished guide serves its intended purpose — not a
 proofreading pass. A guide can be well-written and still fail this review; a guide with rougher
 prose can pass it. Wording is not the subject. One shared checklist applies regardless of format —
 Markdown, Artifact, or both — with a small set of items conditional on which format is in play.
 
 ## When to consult this file
 
-- After publishing or saving a new architecture guide, before considering it complete.
-- After updating an existing architecture guide, before considering the update complete.
+- After publishing or saving a new technical guide, before considering it complete.
+- After updating an existing technical guide, before considering the update complete.
 - Any time you're explicitly asked to evaluate whether a guide is complete or still
-  architecturally misleading — independent of whether this skill also just wrote it.
+  misleading for its purpose — independent of whether this skill also just wrote it.
 
 **Not** while a guide is still being drafted — this is a review of a finished guide, not a
 drafting aid. Drafting uses `rules/authoring.md` for the writing/update procedure and
@@ -19,12 +19,12 @@ the light.
 
 ## Philosophy
 
-- The question is always "does this explain the architecture," never "does this read well."
+- The question is whether the guide serves its intended purpose accurately and usefully, not whether it matches a preferred writing style.
 - Every finding must materially affect what the reader understands about how the system is
   shaped, owned, constrained, or reasoned about — if a suggested change wouldn't change that, it
   isn't a finding, it's a preference. Drop it.
 - Don't nitpick style, word choice, or section ordering unless it actually obscures an
-  architectural claim (an ambiguous pronoun that leaves "who owns this" unclear is a finding; a
+  technical claim (an ambiguous pronoun that leaves "who owns this" unclear is a finding; a
   synonym you'd have picked instead is not).
 - A guide is allowed known gaps. The review's job is to confirm a gap that materially affects
   understanding is stated somewhere in the guide, not silently absent — an unstated gap is the
@@ -40,7 +40,7 @@ the light.
    themselves in. When both formats are maintained for the same guide, inspect each output that's
    actually published or saved, not only one.
 2. Work through the checklist below. Treat each category as conditional: a question about a
-   concern this architecture doesn't have (reuse, runtime, security, testing, decisions,
+   concern the subject doesn't have (reuse, runtime, security, testing, decisions,
    limitations) is inapplicable, not failed — skip it rather than forcing an answer.
 3. When a claim's factual accuracy is in question, reconcile it against verified implementation or
    investigation evidence, not the guide's own wording. This is a truth check on an existing
@@ -52,6 +52,29 @@ the light.
    matter, and leave stylistic judgment calls alone.
 
 ## Checklist
+
+Review against the document's confirmed purpose, not against an architecture template.
+Apply the architecture-specific questions below only where architecture is part of the
+document's purpose. All guides need accurate evidence, coherent structure, consistent
+claims, useful references and honest uncertainty.
+
+For other purposes, check the relevant dimensions:
+- Operations: prerequisites, exact commands or actions, ordering, safeguards, failure
+  consequences, recovery and verification. Distinguish a proposed procedure from a tested one.
+- Technical references: accurate mechanisms, configuration names and values, scope,
+  dependencies, overrides, security constraints and lookup usability.
+- Costs and capacity: arithmetic, units, billing periods, assumptions, exclusions, shared
+  versus incremental costs, and estimates versus actual charges.
+- Approved designs: decision, known rationale, trade-offs, implementation status and
+  pending verification; do not invent missing rationale.
+- Connected documents: subject ownership, working cross-links, consistent shared claims
+  and no unnecessary duplication. Check affected neighboring documents, not only the target.
+
+Verify diagram semantics as well as syntax, and render when tooling permits. Report
+unverified checks. Never execute destructive procedures merely to review documentation.
+Match review effort to consequence and intended use; stop when material findings are resolved.
+
+
 
 ### Architectural center
 
@@ -99,25 +122,24 @@ the light.
   transitions ("component A hands off to component B")? A guide that uses one sentence shape for
   both is blurring them.
 
-### Architecture versus implementation
+### Architecture versus implementation — for explanatory architecture material
 
-- Does the guide explain the concept before showing code, every time, or does any section lead
-  with a code block?
-- Are code snippets limited to genuine extension seams — a contract, an interface, a scope — per
+- Does explanatory architecture material establish the concept before showing code? Operational commands may lead a section when their context is clear.
+- In explanatory architecture material, are code snippets limited to genuine extension seams — a contract, an interface, a scope — per
   `SKILL.md`'s output rules, or has a full method body snuck in for narrative decoration?
 - Has API documentation or an implementation walkthrough started replacing architecture? A tell: a
   section regenerable by reading the source top to bottom instead of by understanding the design.
 
 ### Structure and content
 
-- Does each section answer a coherent reader question, with a direct architectural answer, rather
+- Does each section serve a coherent reader need, with a direct answer, rather
   than trying to cover two unrelated questions at once?
-- Is the structure driven by this capability's architecture, not carried over from a different
+- Is the structure driven by the subject and purpose, not carried over from a different
   guide's section list — a section that exists only because another guide had one is a finding?
 - Are diagrams used for movement, ownership, topology, or relationships — not decoration? A static
   topology or relationship diagram is valid on its own; one that shows none of these is a candidate
   for deletion, not a finding to soften.
-- Are tables used for responsibilities, guarantees, states, decisions, or trade-offs — not as
+- Are tables used for responsibilities, guarantees, states, decisions, configuration, costs, or trade-offs — not as
   formatting for prose that would read fine as a paragraph?
 
 ### Consistency
@@ -159,12 +181,12 @@ the light.
   outside `docs/` as correctly preserved identity, not a defect, unless the user explicitly
   authorized relocating it? Do internal links — to headings within the guide, to referenced source
   paths, and to a paired Artifact if one exists — actually resolve?
-- **Both formats maintained.** Are the architectural claims synchronized between them, per
+- **Both formats maintained.** Are the technical claims synchronized between them, per
   `SKILL.md`'s "Maintaining both formats" — or, when the user explicitly scoped this update to one
   format, is the other output's resulting divergence reported rather than left unstated or
   presented as current? Does each carry a working cross-reference to the other's location?
 
-### Overall
+### Overall — architecture-specific questions
 
 - Would another engineer understand *why* the system was designed this way, not just what it
   does? If every "why," "because," and trade-off were removed, would anything architectural
@@ -191,11 +213,11 @@ the light.
 ## What this review does not flag
 
 - Word choice, sentence rhythm, or comma placement that doesn't change what's understood.
-- A different but equally valid section order or shape, when it communicates the architecture
+- A different but equally valid section order or shape, when it serves the purpose
   equally well.
 - A missing content block, unless a real recurring distinction is being described in prose that a
   reader can't actually follow without it.
-- A "when applicable" checklist category that doesn't apply to this architecture.
+- A "when applicable" checklist category that doesn't apply to the subject.
 - A stated known gap, unless it contradicts another claim, hides a material consequence, or is
   presented misleadingly.
 - Divergence between two maintained formats that the user explicitly authorized for this update,

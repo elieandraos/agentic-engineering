@@ -1,8 +1,21 @@
 # Eloquent Attributes
 
-Conventions for computed model attributes and local scopes. `laravel-best-practices` already covers
+Conventions for model responsibilities, computed attributes and local scopes. `laravel-best-practices` already covers
 the `#[Scope]` attribute's own mechanics; see "Local scopes" below for this stack's own migration-debt
 policy on top of that baseline.
+
+## Model responsibilities
+
+Keep Eloquent models focused on persistence, relationships, casts, scopes and attributes.
+Prefer a focused support class for a reusable business calculation that needs external
+context, such as a business date or organization setting. Keep that context explicit
+rather than resolving it implicitly in an accessor. Avoid model forwarding methods
+and concerns that merely delegate to another class without adding meaningful behavior
+or reuse. Domain methods that naturally belong to a model remain valid. Do not extract
+simple model-local behavior solely to satisfy a layering preference.
+
+Actions retain ownership of business mutations and transactions; support classes can
+supply the reusable calculation without performing the mutation.
 
 ## Computed attributes
 

@@ -1,7 +1,10 @@
 # laravel-inertia-stack
 
-Bring evidence-backed Laravel, InertiaJS, Vue 3, and Pest conventions into the Implement
-stage.
+Laravel Boost provides the framework best practices. `laravel-inertia-stack` complements them
+with an opinionated approach to engineering Laravel, InertiaJS, Vue 3 and Pest applications.
+
+It captures not only how code should be written, but how architectural choices should be
+evaluated. The goal is not merely consistent code, but consistent engineering judgment.
 
 ## When to use it
 
