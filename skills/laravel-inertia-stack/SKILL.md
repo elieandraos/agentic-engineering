@@ -36,6 +36,12 @@ Evaluate whether an abstraction reduces the overall effort to understand, mainta
 the feature, rather than merely reducing repeated code. Avoid forwarding layers that do not
 provide meaningful behavior or reuse.
 
+Keep safeguards proportionate to the invariants and risks they protect. Assess the consequences
+of failure, realistic execution paths and the complexity of prevention. Prefer database constraints,
+transactions and established locking patterns for data integrity. Do not introduce additional
+coordination mechanisms solely to eliminate theoretical races when ordinary concurrent behavior
+is acceptable. Preserve security, tenant isolation and material business invariants.
+
 When designs preserve the same correctness, security, data integrity and operational guarantees,
 prefer the clearest execution flow, most discoverable responsibilities and fewest unnecessary
 concepts. Simplicity is not a reason to weaken those guarantees or avoid justified abstractions.

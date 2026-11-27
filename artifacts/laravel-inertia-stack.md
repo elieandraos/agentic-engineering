@@ -270,6 +270,9 @@ Engineering judgment in the runtime entrypoint governs architectural choices acr
 stack rather than adding a separate procedure. It is an approved convention supported by
 reported design iteration and targeted implementation verification in one consuming project;
 generalization to other projects and independent skill-driven behavior remain unvalidated.
+Proportionality of safeguards is an approved extension informed by concurrency design review.
+It does not prescribe a particular concurrent-edit policy or waive integrity guarantees.
+The simplified concurrency design has not yet been verified in implementation.
 
 The preference for focused models and support classes for context-dependent calculations
 is an approved stack convention informed by design review in one consuming project.
