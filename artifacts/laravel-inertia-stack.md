@@ -185,6 +185,7 @@ that touches the same territory cross-references that owner instead of restating
 | Concrete-class finality | `rules/php-conventions.md` |
 | Migration column nullability | `rules/migrations.md` |
 | Backend-to-Inertia page-component boundary | `rules/inertia-pages.md` |
+| Global-scope tenancy, including explicit tenant boundaries outside HTTP | `rules/global-scope-tenancy.md` |
 
 This matters because two files that each describe part of the same decision can drift independently
 while each still assumes the other owns it. The clearest example still visible in the package's shape
@@ -259,6 +260,11 @@ document does not claim otherwise.
 Pest 5 and Collision 8 sources. Its decisions are a working conclusion pending evidence from another
 project. Its version-specific examples were confirmed against those sources only, and the rule tells
 readers to recheck them against installed versions.
+
+The preference for explicit tenant boundaries in context-independent Actions is an approved
+stack convention based on design review in one consuming project. Its proposed implementation
+has not yet been verified in that project; it is conditional on the complete operation being
+independent of ambient context.
 
 Vue 3 is part of the declared stack boundary, since the stack this skill targets genuinely includes
 it, but mature, independently-owned Vue-specific guidance remains limited here. A Vue implementation

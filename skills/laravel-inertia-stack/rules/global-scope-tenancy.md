@@ -37,10 +37,30 @@ an overridden `resolveRouteBindingQuery()`, an explicit `Route::bind()`, or brin
 scope. Whichever is chosen, a binding that depends on the tenant context must sit behind whatever
 establishes that context; otherwise it fails with a server error or resolves unscoped.
 
+## Explicit tenant boundaries outside HTTP
+
+For an Action that operates on a supplied tenant from a command, scheduled task, or job,
+prefer explicit tenant scoping over changing ambient tenant context when the entire
+operation can run independently of that context. Remove only the tenant global scope
+that must be bypassed, preserve unrelated global scopes, and constrain every affected
+query to the supplied tenant, including subsequent lookups, locks and mutations.
+
+```php
+Order::query()
+    ->withoutGlobalScope(CurrentTeamScope::class)
+    ->whereBelongsTo($team);
+```
+
+This example assumes an existing `team()` belongs-to relation and a project-defined
+`CurrentTeamScope`. If downstream operations depend on ambient tenant context, establish
+and restore that context instead. Do not bypass tenant authorization or rely on a
+primary-key lookup alone after removing the tenant scope. Verify the explicit path
+without an ambient context and with records belonging to another tenant.
+
 ## Queued work runs without the request's tenant context
 
-A worker has no request, so the tenant context must be carried and established explicitly. Passing
-models into the job or notification is not enough:
+A worker has no request. Carry the tenant identity explicitly, and establish the tenant context
+when the operation depends on it. Passing models into the job or notification is not enough:
 
 - Models restore without global scopes, but relations loaded at dispatch are reloaded through ordinary
   scoped queries while the job is unserialized, before `handle()` or job middleware runs. Dispatch
