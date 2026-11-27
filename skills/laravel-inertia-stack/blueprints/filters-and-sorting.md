@@ -25,7 +25,7 @@ like Actions trust `$request->validated()`.
   designed for extension (see `rules/php-conventions.md`). Ships as a reusable implementation template:
   [`templates/app/Filters/QueryFilter.php`](../templates/app/Filters/QueryFilter.php).
 - `app/Filters/{Model}Filter.php` — one concrete filter per model, flat in `app/Filters/`. Name:
-  `{Model}Filter`. Always `final`.
+  `{Model}Filter`. Declare it `final`.
 - `app/Models/Concerns/Filterable.php` — trait adding the `filter` scope to a model. Ships as a reusable
   implementation template:
   [`templates/app/Models/Concerns/Filterable.php`](../templates/app/Models/Concerns/Filterable.php).
@@ -33,7 +33,7 @@ like Actions trust `$request->validated()`.
   a reusable implementation template:
   [`templates/app/Sorts/QuerySorter.php`](../templates/app/Sorts/QuerySorter.php).
 - `app/Sorts/{Model}Sort.php` — one concrete sorter per model, flat in `app/Sorts/`. Name: `{Model}Sort`.
-  Always `final`.
+  Declare it `final`.
 - `app/Models/Concerns/Sortable.php` — trait adding the `sort` scope to a model. Ships as a reusable
   implementation template:
   [`templates/app/Models/Concerns/Sortable.php`](../templates/app/Models/Concerns/Sortable.php).
@@ -64,6 +64,11 @@ Each filter method takes the raw (validated) value, reads/writes `$this->builder
 validated array key and calls the same-named method on the concrete filter — no registration step. A key
 with no matching method, or a `null`/`''` value, is silently skipped.
 
+Because keys dispatch to methods and sort values select columns, the Form Request's rules are the
+allow-list for these dynamic query components. A filter or sorter must be constructed from `validated()`,
+not from raw query input. Give every sort column an `in:` rule that names only columns the sorter
+implements.
+
 ```php
 // app/Models/Concerns/Filterable.php — see the reusable implementation template for the exact trait
 #[Scope]
@@ -87,15 +92,20 @@ final class OrderSort extends QuerySorter
         return $this->builder->orderBy('total', $direction);
     }
 
+    public function createdAt(string $direction): Builder
+    {
+        return $this->builder->orderBy('created_at', $direction);
+    }
+
     protected function default(Builder $builder): Builder
     {
-        return $builder->orderBy('created_at', 'desc');
+        return $builder->latest();
     }
 }
 ```
 
 `QuerySorter::apply()` resolves the requested column the same way `QueryFilter` resolves a filter key,
-then breaks ties on the model's primary key — so pagination and tests get a stable, repeatable order
+then breaks ties on the model's qualified primary key — so pagination and tests get a stable, repeatable order
 regardless of the query plan the database chooses for the primary sort column.
 
 ## Wiring: FormRequest → Controller
