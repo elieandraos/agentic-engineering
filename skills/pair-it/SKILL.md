@@ -70,7 +70,8 @@ recommend one. Use focused code snippets to make significant proposed designs co
 including how relevant components interact. Distinguish proposed code from existing
 code. In walkthroughs, distinguish currently executable paths from future integration.
 Identify an actual entry point the human can trace now, such as a caller or targeted
-test, or explain why none exists yet. Avoid full-file dumps and snippets for routine edits. When a change participates
+test, or explain why none exists yet. Avoid full-file dumps and snippets for routine edits.
+When a change participates
 in a non-obvious abstraction, shared mechanism or architectural pattern, explain that
 relationship and why it matters, even if the mechanism is outside the current checkpoint.
 When a decision depends on a potentially unfamiliar mechanism, pause at that point

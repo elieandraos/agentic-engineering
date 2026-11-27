@@ -13,14 +13,14 @@ explains the architecture behind both rather than restating either.
 
 ## 1. Purpose and result model
 
-`document-it` creates, maintains, and reviews explanatory architecture guides — in Markdown, a
+`document-it` creates, maintains, and reviews purpose-driven technical guides — in Markdown, a
 Claude Artifact, or both — from already-available, sufficient, and current understanding. It is
 independently callable: a documentation request does not require a fresh investigation to begin,
 and does not require [`lab-it`](../skills/lab-it/) to have run first.
 
 | Workflow | Terminal output | What gates that output |
 |---|---|---|
-| Document existing architecture | A new guide (Markdown, Artifact, or both) | The user confirms the investigation recap before writing |
+| Document a technical system or approved design | A new guide (Markdown, Artifact, or both) | The user confirms the investigation recap before writing |
 | Update an existing guide | The same guide, reconciled and re-saved/redeployed | Only when authority, intent, or a material decision is unclear |
 | Review a guide | A findings report, not a rewrite | Nothing — the report itself is the result |
 
@@ -32,7 +32,8 @@ file extension does not decide ownership.
 
 Before writing or updating anything, this skill establishes whether currently available
 understanding is sufficient and current — from the conversation, a recent investigation, or
-evidence directly verifiable against the real system right now. When it is, this skill proceeds
+evidence directly verifiable against the real system right now, approved decisions or explicit
+assumptions. Approved designs and estimates are distinguished from verified behavior. When it is, this skill proceeds
 directly; it does not repeat a full investigation merely because a documentation workflow is
 starting.
 
@@ -93,19 +94,13 @@ user's explicit authorization.
 
 ## 4. The guide as a published or saved document
 
-A guide's section list is decided by its confirmed architectural center of gravity — the one idea
-everything else hangs off (a shared contract, a pipeline, a runtime boundary, a data-ownership
-split) — never poured into a fixed inventory. Two guides for two different capabilities
-legitimately have different section counts, names, and content. What's fixed is the rhythm each
-section opens with (a heading, an italicized question a reader would actually ask, then one
-direct-answer paragraph) before composing from a shared content-block vocabulary — a spec strip of
-concrete facts, an ownership/flow diagram, a responsibility table, an ordered timeline, a callout, a
-formula recap, a variant badge, or a closing sentence — chosen per section, never applied
-uniformly. See [`rules/doc-style.md`](../skills/document-it/rules/doc-style.md) for the full
-grammar and the Markdown/Artifact form each block takes; this dossier does not restate its
-vocabulary.
+A guide's structure follows its purpose and audience, not a fixed inventory or mandatory section
+rhythm. Architecture retains a central explanatory idea; operations prioritize safe execution;
+references prioritize lookup and understanding; cost guides disclose assumptions and trade-offs.
+Connected guides assign each subject an authoritative home and link to supporting detail.
+See [`rules/doc-style.md`](../skills/document-it/rules/doc-style.md) for the writing grammar.
 
-**Artifact identity and rendering.** A guide's title follows `"{Capability} Architecture"`. Its
+**Artifact identity and rendering.** A guide's title follows its subject and purpose. Its
 favicon is one or two domain-appropriate emoji, supplied at first publish and re-supplied unchanged
 on every redeploy — a changed favicon reads as a different document, so a maintenance pass
 discovers or confirms the guide's current favicon before touching anything.
@@ -131,10 +126,10 @@ skill.
 favicon equivalent. It applies the same writing grammar and content-block vocabulary in
 Markdown-native form (a fenced-code diagram instead of the Artifact's `.ascii` block, a standard
 Markdown table instead of `.table-wrap`, a blockquote instead of a side card, and so on), and must
-communicate the architecture with no Artifact-specific tooling, template, or rendering constraints
+communicate the subject with no Artifact-specific tooling, template, or rendering constraints
 at all — it is a first-class output, not a fallback.
 
-**Both formats maintained.** Keep architectural claims synchronized across both on an update,
+**Both formats maintained.** Keep technical claims synchronized across both on an update,
 unless the user explicitly requests otherwise for that update; report precisely which outputs
 changed and name any remaining divergence rather than reporting a single "done," distinguishing a
 publication failure from a user-authorized single-format update; keep the association between the
@@ -145,7 +140,7 @@ not a registry, and nothing beyond that is required.
 
 [`rules/maintenance.md`](../skills/document-it/rules/maintenance.md) governs every judgment call in
 reconciling a published guide with verified current reality without breaking the identity and
-architectural meaning it already carries. The maintenance unit is the **architectural claim** — a
+technical meaning it already carries. The maintenance unit is the **technical claim** — a
 center of gravity, a responsibility, a boundary, an invariant, a lifecycle, an integration seam, a
 decision and its trade-off, a limitation, or a concrete evidence reference — not the section,
 table, or paragraph that happens to carry it; the same claim routinely repeats across several of
@@ -154,7 +149,7 @@ not only the section a triggering issue or PR happened to name.
 
 A reconciliation pass classifies what it finds into exactly one of four outcomes: no documentation
 event (not every commit is one — leave the guide alone); a narrow update (one fact or reference is
-wrong, correct it in place); a connected architectural change (several claims move together,
+wrong, correct it in place); a connected technical change (several claims move together,
 follow the graph); or unresolved authority, intent, or a material decision (stop — route to the
 user, or to `lab-it` when it requires fresh investigation or an architecture decision, rather than
 deciding it during maintenance). This four-way classification is specific to how a maintenance pass
@@ -169,19 +164,19 @@ and presentation choice — not rewriting nearby prose merely because the file i
 restructuring for taste or conformity with another guide's shape. Continuity is not the same as
 freezing the guide's center of gravity, ownership, or reasoning in place: when verified architecture
 has genuinely moved one of those, the guide moves with it, in proportion to what changed. The guide
-is written as present-tense architecture, never a changelog — a past decision or rejected
+describes current reality and explicitly approved future design, never a changelog — a past decision or rejected
 alternative is preserved as durable rationale when it materially explains the current shape, but
 release-history narration is not.
 
 ## 6. Review
 
 [`rules/review.md`](../skills/document-it/rules/review.md) is a check on whether a *finished* guide
-actually communicates the architecture, run only against a published Artifact, a saved Markdown
+actually serves its purpose, run only against a published Artifact, a saved Markdown
 file, or the exact draft being proposed — never mid-draft, since drafting is `doc-style.md`'s job,
 not this one. Its checklist categories (architectural center; responsibility and ownership;
 reuse/integration/variation; runtime, lifecycle, and state; architecture versus implementation;
 structure and content; consistency; decisions and limitations; format-specific checks) are each
-conditional on the architecture actually having that concern — an inapplicable category is skipped,
+conditional on the subject actually having that concern — an inapplicable category is skipped,
 not failed. A known, honestly-stated gap is not itself a finding; an unstated one is. Format-specific
 checks apply narrowly: an Artifact's favicon stability and preserved `url`; a Markdown guide's
 `docs/`-relative location for a new guide (or its preserved existing path, including outside
@@ -201,7 +196,7 @@ called a rule: it's a scaffold to edit, not a normative statement the way the ot
 | [`rules/authoring.md`](../skills/document-it/rules/authoring.md) | Format selection, new-guide writing, and existing-guide-update mechanics — the operational procedure `SKILL.md` hands off to once its own trigger condition fires |
 | [`rules/doc-style.md`](../skills/document-it/rules/doc-style.md) | The writing grammar for guides: section rhythm, the content-block vocabulary in both Markdown and Artifact form, tone and evidence discipline, favicon stability |
 | [`rules/template.html`](../skills/document-it/rules/template.html) (scaffold, not a rule) | The Artifact HTML/CSS/JS: theme tokens, the responsive shell, content-block CSS classes, the highlighter and its fallback contract |
-| [`rules/review.md`](../skills/document-it/rules/review.md) | Judging whether a finished guide, in either format, communicates its architecture |
+| [`rules/review.md`](../skills/document-it/rules/review.md) | Judging whether a finished guide, in either format, serves its purpose |
 | [`rules/maintenance.md`](../skills/document-it/rules/maintenance.md) | Reconciling an existing guide with verified current reality without breaking its identity or unaffected meaning |
 
 **Handoff with `lab-it`**, stated precisely (§2): `lab-it` routes a guide-shaped request here; this
@@ -217,8 +212,8 @@ never touched by this skill; issue creation and Git workflow belong entirely els
 
 ## 8. Boundaries, non-goals, and current confidence
 
-This skill owns creating new architecture guides, maintaining and reconciling existing ones, and
-reviewing guides for architectural completeness, in Markdown, Artifact, or both. It does not own
+This skill owns creating new technical guides, maintaining and reconciling existing ones, and
+reviewing guides for fitness for purpose, in Markdown, Artifact, or both. It does not own
 investigation from scratch when evidence is missing or stale, architecture decisions reached with
 the user, or `plan.md` synthesis (all `lab-it`'s); application implementation; debugging or diff
 review; API reference documentation; feature classification and issue decomposition; GitHub issue
@@ -230,10 +225,14 @@ dependency and must work without either. Neither makes this skill tracker- or st
 
 **Current, honest limits:**
 
+- The broadened purpose-driven contract is informed by reported infrastructure documentation
+  work in one consuming project. Independent forward-use validation of the revised instructions
+  and portability across projects remain unverified.
+
 - The Artifact identity, rendering, and accessibility contract in §4 is stated as an explicit
   operational constraint inside the template and its own inline documentation. Nothing in this
   skill's files independently confirms how a specific renderer actually displays a published guide —
-  the guide review checks whether a guide communicates architecture, not whether a rendered page
+  the guide review checks whether a guide serves its purpose, not whether a rendered page
   meets a measured contrast ratio or a formal accessibility standard.
 - The syntax highlighter enhances five named languages with a disclosed, safe fallback for anything
   else — a bounded, honestly-scoped renderer capability, not a hidden assumption, but still a literal

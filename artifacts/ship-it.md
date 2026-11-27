@@ -155,7 +155,7 @@ itself. If a later finding reopens the count above zero, the milestone stays ope
 resolved and this whole gate is re-run.
 
 **Release** starts from the same authorization and proceeds through its own sequence: discover the
-project's actual, real release policy — an explicit stated policy first, only then inferred from the
+project's actual, real release policy — an explicit stated policy first (including project agent rules), only then inferred from the
 repository's own established artifacts and history, and never invented when the evidence is
 ambiguous — understand the release being made (its actual merged outcomes and theme, never inferred
 from diff size or commit count), draft notes at release-level altitude (what shipped and why it
@@ -206,6 +206,9 @@ gates, `review-it`-backed implementation assurance, commit construction, verific
 closure are entirely `implement-it`'s architecture, referenced here only as the fact this skill's
 gates depend on, never restated. As §1 and §2 state, this skill checks that state directly from
 GitHub rather than requiring proof of a specific `implement-it` session behind it.
+
+Project-specific delivery and release policy can extend this workflow through project rules,
+without waiving human approval, verification or authorization gates.
 
 **Stack/project implementation guidance never reaches this skill.** Application code, framework
 conventions, and implementation tooling belong to `implement-it` and whatever stack companion a
