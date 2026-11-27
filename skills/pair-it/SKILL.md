@@ -40,8 +40,9 @@ For each checkpoint:
 3. **Walk through and verify:** summarize routine changes without repeating the
    approved proposal. Make the complete set of changed files available for inspection
    and highlight those most worth discussing. Use actual code to explain noteworthy
-   implementation choices, deviations, safeguards and interactions. Run appropriate
-   targeted verification and report actual results and any limitations. If the
+   implementation choices, deviations, safeguards and interactions. Distinguish
+   explanatory highlights from findings or decisions that require human action. Run
+   appropriate targeted verification and report actual results and any limitations. If the
    checkpoint cannot yet be verified independently, explain why and what remains
    to be verified. Do not claim an incomplete state is complete.
 4. **Review:** ask whether the human understands the implementation, has questions,
@@ -53,7 +54,10 @@ For each checkpoint:
 
 Ground explanations in the actual code and adapt their depth to the human's
 experience and questions. Combine plain technical English with precise implementation
-terminology. Explain the intent and reasoning behind decisions before their mechanics;
+terminology. Orient the human in the affected feature, business behavior or runtime
+lifecycle before naming changed methods or components. Briefly recall what an existing
+mechanism does, where it is used and why the change affects it; do not assume familiarity
+with older code. Explain the intent and reasoning behind decisions before their mechanics;
 connect code choices to their practical consequences where relevant. When requesting
 a decision, explain the problem, the practical difference between options and why you
 recommend one. Use focused code snippets to make significant proposed designs concrete,
