@@ -17,6 +17,8 @@ use Inertia\Testing\AssertableInertia;
  *
  * Requires: inertiajs/inertia-laravel (for Inertia\Testing\AssertableInertia)
  * and Pest (for the expect() global used inside the macros below).
+ * assertHasInertiaFlash() also requires an inertia-laravel version that
+ * provides Inertia::flash(); confirm it in the installed package.
  *
  * Registration: add App\Providers\TestingServiceProvider::class to
  * bootstrap/providers.php. The runningUnitTests() guard in boot() means these
@@ -69,11 +71,12 @@ final class TestingServiceProvider extends ServiceProvider
             });
         });
 
-        TestResponse::macro('assertHasInertiaFlash', function (string $type, string $message) {
+        // Asserts one key of the data flashed with Inertia::flash(), whatever
+        // key and value shape the project uses. The key is read with dot
+        // notation, so a nested value can be addressed as 'parent.child'.
+        TestResponse::macro('assertHasInertiaFlash', function (string $key, mixed $value) {
             /** @var TestResponse $this */
-            return $this->assertSessionHas('inertia.flash_data', [
-                'toast' => ['type' => $type, 'message' => $message],
-            ]);
+            return $this->assertSessionHas('inertia.flash_data.'.$key, $value);
         });
     }
 }
