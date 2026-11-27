@@ -1,8 +1,7 @@
 # Eloquent Attributes
 
-Conventions for model responsibilities, computed attributes and local scopes. `laravel-best-practices` already covers
-the `#[Scope]` attribute's own mechanics; see "Local scopes" below for this stack's own migration-debt
-policy on top of that baseline.
+Conventions for model responsibilities, computed attributes and local scopes. `laravel-best-practices`
+already covers the `#[Scope]` attribute's own mechanics.
 
 ## Model responsibilities
 
@@ -49,31 +48,31 @@ Reserve an accessor for a derived property, not as a generic replacement for dom
 reusable operation with behavior or side effects stays a method or an Action, not an Eloquent
 attribute.
 
-`Illuminate\Database\Eloquent\Casts\Attribute` supports `make()`, `get()`, and `set()` for accessors
-and mutators. Confirm the project's installed Laravel version supports the API before relying on it.
-
 ## Local scopes
 
-Every new local scope uses the `#[Scope]` attribute — never the legacy `scope`-prefixed method-name
-convention. `laravel-best-practices` already demonstrates the attribute's own mechanics, so this rule
-does not re-teach them; the stack's own position is narrower and durable: a model with older,
-legacy-named scopes is migration debt, not a pattern to extend, so a new scope on that same model
-still uses the attribute rather than matching the model's existing style.
+Which scope style a new scope uses depends on the project's established position:
+
+- **No established position** — define the scope with the `#[Scope]` attribute, not the
+  `scope`-prefixed method-name convention.
+- **The project consistently uses `scope`-prefixed methods** — match that style for compatibility.
+- **The project has explicitly adopted an incremental migration to `#[Scope]`** (recorded in its
+  project instructions or rules) — new scopes use the attribute, including on a model whose existing
+  scopes still use the prefix. Convert existing scopes only when the task includes that migration.
 
 ```php
-// ✅ every new scope, regardless of what else exists on the model
+// The attribute style
 #[Scope]
 protected function filter(Builder $query, QueryFilter $filters): Builder
 {
     return $filters->apply($query);
 }
 
-// ❌ do not add a new scope this way, even to match an older scope already on the model
+// The scope-prefixed style
 public function scopeFilter(Builder $query, QueryFilter $filters): Builder
 {
     return $filters->apply($query);
 }
 ```
 
-Requires a Laravel version that provides `Illuminate\Database\Eloquent\Attributes\Scope` — confirm
-this class exists in the project's installed `laravel/framework` version before relying on it.
+Both styles are called the same way (`Order::query()->filter($filters)`), so a migration does not change
+callers.

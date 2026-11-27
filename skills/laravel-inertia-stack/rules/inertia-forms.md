@@ -1,7 +1,7 @@
 # Inertia Forms
 
-Build a form with the `<Form>` component and named inputs, letting a Wayfinder route helper supply
-the action and method:
+Build a new form with the `<Form>` component and named inputs. When the project uses Wayfinder, let a
+route helper supply the action and method:
 
 ```vue
 <Form v-bind="routeHelper.form()" v-slot="{ errors, processing }">
@@ -9,12 +9,11 @@ the action and method:
 </Form>
 ```
 
-`inertia-vue-development` and `wayfinder-development` already document `<Form>`'s own mechanics and
-the Wayfinder integration; this stack's own fallback rule is narrower: reach for `useForm()` only when
-a transformation must run client-side and genuinely cannot be moved to the backend — the same bias
-toward backend-owned coercion that `request-normalization.md` states for request input generally, not
-a separate judgment call for forms. This file also adds the one delta Boost doesn't cover: making a
-custom Vue control participate in `<Form>` serialization.
+`inertia-vue-development` and `wayfinder-development` document `<Form>` and the Wayfinder integration.
+This stack specializes Boost's choice between `<Form>` and `useForm()`: use `useForm()` only when a
+transformation must run client-side and cannot move to the backend — the same bias toward
+backend-owned coercion that `request-normalization.md` states for request input generally. This file
+also covers making a custom Vue control participate in `<Form>` serialization.
 
 ## Make custom controls serializable
 

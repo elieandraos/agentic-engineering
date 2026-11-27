@@ -2,8 +2,22 @@
 
 ## Purpose
 
-A controller never passes a raw Eloquent model or query result directly to Inertia. A **JsonResource**
-sits between the query and the view — it controls exactly which fields are exposed and their shape.
+Two related but distinct concerns govern model data sent to an Inertia page:
+
+- **Invariant — no unauthorized exposure.** Every Inertia prop is serialized into the page response,
+  whether or not the page renders it. A prop must never carry data the current user is not allowed to
+  see.
+- **Convention — an explicit response projection.** This stack meets that invariant by projecting model
+  data explicitly rather than serializing a model or query result as-is. A **JsonResource** is the
+  default projection: it states which fields the page receives and their shape.
+
+A serialized model is not unsafe by itself — it honors `$hidden`, `$visible`, and `$appends`, and includes
+only loaded relations. But its output follows the model's current state rather than the page's needs, so
+a new column or a newly loaded relation reaches the page without anyone deciding it should. The
+projection makes that decision explicit at the boundary.
+
+Shared props that a starter kit already defines (such as the authenticated user) keep the kit's shape
+unless a task changes them; the exposure invariant still applies to them.
 
 ## Responsibility split
 
@@ -37,7 +51,7 @@ final class OrderResource extends JsonResource
 
 ## Key rules
 
-- Always `final class` (see `php-conventions.md`).
+- Declare the resource `final` (see `php-conventions.md`).
 - Add `/** @mixin ModelClass */` PHPDoc on the class — enables model-property autocomplete and removes
   the need for a `@return` annotation on `toArray()`.
 - Do not add a `@return` docblock to `toArray()` — the native return type declaration is sufficient.
@@ -63,10 +77,10 @@ public function show(Order $order): Response
 }
 ```
 
-Never pass a raw Eloquent result:
+Do not pass the model or query result itself:
 
 ```php
-// ❌ exposes every model attribute, no shape control
+// ❌ the page receives whatever the model serializes — its fields follow the model, not the page
 return Inertia::render('Orders/Index', [
     'orders' => Order::query()->paginate(),
 ]);
@@ -92,7 +106,7 @@ and the label:
 ```
 
 A small dedicated option resource is an equally valid projection; follow whichever form the project
-already uses. Either satisfies "never pass a raw Eloquent result" above — what matters is that the option
+already uses. Either is an explicit projection — what matters is that the option
 shape is chosen for its consumer rather than inherited from the detail page. A resource that is already
 exactly the option shape can be reused as-is.
 
