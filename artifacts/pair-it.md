@@ -41,6 +41,13 @@ from the agent's initial optimization criteria; the interaction contract should
 surface those priorities without transferring scope or architecture approval to
 `pair-it`. The revised guidance is approved, but its effect without external
 prompt coaching remains unvalidated.
+Checkpoint reviewability is independent of commit boundaries. The contract calls for
+checkpoint-specific comparisons without requiring a particular version-control mechanism.
+Walkthroughs distinguish executable paths from future integration and point to a current
+entry point where available. Reported use in one project supports the feasibility of
+non-destructive baseline comparisons, including untracked files; the revised runtime
+instructions have not been independently exercised.
+
 Full lifecycle behavior, automatic activation and portability remain unvalidated.
 Keep further growth proportional to observed evidence. The runtime contract lives in
 [`SKILL.md`](../skills/pair-it/SKILL.md).

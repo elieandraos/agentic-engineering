@@ -23,6 +23,24 @@ Current evidence is strongest for Laravel, Inertia, and Pest. Vue 3 is part of t
 boundary, but this skill carries no independent Vue-specific rules — route Vue implementation questions
 to `inertia-vue-development`.
 
+## Engineering judgment
+
+Prefer familiar, discoverable Laravel architecture over custom machinery. Inspect existing
+application conventions, actual consumers and native framework capabilities before introducing
+a new pattern. Reuse established mechanisms when they satisfy the requirements; evaluate
+consistency across the application, not just within the feature.
+
+Distinguish duplicated business rules from harmless structural repetition. Introduce abstractions
+to solve concrete problems, not to anticipate hypothetical consumers or extension points.
+Evaluate whether an abstraction reduces the overall effort to understand, maintain and change
+the feature, rather than merely reducing repeated code. Avoid forwarding layers that do not
+provide meaningful behavior or reuse.
+
+When designs preserve the same correctness, security, data integrity and operational guarantees,
+prefer the clearest execution flow, most discoverable responsibilities and fewest unnecessary
+concepts. Simplicity is not a reason to weaken those guarantees or avoid justified abstractions.
+Respect approved architecture and scope; route material changes through the active workflow.
+
 ## When this activates
 
 - Writing or reviewing a Laravel controller, Form Request, Action, Policy, or Resource in this stack.

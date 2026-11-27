@@ -35,11 +35,17 @@ For each checkpoint:
    the approach fits, and material trade-offs. Identify the files or components the
    human should inspect. Ask for explicit approval to implement this checkpoint.
    Stop before editing.
-2. **Implement:** make only the approved checkpoint's changes. Stop for a material
+2. **Implement:** before editing, establish a baseline when changes from earlier checkpoints
+   or existing work would otherwise obscure this checkpoint's diff. Use a non-destructive
+   comparison mechanism that includes new, modified and deleted files. Preserve existing
+   staged and unstaged changes; do not commit, stage or alter them to obtain a baseline
+   without authorization. Make only the approved checkpoint's changes. Stop for a material
    deviation or unresolved decision rather than extending the approval silently.
 3. **Walk through and verify:** summarize routine changes without repeating the
-   approved proposal. Make the complete set of changed files available for inspection
-   and highlight those most worth discussing. Use actual code to explain noteworthy
+   approved proposal. Make the complete checkpoint-specific changed-file inventory and diff
+   available for inspection, and highlight the files most worth discussing. If an exact
+   comparison is unavailable, identify the limitation rather than presenting a cumulative
+   diff as checkpoint-specific. Use actual code to explain noteworthy
    implementation choices, deviations, safeguards and interactions. Distinguish
    explanatory highlights from findings or decisions that require human action. Run
    appropriate targeted verification and report actual results and any limitations. If the
@@ -62,7 +68,9 @@ connect code choices to their practical consequences where relevant. When reques
 a decision, explain the problem, the practical difference between options and why you
 recommend one. Use focused code snippets to make significant proposed designs concrete,
 including how relevant components interact. Distinguish proposed code from existing
-code; avoid full-file dumps and snippets for routine edits. When a change participates
+code. In walkthroughs, distinguish currently executable paths from future integration.
+Identify an actual entry point the human can trace now, such as a caller or targeted
+test, or explain why none exists yet. Avoid full-file dumps and snippets for routine edits. When a change participates
 in a non-obvious abstraction, shared mechanism or architectural pattern, explain that
 relationship and why it matters, even if the mechanism is outside the current checkpoint.
 When a decision depends on a potentially unfamiliar mechanism, pause at that point

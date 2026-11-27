@@ -266,6 +266,11 @@ stack convention based on design review in one consuming project. Its proposed i
 has not yet been verified in that project; it is conditional on the complete operation being
 independent of ambient context.
 
+Engineering judgment in the runtime entrypoint governs architectural choices across the
+stack rather than adding a separate procedure. It is an approved convention supported by
+reported design iteration and targeted implementation verification in one consuming project;
+generalization to other projects and independent skill-driven behavior remain unvalidated.
+
 The preference for focused models and support classes for context-dependent calculations
 is an approved stack convention informed by design review in one consuming project.
 The revised implementation is not yet verified. It is a placement preference, not a ban
