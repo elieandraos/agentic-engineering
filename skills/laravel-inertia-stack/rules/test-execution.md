@@ -88,6 +88,24 @@ asserts the original. Keep both in one test file, so they run in order in one pr
 separate files can run in different workers during a parallel run, and then prove nothing. Run the
 file on one process and inside a parallel run.
 
+## Changing the database refresh strategy
+
+`testing-best-practices` owns the choice of database refresh trait. Before switching between
+`RefreshDatabase` and `LazilyRefreshDatabase`, find tests that depend on when the per-test transaction
+starts:
+
+- `RefreshDatabase` begins the wrapping transaction during test setup.
+- `LazilyRefreshDatabase` migrates and begins it only when the connection runs its first query or
+  starts its first transaction.
+
+A test that leaves the wrapping transaction on purpose — for example, calling `DB::rollBack()` first so
+that it can exercise outermost-transaction behavior such as deadlock retries — behaves differently under
+the lazy trait when that call comes before the test's first query on the connection. There is no
+transaction to roll back yet, so the call does nothing. The test's next query or transaction then
+triggers the refresh, and the test's own transaction runs nested inside the wrapping one. The test can
+still pass while no longer exercising the behavior it targets. After switching, confirm that each such
+test still fails when the behavior under test is broken.
+
 ## Verify what a run executed
 
 - Compare the run's test count with the suite's collected count. A matching count alone does not prove

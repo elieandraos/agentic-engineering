@@ -2,15 +2,16 @@
 
 ## Boundary
 
-This file defines the target `tests/Unit`/`tests/Feature` execution-boundary taxonomy for this stack.
-`testing-best-practices` owns the general layer-ownership/de-duplication principle, record-level
-test-data minimalism, and the general framework-vs-project testing distinction — this file does not
-restate any of them. `rules/test-ownership.md` is the single source of truth for the concrete
-Action/Policy/Filter/Sorter/Resource/Model/HTTP class-taxonomy mapping, per-layer assertion focus,
-existence-versus-exact-value assertions, and the no-redundancy rule — load it alongside this file when
-writing a layer-specific test.
+This file owns this stack's test layout: the `tests/Unit`/`tests/Feature` execution boundary, HTTP test
+file organization, and the testing patterns below. `testing-best-practices` owns the general testing
+principles it builds on. `rules/test-ownership.md` owns the concrete per-class location and ownership
+mapping — load it alongside this file when writing a layer-specific test.
 
-## Unit vs. Feature — classify by execution boundary first
+## Unit vs. Feature — classify by execution boundary
+
+This specializes Boost's "unit test only for logic that does not use the framework" into a layout, and
+overrides Boost's mirror-the-class-path file placement: a framework-dependent class's test lives under
+`tests/Feature`, even when its class is not an HTTP concern.
 
 - **`tests/Unit`** — genuinely isolated only: no Laravel application boot, no database or factories, no
   service container, no Laravel facades. A plain enum, a plain value object, or any class with no
@@ -19,24 +20,13 @@ writing a layer-specific test.
   Filter, Sorter, Resource, and Model tests in this stack, since they typically use factories, the
   database, or Laravel's container — not only HTTP tests. Mirror the owning application area inside
   `Feature` only where useful (`Http`, `Actions`, `Policies`, `Filters`, `Sorts`, `Resources`, `Models`)
-  — never force a category a feature has nothing to put in.
-
-Before relying on this distinction, confirm what the project's `tests/Pest.php` actually binds database
-refresh to. A suite that applies it uniformly to both `Feature` and `Unit` has not drawn this boundary in
-practice yet, regardless of the directory names — treat a directory name as aspirational until the
-binding matches it, and don't assume a class under `tests/Unit` is actually isolated without checking.
+  — do not force a category a feature has nothing to put in.
 
 ## Binding `tests/Pest.php` to the boundary
 
-Confirming the mismatch above is not the end state — the binding has to change to match it. Once every
-framework-dependent test has been moved out of `tests/Unit`, narrow the project's `tests/Pest.php`
-accordingly:
-
-- the project's Laravel `TestCase` binding applies only to `Feature`;
-- its chosen database-refresh trait (`RefreshDatabase` below is illustrative — `LazilyRefreshDatabase` or
-  another project-selected mechanism applies the same way) applies only to `Feature`;
-- genuinely isolated `Unit` tests receive no separate Laravel `TestCase` binding at all, and fall back to
-  Pest/PHPUnit's default test case.
+A directory name does not establish the boundary; the binding in `tests/Pest.php` does. Bind the
+project's Laravel `TestCase` and its database-refresh trait to `Feature` only. Genuinely isolated `Unit`
+tests receive no Laravel `TestCase` binding and fall back to Pest's default test case.
 
 ```php
 pest()->extend(Tests\TestCase::class)
@@ -44,16 +34,18 @@ pest()->extend(Tests\TestCase::class)
     ->in('Feature');
 ```
 
-Binding the Laravel `TestCase` to `Unit` without the database trait does not satisfy the isolated
-boundary either: `Illuminate\Foundation\Testing\TestCase` boots the full application in `setUp()`
-regardless of whether a database-refresh trait is attached, so a `Unit` test bound to it still boots
-Laravel.
+The refresh trait shown is illustrative; the project chooses it (see `rules/test-execution.md` before
+changing it). Binding the Laravel `TestCase` to `Unit` without a refresh trait does not make those tests
+isolated: `Illuminate\Foundation\Testing\TestCase` boots the application in `setUp()` regardless.
 
-Order matters when migrating an existing suite: move every framework-dependent test out of `Unit` first,
-then narrow this binding. Narrowing it before the move is complete strips `TestCase` and the database
-trait from tests still sitting in `Unit` mid-migration, breaking them.
+Check the actual binding before treating a test under `tests/Unit` as isolated. When a suite still binds
+the Laravel `TestCase` to `Unit`, move its framework-dependent tests to `Feature` before narrowing the
+binding; narrowing first breaks the tests that still depend on it.
 
 ## Preserve endpoint-oriented HTTP test files
+
+This overrides Boost's one-file-per-class layout with `describe()` groups: endpoint files keep each
+endpoint's cases easy to find and keep files small.
 
 Keep one Pest file per HTTP endpoint or closely related group (`IndexTest.php`, `ShowTest.php`,
 `StoreTest.php`, `UpdateTest.php`, `DestroyTest.php`, and any custom-action endpoint's own file) inside
@@ -62,6 +54,7 @@ Keep one Pest file per HTTP endpoint or closely related group (`IndexTest.php`, 
 
 ## Warning: don't let a resource-built comparison stand in for the value a test is specifically responsible for proving
 
+This specializes Boost's rule to assert a known value rather than one computed by the implementation.
 The reusable `assertHasResource`/`assertHasPaginatedResource` macros (below) compare the actual Inertia
 prop against a value built by instantiating the same production Resource the endpoint itself uses. That
 comparison is appropriate when what an HTTP test needs to prove is integration — the correct Resource
@@ -122,7 +115,8 @@ implementation template — see
 [`templates/app/Providers/TestingServiceProvider.php`](../templates/app/Providers/TestingServiceProvider.php)
 for the implementation, required packages, and registration/guard instructions. Install and register that
 provider before writing a test that calls any of these macros; do not write a test that assumes they
-exist without checking first.
+exist without checking first. `assertHasInertiaFlash($key, $value)` asserts one key of Inertia's flash
+data, so it works with whatever flash key and shape the project uses.
 
 ```php
 test('an authenticated user can view an order', function () {
@@ -188,10 +182,6 @@ runs under the runner's configuration.
 
 ## Capability gating
 
-Treat Pest TIA (a core Pest 5 feature) and any other optional Pest plugin (architecture testing, type
-coverage, and similar) as capability-gated: check what the consuming project has actually installed and
-configured before assuming any of them is available. Never universally prescribe one. For TIA's
-tradeoffs and how full-suite and CI runs switch it off, see `rules/test-execution.md`.
-
-`LazilyRefreshDatabase` is a measured future candidate for a suite that currently binds `RefreshDatabase`
-uniformly across `Feature` and `Unit` — record it for evaluation, not as a requirement to adopt.
+Pest TIA (a core Pest 5 feature) and optional Pest plugins follow Boost's rule to use only the test tools
+the project installs. For TIA's tradeoffs and how full-suite and CI runs switch it off, see
+`rules/test-execution.md`.

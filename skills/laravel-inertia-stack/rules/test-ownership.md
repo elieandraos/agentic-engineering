@@ -1,13 +1,14 @@
 # Test Ownership
 
-`testing-best-practices` already states the general no-redundancy principle: an owning unit test's
-complete matrix (a Policy's permission matrix, a validation rule's cases) is not repeated by a
-higher-layer test, which keeps only enough to prove the gate is wired up. This file extends that same
-principle to the first-party test subjects Boost has no equivalent for in this stack — Action, Filter,
-and Sorter classes — with the concrete location-and-ownership mapping and the one exception a
-route-bound or pivot endpoint needs. See `blueprints/pest-testing.md` for the general
-`tests/Unit`/`tests/Feature` execution-boundary taxonomy, the self-referential-expected-value warning,
-and Pest capability gating — this file does not restate any of that.
+`testing-best-practices` owns the layer-ownership principle: the class a request calls owns its complete
+matrix, and the endpoint test keeps only what proves the wiring. This file specializes that principle
+into this stack's concrete classes — where each class's test lives and what it owns — and adds the
+wiring exception nested, route-bound, and pivot endpoints need.
+
+The locations below override Boost's mirror-the-class-path layout: this stack places every
+framework-dependent test under `tests/Feature`, grouped by the owning application area, and keeps HTTP
+tests per endpoint (see `blueprints/pest-testing.md`, which owns the `tests/Unit`/`tests/Feature`
+boundary, the self-referential-expected-value warning, and Pest capability gating).
 
 ## Ownership
 
@@ -35,15 +36,13 @@ for their own search fields, boundaries, and overrides. For example, test generi
 handling in the shared query-filter tests and test each concrete filter's specific behavior in its own
 suite. Retain representative integration coverage where a caller's wiring could fail independently.
 
-## Assertion note
+## Exact persisted values
 
-Use `assertModelExists()` for existence (Boost's default). Use `assertDatabaseHas()` when a test
-genuinely needs to prove an exact persisted value — for example after a mutation that derives or
-transforms a field, where existence alone wouldn't prove the derivation was correct — or when it needs to
-prove a specific persisted association required to confirm endpoint wiring (see the wiring exception
-below).
+Use `assertDatabaseHas()` rather than existence alone when a test must prove an exact persisted value —
+for example after a mutation that derives or transforms a field — or a specific persisted association
+needed to prove endpoint wiring (see the wiring exception below).
 
-## No-redundancy rule, extended to Action/Filter/Sorter
+## No redundancy across layers
 
 If an Action test already proves a value was persisted correctly, the HTTP test for the same endpoint
 does not repeat that assertion — it proves the HTTP contract (status, redirect, flash, prop shape)
