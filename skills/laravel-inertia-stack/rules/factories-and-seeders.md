@@ -5,7 +5,7 @@ so seeded or demo data looks plausible rather than merely structurally valid.
 
 ## Derive dependent fields from one source of truth
 
-Never randomize two fields independently when they have a real-world relationship. Pick the field that
+Do not randomize two fields independently when they have a real-world relationship. Pick the field that
 drives the relationship first, then derive the other(s) from it.
 
 ✅
@@ -80,12 +80,13 @@ When a factory sets multiple date fields, don't randomize each independently wit
 later date should be derived from, or bounded by, an earlier date, so a seeded record can never describe
 an impossible timeline.
 
-✅ *(illustrative — bound the later date's range using the earlier one)*
+✅ *(the later date's range is bounded by the earlier date's final value)*
 ```php
-$hiredAt = fake()->dateTimeBetween('-5 years', 'now');
-
-'hired_at' => $hiredAt,
-'probation_ends_at' => fake()->dateTimeBetween($hiredAt, Carbon::parse($hiredAt)->addMonths(3)),
+'hired_at' => fake()->dateTimeBetween('-5 years', 'now'),
+'probation_ends_at' => fn (array $attributes) => fake()->dateTimeBetween(
+    $attributes['hired_at'],
+    Carbon::parse($attributes['hired_at'])->addMonths(3),
+),
 ```
 
 ❌
@@ -93,6 +94,9 @@ $hiredAt = fake()->dateTimeBetween('-5 years', 'now');
 'hired_at' => fake()->dateTimeBetween('-5 years', 'now'),
 'probation_ends_at' => fake()->dateTimeBetween('-3 months'), // independent range, no relation to hired_at
 ```
+
+As in "Derive dependent fields" above, the closure reads the final merged `hired_at`, so an override
+such as `create(['hired_at' => '2020-01-01'])` still produces a consistent timeline.
 
 ## Relationship scoping: custom state vs. built-in `for()`
 
@@ -110,23 +114,9 @@ public function reportingTo(Employee $manager): static
 }
 ```
 
-❌ *(the related model is already in scope — no custom state needed)*
-```php
-public function inDepartment(Department $department): static
-{
-    return $this->state(fn (array $attributes): array => [
-        'department_id' => $department->id,
-    ]);
-}
-```
-
-✅ *(use Eloquent's built-in relationship binding instead)*
-```php
-Employee::factory()->for($department)->create();
-```
-
-`for()` infers the relation (`department()`) from the target model's `belongsTo` return type — no extra
-factory code is needed for the direct-model case. Reserve a custom state for a genuinely derived value.
+When the related model is already in scope, use Eloquent's built-in `for()` binding
+(`Employee::factory()->for($department)->create()`) instead of a custom state. Reserve a custom state for
+a genuinely derived value.
 
 When introducing a new state for a repeated pattern, replace every existing call site across the test
 suite, not only new ones going forward.
