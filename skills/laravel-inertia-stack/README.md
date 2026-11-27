@@ -1,26 +1,24 @@
 # laravel-inertia-stack
 
-Laravel Boost provides the framework best practices. `laravel-inertia-stack` complements them
-with an opinionated approach to engineering Laravel, InertiaJS, Vue 3 and Pest applications.
+An opinionated approach to engineering Laravel, InertiaJS, Vue 3 and Pest applications. It captures
+not only how code should be written, but how architectural choices should be evaluated. The goal is
+not merely consistent code, but consistent engineering judgment.
 
-It captures not only how code should be written, but how architectural choices should be
-evaluated. The goal is not merely consistent code, but consistent engineering judgment.
+## How it relates to Laravel Boost
 
-## When to use it
+Laravel Boost provides the framework best practices, and this skill loads alongside the matching Boost
+skill(s). On top of that baseline, each convention here does one of three things:
 
-- Writing or reviewing a Laravel controller, Form Request, Action, Policy, or Resource on
-  this stack.
-- Adding query filtering or sorting to an Eloquent index query.
-- Writing or organizing a Pest test.
-- Speeding up the test suite or changing how it runs, locally or in CI.
-- Implementing an approved issue that touches this stack.
+- **extends** Boost where it is silent — for example, Action payload shapes, child-resource
+  authorization, Inertia form serialization, and tenancy paths a global scope does not reach;
+- **specializes** a Boost principle into a concrete stack shape — for example, test-layer ownership
+  mapped onto Actions, Filters, Sorters, and Resources;
+- **overrides** a Boost default deliberately — for example, Actions for every mutation, Form Requests
+  for every validated input, `#[Authorize]` attributes, plural resource controllers, and the Pest test
+  layout. Each override states its reason where it is defined.
 
-This is an optional stack companion, not a pipeline stage — and not a replacement for
-Laravel Boost. It loads **alongside** Boost's `laravel-best-practices`,
-`testing-best-practices`, and `inertia-vue-development`, stating this stack's own durable,
-opinionated conventions on top of that baseline. A rule here may restate or refine a Boost
-topic when the stack has a stable position on it — Boost covering a topic is not, by
-itself, a reason to drop the rule; only pointless mechanical duplication is trimmed.
+The consuming project stays authoritative; `SKILL.md` states how its conventions and this skill's
+defaults combine.
 
 ## Boring prompts
 
@@ -32,26 +30,18 @@ itself, a reason to drop the rule; only pointless mechanical duplication is trim
 
 ## What normally happens
 
-A task loads only the specific rule, blueprint, or template it needs — never the whole
-skill at once. Three kinds of content back that up:
+A task loads only the specific rule, blueprint, or template it needs — never the whole skill at once.
+Three kinds of content back that up:
 
-- **`rules/`** — independently applicable conventions (Actions, authorization, request
-  normalization, and more).
+- **`rules/`** — independently applicable conventions (Actions, authorization, request normalization,
+  and more).
 - **`blueprints/`** — conditional shapes for multi-component work (resource controllers,
-  filtering/sorting, Pest test taxonomy) — not mandatory architecture every project must
-  adopt.
-- **`templates/`** — adaptable starting points, never blindly copied: the consuming
-  project is inspected for an existing equivalent, reconciled, and validated before a
-  template is installed.
+  filtering/sorting, Pest test taxonomy) — not mandatory architecture every project must adopt.
+- **`templates/`** — adaptable starting points, never blindly copied: the consuming project is inspected
+  for an existing equivalent, reconciled, and validated before a template is installed.
 
-## Ownership
-
-Laravel Boost is the first-party baseline and reference. `laravel-inertia-stack` states
-the durable, opinionated conventions for this Laravel + Inertia + Vue 3 + Pest stack — it
-may restate or refine a Boost topic when the stack has a stable position on it, trimming
-only mechanical explanation Boost already covers well. The consuming project remains
-authoritative over its own conventions; this skill isn't a generic Laravel manual, a
-complete Vue guide, or documentation for any one project.
+This is a companion, not a pipeline stage: `implement-it` and `review-it` load it when work touches this
+stack.
 
 ## Install
 

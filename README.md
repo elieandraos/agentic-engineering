@@ -1,6 +1,13 @@
-> A portable, evidence-driven methodology for understanding, planning, implementing, reviewing, and shipping software—with stack-specific companions and tools where needed. Not a prompt collection for one repository or framework.
+> A portable, evidence-driven engineering methodology for understanding, planning, implementing, reviewing, and shipping software — with an opinionated approach to Laravel engineering where it applies. Not a prompt collection for one repository or framework.
 
-# The pipeline
+# Engineering philosophy
+
+- **Evidence before conventions.** Skills inspect the real system — code, configuration, tests, and current state — before explaining or changing it. The system establishes what exists; the human decides what it should become.
+- **Humans own decisions and approvals.** Material product and architecture choices are settled with a human, and PR approval and merge always stay with a human. No skill merges its own work.
+- **Knowledge lives where it belongs.** Portable methodology stays independent of language and framework. Stack knowledge belongs to a stack companion. The consuming project remains authoritative for its domain, conventions, and delivery environment.
+- **Proportionate engineering.** A rule earns its place by changing a decision or protecting an invariant, and safeguards stay proportionate to the risks they address.
+
+# The lifecycle
 
 **Lab → Plan → Implement → Review → Ship**
 
@@ -13,27 +20,24 @@
 | [`ship-it`](skills/ship-it/) | Close the milestone, propose the milestone PR, and handle release once merged. |
 
 - **These skills do not assume a language, framework, or project layout.** The consuming project supplies those; each skill supplies the method.
-- **PR approval and merge always stay with a human.** No skill in this pipeline merges its own work.
-- The pipeline is composable, not mandatory end-to-end. Use the skills independently or combine them into the workflow your project needs.
-- **`implement-it` supports authorized parallel implementation of independent, dependency-ready issues in the same milestone.** Each concurrent worker preserves the normal per-issue engineering and approval lifecycle — its own branch, focused verification, `review-it`, human approval, and a semantic commit plan — while regression verification is coordinated once at the wave level: the human makes one combined regression run/skip decision for the whole batch instead of one per issue, then each approved issue's commits converge back onto the shared branch in turn. Implementing one issue on its own is unchanged.
+- **The lifecycle is composable, not mandatory end-to-end.** Use the skills independently or combine them into the workflow your project needs.
 
-# Stack companions
+# Engineering capabilities
 
-Stack companions carry technology-specific implementation knowledge without becoming another pipeline stage.
+Complementary capabilities that work alongside the lifecycle or on their own, without becoming lifecycle stages.
 
-* [`laravel-inertia-stack`](skills/laravel-inertia-stack/) — Laravel, InertiaJS, Vue 3, and Pest. It works alongside relevant Laravel Boost skills.
-* A different stack can get its own companion when real use justifies it.
+* [`pair-it`](skills/pair-it/) — collaborative implementation through human-approved checkpoints, architectural explanations, code walkthroughs, and targeted verification. When combined with `implement-it`, the lifecycle stays with `implement-it`.
+* [`audit-it`](skills/audit-it/) — evidence-backed audits of a system's current behavior: data integrity and query performance, security, background-work reliability, and business-rule consistency. It reports verified findings with recommended corrections; it does not implement fixes.
+* [`document-it`](skills/document-it/) — evidence-backed technical documentation, from architecture and infrastructure to operations, engineering practices, and costs.
+* [`steward-it`](skills/steward-it/) — retrospective investigation of engineering sessions that were unexpectedly slow, difficult, or off course, recommending the smallest justified improvement.
 
-# Tools
+# Opinionated Laravel engineering
 
-Independent capabilities that support the workflow without becoming lifecycle stages.
+[`laravel-inertia-stack`](skills/laravel-inertia-stack/) is our opinionated approach to engineering Laravel, InertiaJS, Vue 3, and Pest applications — conventions, architectural blueprints, testing methodology, and reusable implementation templates, guided by explicit engineering judgment.
 
-* [`pair-it`](skills/pair-it/) — shapes the collaborative implementation experience through human-approved checkpoints, architectural explanations, code walkthroughs and targeted verification. Works standalone or alongside an implementation skill. When combined, `implement-it` remains responsible for the lifecycle; `pair-it` shapes the collaborative experience without duplicating it.
-* [`audit-it`](skills/audit-it/) — independently audits a system's current behavior for database integrity and query performance, security, background-work reliability, and business-rule consistency. It verifies material findings with evidence and reports them with recommended corrections; it does not implement fixes, and it hands unresolved product decisions to `lab-it`.
-* [`document-it`](skills/document-it/) — creates, updates, and reviews evidence-backed technical documentation, from architecture and infrastructure to operations, configuration, engineering practices and costs, in the supported output format(s).
-* [`steward-it`](skills/steward-it/) — retrospectively investigates real engineering sessions when something was unexpectedly slow, difficult, wasteful, repeatedly off course, or exposed a recurring workflow problem. It reconstructs timing, human waits, skill/rule usage, token and cache telemetry, verification, outcomes, and recurrence evidence, then recommends the smallest justified improvement.
+It loads alongside Laravel Boost's skills rather than replacing them. It **extends** Boost where Boost is silent, **specializes** Boost's principles into concrete stack shapes, and **deliberately overrides** selected Boost defaults where this stack holds a different position. An established project convention still takes precedence; the skill supplies the defaults where a project has not decided yet. It is a stack companion, not a lifecycle stage: `implement-it` and `review-it` load it when work touches this stack.
 
-# Installation and Usage
+# Installation and usage
 
 Install the skills you need, and choose which coding agent(s) should use them:
 
@@ -41,7 +45,7 @@ Install the skills you need, and choose which coding agent(s) should use them:
 npx skills add elieandraos/agentic-engineering
 ```
 
-The install target selects which agent reads the installed skills, not a set of subagent definitions this repository supplies. Stack companions are installed only where they apply.
+The install target selects which agent reads the installed skills, not a set of subagent definitions this repository supplies. Install `laravel-inertia-stack` only in projects on that stack.
 
 **Boring prompts. Serious engineering.**
 
@@ -49,34 +53,16 @@ State the goal, not the choreography. Investigation methods, planning checks, re
 
 ```shell
 "Investigate how authentication works and prepare the change plan."  # lab-it
-"Document the billing architecture."                                 # document-it
 "Turn the approved plan into GitHub issues."                         # plan-it
-"Implement issue #42."                                               # implement-it + stack companion when relevant
-"Implement issue #42 and pair-program with me."                       # implement-it + pair-it
+"Implement issue #42."                                               # implement-it + laravel-inertia-stack when relevant
+"Implement issue #42 and pair-program with me."                      # implement-it + pair-it
 "Review this branch before I open a PR."                             # review-it
 "Create the milestone PR."                                           # ship-it
 "Audit the billing module for security and data-integrity risks."    # audit-it
+"Document how authentication and tenant isolation work."             # document-it
 "Steward this session. Tell me where the time, tokens, and workflow friction went."  # steward-it
 ```
 
-The stages compose into a human workflow, but each prompt also works on its own.
-
-## Documenting different technical subjects
-
-`document-it` adapts to the purpose of the documentation, not a fixed architecture template. For example:
-
-| Subject | Example prompt |
-|---|---|
-| Application architecture | "Document how authentication and tenant isolation work." |
-| Infrastructure | "Document our hosting architecture, networking and storage." |
-| Operations | "Write a deployment and disaster recovery handbook." |
-| Engineering practices | "Document our testing strategy and CI/CD workflow." |
-| Configuration | "Create an environment variable reference for staging and production." |
-| Costs | "Document our infrastructure costs, assumptions and scaling options." |
-| Integrations | "Explain how our email delivery integration works." |
-| Product behavior | "Document the order lifecycle and its business rules." |
-| Approved technical design | "Document our approved hosting design before provisioning it." |
-
-These are examples, not separate modes. The skill reuses available evidence, distinguishes approved designs from verified behavior, and adapts the structure and review to the reader's needs.
+The stages compose into a human workflow, but each prompt also works on its own. Each skill's own README describes its workflow in detail.
 
 * [Roadmap](roadmap.md) · [License](LICENSE)

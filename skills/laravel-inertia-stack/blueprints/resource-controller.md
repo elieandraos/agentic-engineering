@@ -2,10 +2,9 @@
 
 ## Boundary
 
-`laravel-best-practices`'s `routing.md` already owns general resource/CRUD controller organization, the
-thin-controller principle, and the Form-Request-vs-inline validation boundary. This file does not restate
-any of that — it owns only the concrete composition of those principles with this stack's specific
-classes.
+`laravel-best-practices`'s `routing.md` owns general resource/CRUD controller organization and the
+thin-controller principle. This file specializes them into the composition of this stack's specific
+classes, and states this stack's controller naming.
 
 ## Core composition
 
@@ -13,22 +12,23 @@ classes.
 
 This is the reference composition for a full CRUD endpoint — not a mandatory sequence every endpoint must
 implement. Include each component only when the endpoint actually needs what it does; see "Non-CRUD and
-single-action controllers" below for real, non-exceptional endpoints that omit some of them. Never
+single-action controllers" below for real, non-exceptional endpoints that omit some of them. Do not
 manufacture a component merely to make an endpoint structurally symmetrical with this reference shape.
 
 - **Controller** — coordinates HTTP/Inertia behavior only: resolve the Form Request, authorize
   (declaratively, before the method body runs), delegate the mutation to an Action, build the Resource
   for a read path, and return the appropriate response. No business logic in the method body.
-- **Form Request** — used when input requires validation or normalization; owns that validation and
-  request normalization (`prepareForValidation()` — see `rules/request-normalization.md`), never business
-  logic.
+- **Form Request** — used whenever input requires validation or normalization, including a small rule
+  set. This overrides Boost's allowance for inline validation, so every endpoint's rules and
+  normalization (`prepareForValidation()` — see `rules/request-normalization.md`) have one home. It
+  holds no business logic.
 - **Policy / `#[Authorize]`** — the authorization boundary where authorization is required, resolved
   before the method body runs (see `rules/authorization.md`).
-- **Action** — used for mutations or business workflows: DB writes wrapped in `DB::transaction()`, audit
-  fields, external side effects deferred with `->afterCommit()` so they never execute until the
-  transaction commits (see `rules/actions.md`).
-- **Resource** — used when model data requires an explicit response contract; owns that contract (see
-  `rules/resources.md`).
+- **Action** — used for mutations or business workflows: writes that must be atomic wrapped in
+  `DB::transaction()`, audit fields, external side effects deferred with `->afterCommit()` so they never
+  execute until the transaction commits (see `rules/actions.md`).
+- **Resource** — the explicit projection of model data the response carries (see `rules/resources.md`).
+  An endpoint that sends no model data needs none.
 - **Response** — Inertia is used for Inertia page responses; a valid endpoint may instead return a
   Resource directly, a binary response, a no-content response, or another appropriate HTTP response — see
   "Non-CRUD and single-action controllers" below for real examples of each.
@@ -61,9 +61,9 @@ final class StoreOrderRequest extends FormRequest
 final class OrdersController extends Controller
 {
     #[Authorize('viewAny', Order::class)]
-    public function index(IndexOrderRequest $request): Response
+    public function index(): Response
     {
-        $orders = Order::query()->paginate();
+        $orders = Order::query()->latest()->latest('id')->paginate();
 
         return Inertia::render('Orders/Index', [
             'orders' => OrderResource::collection($orders),
@@ -75,7 +75,7 @@ final class OrdersController extends Controller
     {
         $order = $action->handle($request->user(), $request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Order created.')]);
+        Inertia::flash('message', __('Order created.'));
 
         return to_route('orders.show', $order);
     }
@@ -93,7 +93,7 @@ final class OrdersController extends Controller
     {
         $order = $action->handle($request->user(), $order, $request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Order updated.')]);
+        Inertia::flash('message', __('Order updated.'));
 
         return to_route('orders.show', $order);
     }
@@ -103,7 +103,7 @@ final class OrdersController extends Controller
     {
         $action->handle($order);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Order deleted.')]);
+        Inertia::flash('message', __('Order deleted.'));
 
         return to_route('orders.index');
     }
@@ -115,17 +115,37 @@ them the same way as `index`/`show`; a feature that doesn't (an API-style or mod
 no route for them. See "Non-CRUD and single-action controllers" below — omitting a resourceful method is
 normal, not a gap to fill.
 
+## Controller naming
+
+This stack names controllers by their route resource, using the plural resource segment. This overrides
+Boost's singular-controller naming default:
+
+| Controller | Name | Example |
+|---|---|---|
+| Resource controller | `{Resources}Controller` | `OrdersController` for `orders` |
+| Nested resource controller | `{Parent}{Resources}Controller` — singular parent, plural child | `OrderNotesController` for `orders/{order}/notes` |
+| Single-action controller for a resource's operation | `{Resources}{Operation}Controller`, or `{Parent}{Resources}{Operation}Controller` when nested | `OrdersArchiveController`, `OrdersPdfExportController` |
+| Singleton resource controller | `{Resource}Controller` — singular, because there is one | `ProfileController` for `settings/profile` |
+
 ## What the controller must make explicit
 
-### Redirects and flash messages
+### Redirects and flash data
 
-Flash a toast, then redirect with `to_route()`:
+After a successful mutation, redirect with `to_route()` rather than rendering a page from the mutating
+request. Give user feedback through Inertia flash data, using the key and value shape the project's
+frontend already reads:
 
 ```php
-Inertia::flash('toast', ['type' => 'success', 'message' => __('Order created.')]);
+Inertia::flash('message', __('Order created.'));
 
 return to_route('orders.show', $order);
 ```
+
+The `message` key above is illustrative. The flash key, its shape, and how the UI presents it (a toast,
+a banner, inline text) are project decisions. When the project has no feedback convention yet, do not
+invent a frontend contract inside a backend change — flash only what an existing consumer reads, or
+agree the contract as part of the feature. The HTTP test owns asserting the flash data (see
+`rules/test-ownership.md`).
 
 ### Route-model binding behavior
 
@@ -158,7 +178,14 @@ it does not reach.
 
 ## Non-CRUD and single-action controllers are first-class
 
-Do not manufacture CRUD symmetry a feature does not have. Four real, non-exceptional shapes:
+Do not manufacture CRUD symmetry a feature does not have.
+
+A business operation on an existing resource — archive, export, resend — gets a single-action
+controller. When the operation genuinely represents an independent resource with its own lifecycle (it
+is created and removed, listed, or carries its own state), model it as that resource's controller
+instead, as Boost's routing guidance describes.
+
+Four real, non-exceptional shapes:
 
 **A single-action `__invoke` controller** for an operation that isn't one of the seven resourceful
 actions:
@@ -171,7 +198,7 @@ final class OrdersArchiveController extends Controller
     {
         $action->handle($request->user(), $order);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Order archived.')]);
+        Inertia::flash('message', __('Order archived.'));
 
         return to_route('orders.index');
     }
@@ -236,7 +263,7 @@ final class LabelsController extends Controller
 }
 ```
 
-Never introduce a generic shared `CrudController` base merely to force structural symmetry, and never add
+Do not introduce a generic shared `CrudController` base merely to force structural symmetry, and do not add
 a `create`/`edit`/`show` method a feature has no route for.
 
 ## Explicitly out of the core

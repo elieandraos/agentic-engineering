@@ -2,16 +2,20 @@
 
 ## Purpose
 
-Business logic and mutations live in an **Action**, not the controller or the Form Request. See
-`blueprints/resource-controller.md` for how an Action fits between the Form Request and the Resource in
-the full controller composition — this file owns only the Action's own shape.
+Business logic and mutations live in an **Action**, not the controller or the Form Request. This
+overrides Boost's extract-when-useful default: in this stack every mutation has one discoverable owner,
+reusable from HTTP, console, queue, and listener entry points. See `blueprints/resource-controller.md`
+for how an Action fits between the Form Request and the Resource in the full controller composition —
+this file owns only the Action's own shape.
 
 ## Naming and location
 
 - Place actions in `app/Actions/{Domain}/` — for example `app/Actions/Orders/`.
-- Name each action `{Verb}{Model}Action` — for example `CreateOrderAction`, `UpdateOrderAction`,
-  `ArchiveOrderAction`.
-- The action's entry method is always named `handle()`.
+- Name each action `{Verb}{Subject}Action`. The subject is usually a model — `CreateOrderAction`,
+  `UpdateOrderAction`, `ArchiveOrderAction` — but a domain without models names what it acts on.
+- Name the entry method `handle()`.
+- A class that implements a package contract keeps the contract's class and method names — for example,
+  Fortify's `ResetsUserPasswords::reset()`. These naming defaults apply to the project's own actions.
 
 ## Action structure
 
@@ -23,15 +27,19 @@ final class CreateOrderAction
      */
     public function handle(User $user, array $attributes): Order
     {
-        return DB::transaction(function () use ($user, $attributes): Order {
-            return Order::query()->create([
-                ...$attributes,
-                'created_by' => $user->id,
-            ]);
-        });
+        return Order::query()->create([
+            ...$attributes,
+            'created_by' => $user->id,
+        ]);
     }
 }
 ```
+
+Wrap the work in `DB::transaction()` when the unit of work must be atomic — several writes that must
+succeed or fail together, or a locked read (`lockForUpdate()`) followed by the write it protects. A
+single write with no dependent writes does not need one. Side effects follow "Keep external
+side-effect execution out of the transaction" below either way, because a caller may already have
+opened a transaction.
 
 `customer_id` is typed `int` here only because the corresponding Form Request's `prepareForValidation()`
 normalizes it explicitly (see "Data payload convention" below and `request-normalization.md`) — the
@@ -93,29 +101,6 @@ checked it:
   `boolean`, or `numeric` rule.
 - Use a narrow scalar or enum type (`int`, `bool`, `OrderStatus`) in the shape only when a normalization
   step genuinely produces it. Don't infer that type from the rule name alone.
-
-## Reusing an Action from another Action
-
-Inject it via the constructor — Laravel resolves the dependency automatically:
-
-```php
-final class CreateOrderAction
-{
-    public function __construct(private readonly AssignDefaultPricingAction $assignPricing) {}
-
-    public function handle(User $user, array $attributes): Order
-    {
-        $order = DB::transaction(fn (): Order => Order::query()->create([
-            ...$attributes,
-            'created_by' => $user->id,
-        ]));
-
-        $this->assignPricing->handle($order);
-
-        return $order;
-    }
-}
-```
 
 ## Keep external side-effect execution out of the transaction; defer it with `afterCommit()`
 

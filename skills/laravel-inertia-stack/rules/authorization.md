@@ -1,13 +1,11 @@
 # Authorization Pattern
 
-Requires a Laravel version that ships `Illuminate\Routing\Attributes\Controllers\Authorize` — confirm
-this class exists in the project's installed `laravel/framework` version before relying on this pattern,
-the same way `eloquent-attributes.md` asks for `Illuminate\Database\Eloquent\Attributes\Scope`.
-
 ## Use `#[Authorize]` attributes
 
-Authorize a controller method with the `#[Authorize]` PHP attribute — never call `$this->authorize()`
-inline.
+Authorize a controller method with the `#[Authorize]` PHP attribute rather than an inline
+`$this->authorize()` or `Gate::authorize()` call. This overrides Boost's inline and Form Request
+`authorize()` examples: in this stack, a controller's authorization is declared on the method, where it
+is visible next to the route action and runs before the method body.
 
 ```php
 use Illuminate\Routing\Attributes\Controllers\Authorize;
@@ -19,34 +17,19 @@ public function index(Request $request): Response { ... }
 public function store(StoreProjectRequest $request, CreateProjectAction $action): RedirectResponse { ... }
 ```
 
-The attribute registers authorization as route middleware, so it runs before the method body executes —
-no imperative call is needed inside the method.
+The attribute registers Laravel's `Authorize` middleware for the route, so authorization runs before the
+method body executes. Its first argument is the ability (a policy method name or a `UnitEnum`); its second
+is a model class string, a route parameter name, or an array of them, or `null` for a gate-only check. The
+attribute is repeatable. For its remaining options, check the installed framework's attribute class.
 
-## Attribute signature
+## `AuthorizesRequests` on the base `Controller`
 
-```php
-#[Authorize(ability: string|UnitEnum, models: string|array|null = null)]
-```
-
-- `ability` — the policy method name (for example `'viewAny'`, `'create'`) or a `UnitEnum` value.
-- `models` — the model class string for a resource-level check, or `null` for a gate-only check.
-- The attribute is repeatable — stack more than one on the same method when a route needs more than one
-  check.
-
-## Never add `AuthorizesRequests` to the base `Controller`
-
-That trait exists to support the imperative `$this->authorize()` call. The attribute-based approach does
-not need it.
+When controllers authorize through the attribute, the base `Controller` does not need the
+`AuthorizesRequests` trait — that trait exists to support the imperative `$this->authorize()` call.
+Do not add it only for this pattern.
 
 ```php
-// correct
 abstract class Controller {}
-
-// wrong — do not add this trait when using #[Authorize]
-abstract class Controller
-{
-    use AuthorizesRequests; // ❌
-}
 ```
 
 ## Authorizing `create`/`viewAny` on a child resource
@@ -62,7 +45,7 @@ public function update(UpdateTaskRequest $request, Task $task, UpdateTaskAction 
 
 `create`/`viewAny` have **no instance to infer a policy from** — nothing exists yet. Passing only the
 parent's route parameter (`'project'`) would authorize against the *parent's* policy, not the child's.
-Name the child's policy class explicitly and pass the parent as the second argument:
+Name the child's policy class explicitly and pass the parent as the second element:
 
 ```php
 #[Authorize('create', [Task::class, 'project'])]
@@ -79,8 +62,8 @@ final class TaskPolicy
 }
 ```
 
-Why the array form is required: the `Authorize` attribute treats a string containing `\` as a literal
-class name — used to resolve the policy, then stripped before the ability method is called — and
+Why the array form is required: the authorization middleware treats a string containing `\` as a
+literal class name — used to resolve the policy, then stripped before the ability method is called — and
 resolves any other string as a route parameter. `[Task::class, 'project']` resolves to
 `["App\Models\Task", $projectInstance]`: the class-name string selects `TaskPolicy`, and the resolved
 `$project` model is what actually reaches `create()`. `#[Authorize('create', Task::class)]` alone would
@@ -89,6 +72,5 @@ that never inspects which parent is involved.
 
 ## Testing
 
-See `test-ownership.md` for what a Policy test asserts and where it lives. A controller test confirms
-the gate is wired up with a single `assertForbidden()` — it does not duplicate the Policy test's full
-permission matrix.
+See `test-ownership.md`: the Policy test owns the permission matrix, and the HTTP test proves the gate is
+wired up.

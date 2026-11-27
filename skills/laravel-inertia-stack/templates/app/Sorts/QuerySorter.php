@@ -30,10 +30,11 @@ abstract class QuerySorter
 
         $sorted = $this->resolve();
 
-        // Break ties on the primary key so pagination and tests get a stable,
-        // repeatable order regardless of the database's query plan for the
-        // primary sort column.
-        return $sorted->orderBy($sorted->getModel()->getKeyName());
+        // Break ties on the qualified primary key so pagination and tests get a
+        // stable, repeatable order regardless of the database's query plan for
+        // the primary sort column. Qualifying it keeps the column unambiguous
+        // when a sort method joins another table.
+        return $sorted->orderBy($sorted->getModel()->getQualifiedKeyName());
     }
 
     private function resolve(): Builder

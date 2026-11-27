@@ -2,8 +2,7 @@
 
 When a Laravel endpoint renders a new Inertia page component, create the corresponding Vue page
 component within the same implementation boundary. A backend-only change is not complete when its
-Inertia response names a page that does not yet exist: in this stack, a missing component fails the
-request through the Vite manifest instead of producing a normal page response.
+Inertia response names a page that does not yet exist.
 
 ## Rule
 
@@ -37,6 +36,15 @@ defineProps<{ orders: unknown }>();
 
 ## Why
 
-The backend-to-Inertia boundary depends on the named Vue component being resolvable — treat its
-existence as part of the endpoint's minimum working boundary, even when the real UI lands later. This
-rule does not prescribe page design or frontend component architecture.
+The backend-to-Inertia boundary depends on the named Vue component being resolvable. A missing
+component fails in more than one place:
+
+- A root layout that lists the page in `@vite` (as Laravel's Inertia starter kits do) cannot find it in
+  the Vite manifest, so the request errors instead of rendering.
+- The client cannot resolve the page, even when the server response succeeds.
+- In tests, `assertInertia()`'s component assertion fails when inertia-laravel's
+  `testing.ensure_pages_exist` option is on (its default). Tests that call `withoutVite()` do not reach the
+  manifest failure, so this assertion is what catches the gap there.
+
+Treat the component's existence as part of the endpoint's minimum working boundary, even when the real
+UI lands later. This rule does not prescribe page design or frontend component architecture.
