@@ -14,10 +14,10 @@ document explains the architecture behind both rather than restating either.
 
 `lab-it` investigates a real system and turns that investigation into exactly
 one of two results — or, just as legitimately, into no artifact at all when understanding is the
-whole point. It is not for explaining a single function, debugging, reviewing a diff, or writing
-API reference documentation; those questions don't need an architecture investigation, and this
-skill doesn't try to answer them. It is also not for creating, updating, or reviewing an
-architecture guide — that capability, and its own architecture, belong entirely to
+whole point. It is not for explaining a single function, debugging, or reviewing a diff; those
+questions don't need an architecture investigation, and this skill doesn't try to answer them. It
+is also not for creating, updating, or reviewing technical documentation, including API and
+integration references — that capability, and its own architecture, belong entirely to
 [`document-it`](../skills/document-it/), a separate, independently callable skill (§7).
 
 The two results are genuinely different artifacts, not two names for the same deliverable, and
@@ -168,11 +168,11 @@ its workflow actually needs it:
 |---|---|
 | [`rules/plan-synthesis.md`](../skills/lab-it/rules/plan-synthesis.md) | The full Plan Synthesis contract: the materiality test consulted throughout the decision conversation as well as at drafting time, preconditions, the four-category claim model, evidence rules, the internal review, and the approval/handoff gate |
 
-Guide-writing, guide-scaffold, guide-review, and guide-maintenance rules — formerly this skill's
-own — now live entirely under `document-it` and are not duplicated here; §7 states the boundary.
+Documentation writing, maintenance, and review rules — formerly this skill's own — now live
+entirely under `document-it` and are not duplicated here; §7 states the boundary.
 
 Outside this skill, two things ever cross to another skill as a governed artifact handoff: an
-approved `plan.md`, handed to `plan-it`, and a guide-shaped request, routed to `document-it` (§7). A
+approved `plan.md`, handed to `plan-it`, and a documentation request, routed to `document-it` (§7). A
 verified answer — from a standalone investigation, or from "Plan feature architecture" finding no
 material decision, or resolving one without a `plan.md` being requested — may recommend the user
 proceed to `plan-it` directly. That recommendation itself grants no approval and does not erase a
@@ -191,35 +191,35 @@ mutates GitHub and never performs Git workflow.
 ## 7. Boundary with `document-it`
 
 `document-it` is a separate, independently callable skill, not a narrowed remnant of this one — it
-owns guide creation, guide maintenance, and guide review in both Markdown and Artifact form, along
-with the rendering, identity, and review architecture those require. This skill does not own, and
+owns creating, maintaining, and reviewing technical documentation in Markdown, along with the
+maintenance and review architecture those require. This skill does not own, and
 this dossier does not describe, any of that architecture — see
 [`document-it`'s own dossier](document-it.md).
 
 **The relationship runs in both directions, not one.** This skill's own routing table
-(`SKILL.md`'s "What this skill does") recognizes a guide-shaped request — document, update, or
-review an architecture guide — as outside its own scope and routes it to `document-it`: that is a
+(`SKILL.md`'s "What this skill does") recognizes a documentation request — create, update, or
+review technical documentation — as outside its own scope and routes it to `document-it`: that is a
 real handoff this skill performs, not merely `document-it` reaching backward into this one. In the
 other direction, `document-it` draws on this skill's evidence discipline (§2) only for its own
 narrower missing-or-stale-evidence sub-problem, reusing sufficient verified evidence rather than
 repeating a full investigation from scratch; an investigation entered this way ends by handing back
-verified findings to `document-it`, never by this skill drafting or publishing a guide itself.
-Neither direction produces the other skill's terminal output: this skill never publishes a guide,
+verified findings to `document-it`, never by this skill drafting documentation itself.
+Neither direction produces the other skill's terminal output: this skill never writes documentation,
 and `document-it` never reaches an architecture decision with the user or synthesizes a `plan.md`
 on its own. File extension does not decide ownership either way: an approved `plan.md` stays this
-skill's even though it's a `.md` file, and a Markdown architecture guide is `document-it`'s even
-though it isn't an Artifact.
+skill's even though it's a `.md` file, while other technical documentation in Markdown is
+`document-it`'s.
 
 ## 8. Boundaries, non-goals, and current confidence
 
 This skill owns architecture investigation, architectural explanation, surfacing and resolving
 material decisions with the user, and synthesis of approved architecture into `plan.md`. It does
-not own application implementation, debugging or diff review, API reference documentation, guide
+not own application implementation, debugging or diff review, documentation
 creation/maintenance/review (§7), feature classification, issue decomposition, GitHub issue
 mutation, delivery sequencing, or Git workflow — those stay with `document-it`, `plan-it`, and the
 consuming project.
 
-This skill's two external handoffs — an approved `plan.md` to `plan-it`, and a guide-shaped request
+This skill's two external handoffs — an approved `plan.md` to `plan-it`, and a documentation request
 routed to `document-it` (§7) — do not make this skill tracker- or stack-specific.
 
 **Architectural coherence.** Two workflows produce two genuinely distinct outputs — a verified

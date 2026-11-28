@@ -1,150 +1,140 @@
-# Maintaining a technical guide
+# Maintaining technical documentation
 
-This file governs the "Update an existing guide" workflow — triggered from `SKILL.md`, with its
-locating, situation-handling, and identity-preservation mechanics in `rules/authoring.md` — for how
-to reconcile a published technical guide — Markdown, Artifact, or both — with verified current
-reality without breaking the identity and technical meaning it already carries. `rules/review.md`
-judges whether a finished guide serves its purpose; this file governs what you're allowed
-to touch when a guide already does, so a maintenance pass doesn't quietly undo that.
+This file owns the "Update an existing document" workflow triggered from `SKILL.md`: locating the
+target, reconciling it with verified current reality, and finishing with a review pass. It
+preserves the identity and technical meaning a document already carries. `rules/doc-style.md` owns
+the writing guidance; `rules/review.md` owns the evaluation.
 
 Maintenance fails in two opposite directions: leaving stale documentation in place for the sake of
-continuity, and rewriting or restructuring the guide beyond what the verified change actually
+continuity, and rewriting or restructuring the document beyond what the verified change actually
 requires. Both are defects this file exists to prevent.
+
+## Locate the target
+
+Locate and inspect the actual document before updating it. Discover it from what's supplied: a
+stated file path, an existing cross-reference from another document or from project
+documentation, or a repository search by subject. Ask the user when identification remains
+ambiguous — don't guess, and don't assume the document's content from memory.
+
+- **Genuinely missing** — no document exists for the subject. This is a new-document request;
+  follow `rules/authoring.md`.
+- **Unreachable** — the document is known but can't currently be read or written (for example, a
+  path outside the accessible workspace, or no write access). Explain the limitation concretely
+  and ask the user how to proceed. Never report a document as updated when it wasn't.
 
 ## The maintenance unit: technical claims
 
-Treat every statement the guide makes as an **technical claim** — a center of gravity, a
-responsibility or ownership, a boundary, an invariant or guarantee, a lifecycle or state, an
-integration or extension seam, a decision and its trade-off, a limitation or deferred item, or a
-concrete evidence reference. A claim, not the section, table, or paragraph carrying it, is the unit
-of maintenance — the same claim routinely repeats across several of those.
+Treat every statement the document makes as a **technical claim** — for example a center of
+gravity, a responsibility or ownership, a boundary, an invariant or guarantee, a lifecycle or
+state, an integration or extension seam, a procedure step, a configuration value, a cost
+assumption, a business rule or exception, a decision and its trade-off, a limitation or deferred
+item, or a concrete evidence reference. A claim, not the section, table, or paragraph carrying it,
+is the unit of maintenance — the same claim routinely repeats across several of those.
 
 ## Reconcile before editing
 
-Locate the existing guide rather than assuming its content. Compare its claims against current evidence, approved decisions, configuration, runtime evidence, relevant tests and cost assumptions — the same evidence
-discipline `SKILL.md` requires before any documentation output: reuse what's already sufficient
-and current, and route missing or stale evidence through `lab-it` rather than repeating its
-investigation method here.
+Compare the document's claims against current evidence, approved decisions, configuration, runtime
+evidence, relevant tests and cost assumptions. Reuse evidence that is already sufficient and
+current, per `SKILL.md`.
 
 Classify what you find:
 
-1. **No documentation event** — neither a claim nor its evidence reference changed. Leave the guide
-   alone; not every commit is a documentation event.
-2. **A narrow update** — one fact or evidence reference is now wrong, with no material design or operational shift
-   behind it. Correct it in place.
+1. **No documentation event** — neither a claim nor its evidence reference changed. Leave the
+   document alone; not every commit is a documentation event.
+2. **A narrow update** — one fact or evidence reference is now wrong, with no material design or
+   operational shift behind it. Correct it in place.
 3. **A connected technical change** — several claims or structural elements depend on each
    other and must move together (see "Follow the claim graph," below).
 4. **Unresolved authority, intent, or a material decision** — stop. Return it to the user rather
-   than deciding it during maintenance. Maintenance updates a guide to match an already-resolved
-   reality; it does not resolve product or architecture questions itself. A decision that requires
-   fresh investigation or an architecture decision with the user routes through `lab-it`.
+   than deciding it during maintenance. Maintenance updates a document to match an
+   already-resolved reality; it does not resolve product or architecture questions itself. A
+   decision that requires fresh investigation or an architecture decision with the user routes
+   through `lab-it`.
 
-## Preserve continuity without freezing the guide
+## Preserve continuity without freezing the document
 
 Preserve every unaffected claim, explanation, section, and presentation choice. Don't rewrite
 nearby prose merely because the file is already open, and don't restructure for taste, tidiness, or
-conformity with another guide's shape.
+conformity with another document's shape.
 
-Continuity is not the same as freezing the guide's center of gravity, ownership, boundaries, or
-reasoning in place. If verified reality actually changed one of those, the guide must change
+Continuity is not the same as freezing the document's center of gravity, ownership, boundaries, or
+reasoning in place. If verified reality actually changed one of those, the document must change
 with it: a strengthened guarantee updates exactly where it already lives, but a moved
 responsibility, a new center of gravity, or a shifted boundary requires restructuring that section,
-a connected set of sections, or — rarely — the whole guide, in proportion to what actually changed.
-A prior documentation defect — a claim that was always misplaced or wrong, independent of any new
-implementation change — can also justify moving or restructuring content.
+a connected set of sections, or — rarely — the whole document, in proportion to what actually
+changed. A prior documentation defect — a claim that was always misplaced or wrong, independent of
+any new implementation change — can also justify moving or restructuring content.
 
-**Preserve the guide's identity by default.** A maintenance pass evolves the existing guide; it
-does not mint a new one:
-
-- **Markdown** — the same file path. Preserve unaffected front matter and title, and any other
-  metadata not implicated by the update, while allowing the changes the requested update actually
-  requires. Markdown metadata is not treated as universally immutable the way an Artifact's `url`
-  and favicon are — preserve what the update doesn't touch, and change only what it must.
-- **Artifact** — the same `url` and the same favicon, with equal weight: neither changes as a side
-  effect of an ordinary content update.
+**Preserve the document's identity by default.** Keep the same file path, including a path outside
+`docs/` — `docs/` is only the default location for a new document. Relocate only when the user
+explicitly authorizes it. Preserve front matter, the title, and other metadata the update doesn't
+touch, while allowing the changes the update actually requires.
 
 ## Follow the claim graph, not the triggering issue
 
 An issue, PR, or request names the trigger, not the documentation scope. Once a changed claim is
-identified, find every place that depends on or repeats it, wherever the guide actually has them:
-hero or introductory framing, navigation or section labels, prose, diagrams, tables, counts or
-spec-strip facts, source references, decisions and trade-offs, limitations or deferred work, and
-closing material. None of these is mandatory in every guide — update whichever the guide actually
-uses to state the claim, forming the smallest complete connected set, not just the section the
-issue happened to name. When both formats are maintained, the claim graph spans both by default —
-a claim changed in one carries the same obligation in the other, per `SKILL.md`'s "Maintaining
-both formats." When the user explicitly limits this update to one format, update only that
-format's claim graph, and record the resulting divergence in the other rather than leaving it
-unstated.
+identified, find every place that depends on or repeats it, wherever the document actually has
+them: the opening summary or summary facts, headings, prose, diagrams, tables, counts, source
+references, decisions and trade-offs, limitations or deferred work, and closing material. None of
+these is mandatory in every document — update whichever the document actually uses to state the
+claim, forming the smallest complete connected set, not just the section the issue happened to
+name.
 
 For connected documentation, follow the affected claim graph across authoritative references,
-primary summaries and dependent guides. Update the owning document first and reconcile only
-materially affected summaries, links and claims. Do not duplicate detail or silently relocate
-files; report any scope-limited divergence.
+primary summaries and dependent documents. Update the owning document first, then reconcile only
+the materially affected summaries, links and claims. Do not duplicate detail or silently relocate
+files. When the user limits an update to some of the connected documents, report which documents
+still carry the superseded claim rather than presenting them as current.
 
 ## Implementation-only changes
 
-Not every implementation change requires a guide edit — but treat the guide as unaffected only when
-both hold:
+Not every implementation change requires a document edit — but treat the document as unaffected
+only when both hold:
 
-- the technical understanding or procedure the guide communicates remains accurate;
+- the technical understanding or procedure the document communicates remains accurate;
 - every concrete evidence reference, path, symbol, configuration key, count, or other durable fact
-  the guide prints remains valid.
+  the document prints remains valid.
 
 A refactor with no architectural effect can still invalidate a printed reference. When it does, the
-guide needs an edit even though the underlying design itself didn't move.
+document needs an edit even though the underlying design itself didn't move.
 
 ## Keep deferred work current
 
-Wherever the guide records limitations or deferred work, it must describe current reality:
+Wherever the document records limitations or deferred work, it must describe current reality:
 
 - remove an item once it's completed — don't strike it through or leave it as a note;
 - update whatever claim the completed work actually changed, using the rules above;
 - don't retain completed work as release notes.
 
 No section is required for this, and none should be added to hold a single completed-item note. A
-guide with no materially useful limitations doesn't need one.
+document with no materially useful limitations doesn't need one.
 
 ## Current technical reality, not changelog
 
-Describe the system as it works now, or the approved design explicitly as such — write it the way you'd write it if documenting the
-system for the first time today. Don't narrate commits, pull requests, or before/after
-implementation history.
+Describe the system as it works now, or the approved design explicitly as such — write it the way
+you'd write it if documenting the system for the first time today. Don't narrate commits, pull
+requests, or before/after implementation history.
 
 This doesn't erase rationale. When a past decision or a rejected alternative materially explains
-why the current architecture is shaped the way it is, preserve that reasoning as durable
-technical content, not chronology. Omit only the parts that serve solely as release history.
-
-## Redeployment, resaving, and review
-
-Before editing: locate the existing guide. For an **Artifact**, note its current `url` and
-discover its current favicon — read the published Artifact, or ask the user if you can't tell —
-per `rules/doc-style.md`. For **Markdown**, confirm its current file path and note the front
-matter or title metadata the update must preserve. Don't silently mint a replacement in either
-format.
-
-After editing: for an **Artifact**, redeploy through the `Artifact` tool with the same `url` and
-the same favicon. For **Markdown**, save to the same file path, preserving unaffected metadata.
-Then run `rules/review.md` against the whole updated guide — every maintained format, not only the
-one edited first, confirming that a format deliberately left unupdated by the user's request has
-its resulting divergence accurately reported rather than left unstated or presented as current —
-not only the sections you touched, paying particular attention to the claims you changed and
-whatever depends on them. Confirm the changes don't contradict untouched material elsewhere in the
-guide.
+why the current design is shaped the way it is, preserve that reasoning as durable technical
+content, not chronology. Omit only the parts that serve solely as release history.
 
 ## Sequence
 
-1. Locate the existing guide and gather current evidence — reuse what's sufficient and current;
-   route through `lab-it` when it's missing or stale.
+1. Locate the target and gather current evidence — reuse what's sufficient and current; route
+   through `lab-it` when it's missing or stale.
 2. State the changed claim or evidence reference in one sentence.
 3. Classify it (see "Reconcile before editing") and determine the complete connected scope.
 4. Stop for unresolved authority or a material decision — route it to the user, or to `lab-it` when
    it requires fresh investigation or an architecture decision.
-5. Update only the affected claim graph — in every maintained format by default, or only the
-   format the user explicitly authorized, recording the resulting divergence in the other.
-6. Preserve unaffected narrative and the guide's identity.
-7. Remove stale deferred-work claims and update whatever they affected.
-8. Reread the edit as current technical documentation, not release notes.
-9. Redeploy or resave the guide, preserving its identity — same `url` and favicon for Artifact;
-   same file path, with unaffected metadata preserved, for Markdown.
-10. Run `rules/review.md` against the whole updated guide.
+5. Update only the affected claim graph, preserving unaffected narrative and the document's
+   identity.
+6. Remove stale deferred-work claims and update whatever they affected.
+7. Reread the edit as current technical documentation, not release notes.
+8. Save the document at its existing path.
+9. Run `rules/review.md` against the whole updated document, with emphasis on the changed claims
+   and whatever depends on them, and confirm the changes don't contradict untouched material. Correct
+   the material findings it reports and verify the corrections. Stop and return to the user when a
+   correction requires an unresolved decision.
+10. Report which documents changed, any material findings you corrected, and any remaining
+    divergence or open finding with its reason.

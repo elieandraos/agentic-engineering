@@ -28,7 +28,7 @@ Complementary capabilities that work alongside the lifecycle or on their own, wi
 
 * [`pair-it`](skills/pair-it/) — collaborative implementation through human-approved checkpoints, architectural explanations, code walkthroughs, and targeted verification. When combined with `implement-it`, the lifecycle stays with `implement-it`.
 * [`audit-it`](skills/audit-it/) — evidence-backed audits of a system's current behavior: data integrity and query performance, security, background-work reliability, and business-rule consistency. It reports verified findings with recommended corrections; it does not implement fixes.
-* [`document-it`](skills/document-it/) — evidence-backed technical documentation, from architecture and infrastructure to operations, engineering practices, and costs.
+* [`document-it`](skills/document-it/) — creates, maintains, and reviews evidence-backed technical documentation in Markdown, from architecture and infrastructure to operations, integrations, costs, and product behavior.
 * [`steward-it`](skills/steward-it/) — retrospective investigation of engineering sessions that were unexpectedly slow, difficult, or off course, recommending the smallest justified improvement.
 
 # Opinionated Laravel engineering
@@ -65,4 +65,4 @@ State the goal, not the choreography. Investigation methods, planning checks, re
 
 The stages compose into a human workflow, but each prompt also works on its own. Each skill's own README describes its workflow in detail.
 
-* [Roadmap](roadmap.md) · [License](LICENSE)
+* [Roadmap](roadmap.md) · [Skill-authoring methodology](docs/skill-authoring-methodology.md) · [License](LICENSE)

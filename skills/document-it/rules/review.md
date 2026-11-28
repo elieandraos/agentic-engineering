@@ -1,226 +1,178 @@
-# Reviewing a technical guide
+# Reviewing technical documentation
 
-This is a check on whether a finished guide serves its intended purpose — not a
-proofreading pass. A guide can be well-written and still fail this review; a guide with rougher
-prose can pass it. Wording is not the subject. One shared checklist applies regardless of format —
-Markdown, Artifact, or both — with a small set of items conditional on which format is in play.
+This file owns evaluating whether a finished document serves its intended purpose, and reporting
+the findings. It is not a proofreading pass: a document can be well-written and still fail this
+review, and a document with rougher prose can pass it. This file never edits the document.
 
-## When to consult this file
+## When this review runs
 
-- After publishing or saving a new technical guide, before considering it complete.
-- After updating an existing technical guide, before considering the update complete.
-- Any time you're explicitly asked to evaluate whether a guide is complete or still
-  misleading for its purpose — independent of whether this skill also just wrote it.
+- **Standalone review** — the user asks whether a document is complete, accurate, or still fit for
+  its purpose. The result is the findings report and nothing else. Don't edit the document; any
+  fix needs its own authorized scope, through `rules/maintenance.md`.
+- **Review pass inside authoring or maintenance** — `rules/authoring.md` or `rules/maintenance.md`
+  runs this review on the document it just wrote or updated. This file still only evaluates and
+  reports; the calling workflow owns acting on the findings.
 
-**Not** while a guide is still being drafted — this is a review of a finished guide, not a
-drafting aid. Drafting uses `rules/authoring.md` for the writing/update procedure and
-`rules/doc-style.md` for the grammar; switch to this file once there's a document to hold up to
-the light.
+Not while a document is still being drafted — this is a review of a finished document or of the
+exact draft being proposed, not a drafting aid.
 
 ## Philosophy
 
-- The question is whether the guide serves its intended purpose accurately and usefully, not whether it matches a preferred writing style.
-- Every finding must materially affect what the reader understands about how the system is
-  shaped, owned, constrained, or reasoned about — if a suggested change wouldn't change that, it
-  isn't a finding, it's a preference. Drop it.
-- Don't nitpick style, word choice, or section ordering unless it actually obscures an
-  technical claim (an ambiguous pronoun that leaves "who owns this" unclear is a finding; a
-  synonym you'd have picked instead is not).
-- A guide is allowed known gaps. The review's job is to confirm a gap that materially affects
-  understanding is stated somewhere in the guide, not silently absent — an unstated gap is the
-  finding, not the gap itself.
-- The output of a review is a short list of findings, not a rewrite. Identify weaknesses; let the
-  guide's author decide what to act on. Don't rewrite prose inline as part of a review pass.
+- The question is whether the document serves its intended purpose and reader accurately and
+  usefully, not whether it matches a preferred writing style.
+- A finding is material when it affects whether the intended reader can correctly understand,
+  operate, extend, look up or decide what the document is for — how a system is shaped and owned,
+  whether a procedure can be run safely, whether a rule can be applied without guessing. If a
+  suggested change wouldn't affect that, it is a preference, not a finding. Drop it.
+- Don't nitpick style, word choice, or section ordering unless it actually obscures a technical
+  claim (an ambiguous pronoun that leaves "who owns this" unclear is a finding; a synonym you'd have
+  picked instead is not).
+- A document is allowed known gaps. The review's job is to confirm that a gap which materially
+  affects the reader is stated somewhere in the document, not silently absent — an unstated gap is
+  the finding, not the gap itself.
 
 ## How to run it
 
-1. Inspect the actual guide — the published Markdown file or Claude Artifact when one exists, or
-   the exact draft being proposed when it doesn't — the way a new engineer would actually
-   encounter it, not your own memory of drafting it. Working from memory lets gaps silently fill
-   themselves in. When both formats are maintained for the same guide, inspect each output that's
-   actually published or saved, not only one.
-2. Work through the checklist below. Treat each category as conditional: a question about a
-   concern the subject doesn't have (reuse, runtime, security, testing, decisions,
-   limitations) is inapplicable, not failed — skip it rather than forcing an answer.
-3. When a claim's factual accuracy is in question, reconcile it against verified implementation or
-   investigation evidence, not the guide's own wording. This is a truth check on an existing
-   claim, not a fresh investigation — investigating the system from scratch is `lab-it`'s
-   investigation method, not this review.
-4. For every question you can't answer "yes" outright, write one finding: what's missing,
-   unclear, or contradicted, and where in the guide. One sentence each — this stays lightweight.
-5. Stop there. Don't fix findings inline. Report them, or act on only the ones that clearly
-   matter, and leave stylistic judgment calls alone.
+1. Inspect the actual saved document — or the exact draft being proposed when none is saved yet —
+   the way its intended reader would encounter it, not your own memory of drafting it. Working from
+   memory lets gaps silently fill themselves in.
+2. Establish the document's confirmed purpose and audience. Review against that purpose, not
+   against an architecture template.
+3. Work through the general questions, then only the purpose dimensions the document actually has.
+   A question about a concern the subject doesn't have (reuse, runtime, security, costs,
+   decisions, limitations) is inapplicable, not failed — skip it rather than forcing an answer.
+4. When a claim's factual accuracy is in question, reconcile it against verified evidence, not the
+   document's own wording. This is a truth check on an existing claim, not a fresh investigation —
+   investigating the system from scratch is `lab-it`'s method, not this review.
+5. Verify diagram semantics as well as syntax, and render when tooling permits. Never execute
+   destructive procedures merely to review documentation. Match review effort to consequence and
+   intended use.
+6. For every question you can't answer "yes" outright, write one finding: what's missing, unclear,
+   or contradicted, and where in the document. Then report.
 
-## Checklist
+## General questions
 
-Review against the document's confirmed purpose, not against an architecture template.
-Apply the architecture-specific questions below only where architecture is part of the
-document's purpose. All guides need accurate evidence, coherent structure, consistent
-claims, useful references and honest uncertainty.
+- **Accuracy.** Do material claims match verified evidence? Do evidence references resolve?
+- **Status honesty.** Are verified behavior, approved design, estimates and pending verification
+  distinguishable? Is a proposal or an open decision presented as settled?
+- **Structure.** Does each section serve a coherent reader need, with a direct answer, rather than
+  covering two unrelated questions at once? Is the structure driven by the subject and purpose,
+  not carried over from another document — a section that exists only because another document had
+  one is a finding?
+- **Presentation.** Do diagrams show movement, ownership, topology or relationships rather than
+  decoration? Are tables used for responsibilities, guarantees, states, decisions, configuration,
+  costs or trade-offs rather than as formatting for prose?
+- **Consistency.**
+  - Do counts, labels, and guarantees mean the same thing everywhere they appear — a number in one
+    place matching what a table or diagram elsewhere claims?
+  - Is a volatile configuration value presented as a durable fact?
+  - Does every subject the document treats as core have an identifiable home — some place where
+    its ownership or definition is pinned down — rather than being mentioned repeatedly without one?
+  - Does any absolute claim ("every mutation uses X") conflict with an exception documented
+    elsewhere, or state an intended convention as a universal fact? The document should
+    distinguish convention from current behavior from known exception, and note an exception
+    wherever the convention itself is taught.
+- **Currency.** Does the document describe current reality or an explicitly approved design,
+  rather than narrating history or release notes?
+- **Connected documents.** Is subject ownership clear? Do cross-links, including links to headings
+  within the document, resolve? Do shared claims
+  agree, without unnecessary duplication? Check affected neighboring documents, not only the target.
+- **Location.** A new document lives under `docs/` or the location the user or project named. An
+  updated document keeps its existing path unless the user authorized relocating it — a path
+  outside `docs/` is preserved identity, not a defect.
 
-For other purposes, check the relevant dimensions:
-- Operations: prerequisites, exact commands or actions, ordering, safeguards, failure
-  consequences, recovery and verification. Distinguish a proposed procedure from a tested one.
-- Technical references: accurate mechanisms, configuration names and values, scope,
-  dependencies, overrides, security constraints and lookup usability.
-- Costs and capacity: arithmetic, units, billing periods, assumptions, exclusions, shared
-  versus incremental costs, and estimates versus actual charges.
-- Approved designs: decision, known rationale, trade-offs, implementation status and
-  pending verification; do not invent missing rationale.
-- Connected documents: subject ownership, working cross-links, consistent shared claims
-  and no unnecessary duplication. Check affected neighboring documents, not only the target.
+## Purpose dimensions
 
-Verify diagram semantics as well as syntax, and render when tooling permits. Report
-unverified checks. Never execute destructive procedures merely to review documentation.
-Match review effort to consequence and intended use; stop when material findings are resolved.
+Apply each dimension only where it is part of the document's purpose. These are examples, not
+modes; a document can combine several.
 
+### Architecture
 
-
-### Architectural center
-
-- Is the architectural center of gravity clear early enough to orient the reader — established in
-  the hero, an opening section, or wherever the guide's structure puts it first — rather than only
-  inferable by the end?
-- Does every major section reinforce that central idea, or does at least one section wander into
-  a tangent that doesn't serve it?
-- Where the guide has closing material, however it's structured, does it leave the reader
-  remembering the architectural abstraction itself — a contract, a pipeline, a boundary — rather
-  than a list of features? A guide isn't required to have closing material at all.
-
-### Responsibility and ownership
-
+- Is the architectural center of gravity clear early enough to orient the reader, and does every
+  major section reinforce it rather than wander into a tangent? Where the document has closing
+  material, does it leave the reader with the architectural abstraction itself — a contract, a
+  pipeline, a boundary — rather than a list of features?
 - Are responsibilities, ownership, and boundaries explicit — could a reader point to where one
-  component's responsibility ends and another's begins?
-- Where the guide states a material rule, guarantee, or boundary and an identifiable enforcement
-  mechanism exists for it, is that mechanism named — a path, symbol, schema element, config key,
-  protocol, or runtime boundary, never a class/method shape forced onto a rule enforced some other
-  way? Don't require a reference when no single identifiable mechanism exists.
+  component's responsibility ends and another's begins? Where a material rule, guarantee, or
+  boundary has an identifiable enforcement mechanism, is it named, without forcing a class/method
+  shape onto a rule enforced some other way?
+- Where reusable infrastructure sits alongside integration-specific code, is the line between them
+  explicit? Where an extension seam exists, does the document distinguish what a new
+  implementation must *provide* from what it inherits? When several implementations of the same
+  architecture appear, is one the running example, with the others invoked only for a meaningful
+  variation — unless comparing them is itself the point?
+- Where the capability has runtime behavior, is runtime ownership explained, and kept distinct from
+  lifecycle state? Are state transitions ("the record becomes X") distinguishable in the prose from
+  responsibility transitions ("component A hands off to component B")?
+- Does explanatory material establish the concept before showing code, with snippets limited to
+  genuine extension seams? Has an implementation walkthrough started replacing the design — a
+  section regenerable by reading the source top to bottom?
+- Would another engineer understand *why* the system was designed this way? If every "why,"
+  "because," and trade-off were removed, would anything architectural be lost? Does the document
+  leave the reader understanding the impact of a future change and the invariants it must
+  preserve?
 
-### Reuse, integration, and variation — when the architecture has any
+### Operations
 
-- If the guide covers reusable infrastructure alongside integration-specific or model-specific
-  code, is the line between them explicit — could a reader point to where "shared" ends and
-  "specific" begins?
-- Where an extension seam exists, does the guide clearly distinguish what a new implementation or
-  integration must *provide* from what it inherits for free, without omitting or glossing over the
-  inherited behavior? A section reading like a tutorial for the whole feature, with no such
-  distinction, fails this question.
-- When the guide covers several concrete implementations of the same architecture, is one clearly
-  the running example, with the others invoked only where they show a meaningful variation,
-  exception, or pressure point — rather than several implementations taught in parallel until the
-  shared architecture is harder to follow than the examples themselves? Multiple equal examples
-  are legitimate when the architecture genuinely has no representative path, or when comparing
-  implementations is itself the point.
+Prerequisites, exact commands or actions, ordering, safeguards, failure consequences, recovery and
+verification. Is a proposed procedure distinguished from a tested one?
 
-### Runtime, lifecycle, and state — when the capability has any
+### References and integrations
 
-- Is runtime ownership explained wherever the capability actually has runtime behavior?
-- Is lifecycle kept conceptually distinct from runtime ownership — a state machine and a
-  responsibility handoff are different ideas even when they describe the same feature? They don't
-  need separate diagrams; conflating them so a reader can't tell which is which is the finding.
-- Are state transitions ("the record becomes X") distinguishable in the prose from responsibility
-  transitions ("component A hands off to component B")? A guide that uses one sentence shape for
-  both is blurring them.
+Accurate mechanisms, configuration names and values, interface contracts, scope, dependencies,
+overrides, security constraints and lookup usability. Does the document link to an authoritative
+specification instead of copying it exhaustively?
 
-### Architecture versus implementation — for explanatory architecture material
+### Costs and capacity
 
-- Does explanatory architecture material establish the concept before showing code? Operational commands may lead a section when their context is clear.
-- In explanatory architecture material, are code snippets limited to genuine extension seams — a contract, an interface, a scope — per
-  `SKILL.md`'s output rules, or has a full method body snuck in for narrative decoration?
-- Has API documentation or an implementation walkthrough started replacing architecture? A tell: a
-  section regenerable by reading the source top to bottom instead of by understanding the design.
+Arithmetic, units, billing periods, assumptions, exclusions, shared versus incremental costs, and
+estimates versus actual charges.
 
-### Structure and content
+### Approved designs and decisions
 
-- Does each section serve a coherent reader need, with a direct answer, rather
-  than trying to cover two unrelated questions at once?
-- Is the structure driven by the subject and purpose, not carried over from a different
-  guide's section list — a section that exists only because another guide had one is a finding?
-- Are diagrams used for movement, ownership, topology, or relationships — not decoration? A static
-  topology or relationship diagram is valid on its own; one that shows none of these is a candidate
-  for deletion, not a finding to soften.
-- Are tables used for responsibilities, guarantees, states, decisions, configuration, costs, or trade-offs — not as
-  formatting for prose that would read fine as a paragraph?
+Where the document records a decision, does it state the decision, the known rationale, and the
+accepted trade-off, plus implementation status and pending verification? Missing rationale is a
+finding, not something to invent.
 
-### Consistency
+### Product behavior and business rules
 
-- Do counts, labels, and guarantees mean the same thing everywhere they appear — a number in one
-  place matching what a table or diagram elsewhere claims?
-- Is a volatile configuration value (a pagination size, a UI constant) presented as a durable
-  architectural fact?
-- Does the guide give a clear architectural home — not necessarily a layer, table, or diagram, but
-  some identifiable place — to every feature it treats as core, such as one named in the opening or
-  repeated across sections? A feature mentioned repeatedly without its ownership ever being pinned
-  down anywhere is a finding, even if each mention is accurate on its own.
-- Does any absolute claim ("every mutation uses X," "every model carries Y") conflict with an
-  exception documented elsewhere, or state an intended convention as if it were a universal fact?
-  The goal isn't zero exceptions; it's that the guide distinguishes convention from current
-  implementation from known exception, and notes an exception wherever the convention itself is
-  taught — not only wherever it happens to be listed.
+- Are terms defined once and used consistently across the document and connected documents?
+- Is each rule stated clearly enough to apply without guessing, including its boundaries?
+- Are lifecycle states and transitions complete for what the document claims to cover?
+- Are permissions stated where they govern behavior?
+- Are material exceptions stated where the rule itself is taught?
+- Do examples agree with the rules?
 
-### Decisions and limitations — when the guide states any
+A contradictory or missing decision is a finding to report, not a decision for the reviewer to
+make.
 
-- Where the guide records an architecture decision, does it state the decision, the reason, and
-  the accepted trade-off — not just what the code does?
-- Where the guide states future or deferred work, is it genuinely still open, with a stated
-  reason, rather than something already built? A completed item left in as future work is a
-  finding.
+### Limitations and deferred work — when the document states any
+
+- Is deferred work genuinely still open, with a stated reason? A completed item left in as future
+  work is a finding.
 - Is each known limitation's real status accurate — intentional, deferred, unresolved, or an
-  acknowledged defect, whichever it is — with its consequence and known reasoning stated, rather
-  than smoothed over or left as a bare "TODO: handle this better"? It doesn't need to be
-  intentional to pass; it needs to be described as what it actually is.
+  acknowledged defect — with its consequence stated, rather than a bare "TODO"?
 - A known and accurately stated limitation is not itself a finding, unless it contradicts another
   claim, hides a consequence that matters, or is presented misleadingly.
-
-### Format-specific checks
-
-- **Artifact.** Is the favicon present, stable across redeploys, and domain-appropriate? For an
-  update, does the guide still live at its preserved `url`, per `rules/maintenance.md`?
-- **Markdown.** For a new guide, does the file live under the consuming repository's `docs/`
-  directory? For an update, does the file still live at the guide's existing path — accept a path
-  outside `docs/` as correctly preserved identity, not a defect, unless the user explicitly
-  authorized relocating it? Do internal links — to headings within the guide, to referenced source
-  paths, and to a paired Artifact if one exists — actually resolve?
-- **Both formats maintained.** Are the technical claims synchronized between them, per
-  `SKILL.md`'s "Maintaining both formats" — or, when the user explicitly scoped this update to one
-  format, is the other output's resulting divergence reported rather than left unstated or
-  presented as current? Does each carry a working cross-reference to the other's location?
-
-### Overall — architecture-specific questions
-
-- Would another engineer understand *why* the system was designed this way, not just what it
-  does? If every "why," "because," and trade-off were removed, would anything architectural
-  actually be lost? If not, the guide hasn't cleared this bar yet.
-- For a feature the guide treats as core, can a reader locate its architectural layer or
-  responsibility owner? Ask further about runtime path, security or isolation guarantees, testing
-  boundary, or trade-offs only where this architecture actually makes that dimension apply — don't
-  require every core feature to carry every dimension.
-- Does the guide leave the reader understanding the architectural impact of a future change and
-  the invariants it must preserve — where responsibility lies, which guarantees matter, what would
-  break — without the guide needing to substitute for reading the implementation itself?
 
 ## Review output
 
 - Report only material findings, one sentence each: what's missing, unclear, contradicted, or
-  obscured, and where in the guide.
-- Include the relevant evidence when a finding is a factual mismatch against verified
-  implementation.
+  obscured, and where in the document.
+- Include the relevant evidence when a finding is a factual mismatch against verified evidence.
 - Order by consequence.
-- Don't rewrite the guide.
-- If there are no material findings, say the guide passes. Don't invent improvements to avoid
+- Report checks that could not be performed, such as rendering that tooling did not permit.
+- If there are no material findings, say the document passes. Don't invent improvements to avoid
   returning a clean review.
 
 ## What this review does not flag
 
 - Word choice, sentence rhythm, or comma placement that doesn't change what's understood.
-- A different but equally valid section order or shape, when it serves the purpose
-  equally well.
-- A missing content block, unless a real recurring distinction is being described in prose that a
-  reader can't actually follow without it.
-- A "when applicable" checklist category that doesn't apply to the subject.
+- A different but equally valid section order or shape, when it serves the purpose equally well.
+- A missing presentation element, unless the reader can't follow the content without it.
+- A purpose dimension or question that doesn't apply to the subject.
 - A stated known gap, unless it contradicts another claim, hides a material consequence, or is
   presented misleadingly.
-- Divergence between two maintained formats that the user explicitly authorized for this update,
-  as long as the divergence is reported and neither output is presented as current when it isn't.
-- A Markdown guide's path outside the consuming repository's `docs/` directory, when that path is
-  the guide's preserved existing identity rather than a new guide's location choice.
+- A scope-limited update of connected documents that the user authorized, as long as the remaining
+  divergence is reported and no document is presented as current when it isn't.
+- An existing document's path outside `docs/`, when that path is its preserved identity.

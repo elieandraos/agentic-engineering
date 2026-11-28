@@ -26,6 +26,8 @@ No installed skill was invoked in a consuming project, and no Claude Code/Artifa
 
 ## Findings to address first
 
+> **Retired capability.** `document-it`'s Claude Artifact output and its `rules/template.html` scaffold were removed in v2.5.0. DOC-03 to DOC-08, the template follow-up sections, and the template rows below remain as historical observations of the pinned source. They are not current defects or regression targets.
+
 | Priority | Scenario IDs | Concrete issue |
 | --- | --- | --- |
 | High | IMP-05, IMP-07 | Literal Git recipes can include unrelated staged work or restore/drop an unrelated older stash. |
@@ -1640,7 +1642,7 @@ This section records a bounded correction against the META-01 defect the 2026-09
 recorded: `skills/review-it/SKILL.md`'s frontmatter `description` exceeded the Agent Skills
 specification's 1,024-character limit. It supplements, and does not replace, that original
 record — META-01's pinned source, method, and observation above are unchanged. This same pass also
-produced [`docs/skill-context.md`](docs/skill-context.md), the new dated home for context-consumption
+produced [`docs/skill-context.md`](https://github.com/elieandraos/agentic-engineering/blob/43e465c11709ef78dfc1db0cc4ed7d45f7a9d849/docs/skill-context.md) (since retired), the new dated home for context-consumption
 measurements referenced from each skill's `README.md`, and reconciled `artifacts/implement-it.md`
 and `artifacts/document-it.md` against the approved Git-repair and Artifact-template corrections
 recorded in the follow-up sections above; those changes are not repeated here in detail.

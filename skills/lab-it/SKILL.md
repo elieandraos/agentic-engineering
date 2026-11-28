@@ -1,6 +1,6 @@
 ---
 name: lab-it
-description: "Investigates and validates how an existing system or capability actually works, from real implementation, tests, and current evidence — never conventions or guesses — producing a verified answer, an architecture decision reached with the user, or an approved `plan.md` handed to `plan-it`. Trigger to investigate or explain how a system works, resolve architecture or design decisions for a proposed feature, or synthesize approved findings into `plan.md`. Not for explaining one function, debugging, reviewing a diff, writing API reference docs, or creating, updating, or reviewing an architecture guide — route guide work to `document-it`."
+description: "Investigates and validates how an existing system or capability actually works, from real implementation, tests, and current evidence — never conventions or guesses — producing a verified answer, an architecture decision reached with the user, or an approved `plan.md` handed to `plan-it`. Trigger to investigate or explain how a system works, resolve architecture or design decisions for a proposed feature, or synthesize approved findings into `plan.md`. Not for explaining one function, debugging, or reviewing a diff. Route creating, updating, or reviewing technical documentation, including API and integration references, to `document-it`."
 ---
 
 # lab-it
@@ -15,7 +15,7 @@ following:
 | Understand how a system actually works                                        | A verified answer — investigation and recap, no guide required                            |
 | Resolve a feature's architecture through conversation, no `plan.md` requested  | A verified answer or resolved architecture discussion — no document produced              |
 | Explicitly request `plan.md` synthesis                                        | Approved `plan.md` handed to `plan-it`, via the existing synthesis and approval procedure  |
-| Create, update, or review an architecture guide                               | Routed to `document-it`                                                                    |
+| Create, update, or review technical documentation                             | Routed to `document-it`                                                                    |
 
 Investigation comes first in every workflow — whether user confirmation follows, and when, is
 conditional; see "Shared investigation and decision discipline" below. Investigation and recap
@@ -43,12 +43,12 @@ configuration, schema, runtime observations, and external-system state are autho
 whatever they each actually govern. If asked, check issue and commit history for *why* — reliable
 history explains rationale, it doesn't establish current behavior. Never document something
 history says was planned but the evidence doesn't show. Do not begin writing a `plan.md` — or,
-when this investigation was routed from `document-it`, a guide — during this step.
+when this investigation was routed from `document-it`, documentation — during this step.
 
 What happens next is conditional, not uniform: investigation can end in a verified answer alone,
 with no further output required; planning feature architecture requires explicit, user-approved
 decisions before writing `plan.md`; an investigation routed here from `document-it` ends by
-handing back verified findings rather than drafting a guide itself.
+handing back verified findings rather than drafting documentation itself.
 
 ## Plan feature architecture
 
@@ -138,16 +138,16 @@ This skill owns:
 - surfacing and resolving material decisions with the user;
 - synthesis of approved architecture into `plan.md`.
 
-An investigation may end in a verified answer alone — a guide is never a required next step.
+An investigation may end in a verified answer alone — documentation is never a required next step.
 
 This skill does not own:
 
-- creating or updating an architecture guide, or guide review (→ `document-it` — draws on this
+- creating, updating, or reviewing technical documentation, including API and integration
+  references (→ `document-it` — draws on this
   skill's investigation method when its own available evidence is missing or stale, rather than
   duplicating it);
 - application implementation;
 - debugging or diff review;
-- API reference documentation;
 - feature classification and issue decomposition;
 - GitHub issue mutation;
 - delivery sequencing;
@@ -158,8 +158,8 @@ This skill does not own:
 - the materiality test consulted throughout the decision conversation, and plan writing →
   `rules/plan-synthesis.md`, loaded only when "Plan feature architecture" needs it.
 
-Guide-writing, guide-scaffold, guide-review, and guide-maintenance rules live under `document-it`
-and are not duplicated here.
+Documentation writing, maintenance, and review rules live under `document-it` and are not
+duplicated here.
 
 ## Output-specific non-negotiables
 
@@ -170,5 +170,5 @@ Plan rules (apply to "Plan feature architecture"; full contract in
   visually and textually distinct — the locked-vs-open rule above all.
 - Never present an unresolved decision as settled without the user's explicit confirmation.
 
-Guide-specific non-negotiables live in `document-it/SKILL.md` and `document-it/rules/review.md` —
+Documentation non-negotiables live in `document-it/SKILL.md` and `document-it/rules/review.md` —
 not duplicated here.
