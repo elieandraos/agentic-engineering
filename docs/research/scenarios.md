@@ -26,6 +26,8 @@ No installed skill was invoked in a consuming project, and no Claude Code/Artifa
 
 ## Findings to address first
 
+> **Retired capability.** `document-it`'s Claude Artifact output and its `rules/template.html` scaffold were removed in v2.5.0. DOC-03 to DOC-08, the template follow-up sections, and the template rows below remain as historical observations of the pinned source. They are not current defects or regression targets.
+
 | Priority | Scenario IDs | Concrete issue |
 | --- | --- | --- |
 | High | IMP-05, IMP-07 | Literal Git recipes can include unrelated staged work or restore/drop an unrelated older stash. |

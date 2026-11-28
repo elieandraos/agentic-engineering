@@ -10,7 +10,8 @@ runner or agent harness is implemented by this document.
 
 **Sources.** Contracts were reconciled with the repository at
 [ab65c739](https://github.com/elieandraos/agentic-engineering/tree/ab65c7396bb1b3b98bd5cc519c484a49e2cbf97f).
-The catalogue covers all 47 original [scenario records](scenarios.md), selected repair follow-ups,
+The catalogue covers the 47 original [scenario records](scenarios.md), except DOC-03 to DOC-08,
+which tested the retired Artifact template, plus selected repair follow-ups
 and additional lifecycle contracts from the owning skills. It is a coverage baseline, not a claim
 to enumerate every possible prompt or prove every behavior currently works.
 
@@ -33,7 +34,7 @@ logs and per-run reports outside this catalogue.
 | Implement — implement-it | Carry out an approved issue or an authorized delivery correction using project guidance. | Verified and reviewed work, approved semantic commits, authorized push and issue closure where applicable. |
 | Review — review-it | Independently inspect a worktree, branch, or PR. | Evidence-backed findings or a clean result with explicit scope and limitations; no implementation fixes. |
 | Ship — ship-it | Check milestone PR readiness, create an approved PR, investigate CI failures, and handle authorized closure and release. | Requested delivery actions validated against actual remote state; PR approval and merge remain human-owned. |
-| Document — document-it | Create, maintain, or review architecture guides in Markdown, Artifact, or both. | Accurate guides in the requested formats, preserved identity on updates, and honest coverage reports. |
+| Document — document-it | Create, maintain, or review technical documentation in Markdown. | Accurate, purpose-fit documents, preserved paths on updates, and honest findings reports. |
 | Stack companion — laravel-inertia-stack | Supply applicable Laravel/Inertia/Pest conventions alongside the required Boost capabilities. | Project code follows the applicable companion contract and is verified in a compatible project. |
 
 Review is independently callable and is also invoked during implementation. Documentation is an
@@ -124,42 +125,31 @@ Sources: [lab-it](skills/lab-it/SKILL.md), [plan synthesis](skills/lab-it/rules/
 | LAB-C03 | reports evidence disagreements instead of guessing architecture | Conflicting tests, implementation, or runtime evidence remain explicitly qualified. | — |
 | LAB-C04 | synthesizes a plan only after the required investigation and decisions | A plan request with a missing material decision pauses before synthesizing that decision as settled. | — |
 | LAB-C05 | separates facts approved decisions derived constraints and open details | The resulting plan preserves these distinctions and does not treat its own source-of-truth label as approval. | — |
-| LAB-C06 | routes guide work to document-it | A guide request or returned investigation uses the documentation owner rather than creating a competing guide workflow. | — |
+| LAB-C06 | routes documentation work to document-it | A documentation request or returned investigation uses the documentation owner rather than creating a competing documentation workflow. | — |
 
-### Guide creation, maintenance, and review
+### Documentation creation, maintenance, and review
 
 Sources: [document-it](skills/document-it/SKILL.md),
+[authoring](skills/document-it/rules/authoring.md),
+[writing guidance](skills/document-it/rules/doc-style.md),
 [maintenance](skills/document-it/rules/maintenance.md),
-[guide review](skills/document-it/rules/review.md).
+[documentation review](skills/document-it/rules/review.md).
 
 | ID | Test name | Minimum observable check | Origin |
 | --- | --- | --- | --- |
 | DOC-C01 | reuses sufficient current evidence | Supplied verified findings avoid a redundant full investigation; missing or stale evidence triggers the relevant lab-it investigation. | DOC-01 |
-| DOC-C02 | asks for a new guide format only when it is unspecified | Artifact, Markdown, and both are available choices; an explicit format is honored without re-asking. | DOC-01 |
-| DOC-C03 | obtains recap approval before publishing a new guide | With no applicable recap approval, the workflow stops at the recap; with approval it proceeds in the chosen format. | DOC-01 |
-| DOC-C04 | creates a new Markdown guide without Artifact tooling | After approval, a new guide is saved under the consuming project's docs directory, creating it if needed. | DOC-01 |
-| DOC-C05 | distinguishes a missing guide from an inaccessible guide or tool | A genuinely missing target follows new-guide handling; access/tool failures are explained before choosing an alternative. | — |
-| DOC-C06 | preserves an existing guide identity unless relocation is authorized | An existing root-level Markdown path stays put; an Artifact retains its URL and favicon during an ordinary update. | DOC-02 |
+| DOC-C03 | confirms a new-document recap only when confirmation is still needed | With unconfirmed understanding or decisions, the workflow stops at the recap. With approved substance and explicit authorization to write, it reuses that approval and writes without asking again. A material divergence or new unresolved decision stops it. | DOC-01 |
+| DOC-C04 | saves a new document at the default or stated location | A new document is saved under the consuming project's docs directory, creating it if needed, or at the location the user or project names. | DOC-01 |
+| DOC-C05 | distinguishes a missing document from an unreachable one | A genuinely missing target follows new-document handling; an unreachable target is explained and never reported as updated. | — |
+| DOC-C06 | preserves an existing document path unless relocation is authorized | An existing root-level Markdown path stays put during an ordinary update; unaffected metadata is preserved. | DOC-02 |
 | DOC-C07 | updates the complete affected claim graph | A changed ownership claim is corrected wherever repeated in prose, diagrams, tables, or references; unrelated content is preserved. | DOC-02 |
-| DOC-C08 | leaves an accurate guide unchanged when no documentation fact changed | Both architectural meaning and printed evidence references remain valid; no cosmetic rewrite is introduced. | — |
-| DOC-C09 | synchronizes paired guides by default | Both maintained outputs describe the same verified architecture and retain a discoverable association. | DOC-02 |
-| DOC-C10 | honors a single-format update and reports remaining divergence | Only the authorized output changes; the other is not falsely reported current or updated. | DOC-02 |
-| DOC-C11 | reviews a guide independently without silently rewriting it | A review-only request returns located findings; any subsequent fix has its own authorized scope. | — |
-| DOC-C12 | applies guide checklist questions only where the architecture warrants them | A capability without a reuse seam or runtime lifecycle is not forced to invent one for the checklist. | — |
-
-### Artifact template behavior
-
-Source: [shipped template](skills/document-it/rules/template.html). Execute the actual shipped script
-for content checks and a real browser for layout checks. These are regression contracts; prior
-DOM-stub results do not establish browser rendering.
-
-| ID | Test name | Minimum observable check | Origin |
-| --- | --- | --- | --- |
-| TPL-C01 | preserves source characters while highlighting supported languages | Dataset covers TypeScript, PHP, and JSON URLs; decode rendered source and compare exactly with input. No internal placeholder remains. | DOC-03, DOC-04, DOC-07 |
-| TPL-C02 | distinguishes comments strings and PHP attributes without corrupting content | Escaped quotes, comment markers inside strings, quotes inside comments, attribute-shaped text, and real nested attribute examples round-trip exactly. | Template repair follow-ups |
-| TPL-C03 | falls back safely for unsupported language names | Include an ordinary unsupported name and an inherited object-property name; escaped source survives and later valid blocks still process. | DOC-05, DOC-06 |
-| TPL-C04 | handles missing language labels and HTML-sensitive source safely | Missing labels and characters such as angle brackets do not crash processing or become unintended HTML. | Template repair follow-ups |
-| TPL-C05 | applies the intended navigation behavior at mobile widths | In a browser at the fixture widths, inspect computed navigation position and border and exercise navigation with several entries. | DOC-08 |
+| DOC-C08 | leaves an accurate document unchanged when no documentation fact changed | Both technical meaning and printed evidence references remain valid; no cosmetic rewrite is introduced. | — |
+| DOC-C11 | reviews a document standalone without changing it | A review-only request returns located findings and leaves the document unchanged; any subsequent fix has its own authorized scope. | — |
+| DOC-C12 | applies review questions only where the document's purpose warrants them | A document without a reuse seam, runtime lifecycle, or cost model is not forced to invent one for the checklist. | — |
+| DOC-C13 | reconciles connected documents from the owning document outward | A changed shared claim is updated in its owning document first, then in materially affected summaries and links; a user-limited scope reports which documents still carry the superseded claim. | — |
+| DOC-C14 | corrects review findings during authoring or maintenance | The review pass reports findings without editing; the calling workflow corrects material defects, verifies them, and stops when a correction needs an unresolved decision. | — |
+| DOC-C15 | reviews product rules without deciding them | A business-rule document with a contradictory boundary or undefined term yields a finding; the reviewer does not choose the rule. | — |
+| DOC-C16 | documents integration interfaces without copying an authoritative specification | An integration reference includes the contracts and endpoints the reader needs and links to the discoverable specification instead of reproducing it exhaustively. | — |
 
 ### Feature planning and issue creation
 
@@ -441,7 +431,7 @@ clean controls. Pair complete evidence with unavailable diagnostics and partial 
 
 Reuse fixture dimensions instead of inventing an enormous cross-product: clean/dirty worktrees,
 staged/unstaged/shared-file changes, ordinary/reconstructed history, available/missing companions,
-fresh/resumed sessions, Markdown/Artifact/both, matching/conflicting remote state, and successful/
+fresh/resumed sessions, standalone/connected documents, matching/conflicting remote state, and successful/
 timed-out/partially completed mutations. Combine dimensions where an interaction has demonstrated
 risk, such as reconstruction plus unrelated staged work and an older stash.
 
@@ -456,7 +446,7 @@ turn deliberately. Record tool requests and resulting state, not hidden reasonin
 | One approved issue in a small project | Implementation, full verification, review, human implementation approval, approved semantic commits, final verification, authorized push and closure all occur in order. |
 | A milestone with branching dependencies | Closing A unblocks B and C; the agent reports the graph and recommendation, then stops at the agreed human/new-pass boundary. |
 | A non-Laravel project with no custom companion | Portable skills use the actual project's tools; no Laravel commands or invented mandatory companion appear. |
-| A paired guide with an interrupted Artifact update | Markdown and Artifact results are reported separately; recovery preserves identity and does not claim both are current prematurely. |
+| A connected-documentation update limited to the owning reference | The owning document changes; the overview still carrying the superseded claim is reported, not presented as current. |
 | A milestone PR with a closed-issue CI correction | Ship investigates and secures authorization; implementation owns the fix and its review/approval lifecycle; ship resumes after actual CI success. |
 | An approved release interrupted after creating its tag | Recovery reconciles the correct existing tag and completes only missing authorized publication steps. |
 
@@ -484,8 +474,8 @@ supporting evidence, not the sole proof that a commit, approval, or publication 
 
 ### Build the suite incrementally
 
-1. Start with deterministic fixtures already demonstrated in scenarios: metadata, template source
-   preservation, and Git content/staging/stash preservation.
+1. Start with deterministic fixtures already demonstrated in scenarios: metadata, and Git
+   content/staging/stash preservation.
 2. Add agent tests for implementation approval, commit-plan approval, valid-approval continuation,
    and full-suite reuse.
 3. Add review false-positive controls, planning recovery, and delivery retry cases.
