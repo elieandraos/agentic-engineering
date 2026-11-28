@@ -10,10 +10,10 @@ useful—turn approved decisions into a change plan.
 - A feature idea needs its architecture decisions settled before planning or
   implementation starts.
 
-Not for explaining one function, debugging, reviewing a diff, writing API reference docs, or
-creating, updating, or reviewing an architecture guide — see [`document-it`](../document-it/) for
-guide work, which draws on this skill's investigation method when its own evidence is missing or
-stale.
+Not for explaining one function, debugging, or reviewing a diff. Creating, updating, or reviewing
+technical documentation, including API and integration references, belongs to
+[`document-it`](../document-it/), which draws on this skill's investigation method when its own
+evidence is missing or stale.
 
 ## Boring prompts
 
@@ -41,7 +41,7 @@ investigation.
 ## Ownership
 
 Owns architecture investigation, architectural explanation, and turning approved
-decisions into a `plan.md`. Creating, updating, or reviewing an architecture guide belongs to
+decisions into a `plan.md`. Creating, updating, or reviewing technical documentation belongs to
 [`document-it`](../document-it/) — file extension alone doesn't decide ownership; an approved
 `plan.md` stays this skill's even though it's a `.md` file. Planning the resulting work into
 GitHub issues belongs to [`plan-it`](../plan-it/); implementing it belongs to
