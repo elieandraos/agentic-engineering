@@ -1,101 +1,59 @@
-# Creating and updating technical guides
+# Creating new technical documentation
 
-This file owns the operational mechanics of `SKILL.md`'s three guide-producing conditions: format
-selection, writing a new guide, and updating an existing one. `SKILL.md` states the triggering
-condition for each and hands off here; it does not restate the mechanics below. `rules/doc-style.md`
-owns the writing grammar itself; `rules/maintenance.md` governs judgment calls once an update is
-under way; `rules/review.md` judges the finished result.
+This file owns the procedure for a new document, triggered from `SKILL.md`'s "Document a technical
+system or approved design." Updating an existing document belongs to `rules/maintenance.md`.
 
-## Format selection
+## 1. Establish evidence and purpose
 
-- **Artifact** output uses `rules/template.html` and requires the `artifact-design` skill and the
-  `Artifact` tool. Load `artifact-design` before writing any Artifact page.
-- **Markdown**, for a **new guide**, lives under the consuming repository's own `docs/` directory;
-  create that directory if it doesn't already exist. This default applies to a new guide only —
-  updating an existing Markdown guide preserves its current path instead, including one outside
-  `docs/` (see "Update an existing guide," below). Markdown has no `template.html` equivalent and
-  does not need Artifact-specific tooling — it must work without it.
-- If the requested format's publishing capability is unavailable (no `Artifact` tool, no write
-  access to the target repository), explain that plainly and ask the user how to proceed. Never
-  silently substitute the other format and report success as if the original request were
-  fulfilled.
+Confirm the subject, the intended audience, the purpose and the scope. Reuse current evidence —
+implementation, configuration, schema, tests, runtime behavior, provider documentation, approved
+decisions or cost assumptions — and route missing or stale evidence through `lab-it`, per
+`SKILL.md`.
 
-## Document a technical system or approved design (new guide)
+Identify the central idea or the reader task the document serves. For architecture, this is the
+architectural center of gravity; for an operational document, the task the reader must carry out
+safely; for a product-behavior document, the rules and states the reader must apply. For connected
+documentation, identify which document owns each subject and which existing documents already
+reference it.
 
-1. **Establish evidence.** Confirm the subject, intended audience, purpose and scope. Reuse current evidence:
-   implementation, configuration, schema, tests, runtime behavior, provider documentation,
-   approved decisions or cost assumptions. Route missing or stale evidence through `lab-it`.
-   Identify the central idea or reader task; for architecture this is the architectural
-   center of gravity. For connected guides, identify subject ownership and existing references.
+## 2. Recap, and confirm when confirmation is still needed
 
-2. **Recap and confirm.** Write the recap directly as chat output, not a file or an artifact.
-   Cover, with concrete evidence references where useful, whichever of these actually
-   apply to the system: the problem being solved, the core architecture, reusable pieces versus
-   integration-specific code, runtime behavior, the data model, the integration seam, security,
-   testing, architectural decisions, and remaining gaps. For non-architecture subjects, recap the relevant operational steps, configuration, costs, constraints or approved design instead. Distinguish verified behavior from approved plans and estimates. Don't invent a data model, runtime
-   lifecycle, security boundary, reuse seam, or integration split the system doesn't have just to
-   fill out the list. Keep it bullet-driven and honest about gaps. **Stop here and wait for the
-   user to confirm before this investigation becomes a published guide.** A correction here is
-   real signal about what the guide needs to get right.
+Write the recap directly as chat output, not as a file. Keep it bullet-driven and honest about
+gaps. Cover whichever of these the subject actually has, with concrete evidence references where
+useful: the problem or goal, the central idea, the main components or steps, ownership and
+boundaries, runtime behavior, the data model, integration seams, configuration, costs, rules and
+states, security, testing, decisions, and remaining gaps. Distinguish verified behavior from
+approved plans and estimates. Don't invent a data model, lifecycle, security boundary, or
+integration seam the subject doesn't have just to fill out the list.
 
-3. **Write and publish/save the guide.** Only after the recap is approved, and only after format
-   selection (above):
-   - Decide structure from the confirmed purpose and central idea, not a fixed section inventory. See
-     `rules/doc-style.md` for the writing grammar and content-block vocabulary — it covers both
-     Markdown and Artifact output.
-   - **Artifact:** load the `artifact-design` skill (required before writing any Artifact page).
-     Write the HTML using `rules/template.html` as the starting scaffold. Replace content; keep
-     the design system unless the system genuinely needs a new block type. Publish with the
-     `Artifact` tool: a title appropriate to the subject and purpose, a one-sentence description, and a
-     stable, domain-appropriate favicon (see `rules/doc-style.md#choosing-a-favicon-artifact-only`).
-   - **Markdown:** write the guide under the consuming repository's `docs/` directory (create it
-     if needed), applying the same writing grammar and content-block vocabulary in Markdown-native
-     form (see `rules/doc-style.md`).
-   - **Both:** produce both outputs from the same confirmed recap and purpose, and give
-     each a minimal, discoverable cross-reference to the other's location (see `SKILL.md`'s
-     "Maintaining both formats").
-   - Run `rules/review.md`'s checklist against the finished guide(s) before considering the work
-     complete — see `SKILL.md`'s "Output-specific non-negotiables" for what the guide itself must
-     do.
+Decide whether the recap needs the user's confirmation before writing:
 
-## Update an existing guide
+- **Confirm** when the understanding, the scope, or a material decision behind the document has
+  not been confirmed. Stop and wait. A correction here is real signal about what the document must
+  get right.
+- **Reuse an applicable existing approval** when the user has already approved the substance — in
+  this conversation or another identifiable context — and has explicitly authorized writing the
+  document. An approval is applicable only when it covers this recap's understanding, scope, and
+  material decisions. Present the recap as the basis you are writing from and proceed. Don't ask
+  for the same approval twice.
+- **Stop again** when the recap diverges materially from what was approved, or when writing
+  surfaces a new unresolved decision. Return that decision to the user, or to `lab-it` when it
+  needs fresh investigation or an architecture decision.
 
-**Locate and inspect the actual target before updating it.** Discover it from what's supplied: a
-stated file path or Artifact URL, an existing cross-reference from another guide or from project
-documentation, or a repository search by capability name. Ask the user when identification remains
-ambiguous — don't guess, and don't assume the target's content from memory.
+In every other case, including an unclear one, confirm.
 
-**Distinguish three different situations**, since each needs a different response:
+## 3. Write the document
 
-- **Genuinely missing** — no guide exists yet at the expected identity. This is a new-guide
-  request, not an update; route to "Document a technical system or approved design" above.
-- **Inaccessible** — the target exists (a known file path or Artifact URL) but can't currently be
-  reached or read.
-- **Publishing capability unavailable** — the target is fine, but the tooling needed to update it
-  (e.g., no `Artifact` tool in this session) is missing.
+Write only after the recap is confirmed or an applicable existing approval is reused.
 
-For the second and third situations, explain the limitation concretely and ask the user whether to:
-prepare or update a Markdown version instead; create a replacement Artifact where that's possible;
-or change which format is the maintained one going forward. State which document would change and
-which would remain unchanged or stale — the user doesn't need to understand "draft versus
-migration" to make this choice. **Never claim that writing a Markdown update updated the original
-Artifact** — those are different documents once an Artifact can't be reached or written.
-
-Once the target is confirmed reachable: compare its technical claims against current evidence and approved decisions (reuse sufficient current evidence;
-route to `lab-it` when it's missing or stale) → follow the complete affected claim graph, not only
-the section where the change was first noticed → update to describe current reality and explicitly approved future design, not as a changelog → preserve identity (below) → run `rules/review.md` against the whole
-updated guide, with emphasis on the changed claims and whatever depends on them.
-
-`rules/maintenance.md` governs every judgment call in this route — read it before making any edit.
-It preserves a guide's unaffected technical meaning without freezing architecture the evidence
-shows has genuinely changed: the center of gravity, structure, ownership, or reasoning can move
-when verified reality requires it.
-
-**Preserve identity by default:**
-
-- **Markdown** — the same file path, even one outside the consuming repository's `docs/`
-  directory; `docs/` is only the default location for a new guide, not a requirement imposed
-  retroactively. Relocate only when the user explicitly authorizes it. Preserve unaffected front
-  matter, title, and other metadata, while allowing the changes the requested update actually
-  requires.
-- **Artifact** — the same `url` and the same favicon.
+- Decide the structure from the confirmed purpose and central idea, not a fixed section
+  inventory. `rules/doc-style.md` owns the writing guidance.
+- Save a new document under the consuming repository's `docs/` directory, unless the user or the
+  project's own convention names another location. Create the directory if it doesn't exist. If
+  the location can't be written, explain the limitation, ask how to proceed, and never report the
+  document as saved.
+- Run `rules/review.md` against the saved document. Correct the material findings it reports, then
+  verify the corrected claims against the same evidence. Stop and return to the user when a
+  correction requires an unresolved decision.
+- Report the document's path, any material findings you corrected, and any finding left open with
+  its reason.

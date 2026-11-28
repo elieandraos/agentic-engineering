@@ -1,61 +1,108 @@
-# Documentation style — grammar for technical guides
+# Writing technical documentation
 
-Choose structure and depth from the document's purpose and audience, not a template.
-For architecture, retain the architectural center of gravity; for operations, prioritize
-safe execution; for references, prioritize understanding or lookup; for costs, prioritize
-assumptions, totals and trade-offs. These are examples, not prescribed document types.
+This file is the writing guidance used by `rules/authoring.md` and `rules/maintenance.md`. It
+guides judgment; it does not prescribe a layout. `rules/review.md` evaluates the finished document.
 
-## Section rhythm
+Choose structure and depth from the document's purpose and audience, not a template. For
+architecture, retain the architectural center of gravity; for operations, prioritize safe
+execution; for references and integrations, prioritize understanding or lookup; for costs,
+prioritize assumptions, totals and trade-offs; for product behavior, prioritize precise rules.
+These are examples, not prescribed document types.
 
-Use a clear heading and whatever opening best serves the reader: a direct explanation,
-a guiding question, a table, a diagram or an executable command with necessary context.
-Questions and introductory paragraphs are useful when they orient the reader, not mandatory.
-Keep Artifact section styling compatible with the existing scaffold without forcing every
-section to use every element. Use only content blocks that earn their space.
+## Structure follows the subject
 
-## Content-block vocabulary
-
-
-| Communicates | Artifact block (CSS) | Markdown equivalent |
-|---|---|---|
-| Concrete facts or guarantees grounding the reader before prose — a size limit, a retry count, a cascade behavior. Pick facts that reveal scale or guarantees, not vanity metrics. | Spec strip — `.specsheet` (hero only) | A short bulleted list of 3–6 facts near the top of the guide, before the first section |
-| Ownership or topology: data relationships and runtime sequences. Keep it readable in one glance. | Ownership/flow diagram — `.ascii` | A Mermaid diagram when supported, or a fenced monospace diagram |
-| Responsibility mapping: component catalogs, decision/trade-off tables, security-concern tables, state tables — one row per concern. | Responsibility table — `.table-wrap > table.lc` | A standard Markdown table. End an enforceable row with an inline-code reference — a path, symbol, schema element, config key, protocol, or runtime boundary, whichever actually identifies where the rule lives |
-| Chronological sequence: strictly ordered phases. Only for genuinely sequential steps — independent operations read better as separate tables or flows. | Ordered timeline — `.flow-steps` | A numbered list, each item bold-led with sub-bullets |
-| Supporting explanation: a status card, a short "why this architecture?" Q&A, or a boundary explanation. Not tied to a particular section or position. | Side card — `.callouts > .callout` | A blockquote |
-| Composition, cost, or lifecycle summary, used when a formula reads clearer than prose. May close a section or the guide; not required because a section covers an operation. | Equation recap — `.formula` | An inline or fenced formula line |
-| Recurring variants: short inline tags for 2–3 recurring variants. Add a new variant only when a recurring distinction genuinely needs one. | Variant badge — `.pill` (+ a variant class) | Inline code or a short bold tag, used consistently for the same variant everywhere it appears |
-| Closing takeaway: one bolded sentence stating a reuse contract — "A caller integrates by composing X. It does not reimplement Y." Useful for a contract worth a concise close; not required by subject, nor by section name. | Clincher sentence — plain `<strong>` | A bolded sentence, identical in role |
-
-Don't force an Artifact CSS class into a Markdown file, or invent Markdown-only formatting inside
-an Artifact page — write each format the way it's natively read.
-
-## Section structure
-
-Use exact commands and configuration values when they are the subject of an operational or lookup guide. Explain prerequisites, consequences and verification where material. Keep secrets out. Diagrams must accurately represent the system; validate syntax and rendering when tooling permits, and report what could not be checked.
-
-For connected guides, keep overview-level explanations in primary documents and detailed facts in their authoritative reference. Link rather than repeat.
-
-**Overview documents.** When introducing a larger system or connected documentation set, establish the big picture first. Give each material subject a compact explanation of what it is, why it matters, and how it relates to the whole. Link to its detailed guide for configuration, mechanics, procedures or deeper reasoning. The overview should be independently useful without becoming a duplicate handbook or a directory of links. Use dates or explicit currency notes for volatile facts, estimates and pending validation when useful.
-
-A guide's section list follows what the subject's information actually looks like, not a
-copied table of contents. Compact illustrations, not a checklist:
-
-- A sequential lifecycle reads well as an ordered timeline.
-- Independent responsibilities (several things true at once, not a sequence) read better as
-  separate tables or flows.
-- A real, ordered extension process reads well as numbered steps.
-- A capability with no runtime behavior of its own shouldn't get a runtime section just because
-  other guides have one.
+A document's sections follow what the subject's information actually looks like, not a copied
+table of contents. Give each section a clear heading and whatever opening best serves the reader:
+a direct explanation, a guiding question, a table, a diagram, or an executable command with its
+necessary context. A question-led section is useful when it orients the reader; it is not
+required.
 
 Keep recurring concerns conditional: purpose, security, runtime ownership, decisions, limitations,
-and a closing summary appear only when they materially improve understanding of *this*
-capability — never because a previous guide included them. Nothing here requires a section
-literally named Building Blocks, Integrating, Architectural principles, Focused Improvements,
-Runtime, or Summary — a guide may cover those concepts, but the capability decides what each is
-called, how many there are, and where they sit. A closing-takeaway block (the clincher sentence,
-the formula recap) can still end a guide; it just can't depend on that section being named
-"Summary."
+and a closing summary appear only when they materially improve understanding of *this* subject —
+never because another document included them. The subject decides what each section is called,
+how many there are, and where they sit. A closing takeaway can end a document without depending on
+a section named "Summary."
+
+Compact illustrations, not a checklist:
+
+- A sequential lifecycle reads well as an ordered sequence.
+- Independent responsibilities (several things true at once, not a sequence) read better as
+  separate tables or flows.
+- A real, ordered extension process or procedure reads well as numbered steps.
+- A subject with no runtime behavior of its own shouldn't get a runtime section just because other
+  documents have one.
+
+## Markdown presentation
+
+Use plain, portable Markdown, and choose each element for what it communicates. None is required;
+use an element only when it serves the content better than prose.
+
+- **Summary facts.** A short list near the top can ground the reader in a few concrete facts or
+  guarantees — a size limit, a retry count, a schedule. Pick facts that reveal scale or
+  guarantees, not vanity metrics.
+- **Tables** suit responsibilities, guarantees, states, decisions, configuration, costs and
+  trade-offs — one row per concern. Don't use a table for prose that reads fine as a paragraph.
+  Where a row states an enforceable rule, an inline-code reference can name where it lives.
+- **Numbered lists** suit genuinely sequential steps. Independent operations read better as
+  separate bullets, tables or flows.
+- **Diagrams** show movement, ownership, topology or relationships; a static topology diagram is
+  valid on its own. Keep a diagram readable at a glance and accurate to the system. Use Mermaid
+  only where the target renderer supports it; otherwise use a fenced plain-text diagram. Validate
+  syntax and rendering when tooling permits, and report what could not be checked.
+- **Code blocks** carry exact commands, configuration, or contracts, with a language tag when one
+  applies. Explain prerequisites, consequences and verification where material. Keep secrets out.
+- **Blockquotes** can hold a supporting explanation, such as a short "why this design?" note, that
+  would interrupt the main line of reasoning.
+- **Emphasis.** A bolded sentence can state a contract worth a concise close: "A caller integrates
+  by composing X. It does not reimplement Y." Use the same short label or inline-code tag for the
+  same recurring variant or status everywhere it appears.
+- **Formulas.** A short inline or fenced formula can summarize a composition, cost or lifecycle
+  when it reads clearer than prose.
+
+Numbers can appear wherever they communicate best — a summary list, a table, or plain prose.
+
+## Architecture material
+
+- Establish the concept before showing code. In explanatory architecture material, limit code to
+  genuine extension seams — a contract, an interface, a scope — not full method bodies.
+- When a real line exists between reusable infrastructure and integration-specific code, make it
+  explicit in whatever structure the document already uses — never a mandated section or table.
+- Explain runtime ownership and lifecycle wherever the system has either — don't invent one for a
+  capability with no runtime story.
+
+## References and integrations
+
+Use exact commands and configuration values when they are the subject of an operational or lookup
+document. An integration or technical reference may document interface contracts, endpoints,
+payloads, configuration keys and their constraints when the reader needs them to understand or
+integrate. Explain how the technology works, why the project uses it, and its implications,
+without becoming a generic tutorial. When an authoritative, discoverable specification exists —
+generated API documentation, a provider's reference, the source itself — link to it instead of
+copying it exhaustively.
+
+## Product behavior and business rules
+
+Documentation of product behavior records rules already decided; it does not decide them.
+
+- Define each term once and use it consistently.
+- State each rule with its boundaries — for example, whether a date limit is inclusive.
+- Cover the states and transitions, the permissions, and the material exceptions the subject
+  actually has.
+- Keep examples consistent with the rules they illustrate.
+- Mark a decision that is still open as open, and return it to the user rather than resolving it
+  in the document.
+
+## Connected and overview documents
+
+Keep overview-level explanations in primary documents and detailed facts in their authoritative
+reference. Link rather than repeat.
+
+When introducing a larger system or connected documentation set, establish the big picture first.
+Give each material subject a compact explanation of what it is, why it matters, and how it relates
+to the whole. Link to its detailed document for configuration, mechanics, procedures or deeper
+reasoning. The overview should be independently useful without becoming a duplicate handbook or a
+directory of links. Use dates or explicit currency notes for volatile facts, estimates and pending
+validation when useful.
 
 ## Tone and evidence
 
@@ -64,31 +111,9 @@ Declarative and technical; no marketing language — but declarative isn't the s
 - State verified facts directly; don't hedge what you've confirmed.
 - Label uncertainty, inference, and unresolved decisions honestly instead of smoothing them into
   confident-sounding prose.
-- For material technical claims (a reuse guarantee, a security boundary, an ownership
-  rule), name the mechanism or evidence behind it — a symbol, a schema element, a config key, a
-  protocol, a runtime boundary, whichever is appropriate to the system — not a fixed shape like "a
-  class and a method" forced onto every claim.
+- For material technical claims (a reuse guarantee, a security boundary, an ownership rule, a
+  business rule), name the mechanism or evidence behind it — a symbol, a schema element, a config
+  key, a protocol, a runtime boundary, whichever is appropriate to the system — not a fixed shape
+  like "a class and a method" forced onto every claim.
 - Avoid unsupported certainty: don't state something as universal ("every X does Y") unless
   you've verified it holds everywhere, and flag known exceptions instead of smoothing over them.
-
-Numbers can appear wherever they communicate best — a spec strip, a table, or plain prose.
-
-## Choosing a favicon (Artifact only)
-
-Pick one or two emoji from the capability's own domain and keep it stable across every redeploy —
-the Artifact tool requires a favicon on every publish call, including updates, so re-supply the
-same one rather than omitting it. When maintaining a guide you didn't originally publish, discover
-or confirm its current favicon first — read the published Artifact, or ask the user if you can't
-tell — rather than silently picking a new one; a changed favicon reads as a different document.
-Markdown output has no favicon equivalent; a Markdown guide's identity is its file path.
-
-## Responsibility routing
-
-This file covers the grammar to write *with*. It doesn't own what belongs elsewhere:
-`rules/template.html` owns the Artifact HTML/CSS scaffold and the classes named above;
-`rules/review.md` owns critically evaluating a finished guide — don't mistake self-checking
-against this file's block vocabulary for a review, that's a separate pass run once a draft
-exists; `rules/maintenance.md` owns changing an existing guide without breaking its narrative;
-`rules/authoring.md` owns format selection and the new-guide/existing-guide-update procedures that
-call on this grammar; `SKILL.md` owns which workflow you're in, which format(s) apply, and how
-these files route together.
