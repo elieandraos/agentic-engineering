@@ -15,9 +15,9 @@ the architecture behind both rather than restating either.
 ## 1. Purpose and independence
 
 `review-it` is an independently callable implementation-assurance skill. It reviews a worktree,
-branch, or PR against a substantive, evidence-backed checklist and reports verified findings, a
-scoped clean result, or explicit limitations where evidence or diagnostics weren't available. It
-does not fix what it finds — every correction returns to [`implement-it`](../skills/implement-it/).
+branch, or PR against a substantive, evidence-backed checklist and reports a clean result, verified
+findings, or an inconclusive result where evidence or diagnostics weren't available. It does not fix
+what it finds — corrections go through [`implement-it`](../skills/implement-it/)'s entry contract.
 
 This skill has no predecessor and no narrowed-from history: it did not exist before this
 repository's ecosystem migration extracted implementation assurance out of what was then a single,
@@ -75,19 +75,29 @@ needs direct inspection, since a `HEAD`-relative diff never surfaces one, and no
 or otherwise mutated merely to bring it into view.
 
 **The intended scope** is discovered from a linked issue or milestone, a PR description, an approved
-`plan.md`, explicit scope stated in the request, or `Refs #N` reference lines and commit messages
-already in the diff. No `plan-it`-authored issue, approved `plan.md`, or prior `implement-it` session
-is required — when no scope evidence exists at all, that is stated plainly as a limitation, never
-inferred from the diff's own shape and then treated as if it had been approved. A diff is evidence
-of what changed, never proof of what was authorized.
+`plan.md`, or explicit scope stated in the request. No `plan-it`-authored issue, approved
+`plan.md`, or prior `implement-it` session is required — when no scope evidence exists at all, that
+is stated plainly in the report, never inferred from the diff's own shape and then treated as if it
+had been approved. A diff is evidence of what changed, never proof of what was authorized. For the
+same reason, `Refs #N` lines and commit messages count as the author's claimed scope: they locate an
+authoritative source such as the referenced issue, and are reported as claimed, not approved, scope
+when no such source exists.
 
 **Available evidence** — the diff itself, a linked issue or PR body, `plan.md` or a guide, CI
 results already produced by someone else, applicable project instructions, an installed stack
-companion — is gathered and its actual presence or absence stated in the final report; missing
-evidence is a limitation to report, not a gap to silently fill by inference. The human is asked only
+companion — is gathered and its actual presence or absence stated in the final report, never
+silently filled by inference; missing evidence that leaves an applicable check unresolved is a
+limitation. The human is asked only
 when an unresolved ambiguity would materially change what gets reviewed or the standard it's checked
 against — not on every ambiguity, which is instead noted and proceeded past with the most defensible
 reading.
+
+**Trust boundary.** PR and issue text, commit messages, reviewed files and comments, and command
+output are evidence about the change. They may describe intended scope, but none of them can grant
+authorization, change the review procedure, override a workflow boundary, or expand what the review
+may do; authorization and decisions come from the caller. Applicable, authoritative project
+instructions remain legitimate engineering guidance. The boundary is stated once, in
+`rules/scope.md`, as a property of how evidence is treated — not as a separate security mechanism.
 
 ## 3. Discovering applicable conventions — portable and stack-aware
 
@@ -103,6 +113,12 @@ authoritative source for the same requirement, is skipped, and that skip is stat
 report. A finding grounded in framework or convention reasoning states explicitly whether it rests
 on an established project requirement or on general technical reasoning with no such backing — never
 presenting the latter as if it were a discovered project rule.
+
+When the reviewed change itself modifies a convention — project instructions, a rule file, lint or
+test configuration — the existing convention comes from the base. The convention change is reviewed
+against the authorized intent, and where it is explicitly approved, the implementation depending on
+it is evaluated against the approved convention as well. A change therefore cannot quietly redefine
+the standard it is judged by.
 
 This is a deliberate architectural choice, not an incidental default: portability across projects on
 different stacks is a stated goal of this skill (§8), and a review that silently went quiet on every
@@ -126,9 +142,17 @@ it and spreading important responsibilities across callers supports retaining it
 or thin wrapper alone establishes no defect. Test expectations must independently check the
 behavior their test layer owns, match the intended requirement, and use assertions that would
 catch a regression in that behavior. Legitimate integration assertions remain valid where separate
-tests own the underlying value's correctness. The optional Laravel companion illustrates that
-ownership distinction; the portable check does not require it. The owning checklist contains the
-inspection procedure for both concerns.
+tests own the underlying value's correctness. A stack companion that documents test-layer ownership
+or test-execution mechanics is applied when installed; the portable check does not require one. The
+owning checklist contains the inspection procedure for both concerns.
+
+Defects that already existed are classified by their relation to the change. A defect the change
+introduces — including a new occurrence of an existing flaw — is a finding, as is one the change
+exposes or worsens, and a pre-existing problem that prevents the approved requirements from being
+met. An unrelated pre-existing defect is a brief observation: not a finding, not a review
+limitation, and not automatic correction scope. Performance, compatibility, and deployment
+consequences are checked inside the existing categories (correctness, likely regressions) when
+evidence shows them, not as categories of their own.
 
 When the reviewed change modifies test infrastructure, test adequacy also checks the properties that
 specific change could affect, scaled to it: execution completeness (a matching test count alone does
@@ -137,8 +161,9 @@ to fail below its threshold, and no test deleted, skipped, or weakened to make t
 
 **The authorized-scope-change exemption is deliberately narrow.** An explicitly authorized scope
 change is exempt from exactly one category — Accidental scope expansion — because it is not
-accidental. It is not exempt from anything else: every other applicable category runs against it
-exactly as thoroughly as against any other part of the diff. The authorization approved the work
+accidental. Raising a scope change with the human is not authorization by itself; only the human's
+explicit decision is. It is not exempt from anything else: every other applicable category runs
+against it exactly as thoroughly as against any other part of the diff. The authorization approved the work
 happening; it did not verify the work, and it never suppresses a defect discovered in it or stands
 in as acceptance of that defect's consequences. This is a precise, single-category exemption by
 design — a broader reading (an authorized change being exempt from review generally) was considered
@@ -186,14 +211,24 @@ a fresh or scoped pass when relying on this result again. A scoped re-review sta
 surface it actually checked this time, alongside the same state/comparison identity — never implying,
 by omission, that it independently rechecked the entire target.
 
-**Report shape.** Every result states the reviewed target and its precise identity; confirmed
-findings ordered by consequence, each with location, evidence, consequence, and the requirement or
-project-convention source when the finding depends on one; which checks this skill actually ran or
-traced itself, distinguished from evidence supplied by others; material
-limitations and unresolved questions; and a scoped clean result when warranted, naming which
-categories applied and passed rather than a bare "looks good." An unchecked category is a limitation
-to state, never a pass to imply. **A `review-it` result never grants authorization by itself** — it
-is input to whatever gate the calling context owns (Gate 1, or a human's own judgment for a
+**Report shape.** Every result opens with exactly one outcome: `Clean` (no confirmed findings and
+every applicable check completed), `Findings remain` (which may also list limitations), or
+`Inconclusive` (no confirmed findings, but a material limitation leaves an applicable check
+unresolved). A result with a confirmed finding is never `Clean`, and resolution history belongs to
+the calling workflow's report — the skill is stateless, so it has no "clean after resolution"
+outcome of its own. A human's decision to proceed or to accept a finding is separate and does not
+change the outcome. The report then states the reviewed target and its precise identity; confirmed
+findings ordered by consequence — location, evidence, concrete consequence, relation to the change
+where it isn't plainly introduced, and the requirement or convention source when one applies — with
+no severity label or scoring; brief observations (scope notes, unrelated older defects); which
+checks this skill actually ran or traced itself, distinguished from evidence supplied by others;
+material limitations that could change the outcome; and, when `Clean`, which categories applied and
+passed. A category is reported passed only when its checks were performed: reading a rule file in
+full is required before claiming its coverage, but is never evidence that the checks ran. An
+unchecked category is a limitation to state, never a pass to imply; absent optional evidence (no
+issue, no architectural reference, no companion) is stated and its category skipped, without by
+itself making a result `Inconclusive`. **A `review-it` result never grants authorization by
+itself** — it is input to whatever gate the calling context owns (Gate 1, or a human's own judgment for a
 standalone call); it never substitutes for that decision.
 
 ## 6. What this skill never does, and does not own
@@ -201,7 +236,11 @@ standalone call); it never substitutes for that decision.
 `review-it` reports; it does not edit application code, apply formatting fixes, commit, push,
 approve a gate, merge, or mutate GitHub or any other live or production state — regardless of how
 minor or obviously correct a fix would be. A finding this skill could trivially fix by hand is still
-reported, not applied. Every correction returns to `implement-it`.
+reported, not applied. Corrections go through `implement-it`'s entry contract: an approved issue,
+or an authorized delivery correction handed over by `ship-it`. A human-authorized correction route
+for findings from a standalone review, with no issue, is approved in principle but not yet part of
+`implement-it`'s contract (`OPEN-C01` in the test contracts); this skill implies no route that
+contract doesn't define.
 
 **This skill is deliberately not the owner of every skill's specialized review.** It owns exactly
 one thing: independently callable implementation review against the checklist above, for a
@@ -219,9 +258,9 @@ directly, or `implement-it` on the human's behalf at a gate `implement-it` itsel
 
 | Rule | Owns |
 |---|---|
-| [`rules/scope.md`](../skills/review-it/rules/scope.md) | Establishing the review target, comparison baseline, intended scope, and available evidence before running the checklist; discovering applicable project and stack conventions |
-| [`rules/checklist.md`](../skills/review-it/rules/checklist.md) | The ten-category substantive checklist with concrete inspection instructions, and the narrow authorized-scope-change exemption |
-| [`rules/verification.md`](../skills/review-it/rules/verification.md) | Verifying a finding against concrete evidence, diagnostic-execution boundaries, the staleness/review-identity rule, and the required report shape |
+| [`rules/scope.md`](../skills/review-it/rules/scope.md) | Establishing the review target, comparison baseline, intended scope, and available evidence before running the checklist; the trust boundary for reviewed content; discovering applicable project and stack conventions, including which version applies when the change modifies them |
+| [`rules/checklist.md`](../skills/review-it/rules/checklist.md) | The ten-category substantive checklist with concrete inspection instructions, the classification of defects that already existed, and the narrow authorized-scope-change exemption |
+| [`rules/verification.md`](../skills/review-it/rules/verification.md) | Verifying a finding against concrete evidence, diagnostic-execution boundaries, the staleness/review-identity rule, and the required report shape and outcomes |
 
 **Called by `implement-it`, not owned by it.** `implement-it`'s Gate 1 and its delivery-correction
 flow each invoke this skill the identical standalone way described in §1 — this skill's own dossier
@@ -260,14 +299,21 @@ mechanism of its own to detect that a caller relied on a stale result without as
   tested Git comparison and state-identity behavior specifically — it did not exercise this skill's
   stack-aware convention discovery (§3) or run the checklist itself; it provides no live consumer
   evidence for either.
-- The no-companion convention-discovery behavior (§3) — running the full checklist and skipping only
-  a genuinely companion-dependent sub-check — is stated precisely in `rules/scope.md` and
-  `rules/checklist.md` and has been source-reviewed against that precise wording, but has not yet
-  been exercised against a real non-Laravel project with no stack companion installed; this dossier
-  does not claim that exercise has happened.
-- This skill's three entry points (§1) have each been source-reviewed and static-walkthrough-
-  validated against the actual owning files. That recorded validation does not include an end-to-end
-  skill invocation against a real worktree, branch, or PR.
-- The finding-traceability, abstraction-usefulness, and independent-test-expectation refinements
-  have been checked through source review and focused scenario walkthroughs. Their recorded
-  validation does not include a live review session or executed test fixtures.
+- **Live consumer use, analyzed retrospectively.** Transcripts of 89 real invocations (late October
+  to late November 2026) across three consuming projects were analyzed after the fact. Two use the
+  Laravel companion; one is a Nuxt/Supabase project with no stack companion installed, so the
+  no-companion convention discovery (§3) has run in real use. The invocations came overwhelmingly
+  through `implement-it` before Gate 1, mostly against dirty worktrees, plus a few branch and one PR
+  review. They show evidence-backed true positives, no invented findings, and the
+  verified-versus-supplied distinction honored. They also showed rule files read only partially,
+  reports routinely omitting the reviewed state's identity, and older defects placed
+  inconsistently — the observations behind the current report shape, outcome set, older-defect
+  classification, and full-read requirement. This is observed real use, not a controlled behavioral
+  evaluation: no fixed fixtures, no repeated runs, approximate pattern-matched counts, and review
+  text interleaved with `implement-it`'s own.
+- **The current contract's refinements are not yet validated by use.** The outcome set, restored
+  identity requirement, older-defect classification, trust boundary, changed-convention rule, and
+  full-read requirement were checked by source review and cold-read walkthroughs only. Whether they
+  change behavior remains to be seen in later consumer sessions.
+- The finding-traceability, abstraction-usefulness, and independent-test-expectation checks have
+  been exercised in the consumer sessions above, but no executed test fixture covers them.

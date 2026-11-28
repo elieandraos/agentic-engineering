@@ -98,7 +98,7 @@ who may genuinely have none. Treat `review-it`'s result as follows before report
   no clearly better answer — is not this approval's to resolve silently. Stop and ask, per "When to
   stop and ask," below, citing `review-it`'s finding as the evidence.
 - **A material limitation `review-it` reports** — missing evidence, an unreachable diagnostic, or an
-  ambiguity it proceeded past rather than resolved (`review-it/rules/scope.md`'s report shape). When
+  ambiguity it proceeded past rather than resolved (`review-it/rules/verification.md`'s report shape). When
   the missing evidence is actually obtainable from this skill's own context (the approved issue, the
   authorized correction's scope, a project instruction `review-it` couldn't reach), supply it and
   request a fresh pass. When it isn't obtainable, report the specific blocker and the human decision

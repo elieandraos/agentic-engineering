@@ -1,11 +1,11 @@
 > A portable, evidence-driven engineering methodology for understanding, planning, implementing, reviewing, and shipping software — with an opinionated approach to Laravel engineering where it applies. Not a prompt collection for one repository or framework.
 
-# Engineering philosophy
+# Principles of agentic engineering
 
-- **Evidence before conventions.** Skills inspect the real system — code, configuration, tests, and current state — before explaining or changing it. The system establishes what exists; the human decides what it should become.
-- **Humans own decisions and approvals.** Material product and architecture choices are settled with a human, and PR approval and merge always stay with a human. No skill merges its own work.
-- **Knowledge lives where it belongs.** Portable methodology stays independent of language and framework. Stack knowledge belongs to a stack companion. The consuming project remains authoritative for its domain, conventions, and delivery environment.
-- **Proportionate engineering.** A rule earns its place by changing a decision or protecting an invariant, and safeguards stay proportionate to the risks they address.
+- **Evidence before assumptions.** Agents investigate the actual system before proposing or implementing changes.
+- **Human authority.** Agents investigate, execute and verify. Humans own material decisions and approvals.
+- **Separation of knowledge.** Engineering methodology, stack conventions and project context remain distinct.
+- **Simplicity by design.** Keep solutions and workflows as simple as the problem allows.
 
 # The lifecycle
 
@@ -22,32 +22,49 @@
 - **These skills do not assume a language, framework, or project layout.** The consuming project supplies those; each skill supplies the method.
 - **The lifecycle is composable, not mandatory end-to-end.** Use the skills independently or combine them into the workflow your project needs.
 
-# Engineering capabilities
+# Beyond the delivery lifecycle.
 
-Complementary capabilities that work alongside the lifecycle or on their own, without becoming lifecycle stages.
+Complementary engineering capabilities that work independently or alongside the delivery lifecycle.
 
-* [`pair-it`](skills/pair-it/) — collaborative implementation through human-approved checkpoints, architectural explanations, code walkthroughs, and targeted verification. When combined with `implement-it`, the lifecycle stays with `implement-it`.
-* [`audit-it`](skills/audit-it/) — evidence-backed audits of a system's current behavior: data integrity and query performance, security, background-work reliability, and business-rule consistency. It reports verified findings with recommended corrections; it does not implement fixes.
-* [`document-it`](skills/document-it/) — creates, maintains, and reviews evidence-backed technical documentation in Markdown, from architecture and infrastructure to operations, integrations, costs, and product behavior.
-* [`steward-it`](skills/steward-it/) — retrospective investigation of engineering sessions that were unexpectedly slow, difficult, or off course, recommending the smallest justified improvement.
+| Skill | Purpose | Focus |
+|---|---|---|
+| [`pair-it`](skills/pair-it/) | Engineering together | Collaborative implementation, architectural reasoning and guided verification |
+| [`audit-it`](skills/audit-it/) | Assessing the system | Security, data integrity, performance and operational reliability |
+| [`document-it`](skills/document-it/) | Documenting the system | Creation, maintenance and review of technical documentation grounded in verified system understanding |
+| [`steward-it`](skills/steward-it/) | Investigating the engineering process itself | Retrospective investigation of agentic engineering sessions, identifying inefficiencies, recurring problems and evidence-driven improvements |
 
-# Opinionated Laravel engineering
+# Laravel engineering, with a point of view.
 
-[`laravel-inertia-stack`](skills/laravel-inertia-stack/) is our opinionated approach to engineering Laravel, InertiaJS, Vue 3, and Pest applications — conventions, architectural blueprints, testing methodology, and reusable implementation templates, guided by explicit engineering judgment.
+[`laravel-inertia-stack`](skills/laravel-inertia-stack/) combines engineering philosophy, code conventions, architectural blueprints and testing practices for Laravel, InertiaJS, Vue 3 and Pest.
 
-It loads alongside Laravel Boost's skills rather than replacing them. It **extends** Boost where Boost is silent, **specializes** Boost's principles into concrete stack shapes, and **deliberately overrides** selected Boost defaults where this stack holds a different position. An established project convention still takes precedence; the skill supplies the defaults where a project has not decided yet. It is a stack companion, not a lifecycle stage: `implement-it` and `review-it` load it when work touches this stack.
+| Dimension | Purpose | Focus |
+|---|---|---|
+| Engineering philosophy | Making sound decisions | Simplicity, practical trade-offs and complexity justified by real needs |
+| Code style | Writing maintainable code | Clarity, consistency and expressive use of the framework |
+| Architecture | Organizing complexity | Well-defined responsibilities, deliberate boundaries and purposeful abstractions |
+| Implementation | Solving practical problems | Framework-native solutions, reusable patterns and proportionate safeguards |
+| Testing | Proving behavior | Behavioral correctness, test ownership and meaningful coverage |
 
-# Installation and usage
+It works alongside Laravel Boost — **extends** where Boost is silent, **specializes** where its guidance is general, and **deliberately overrides** where engineering positions differ.
 
-Install the skills you need, and choose which coding agent(s) should use them:
+Established project conventions take precedence. The companion provides defaults where no convention exists.
 
-```shell
-npx skills add elieandraos/agentic-engineering
-```
+# Ten skills, ten distinct engineering questions
 
-The install target selects which agent reads the installed skills, not a set of subagent definitions this repository supplies. Install `laravel-inertia-stack` only in projects on that stack.
+| Skill | Responsibility |
+|---|---|
+| `lab-it` | What exists, and what should change? |
+| `plan-it` | What work should we perform? |
+| `implement-it` | How do we execute approved work? |
+| `review-it` | Is the implementation correct? |
+| `ship-it` | Is the work ready for delivery? |
+| `pair-it` | How do we engineer together? |
+| `audit-it` | Is the existing system sound? |
+| `document-it` | How do we preserve system understanding? |
+| `steward-it` | How do we improve the engineering process? |
+| `laravel-inertia-stack` | How do we engineer within this particular stack? |
 
-**Boring prompts. Serious engineering.**
+# Boring prompts. Serious engineering.
 
 State the goal, not the choreography. Investigation methods, planning checks, review checklists, and delivery rules already live in versioned, reviewable skills.
 
@@ -56,6 +73,7 @@ State the goal, not the choreography. Investigation methods, planning checks, re
 "Turn the approved plan into GitHub issues."                         # plan-it
 "Implement issue #42."                                               # implement-it + laravel-inertia-stack when relevant
 "Implement issue #42 and pair-program with me."                      # implement-it + pair-it
+"Pair-program with me on this feature."                              # pair-it
 "Review this branch before I open a PR."                             # review-it
 "Create the milestone PR."                                           # ship-it
 "Audit the billing module for security and data-integrity risks."    # audit-it
@@ -64,5 +82,15 @@ State the goal, not the choreography. Investigation methods, planning checks, re
 ```
 
 The stages compose into a human workflow, but each prompt also works on its own. Each skill's own README describes its workflow in detail.
+
+# Getting started
+
+Install the skills you need, and choose which coding agent(s) should use them:
+
+```shell
+npx skills add elieandraos/agentic-engineering
+```
+
+The install target selects which agent reads the installed skills, not a set of subagent definitions this repository supplies. Install `laravel-inertia-stack` only in projects on that stack.
 
 * [Roadmap](roadmap.md) · [Skill-authoring methodology](docs/skill-authoring-methodology.md) · [License](LICENSE)

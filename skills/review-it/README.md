@@ -1,7 +1,8 @@
 # review-it
 
-Independently callable implementation review for a worktree, branch, or PR — verified findings, a
-scoped clean result, or explicit limitations, never a fix applied on the spot.
+Independently callable implementation review for a worktree, branch, or PR — a clean result,
+verified findings, or an inconclusive result with explicit limitations, never a fix applied on the
+spot.
 
 ## When to use it
 
@@ -33,15 +34,17 @@ or PR opened outside this ecosystem is a valid, ordinary target.
    compliance, test adequacy, accidental scope expansion), skipping only what genuinely doesn't
    apply.
 4. Verify every candidate finding against concrete evidence — source inspection, or a diagnostic
-   command's actual output — before reporting it.
-5. Report the reviewed state, confirmed findings, what was actually verified versus supplied by
-   others, material limitations, and a scoped clean result when warranted.
+   command's actual output — before reporting it. A defect the change introduces, exposes, or
+   worsens is a finding; an unrelated older defect is a brief observation.
+5. Report the outcome (`Clean`, `Findings remain`, or `Inconclusive`), the reviewed target and its
+   precise state, confirmed findings ordered by consequence, what was actually verified versus
+   supplied by others, and the material limitations.
 
 ## Ownership
 
 Owns independently callable implementation review against the checklist above. Implementing a
-correction stays with [`implement-it`](../implement-it/); guide review stays with
-[`document-it`](../document-it/); issue-definition and dependency review stay with
+correction stays with [`implement-it`](../implement-it/), through its own entry contract; guide
+review stays with [`document-it`](../document-it/); issue-definition and dependency review stay with
 [`plan-it`](../plan-it/); investigation discipline and plan-synthesis review stay with
 [`lab-it`](../lab-it/); commit-plan review (Gate 2) stays with `implement-it`. A `review-it` result
 never grants authorization by itself — every gate it feeds stays a human approval.

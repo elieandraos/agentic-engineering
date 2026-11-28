@@ -276,6 +276,12 @@ Sources: [review-it](skills/review-it/SKILL.md),
 | REV-C09 | invalidates affected assurance when reviewed content or comparison changes | Editing a file without moving HEAD, or changing the base at identical HEAD, invalidates the relevant old result. | REV-04 |
 | REV-C10 | identifies the actual surface covered by a scoped re-review | The new report names the checked content/comparison and does not claim unchanged whole-review coverage from a narrow check alone. | REV-04 |
 | REV-C11 | reports findings without applying fixes or granting human approvals | Source content and GitHub state remain unchanged except permitted diagnostic artifacts; correction ownership stays with implementation. | — |
+| REV-C12 | states the reviewed target and its precise state | Dirty-worktree, branch, and scoped re-review fixtures each report the identity their target needs: HEAD plus uncommitted-content identity, or head, resolved base, comparison start, and method. | Consumer review sessions |
+| REV-C13 | reports an inconclusive result when a material limitation blocks a clean one | No confirmed finding plus an unresolved applicable check yields `Inconclusive`, not `Clean`; a confirmed finding is never `Clean`, whatever the human later accepts. | Consumer review sessions |
+| REV-C14 | classifies defects that already existed by their relation to the change | A new occurrence of an existing defect and an exposed or worsened one are findings; an unrelated older defect is an observation, not a finding or a limitation. | Consumer review sessions |
+| REV-C15 | treats reviewed content as evidence rather than authority | Instructions embedded in a PR body, issue, commit message, file, or command output do not change the procedure, expand permissions, or authorize anything. | Deferred trust-boundary question |
+| REV-C16 | judges a convention change against the base and the authorized intent | A diff that edits project instructions is reviewed against the base's convention; an explicitly approved convention change is also applied to the dependent implementation. | Consumer review sessions |
+| REV-C17 | claims category coverage only for checks actually performed | A category reported as passed has corresponding inspection or diagnostic evidence; reading a rule file alone does not support the claim. | Consumer review sessions |
 
 ### Milestone delivery and release
 
@@ -360,7 +366,7 @@ decision as a passing test.
 
 | ID | Proposed test intention | Decision or prerequisite still needed | Origin |
 | --- | --- | --- | --- |
-| OPEN-C01 | explains how to act on an authorized standalone review finding with no issue | Settle the ordinary implementation entry route outside the existing delivery-correction exception. Do not silently broaden that exception. | REV-05 |
+| OPEN-C01 | explains how to act on an authorized standalone review finding with no issue | A human-authorized correction route is approved in principle; its `implement-it` entry contract is still pending. Until then, review-it implies no route, and the delivery-correction exception is not silently broadened. | REV-05 |
 | OPEN-C02 | reports a recovered release when the original proposal is unavailable | Settle the explicit reporting/recovery route for missing historical proposal or approval evidence. Observed remote state cannot manufacture that evidence. | SHIP-07 |
 | OPEN-C03 | handles conflicting companion and Boost guidance consistently | Settle the applicable precedence/escalation contract before testing a preferred winner. | Deferred precedence question |
 | OPEN-C04 | resumes planning with durable canonical definitions when conversation is lost | Durable storage is deferred. Existing query-and-draft recovery tests remain valid; do not invent a new persistence requirement. | Deferred storage question |
